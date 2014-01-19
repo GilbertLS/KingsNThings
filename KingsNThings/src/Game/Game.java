@@ -2,11 +2,17 @@ package Game;
 
 /*
  * This class is the controller for a Kings n' Things Game. It calls methods from the Game Model,
- * which in turn updates the Game View
+ * and then calls the GameView to update accordingly
  */
 public class Game {
 	private GameModel gameModel; 	//conceptual model of a Kings N' things Game
 	private GameView gameView;		//View to display the game
+	
+	public Game(int playerCount)
+	{
+		this.gameModel = new GameModel(playerCount);
+		this.gameView = new GameView();
+	}
 
 	public int playGame() {
 		//all required initial Game setup
@@ -108,18 +114,16 @@ public class Game {
 
 	private void initialSetup() {
 		//perform initial setup of the game via the model
-		//call the view to update when necessary
-		gameModel.setPlayerCount();
-		
+		//call the view to update when necessary		
 		gameModel.randomizePlayingCup();
 		
 		gameModel.randomizeSpecialCharacters();
 		
 		gameModel.setUpHexTiles();
 		
-		determineInitialPlayerOrder();
-		
 		gameView.drawInitGame();
+		
+		determineInitialPlayerOrder();
 	}
 	
 	//--------------------INITIAL SETUP PHASES------------

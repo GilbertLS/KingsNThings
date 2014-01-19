@@ -6,4 +6,9 @@ import java.util.Vector;
  */
 public class PlayerRack {
 	private Vector<Thing> things;	//Things in Rack
+	
+	public PlayerRack()
+	{
+		this.things = new Vector<Thing>(GameConstants.MAX_NUM_THINGS_IN_RACK);
+	}
 }

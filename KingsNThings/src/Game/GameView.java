@@ -5,8 +5,12 @@ package Game;
  * appropriate.
  */
 public class GameView {
-
-	//draw the initial game after adaquate detup has been performed
+	public GameView()
+	{
+		
+	}
+	
+	//draw the initial game after adequate setup has been performed
 	public void drawInitGame() {
 		// TODO Auto-generated method stub
 		
