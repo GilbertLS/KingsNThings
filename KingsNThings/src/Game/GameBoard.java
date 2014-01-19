@@ -7,5 +7,9 @@ package Game;
  */
 public class GameBoard {
 	private HexTile[][] boardPieces = new HexTile[7][7]; 	//the array of Hex Tiles in play
-
+	
+	public GameBoard()
+	{
+		
+	}
 }
