@@ -45,6 +45,14 @@ public final class GameConstants {
 	public static final int MAX_NUM_THINGS_IN_HAND = 10;
 	public static final int MAX_NUM_SPECIAL_CHARACTERS = 30;
 	public static final int MAX_NUM_TILES = 48;
+	public static final int NUM_FOUR_PLAYER_TILE_RINGS = 3;
+	public static final int NUM_TWO_OR_THREE_PLAYER_TILE_RINGS = 2;
+	
+	//Dice Constants
+	public static final int DIE_1_SIDES = 6;
+	public static final int DIE_2_SIDES = 6;
+	public static final int DIE_3_SIDES = 6;
+	public static final int DIE_4_SIDES = 6;
 	
 	//HexTile Constants
 	public static final int NUM_THINGS_PER_HEX = 10;
@@ -60,6 +68,8 @@ public final class GameConstants {
 	public static final int NUM_SWAMP_TILES = 6;
 	public static final int NUM_MOUNTAIN_TILES = 6;
 	public static final int NUM_DESERT_TILES = 6;
+
+
 
 	//--------------/end INTEGERS
 }
