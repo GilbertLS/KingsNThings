@@ -7,18 +7,16 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameServer implements Runnable {
 	
 	private Socket connection;
-	private static boolean gameEnded = false;
-	private static boolean gameStarted = false;
 	private static int ready = 0;
 	
-	private static List<Socket> clients = new ArrayList<Socket>();
-	
 	public GameServer(Socket connection){
-		clients.add(connection);
+		GameHost.AddClient( connection );
 		this.connection = connection;
 	}
 	
@@ -38,10 +36,10 @@ public class GameServer implements Runnable {
         
         	out.println("");
  	    	
- 	        while ((inputLine = in.readLine()) != null){
-	        	if (!HandleClientReponse( inputLine, in, out )){
-	        		break;
-	        	}
+ 	        while ((inputLine = in.readLine()) != null &&
+ 	        	   (HandleClientReponse( inputLine, in, out ))){
+ 	        	/////////////////////// GAME START ////////////////////////////
+ 	        
  	        }
  	    } catch (IOException e) {
  	        System.out.println("Exception caught when trying to listen on port "
@@ -63,7 +61,7 @@ public class GameServer implements Runnable {
 		Event event = Event.Destringify(inputLine);
 		
 		
-		if (!gameStarted && event.eventId == EventList.READY){
+		if (!GameHost.gameStarted && event.eventId == EventList.READY){
 			ready++;
 			System.out.println(ready);
 			CheckStartGame();
@@ -74,9 +72,9 @@ public class GameServer implements Runnable {
 	}
 	
 	private void CheckStartGame(){
-		if (clients.size() == ready){
+		if (GameHost.clients.size() == ready){
 			System.out.println("Ready to start");
-			System.out.println("Playing with " + clients.size() + " players");
+			System.out.println("Playing with " + GameHost.clients.size() + " players");
 		}
 	}
 }

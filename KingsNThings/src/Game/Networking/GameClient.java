@@ -6,13 +6,17 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import Game.Game;
+
 public class GameClient {
+	public static Socket connection;
+	public static Game game;
 	
-	public boolean isReady = false;
-	public Socket hostConnection;
-	private static int playerNum = 0;
 	public String name;
-	private boolean gameOver = false;
+	
+	private boolean isReady = false;
+	
+	private static int playerNum = 0;
 
 	public GameClient(){
 		this.name = "Player" + playerNum++;
@@ -22,21 +26,32 @@ public class GameClient {
 		this.isReady = true;
 		
 		try { 
-			hostConnection = new Socket(address, Protocol.GAMEPORT);
-			PrintWriter out = new PrintWriter(hostConnection.getOutputStream(), true);
+			connection = new Socket(address, Protocol.GAMEPORT);
+			PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
 	        BufferedReader in = new BufferedReader(
 	        	new InputStreamReader(
-	        		hostConnection.getInputStream()
+	        			connection.getInputStream()
 	        	)
 	        );
 	        
 	        Event ready = new Event(EventList.READY);
 	        
 	        out.println(EventList.READY);
-	        while (!gameOver) {
-	        	String fromServer = in.readLine();
-	        	System.out.println(fromServer);
-	        }
+	        
+        	String fromServer = in.readLine();
+        	////////////////////////////////////// GAME START
+        	System.out.println(fromServer);
+        	
+        	out.close();
+	        in.close();
+	        
+	        Runnable eventReceiver = new EventReceiver( connection );
+	        Thread thread = new Thread(eventReceiver);
+	        
+	        thread.start();
+	        
+	        game = new Game(3);
+	        game.playGame();
 		} catch (IOException e){
 			System.out.print("Unable to connect to game");
 		}

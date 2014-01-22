@@ -4,10 +4,11 @@ package Game.Networking;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PrimaryServer implements Runnable {
 	private Socket connection;
-	private static List<String> hostingClients = new ArrayList<String>();
+	private static Queue<String> hostingClients = new ConcurrentLinkedQueue<String>();
 	
 	PrimaryServer(Socket s) {
 		this.connection = s;
@@ -52,11 +53,11 @@ public class PrimaryServer implements Runnable {
         
         	out.println("");
  	    	
- 	        while ((inputLine = in.readLine()) != null){
-	        	if (!HandleClientResponse( inputLine, in, out )){
-	        		break;
-	        	}
- 	        }
+ 	        while ((inputLine = in.readLine()) != null &&
+ 	        	   (HandleClientResponse( inputLine, in, out ))){}
+ 	        
+ 	        System.out.println("Connection (assumed) closed. Server thread dying");
+ 	        
  	    } catch (IOException e) {
  	        System.out.println("Exception caught when trying to listen on port "
  	            + connection.getPort() + " or listening for a connection");

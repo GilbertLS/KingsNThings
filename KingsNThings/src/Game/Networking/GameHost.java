@@ -11,11 +11,16 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameHost implements Runnable {
 	
-	private static boolean gameStarted = false;
+	public static boolean gameStarted = false;
+	public static boolean gameEnded = false;
 	public String address;
+	
+	public static Queue<Socket> clients = new ConcurrentLinkedQueue<Socket>();
 	
 	public GameHost() throws UnknownHostException {
 		this.address = InetAddress.getLocalHost().getHostAddress();
@@ -39,6 +44,10 @@ public class GameHost implements Runnable {
 	    } catch (IOException e) {
 	    	System.out.println("IO Error");
 	    }
+	}
+	
+	public static void AddClient( Socket c ){
+		clients.add(c);
 	}
 	
 	public void run(){
