@@ -1,12 +1,23 @@
 package Game;
 
+import Game.GameConstants.SpecialType;
+import Game.GameConstants.ThingType;
+
 /*
  * This class adds functionality to the Thing class to facilitate combat.
  */
-public class Combatant extends Thing{
+public abstract class Combatant extends Thing{
 	//The damage dealt by this combatant
 	private int combatValue;	
 	
-	//Booleans to determine any Combatant variations
-	private boolean isFlying, isMagic, canCharge, hasSpecial;
+	//Combatant variation
+	private SpecialType specialType;
+	
+	public Combatant(ThingType thingType, String name, SpecialType specialType, int combatValue)
+	{
+		super(thingType, name);
+		
+		this.combatValue = combatValue;
+		this.specialType = specialType;
+	}
 }
