@@ -42,7 +42,7 @@ public class PrimaryClient {
                 	out.println(fromUser);
                 	exit = HandleInput( fromUser, socket, out, in );
                 }
-            }
+            }            
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
             System.exit(1);
@@ -93,6 +93,8 @@ public class PrimaryClient {
 					
 					GameClient client = new GameClient();
 					client.ConnectToHost(input[1]);
+					
+					return true;
 	    		} else {
 	    			System.out.println("Game not found");
 	    		}
@@ -102,10 +104,10 @@ public class PrimaryClient {
     }
     
     private static void HostGame() throws UnknownHostException {
-    	Runnable server = new GameHost();
+    	Runnable server = new GameController();
     	Thread thread = new Thread(server);
     	thread.start();
     	GameClient client = new GameClient();
-    	client.ConnectToHost(((GameHost)server).address);
+    	client.ConnectToHost(((GameController)server).address);
     }
 }

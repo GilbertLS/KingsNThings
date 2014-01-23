@@ -11,6 +11,7 @@ public abstract class Thing {
 	private Boolean isFlipped;	//whether the Thing is flipped over currently
 	ThingType thingType;		//type of thing (enum defined in GameConstants class
 	String name;				//display name of this Thing
+	HexTile currentTile;
 	
 	public Thing(ThingType thingType, String name)
 	{
@@ -21,5 +22,7 @@ public abstract class Thing {
 		this.name = name;
 		
 		this.isFlipped = true;
+		
+		this.currentTile = null;
 	}
 }

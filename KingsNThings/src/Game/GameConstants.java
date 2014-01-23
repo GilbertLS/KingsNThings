@@ -42,7 +42,6 @@ public final class GameConstants {
 	//Piece count constants
 	public static final int MAX_NUM_THINGS = 150;
 	public static final int MAX_NUM_THINGS_IN_RACK = 10;
-	public static final int MAX_NUM_THINGS_IN_HAND = 10;
 	public static final int MAX_NUM_SPECIAL_CHARACTERS = 30;
 	public static final int MAX_NUM_TILES = 48;
 	public static final int NUM_FOUR_PLAYER_TILE_RINGS = 3;
@@ -68,6 +67,10 @@ public final class GameConstants {
 	public static final int NUM_SWAMP_TILES = 6;
 	public static final int NUM_MOUNTAIN_TILES = 6;
 	public static final int NUM_DESERT_TILES = 6;
+	
+	//event types
+	public static final int PLAYERS_ROLL = 0;
+	public static final int UPDATE_PLAYER_ORDER = 1;
 
 
 

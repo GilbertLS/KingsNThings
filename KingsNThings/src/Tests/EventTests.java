@@ -14,7 +14,7 @@ public class EventTests {
 	public void Setup(){
 		int eventId = 3;
 		String[] params = { "true", "false", "gah" };
-		String[] intendedPlayers = { "1", "2", "3" };
+		int[] intendedPlayers = { 1, 2, 3 };
 		
 		testEvent = new Event(
 			eventId,

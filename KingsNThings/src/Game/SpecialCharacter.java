@@ -13,6 +13,7 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 	public SpecialCharacter()
 	{
 		super(ThingType.SPECIAL_CHARACTER, "specialCharacter" + specialCharacterID, SpecialType.NONE, (int)Math.ceil(Math.random()*6));
+		this.currentTile = null;
 	}
 	
 	//temp (for terrain lord)
@@ -20,6 +21,7 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 	public SpecialCharacter(int temp)
 	{
 		super(ThingType.TERRAIN_LORD, "terrainLord" + terrainLordID, SpecialType.NONE, (int)Math.ceil(Math.random()*6));
+		this.currentTile = null;
 	}
 	
 	//need method for special ability
