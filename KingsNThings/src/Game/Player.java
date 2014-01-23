@@ -22,4 +22,9 @@ public class Player {
 		
 		this.gold = 0;
 	}
+
+	public void setPlayerOrder(int startIndex) {
+		this.playerOrder = startIndex%4;
+		
+	}
 }

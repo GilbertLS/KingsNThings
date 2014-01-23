@@ -1,6 +1,7 @@
 package Game;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Vector;
 
 import Game.GameConstants.Terrain;
@@ -12,7 +13,7 @@ import Game.GameConstants.Terrain;
 public class GameModel {
 	//--------GAME OBJECTS-----------
 	private GameBoard gameBoard;						//board holding the Hex Tiles in play
-	private Vector<HexTile> unusedTiles;				//all unused HexTiles
+	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
 	private Player player1, player2, player3, player4;	//Players in the game
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
 	private Vector<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
@@ -112,9 +113,10 @@ public class GameModel {
 	
 	//create the 48 HexTiles to use for the Game
 	private void createHexTiles() {
-		unusedTiles = new Vector<HexTile>(GameConstants.MAX_NUM_TILES);
+		unusedTiles = new LinkedList<HexTile>();
 		
-		for(int i=0; i < GameConstants.NUM_SEA_TILES; i++)
+		//add all but 4 SEA HexTiles
+		for(int i=0; i < GameConstants.NUM_SEA_TILES-4; i++)
 		{
 			unusedTiles.add(new HexTile(Terrain.SEA));
 		}
@@ -164,18 +166,109 @@ public class GameModel {
 	}
 	
 	public void setUpHexTiles() {
+		int x=0, y=0;	//current tile coordinates
 		
+		//add center tile
+		gameBoard.addHexTile(unusedTiles.pop(), x, y);
+		
+		for(int i=1; 
+				i<=
+					(playerCount == 4?
+							GameConstants.NUM_FOUR_PLAYER_TILE_RINGS:
+							GameConstants.NUM_TWO_OR_THREE_PLAYER_TILE_RINGS);
+				i++)
+		{
+			//move to next ring of tiles ("upwards")
+			x++;
+			y++;
+			
+			//place first tile in ring
+			gameBoard.addHexTile(unusedTiles.pop(), x, y);
+			
+			//place top-right tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the negative y direction
+				y--;
+				
+				gameBoard.addHexTile(unusedTiles.pop(), x, y);
+			}
+						
+			//place right tiles
+			for(int j=0; j<i; j++)
+			{
+				//move in the "downward" direction
+				x--;
+				y--;
+				
+				gameBoard.addHexTile(unusedTiles.pop(), x, y);
+			}
+			
+			//place bottom-right tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the negative x direction
+				x--;
+				
+				gameBoard.addHexTile(unusedTiles.pop(), x, y);
+			}	
+			
+			//place bottom-left tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the positive y direction
+				y++;
+				
+				gameBoard.addHexTile(unusedTiles.pop(), x, y);
+			}
+			
+			//place left tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the "upward" direction
+				x++;
+				y++;
+				
+				gameBoard.addHexTile(unusedTiles.pop(), x, y);
+			}
+			
+			//place top-left tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the positive x direction
+				x++;
+				
+				gameBoard.addHexTile(unusedTiles.pop(), x, y);
+			}
+		}
+		
+		//add in remaining 4 SEA HexTles and shuffle again
+		for(int i=0; i<4; i++)
+		{
+			unusedTiles.add(new HexTile(Terrain.SEA));
+		}
+		shuffleUnusedTiles();
+	}
+	
+	public void setInitialPlayerOrder(int startIndex) {
+		player1.setPlayerOrder(startIndex);
+		player2.setPlayerOrder(startIndex+1);
+		player3.setPlayerOrder(startIndex+2);
+		player4.setPlayerOrder(startIndex+3);
 		
 	}
 	//--------------/end INITIAL SETUP METHODS-----------
 	
-	
-	
-	//---------------PLAYER SETUP METHODS----------------
-	public void shuffleRemainingTerrain() {
-		// TODO Auto-generated method stub
-		
+	public void shuffleUnusedTiles() {
+		Collections.shuffle(unusedTiles);
 	}
-	//------------/end PLAYER SETUP METHODS
+	public void rollTwoDice() {
+		dice.rollTwoDice();
+	}
 	
+	public int getDie1Value(){return dice.getDie1Value();}
+	public int getDie2Value(){return dice.getDie2Value();}
+	public int getDie3Value(){return dice.getDie3Value();}
+	public int getDie4Value(){return dice.getDie4Value();}
+
 }
