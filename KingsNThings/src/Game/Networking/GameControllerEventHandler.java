@@ -7,9 +7,9 @@ public class GameControllerEventHandler {
 		
 		for(GameRouter i : GameController.servers)
 		{
-			Response rollResponse = i.sendEvent(new Event(e.eventId));
+			int rollResponse = i.sendEvent(new Event(e.eventId)).castToInt();
 			System.out.println("A DICE ROLL EVENT HAS BEEN HANDLED");
-			s += rollResponse.message + " ";
+			s += rollResponse + " ";
 		}
 		
 		System.out.println(s);
