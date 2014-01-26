@@ -9,7 +9,6 @@ public class Player {
 	private int playerNum;				//Number identifying player
 	private int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
-	private Vector<Thing> heldThings;	//Things held by the player (e.g. during movement)
 	
 	public Player(int playerNum)
 	{
@@ -17,8 +16,6 @@ public class Player {
 		
 		this.playerNum = playerNum;
 		this.playerOrder = playerNum;
-		
-		this.heldThings = new Vector<Thing>(GameConstants.MAX_NUM_THINGS_IN_HAND);
 		
 		this.gold = 0;
 	}

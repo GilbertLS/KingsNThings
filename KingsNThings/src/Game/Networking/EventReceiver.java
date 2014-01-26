@@ -7,6 +7,7 @@ import java.net.Socket;
 
 public class EventReceiver implements Runnable {
 	private Socket connection; 
+	private String fromServer;
 	
 	public EventReceiver( Socket c ){
 		connection = c;
@@ -20,9 +21,14 @@ public class EventReceiver implements Runnable {
 				)
 	    	);
 
-			while( !GameHost.gameEnded ) {
-				String fromServer = in.readLine();
+			//!!!! GameController is Static, thus not initialized for joined client !!!!!!
+			while(true) {
+				System.out.println("GameClient's Event Reciver is waiting for an event to handle");
+				fromServer = in.readLine();
 					
+				//second line is never read
+				
+				System.out.println("ATTEMPTING TO HANDLE A DICE ROLL");
 				EventHandler.HandleEvent(fromServer);
 				
 			}

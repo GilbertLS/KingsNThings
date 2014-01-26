@@ -115,3 +115,12 @@ KingsNThings/src/Game/Treasure.class
 .metadata/.plugins/org.eclipse.jdt.ui/jdt-images/5.png
 .metadata/.plugins/org.eclipse.jdt.ui/jdt-images/6.png
 .metadata/.plugins/org.eclipse.jdt.ui/jdt-images/7.png
+Documentation/~$$coordinateSystem.~vsd
+KingsNThings/bin/Game/Networking/GameController.class
+KingsNThings/bin/Game/Networking/GameControllerEventHandler.class
+KingsNThings/bin/Game/Networking/GameRouter.class
+KingsNThings/bin/Game/Networking/Response.class
+KingsNThings/src/Game/Networking/GameController.class
+KingsNThings/src/Game/Networking/GameControllerEventHandler.class
+KingsNThings/src/Game/Networking/GameRouter.class
+KingsNThings/src/Game/Networking/Response.class

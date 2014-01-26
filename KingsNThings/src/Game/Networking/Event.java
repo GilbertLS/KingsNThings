@@ -3,7 +3,7 @@ package Game.Networking;
 public class Event {
 	public int eventId;
 	public String[] eventParams;
-	public String[] intendedPlayers;
+	public int[] intendedPlayers;
 	public static String delimiter = "|";
 	public static String elementDelimiter = ",";
 	
@@ -12,19 +12,34 @@ public class Event {
 	) {
 		this.eventId = eventId;
 		this.eventParams = new String[0];
-		this.intendedPlayers = new String[0];
+		this.intendedPlayers = new int[0];
 	}
 	
 	public Event(
 		int eventId,
 		String[] eventParams,
-		String[] intendedPlayers
+		int[] intendedPlayers
 	) {
 		this.eventId = eventId;
 		this.eventParams = eventParams;
 		this.intendedPlayers = intendedPlayers;
 	}
 	
+	public Event(
+			int eventId,
+			int[] intendedPlayers
+		) {
+			this.eventId = eventId;
+			this.eventParams = new String[0];
+			this.intendedPlayers = intendedPlayers;
+		}
+	
+	public Event(int eventId, String[] args) {
+		this.eventId = eventId;
+		this.eventParams = args;
+		this.intendedPlayers = new int[0];
+	}
+
 	public static Event Destringify (
 		String stringifiedEvent
 	){
@@ -32,7 +47,7 @@ public class Event {
 		
 		int eventId = -1;
 		String[] eventParams = new String[0];
-		String[] intendedPlayers = new String[0];
+		String[] intendedPlayersString = new String[0];
 		
 		if (eventFields.length > 0) {
 			eventId = Integer.parseInt(eventFields[0]);
@@ -41,7 +56,12 @@ public class Event {
 			eventParams = eventFields[1].split("\\" + elementDelimiter);
 		}
 		if (eventFields.length > 2) {
-			intendedPlayers = eventFields[2].split("\\" + elementDelimiter);
+			intendedPlayersString = eventFields[2].split("\\" + elementDelimiter);
+		}
+		int[] intendedPlayers = new int[intendedPlayersString.length];
+		
+		for(int i = 0 ; i < intendedPlayersString.length; i++){
+			intendedPlayers[i] = Integer.parseInt(intendedPlayersString[i]);
 		}
 		
 		Event e = new Event(
@@ -62,12 +82,23 @@ public class Event {
 		
 		ret += delimiter;
 		
-		for (String s : intendedPlayers){
+		for (int s : intendedPlayers){
 			ret += s + elementDelimiter;
 		}
 		
 		ret += delimiter;
 		
 		return ret;
+	}
+	
+	public String getEventParameters()
+	{
+		String s = "";
+		for(int i=0; i<eventParams.length; i++)
+		{
+			s += eventParams[i] + " ";
+		}
+		
+		return s;
 	}
 }

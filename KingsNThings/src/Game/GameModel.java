@@ -14,7 +14,7 @@ public class GameModel {
 	//--------GAME OBJECTS-----------
 	private GameBoard gameBoard;						//board holding the Hex Tiles in play
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
-	private Player player1, player2, player3, player4;	//Players in the game
+	private Player player1, player2, player3, player4;								//Player of the game
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
 	private Vector<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
 	private Vector<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
@@ -29,23 +29,10 @@ public class GameModel {
 		//initialize unusedTiles
 		createHexTiles();
 		
-		//initialize Players
-		for(int i=0; i< playerCount; i++)
-		{
-			switch(i){
-				case 0:
-					player1 = new Player(i);
-				case 1:
-					player2 = new Player(i);
-				case 2:
-					player3 = new Player(i);
-				case 3:
-					player4 = new Player(i);
-				default:
-					break;
-				
-			}
-		}
+		this.player1 = new Player(0);
+		this.player2 = new Player(1);
+		this.player3 = new Player(2);
+		this.player4 = new Player(3);
 		
 		//initialize playing cup
 		createNewThings();
@@ -250,11 +237,11 @@ public class GameModel {
 		shuffleUnusedTiles();
 	}
 	
-	public void setInitialPlayerOrder(int startIndex) {
-		player1.setPlayerOrder(startIndex);
-		player2.setPlayerOrder(startIndex+1);
-		player3.setPlayerOrder(startIndex+2);
-		player4.setPlayerOrder(startIndex+3);
+	public void setPlayerOrder(int index) {
+		player1.setPlayerOrder(index);
+		player2.setPlayerOrder(index+1);
+		player3.setPlayerOrder(index+2);
+		player4.setPlayerOrder(index+3);
 		
 	}
 	//--------------/end INITIAL SETUP METHODS-----------
