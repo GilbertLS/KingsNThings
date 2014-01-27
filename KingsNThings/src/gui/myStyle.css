@@ -1,6 +1,8 @@
 .root {
 	-fx-background-color: #336699;
 	-fx-font: 12px "Arial";
+	padding: 0px;
+	margin: 0px;
 }
 
 .player-panel {
@@ -22,5 +24,35 @@
 }
 
 .rack {
-	-fx-background-color: #FF0000;
+	-fx-padding: 0px;
+	-fx-margin: 0px;
+}
+
+.rack .list-view {
+	padding: 0px;
+}
+
+.rack .scroll-bar:vertical .increment-arrow,
+.rack .scroll-bar:vertical .decrement-arrow,
+.rack .scroll-bar:vertical .increment-button,
+.rack .scroll-bar:vertical .decrement-button {
+    -fx-padding:0;
+}
+
+.board {
+	-fx-background-color: #FFFF00;
+}
+
+.tile {
+	-fx-background-color: #564456;
+	-fx-background-image: url("../res/images/Tuile_Back.png");
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+}
+
+.thing {
+	-fx-background: #FFFF00;
+	-fx-background-image: url("../res/images/T_Back.png");
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
 }
