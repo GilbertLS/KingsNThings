@@ -9,14 +9,13 @@ import javafx.util.Callback;
 
 public class RackView extends ListView<ThingView> {
 	
-	
 	RackView(ObservableList<ThingView> l) {
 		super(l);
-		this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		this.setOrientation(Orientation.HORIZONTAL);
-		this.getStyleClass().add("rack");
-		this.setPrefSize(800, 70);
-		this.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
+		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		setOrientation(Orientation.HORIZONTAL);
+		getStyleClass().add("rack");
+		setPrefSize(800, 70);
+		setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
             @Override
             public ListCell<ThingView> call(ListView<ThingView> param) {
                 return new ThingCell();

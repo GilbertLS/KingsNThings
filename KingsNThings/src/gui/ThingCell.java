@@ -1,5 +1,9 @@
 package gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -11,6 +15,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
 public class ThingCell extends ListCell<ThingView> {
+	ThingCell thisCell = this;
+
 	public ThingCell() {
 		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		setAlignment(Pos.CENTER);
@@ -18,47 +24,64 @@ public class ThingCell extends ListCell<ThingView> {
 	}
 
 	protected void initListeners()
-	{
-		this.setOnDragDetected(new EventHandler<MouseEvent>() {
-			@Override public void handle(MouseEvent event) {
+	{	
+		setOnDragDetected(new EventHandler<MouseEvent>() {
+			@Override public void handle(MouseEvent e) {
+				if (getItem() == null) {
+					return;
+				}
+
+				ObservableList<ThingView> items = getListView().getItems();
+
 				Dragboard db = startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString("Hello");
+				content.putString(String.valueOf(items.indexOf(getItem())));
 				db.setContent(content);
-				event.consume();
+
+				//db.setDragView(arg0);
+				e.consume();;
 			}
 		});
-		
+
 		setOnDragOver(new EventHandler<DragEvent>() {
-			@Override public void handle(DragEvent event) {
-	            if (event.getGestureSource() != this &&
-	                   event.getDragboard().hasString()) {
-	                event.acceptTransferModes(TransferMode.MOVE);
-	            }
-	
-	            event.consume();
-			}
-        });
+			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					e.acceptTransferModes(TransferMode.MOVE);				}
+				e.consume();
+			}		});
+		setOnDragEntered(new EventHandler<DragEvent>() {
+			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					setOpacity(0.3);				}
+			}		});
+		setOnDragExited(new EventHandler<DragEvent>() {
+			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					setOpacity(1);				}
+			}		});
+		/*setOnDragDropped(new EventHandler<DragEvent>() {
+			@Override public void handle(DragEvent e) {
+				if (getItem() == null) {
+					return;
+				}
 
-        setOnDragEntered(new EventHandler<DragEvent>() {
-			@Override public void handle(DragEvent event) {
-	            if (event.getGestureSource() != this &&
-	                    event.getDragboard().hasString()) {
-	                setOpacity(0.3);
-	            }
-			}
-        });
+				Dragboard db = e.getDragboard();
+				boolean success = false;
 
-        this.setOnDragExited(new EventHandler<DragEvent>() {
-			@Override public void handle(DragEvent event) {
-	            if (event.getGestureSource() != this &&
-	                    event.getDragboard().hasString()) {
-	                setOpacity(1);
-	            }
+				if (db.hasString()) {
+					ObservableList<ThingView> items = getListView().getItems();
+					int draggedIdx 					= Integer.parseInt(db.getString());
+					int thisIdx 					= items.indexOf(getItem());
+					ThingView draggedItem 			= items.get(draggedIdx);
+
+					items.set(draggedIdx, getItem());
+					items.set(thisIdx, draggedItem);
+
+					List<ThingView> itemscopy = new ArrayList<ThingView>(getListView().getItems());
+					getListView().getItems().setAll(items);
+
+					success = true;
+				}
+				e.setDropCompleted(success);
+
+				e.consume();
 			}
-        });
-		
-		
+		});*/
+
 	}
 
 	@Override

@@ -6,16 +6,16 @@ import javafx.scene.layout.Region;
 public class BoardView extends Region {
 	BoardView(HexTile[][] h)
 	{
-		this.getStyleClass().add("board");
-		this.addTiles(h);
+		getStyleClass().add("board");
+		addTiles(h);
 	}
 
 	private void addTiles(HexTile[][] h) {
 		Double width 	= 120.0;
 		Double height 	= 106.0;
 		
-		this.setMinSize(width*6, height*7+16);
-		this.setMaxSize(width*6, height*7+16);
+		setMinSize(width*6, height*7+16);
+		setMaxSize(width*6, height*7+16);
 		
         for (int i = 0; i < 7; i++) {
         	for (int j = 0; j < 7; j++) {
@@ -26,7 +26,7 @@ public class BoardView extends Region {
 	    	        Double y = i*height + j*height/2 - 3*height/2 + i + 2;
 	    	        tile.relocate(x, y);
 	    	        
-	    	        this.getChildren().add(tile);
+	    	        getChildren().add(tile);
         		}
         	}
         }

@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import Game.HexTile;
@@ -41,7 +42,10 @@ public class GameView extends Application {
         PlayerList playerList = new PlayerList(Arrays.asList(new PlayerPanel("Player 1", 0), new PlayerPanel("Player 2", 0), new PlayerPanel("Player 3", 0), new PlayerPanel("Player 4", 0)));
         rightPanel.getChildren().add(playerList);
         
-        RackView rack = new RackView(FXCollections.observableList((Arrays.asList(new ThingView(), new ThingView(), new ThingView(), new ThingView(), new ThingView(), new ThingView(), new ThingView(), new ThingView(), new ThingView(), new ThingView()))));
+        ArrayList<ThingView> arr = new ArrayList<ThingView>();
+        for(int i = 0; i < 10; i++)
+        	arr.add(new ThingView());
+        RackView rack = new RackView(FXCollections.observableList((arr)));
         bottomPanel.getChildren().add(rack);
                 
         Scene scene = new Scene(root, 1200, 800);
