@@ -2,12 +2,10 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import Game.HexTile;
 import Game.GameConstants.Terrain;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;

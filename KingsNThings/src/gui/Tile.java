@@ -1,20 +1,16 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Polygon;
 
-public class Tile extends Region {
+public class Tile extends Region implements Draggable {
 	Tile thisTile = this;
 	
     public Tile(Double width, Double height)
@@ -40,7 +36,7 @@ public class Tile extends Region {
 		setOnDragOver(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
 	            if (e.getGestureSource() != this &&
-	                   e.getDragboard().hasString()) {
+	                   e.getDragboard().hasContent(thingRackIds)) {
 	                e.acceptTransferModes(TransferMode.MOVE);
 	            }
 	
@@ -51,7 +47,7 @@ public class Tile extends Region {
         setOnDragEntered(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
 	            if (e.getGestureSource() != this &&
-	                    e.getDragboard().hasString()) {
+	                    e.getDragboard().hasContent(thingRackIds)) {
 	                setOpacity(0.3);
 	            }
 			}
@@ -60,7 +56,7 @@ public class Tile extends Region {
         setOnDragExited(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
 	            if (e.getGestureSource() != this &&
-	                    e.getDragboard().hasString()) {
+	                    e.getDragboard().hasContent(thingRackIds)) {
 	                setOpacity(1);
 	            }
 			}
@@ -68,22 +64,26 @@ public class Tile extends Region {
 		
 		setOnDragDropped(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
-				Dragboard db = e.getDragboard();
-				boolean success = false;
+				Dragboard 	db 		= e.getDragboard();
+				boolean 	success = false;
 
-				if (db.hasString()) {
-					ThingCell t 					= (ThingCell)e.getGestureSource();
-					int id							= Integer.parseInt(db.getString());
-					ThingView item 					= t.getListView().getItems().get(id);
+				if (db.hasContent(thingRackIds)) {
+					ThingCell 					source 		= (ThingCell)e.getGestureSource();
+					ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
+					ObservableList<ThingView> 	items		= source.getListView().getItems();
+					ArrayList<ThingView> 		things		= new ArrayList<ThingView>();
 
-					thisTile.getChildren().add(item);
+					for (Integer i : listOfIds) {
+						things.add(items.get(i));
+					}
 					
-					t.getListView().getItems().remove(id);
+					thisTile.getChildren().addAll(things);
+					source.getListView().getItems().removeAll(things);
 
 					success = true;
 				}
+				
 				e.setDropCompleted(success);
-
 				e.consume();
 			}
 		});

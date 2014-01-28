@@ -1,9 +1,6 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
@@ -14,7 +11,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
-public class ThingCell extends ListCell<ThingView> {
+public class ThingCell extends ListCell<ThingView> implements Draggable {
 	ThingCell thisCell = this;
 
 	public ThingCell() {
@@ -31,11 +28,11 @@ public class ThingCell extends ListCell<ThingView> {
 					return;
 				}
 
-				ObservableList<ThingView> items = getListView().getItems();
-
+				ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
+				
 				Dragboard db = startDragAndDrop(TransferMode.MOVE);
 				ClipboardContent content = new ClipboardContent();
-				content.putString(String.valueOf(items.indexOf(getItem())));
+				content.put(thingRackIds, selectedIds);
 				db.setContent(content);
 
 				//db.setDragView(arg0);
@@ -53,7 +50,8 @@ public class ThingCell extends ListCell<ThingView> {
 		setOnDragExited(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					setOpacity(1);				}
 			}		});
-		/*setOnDragDropped(new EventHandler<DragEvent>() {
+
+		/* IMPLEMENT RACK REORDERING? */		/*setOnDragDropped(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
 				if (getItem() == null) {
 					return;
@@ -89,7 +87,6 @@ public class ThingCell extends ListCell<ThingView> {
 		super.updateItem(t, b);
 
 		if (t != null) {
-			getChildren().add(t);
 			setPrefSize(64, 64);
 			setStyle("-fx-margin: 100; -fx-padding: 1000; -fx-background-image: url('res/images/T_Back.png'); -fx-background-repeat: stretch; -fx-background-position: center center;");
 		}
