@@ -35,8 +35,7 @@ public class Tile extends Region implements Draggable {
 	{	
 		setOnDragOver(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
-	            if (e.getGestureSource() != this &&
-	                   e.getDragboard().hasContent(thingRackIds)) {
+	            if (e.getGestureSource() != this && e.getDragboard().hasContent(thingRackIds)) {
 	                e.acceptTransferModes(TransferMode.MOVE);
 	            }
 	
@@ -46,8 +45,7 @@ public class Tile extends Region implements Draggable {
 
         setOnDragEntered(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
-	            if (e.getGestureSource() != this &&
-	                    e.getDragboard().hasContent(thingRackIds)) {
+	            if (e.getGestureSource() != this && e.getDragboard().hasContent(thingRackIds)) {
 	                setOpacity(0.3);
 	            }
 			}
@@ -55,8 +53,7 @@ public class Tile extends Region implements Draggable {
 
         setOnDragExited(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
-	            if (e.getGestureSource() != this &&
-	                    e.getDragboard().hasContent(thingRackIds)) {
+	            if (e.getGestureSource() != this && e.getDragboard().hasContent(thingRackIds)) {
 	                setOpacity(1);
 	            }
 			}

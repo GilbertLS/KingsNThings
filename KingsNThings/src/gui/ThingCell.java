@@ -1,10 +1,13 @@
 package gui;
 
 import java.util.ArrayList;
+
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ListCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -15,13 +18,13 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 	ThingCell thisCell = this;
 
 	public ThingCell() {
-		setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 		setAlignment(Pos.CENTER);
 		initListeners();
 	}
 
 	protected void initListeners()
 	{	
+			
 		setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent e) {
 				if (getItem() == null) {
@@ -40,7 +43,8 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			}
 		});
 
-		setOnDragOver(new EventHandler<DragEvent>() {
+		/* IMPLEMENT RACK REORDERING? */
+		/*setOnDragOver(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					e.acceptTransferModes(TransferMode.MOVE);				}
 				e.consume();
 			}		});
@@ -51,7 +55,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					setOpacity(1);				}
 			}		});
 
-		/* IMPLEMENT RACK REORDERING? */		/*setOnDragDropped(new EventHandler<DragEvent>() {
+		setOnDragDropped(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
 				if (getItem() == null) {
 					return;
@@ -61,18 +65,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				boolean success = false;
 
 				if (db.hasString()) {
-					ObservableList<ThingView> items = getListView().getItems();
-					int draggedIdx 					= Integer.parseInt(db.getString());
-					int thisIdx 					= items.indexOf(getItem());
-					ThingView draggedItem 			= items.get(draggedIdx);
-
-					items.set(draggedIdx, getItem());
-					items.set(thisIdx, draggedItem);
-
-					List<ThingView> itemscopy = new ArrayList<ThingView>(getListView().getItems());
-					getListView().getItems().setAll(items);
-
-					success = true;
+					//STUFF
 				}
 				e.setDropCompleted(success);
 
@@ -86,9 +79,11 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 	protected void updateItem(ThingView t, boolean b) {
 		super.updateItem(t, b);
 
-		if (t != null) {
+		if (t == null) {
+			setStyle("");
+		} else {
 			setPrefSize(64, 64);
-			setStyle("-fx-margin: 100; -fx-padding: 1000; -fx-background-image: url('res/images/T_Back.png'); -fx-background-repeat: stretch; -fx-background-position: center center;");
+			setStyle("-fx-background-image: url('res/images/T_Back.png'); -fx-background-repeat: stretch; -fx-background-position: center center;");
 		}
 	}
 }

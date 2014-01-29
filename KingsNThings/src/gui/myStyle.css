@@ -23,13 +23,23 @@
 	-fx-border-color: #353535;
 }
 
-.rack {
-	-fx-padding: 0px;
-	-fx-margin: 0px;
+.list-view {
+	-fx-focus-color: transparent;
 }
 
-.rack .list-view {
-	padding: 0px;
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);
+    -fx-text-fill: white;
+    -fx-opacity: 0.3;
+}
+
+.list-cell:even {
+    -fx-background-color: red;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #FFFF00;
+    -fx-text-fill: white;
 }
 
 .rack .scroll-bar:vertical .increment-arrow,
