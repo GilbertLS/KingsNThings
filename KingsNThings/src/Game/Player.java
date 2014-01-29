@@ -20,8 +20,12 @@ public class Player {
 		this.gold = 0;
 	}
 
-	public void setPlayerOrder(int startIndex) {
-		this.playerOrder = startIndex%4;
+	public void setPlayerOrder(int startIndex, int numPlayers) {
+		this.playerOrder = startIndex % numPlayers;
 		
+	}
+
+	public int getPlayerOrder() {
+		return playerOrder;
 	}
 }

@@ -22,7 +22,7 @@ public class GameModel {
 	private int playerCount;
 	
 	//-----------INITIAL SETUP METHODS--------------------
-	public GameModel(int playerCount)
+	public GameModel()
 	{
 		this.gameBoard = new GameBoard();
 		
@@ -43,8 +43,6 @@ public class GameModel {
 		ownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
 		dice = new Dice();
-		
-		this.playerCount = playerCount;
 		
 	}
 	private void createNewSpecialCharacters() {
@@ -238,10 +236,15 @@ public class GameModel {
 	}
 	
 	public void setPlayerOrder(int index) {
-		player1.setPlayerOrder(index);
-		player2.setPlayerOrder(index+1);
-		player3.setPlayerOrder(index+2);
-		player4.setPlayerOrder(index+3);
+		player1.setPlayerOrder(0 - index, playerCount);
+		player2.setPlayerOrder(1 - index, playerCount);
+		player3.setPlayerOrder(2 - index, playerCount);
+		player4.setPlayerOrder(3 - index, playerCount);
+		
+		System.out.println("Player 1 Player order: " + player1.getPlayerOrder());
+		System.out.println("Player 2 Player order: " + player2.getPlayerOrder());
+		System.out.println("Player 3 Player order: " + player3.getPlayerOrder());
+		System.out.println("Player 4 Player order: " + player4.getPlayerOrder());
 		
 	}
 	//--------------/end INITIAL SETUP METHODS-----------
@@ -257,5 +260,10 @@ public class GameModel {
 	public int getDie2Value(){return dice.getDie2Value();}
 	public int getDie3Value(){return dice.getDie3Value();}
 	public int getDie4Value(){return dice.getDie4Value();}
+	
+	public void setPlayerCount(int playerCount)
+	{
+		this.playerCount = playerCount;
+	}
 
 }

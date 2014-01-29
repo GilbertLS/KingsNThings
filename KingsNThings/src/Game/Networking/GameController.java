@@ -45,7 +45,11 @@ public class GameController implements Runnable {
 		        while(!gameRouter.ready()){}      
 	    	 }
 	    	 
-	    	 this.numClients = servers.size();
+	    	 numClients = servers.size();
+	    	 
+	 		String[] args = new String[1];
+			args[0] = Integer.toString(numClients);	
+			GameControllerEventHandler.sendEvent(new Event(EventList.SET_NUM_PLAYERS, args));
 	    	 
 	    	 //GAME START
 	    	 System.out.println("GAME HAS BEGUN!");
@@ -61,7 +65,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 2;
+		return servers.size() == 4;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -93,60 +97,80 @@ public class GameController implements Runnable {
 		//gameView.drawInitGame();
 		
 		determineInitialPlayerOrder();
+		
 	}
 	
 	private void determineInitialPlayerOrder() {
 		
 		//array to hold player rolls
-		int[] playerRolls = new int[numClients];	
+		boolean[] playerRolling = new boolean[numClients];	
 		for(int i=0; i<numClients; i++)
 		{
-			playerRolls[i] = 0;
+			playerRolling[i] = true;
 		}
 		
 		//number of player currently rolling (all roll initially)
-		int playersRolling = numClients;
+		int numPlayersRolling = numClients;
 		
 		int highestRoll;
 		int highestRollPlayerIndex;
-		//do	//roll until only a single player has the highest roll
-		//{		
-			int[] intendedPlayers = new int[numClients];
-			for(int i=0; i<playersRolling; i++)
-			{
-				if(playerRolls[i] != -1)
-					intendedPlayers[i] = i;
-					
-			}
-			Event e = new Event(EventList.ROLL_DICE, intendedPlayers);
-			Response playerRollsString = GameControllerEventHandler.sendEvent(e);
-			System.out.println(playerRollsString.message);
-			//String[] returnArgs = playerRollsString.getString();
-			//parse returnArgs
-			
-			//store index of player with the highest roll, along with the roll's value
-			/*highestRoll = 0;
+		do	//roll until only a single player has the highest roll
+		{		
+			highestRoll = 0;
 			highestRollPlayerIndex = -1;
-			for(int i=0; i<playerCount; i++)
+			
+			boolean[] intendedPlayers = new boolean[numClients];
+			for(int i=0; i<numClients; i++)
 			{
-				if(playerRolls[i] != -1)
+				if(playerRolling[i] != false)
+					intendedPlayers[i] = true;
+				else
+					intendedPlayers[i] = false;
+			}
+			
+			Event e = new Event(EventList.ROLL_DICE, new String[0],intendedPlayers, true);
+			Response playerRollsString = GameControllerEventHandler.sendEvent(e);
+			
+			String[] responses = playerRollsString.message.split(" ");
+			
+			System.out.println(playerRollsString.message);
+			
+			for(int i=0; i<responses.length; i++)
+			{
+				int currentIndex = Character.getNumericValue(responses[i].charAt(0));
+				int currentRoll = Character.getNumericValue(responses[i].charAt(1));
+				
+				if(currentRoll > highestRoll)
 				{
-					if(playerRolls[i] < highestRoll)
-					{
-						playerRolls[i] = -1;
-						playersRolling--;
-					}
-					else	//otherwise, they are the new highest roll(if its the same, they will both roll again)
-					{
-						highestRoll = playerRolls[i];
-						highestRollPlayerIndex = i;
-					}
+					highestRoll = currentRoll;
+					highestRollPlayerIndex = currentIndex;
 				}
-			}*/
-		//}while(playersRolling > 1);
+			}	
+			
+			for(int i=0; i<responses.length; i++)
+			{
+				int currentIndex = Character.getNumericValue(responses[i].charAt(0));
+				int currentRoll = Character.getNumericValue(responses[i].charAt(1));
+				
+				if (currentRoll < highestRoll)
+				{
+					playerRolling[currentIndex] = false;
+					numPlayersRolling--;
+				}
+			}
+		}while(numPlayersRolling > 1);
 		
-		//String[] args = new String[1];
-		//args[0] = 
-		//EventHandler.sendEvent(GameConstants.UPDATE_PLAYER_ORDER, null, null);
+		System.out.println("First Player is player with index: " + highestRollPlayerIndex);
+		
+		assignInitialPlayerOrder(highestRollPlayerIndex);
+	}
+
+	private void assignInitialPlayerOrder(int startPlayerIndex) {
+		
+		String[] args = new String[1];
+		args[0] = Integer.toString(startPlayerIndex);	
+		
+		GameControllerEventHandler.sendEvent(new Event(EventList.SET_PLAYER_ORDER, args));
+		
 	}
 }

@@ -15,13 +15,17 @@ public class GameRouter implements Runnable {
 	private Socket connection;
 	private boolean ready = false;
 	private static int id = 0;
+	private static int order =0;
 	public int myID;
+	public int myPlayerOrder;
 	PrintWriter out;
 	BufferedReader in;
 	
 	public GameRouter(Socket connection){
 		this.connection = connection;
 		this.myID = id++;
+		
+		this.myPlayerOrder = order++;
 		
 		try{
 		 out = new PrintWriter(
@@ -55,18 +59,31 @@ public class GameRouter implements Runnable {
 	public Response sendEvent(Event e)
 	{
 		//send the event to the GameClient
-		System.out.println("SENDING EVENT " + e.toString() + "TO GAME CLIENT");
+		System.out.println("SENDING EVENT " + e.toString() + " TO GAME CLIENT - " + myID);
 		out.println(e.toString());
-		String returnEvent;
-		try {
-			//get the message back from the GameClient (this fails for the second client)
-			returnEvent = in.readLine();
+		
+		if(e.eventId == EventList.SET_PLAYER_ORDER)
+		{
+			//Need to change the ollowing '4' to the player count (pass through params?)
+			myPlayerOrder = (myPlayerOrder - Integer.parseInt(e.getEventParameters().trim())) % 4;
 			
-			String responseString = (Event.Destringify(returnEvent)).getEventParameters();
-			System.out.println("EVENT PARAM:" + responseString);
-			return new Response(responseString);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+			System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
+		}
+		
+		//if necessary, wait for a response
+		if(e.eventId == EventList.ROLL_DICE)
+		{
+			String returnEvent;
+			try {
+				//get the message back from the GameClient 
+				returnEvent = in.readLine();
+				
+				String responseString = (Event.Destringify(returnEvent)).getEventParameters();
+				return new Response(responseString);
+				
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 		return null;
 	}
