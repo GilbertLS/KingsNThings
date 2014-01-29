@@ -3,42 +3,63 @@ package Game.Networking;
 public class Event {
 	public int eventId;
 	public String[] eventParams;
-	public int[] intendedPlayers;
+	public boolean[] intendedPlayers;
 	public static String delimiter = "|";
 	public static String elementDelimiter = ",";
+	public boolean expectsResponseEvent;
 	
 	public Event(
 		int eventId
 	) {
 		this.eventId = eventId;
 		this.eventParams = new String[0];
-		this.intendedPlayers = new int[0];
+		this.intendedPlayers = new boolean[4];
+		this.expectsResponseEvent = false;
+		
+		for(int i=0; i<4; i++){intendedPlayers[i] = true;}
 	}
 	
 	public Event(
 		int eventId,
 		String[] eventParams,
-		int[] intendedPlayers
+		boolean[] intendedPlayers
 	) {
 		this.eventId = eventId;
 		this.eventParams = eventParams;
 		this.intendedPlayers = intendedPlayers;
+		this.expectsResponseEvent = false;
 	}
 	
 	public Event(
 			int eventId,
-			int[] intendedPlayers
+			boolean[] intendedPlayers
 		) {
 			this.eventId = eventId;
 			this.eventParams = new String[0];
 			this.intendedPlayers = intendedPlayers;
+			this.expectsResponseEvent = false;
 		}
 	
 	public Event(int eventId, String[] args) {
 		this.eventId = eventId;
 		this.eventParams = args;
-		this.intendedPlayers = new int[0];
+		this.intendedPlayers = new boolean[4];
+		this.expectsResponseEvent = false;
+		
+		for(int i=0; i<4; i++){intendedPlayers[i] = true;}
 	}
+	
+	public Event(
+			int eventId,
+			String[] eventParams,
+			boolean[] intendedPlayers,
+			boolean expectsResponseEvent
+		) {
+			this.eventId = eventId;
+			this.eventParams = eventParams;
+			this.intendedPlayers = intendedPlayers;
+			this.expectsResponseEvent = expectsResponseEvent;
+		}
 
 	public static Event Destringify (
 		String stringifiedEvent
@@ -58,10 +79,11 @@ public class Event {
 		if (eventFields.length > 2) {
 			intendedPlayersString = eventFields[2].split("\\" + elementDelimiter);
 		}
-		int[] intendedPlayers = new int[intendedPlayersString.length];
+		
+		boolean[] intendedPlayers = new boolean[intendedPlayersString.length];
 		
 		for(int i = 0 ; i < intendedPlayersString.length; i++){
-			intendedPlayers[i] = Integer.parseInt(intendedPlayersString[i]);
+			intendedPlayers[i] = Boolean.parseBoolean(intendedPlayersString[i]);
 		}
 		
 		Event e = new Event(
@@ -82,7 +104,7 @@ public class Event {
 		
 		ret += delimiter;
 		
-		for (int s : intendedPlayers){
+		for (boolean s : intendedPlayers){
 			ret += s + elementDelimiter;
 		}
 		

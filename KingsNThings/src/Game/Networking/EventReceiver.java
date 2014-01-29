@@ -21,14 +21,10 @@ public class EventReceiver implements Runnable {
 				)
 	    	);
 
-			//!!!! GameController is Static, thus not initialized for joined client !!!!!!
 			while(true) {
 				System.out.println("GameClient's Event Reciver is waiting for an event to handle");
 				fromServer = in.readLine();
-					
-				//second line is never read
-				
-				System.out.println("ATTEMPTING TO HANDLE A DICE ROLL");
+
 				EventHandler.HandleEvent(fromServer);
 				
 			}
