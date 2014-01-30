@@ -124,3 +124,4 @@ KingsNThings/src/Game/Networking/GameController.class
 KingsNThings/src/Game/Networking/GameControllerEventHandler.class
 KingsNThings/src/Game/Networking/GameRouter.class
 KingsNThings/src/Game/Networking/Response.class
+*.class
