@@ -61,5 +61,9 @@ public class EventHandler {
 				new Event(EventList.GET_CONTESTED_ZONES, args)
 			);
 		}
+		else if(e.eventId == EventList.TEST_EVENT)
+		{
+			GameClient.game.gameView.playerList.getChildren().get(0).setStyle("-fx-background-color: 'red'");
+		}
 	}
 }
