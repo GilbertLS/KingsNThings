@@ -1,5 +1,7 @@
 package Game.Networking;
 
+import Game.GameController;
+
 public class GameControllerEventHandler {
 	public static Response sendEvent(Event e)
 	{	

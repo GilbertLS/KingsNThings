@@ -1,4 +1,4 @@
-package Game.Networking;
+package Game;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import Game.Networking.Event;
+import Game.Networking.EventList;
+import Game.Networking.GameControllerEventHandler;
+import Game.Networking.GameRouter;
+import Game.Networking.Protocol;
+import Game.Networking.Response;
 
 public class GameController implements Runnable {
 	
@@ -167,8 +174,9 @@ public class GameController implements Runnable {
 
 	private void assignInitialPlayerOrder(int startPlayerIndex) {
 		
-		String[] args = new String[1];
-		args[0] = Integer.toString(startPlayerIndex);	
+		String[] args = new String[2];
+		args[0] = Integer.toString(startPlayerIndex);
+		args[1] = Integer.toString(numClients);
 		
 		GameControllerEventHandler.sendEvent(new Event(EventList.SET_PLAYER_ORDER, args));
 		
