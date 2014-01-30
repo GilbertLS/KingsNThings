@@ -7,4 +7,9 @@ public class Response {
 	{
 		this.message = message;
 	}
+	
+	public int castToInt()
+	{
+		return Integer.parseInt(message.trim());
+	}
 }

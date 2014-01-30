@@ -1,9 +1,22 @@
-package Game;
+package Game.Networking;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import Game.Creature;
+import Game.Dice;
+import Game.Event;
+import Game.GameBoard;
+import Game.GameConstants;
+import Game.HexTile;
+import Game.Magic;
+import Game.Settlement;
+import Game.SpecialCharacter;
+import Game.SpecialIncome;
+import Game.TerrainLord;
+import Game.Thing;
+import Game.Treasure;
 import Game.GameConstants.Terrain;
 
 /*
@@ -14,7 +27,7 @@ public class GameModel {
 	//--------GAME OBJECTS-----------
 	private GameBoard gameBoard;						//board holding the Hex Tiles in play
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
-	private Player player1, player2, player3, player4;								//Player of the game
+	private Player player1, player2, player3, player4;	//Players of the game
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
 	private Vector<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
 	private Vector<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
@@ -22,7 +35,7 @@ public class GameModel {
 	private int playerCount;
 	
 	//-----------INITIAL SETUP METHODS--------------------
-	public GameModel(int playerCount)
+	public GameModel()
 	{
 		this.gameBoard = new GameBoard();
 		
@@ -43,8 +56,6 @@ public class GameModel {
 		ownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
 		dice = new Dice();
-		
-		this.playerCount = playerCount;
 		
 	}
 	private void createNewSpecialCharacters() {
@@ -237,11 +248,24 @@ public class GameModel {
 		shuffleUnusedTiles();
 	}
 	
-	public void setPlayerOrder(int index) {
-		player1.setPlayerOrder(index);
-		player2.setPlayerOrder(index+1);
-		player3.setPlayerOrder(index+2);
-		player4.setPlayerOrder(index+3);
+	public void setPlayerOrder(int firstPlayerIndex) {
+		/*
+		 * 0: 0 1 2 3 (+0)
+		 * 1: 3 0 1 2 (+1)
+		 * 2: 2 3 0 1 (+2)
+		 * 3: 1 2 3 0 (+3)
+		 */
+		int playerShift = playerCount - firstPlayerIndex;
+		
+		player1.setPlayerOrder((0 + playerShift)%playerCount);
+		player2.setPlayerOrder((1 + playerShift)%playerCount);
+		player3.setPlayerOrder((2 + playerShift)%playerCount);
+		player4.setPlayerOrder((3 + playerShift)%playerCount);
+		
+		System.out.println("Player 1 Player order: " + player1.getPlayerOrder());
+		System.out.println("Player 2 Player order: " + player2.getPlayerOrder());
+		System.out.println("Player 3 Player order: " + player3.getPlayerOrder());
+		System.out.println("Player 4 Player order: " + player4.getPlayerOrder());
 		
 	}
 	//--------------/end INITIAL SETUP METHODS-----------
@@ -257,5 +281,16 @@ public class GameModel {
 	public int getDie2Value(){return dice.getDie2Value();}
 	public int getDie3Value(){return dice.getDie3Value();}
 	public int getDie4Value(){return dice.getDie4Value();}
+	
+	public void setPlayerCount(int playerCount)
+	{
+		this.playerCount = playerCount;
+	}
+	public void updatePlayerOrder() {
+		player1.updatePlayerOrder(playerCount);	
+		player2.updatePlayerOrder(playerCount);	
+		player3.updatePlayerOrder(playerCount);	
+		player4.updatePlayerOrder(playerCount);	
+	}
 
 }

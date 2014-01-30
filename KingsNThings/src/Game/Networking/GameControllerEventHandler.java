@@ -5,15 +5,23 @@ public class GameControllerEventHandler {
 	{	
 		String s = "";
 		
+		
 		for(GameRouter i : GameController.servers)
 		{
-			Response rollResponse = i.sendEvent(new Event(e.eventId));
-			System.out.println("A DICE ROLL EVENT HAS BEEN HANDLED");
-			s += rollResponse.message + " ";
+			if(e.intendedPlayers[i.myID] == true)
+			{
+				if(e.expectsResponseEvent)
+				{
+					Response rollResponse = i.sendEvent(new Event(e.eventId, e.eventParams));
+					s += Integer.toString(i.myID) + rollResponse.message;
+				}
+				else
+				{
+					i.sendEvent(new Event(e.eventId, e.eventParams));
+				}
+			}
 		}
-		
-		System.out.println(s);
-		
-		return new Response("DIE ROLL COMPLETE");				
+		System.out.println("HERE IS THE RETURN MESSAGE FROM ALL CLIENTS: " + s);
+		return new Response(s);				
 	}
 }
