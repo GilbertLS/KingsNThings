@@ -26,7 +26,7 @@ public class EventHandler {
 		{
 			System.out.println("HANDLING SET PLAYER ORDER EVENT");
 			
-			GameClient.game.setPlayerOrders(Integer.parseInt(e.eventParams[0]));
+			GameClient.game.setPlayerOrders(Integer.parseInt(e.eventParams[1]));
 		}
 		else if(e.eventId == EventList.SET_NUM_PLAYERS)
 		{
