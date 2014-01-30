@@ -1,22 +1,9 @@
-package Game.Networking;
+package Game;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Vector;
 
-import Game.Creature;
-import Game.Dice;
-import Game.Event;
-import Game.GameBoard;
-import Game.GameConstants;
-import Game.HexTile;
-import Game.Magic;
-import Game.Settlement;
-import Game.SpecialCharacter;
-import Game.SpecialIncome;
-import Game.TerrainLord;
-import Game.Thing;
-import Game.Treasure;
 import Game.GameConstants.Terrain;
 
 /*

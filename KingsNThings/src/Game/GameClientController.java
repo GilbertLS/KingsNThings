@@ -1,8 +1,6 @@
-package Game.Networking;
+package Game;
 
 import java.util.Vector;
-
-import Game.GameView;
 
 public class GameClientController {
 	private GameModel gameModel; 	//conceptual model of a Kings N' things Game
