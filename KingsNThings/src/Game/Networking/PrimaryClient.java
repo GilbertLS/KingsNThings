@@ -77,7 +77,7 @@ public class PrimaryClient {
     		catch (IOException e) {}
     		try { 
 	    		HostGame();
-    		} catch (UnknownHostException e ){}
+    		} catch (Exception e ){}
     		
     		return true;
     	} else if (command.equals(Protocol.GETHOSTEDSERVERS)) {
@@ -103,10 +103,11 @@ public class PrimaryClient {
     	return false;
     }
     
-    private static void HostGame() throws UnknownHostException {
+    private static void HostGame() throws Exception {
     	Runnable server = new GameController();
     	Thread thread = new Thread(server);
     	thread.start();
+    	Thread.sleep(2000);
     	GameClient client = new GameClient();
     	client.ConnectToHost(((GameController)server).address);
     }

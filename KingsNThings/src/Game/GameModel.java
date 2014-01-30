@@ -21,6 +21,8 @@ public class GameModel {
 	private Dice dice;									//Object to emulate up to 4 dice
 	private int playerCount;
 	
+	public BoardController boardController;
+	
 	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
@@ -44,6 +46,7 @@ public class GameModel {
 		
 		dice = new Dice();
 		
+		boardController = new BoardController(gameBoard);
 	}
 	private void createNewSpecialCharacters() {
 		this.unownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
@@ -252,14 +255,14 @@ public class GameModel {
 	public void shuffleUnusedTiles() {
 		Collections.shuffle(unusedTiles);
 	}
-	public void rollTwoDice() {
-		dice.rollTwoDice();
+	public int rollDice() {
+		return dice.rollDice();
 	}
 	
-	public int getDie1Value(){return dice.getDie1Value();}
-	public int getDie2Value(){return dice.getDie2Value();}
-	public int getDie3Value(){return dice.getDie3Value();}
-	public int getDie4Value(){return dice.getDie4Value();}
+	public int[] rollDice(int numDice){
+		return dice.rollDice(numDice);
+	}
+	
 	
 	public void setPlayerCount(int playerCount)
 	{
