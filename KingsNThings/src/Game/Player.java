@@ -1,7 +1,5 @@
-package Game.Networking;
+package Game;
 import java.util.Vector;
-
-import Game.PlayerRack;
 
 /*
  * Represents one of the player of a Kings N' Things Game.
