@@ -17,5 +17,10 @@ public class GameClientController {
 
 	public void setPlayerCount(int numPlayers) {
 		gameModel.setPlayerCount(numPlayers);
+	}
+
+	public void updatePlayerOrder() {
+		gameModel.updatePlayerOrder();
+		
 	}	
 }

@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import Game.GameController;
+
 public class GameRouter implements Runnable {
 	
 	private Socket connection;
@@ -64,8 +66,17 @@ public class GameRouter implements Runnable {
 		
 		if(e.eventId == EventList.SET_PLAYER_ORDER)
 		{
-			//Need to change the ollowing '4' to the player count (pass through params?)
-			myPlayerOrder = (myPlayerOrder - Integer.parseInt(e.getEventParameters().trim())) % 4;
+			int numPlayers = Integer.parseInt(e.eventParams[1]);
+			
+			myPlayerOrder = (myPlayerOrder + (numPlayers - Integer.parseInt(e.eventParams[0]))) % numPlayers;
+			
+			System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
+		}
+		else if(e.eventId == EventList.UPDATE_PLAYER_ORDER)
+		{
+			int numPlayers = Integer.parseInt(e.eventParams[0]);
+			
+			myPlayerOrder = (myPlayerOrder + 1) % numPlayers;
 			
 			System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
 		}

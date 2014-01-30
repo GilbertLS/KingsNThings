@@ -14,7 +14,7 @@ public class GameModel {
 	//--------GAME OBJECTS-----------
 	private GameBoard gameBoard;						//board holding the Hex Tiles in play
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
-	private Player player1, player2, player3, player4;								//Player of the game
+	private Player player1, player2, player3, player4;	//Players of the game
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
 	private Vector<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
 	private Vector<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
@@ -238,11 +238,19 @@ public class GameModel {
 		shuffleUnusedTiles();
 	}
 	
-	public void setPlayerOrder(int index) {
-		player1.setPlayerOrder(0 - index, playerCount);
-		player2.setPlayerOrder(1 - index, playerCount);
-		player3.setPlayerOrder(2 - index, playerCount);
-		player4.setPlayerOrder(3 - index, playerCount);
+	public void setPlayerOrder(int firstPlayerIndex) {
+		/*
+		 * 0: 0 1 2 3 (+0)
+		 * 1: 3 0 1 2 (+1)
+		 * 2: 2 3 0 1 (+2)
+		 * 3: 1 2 3 0 (+3)
+		 */
+		int playerShift = playerCount - firstPlayerIndex;
+		
+		player1.setPlayerOrder((0 + playerShift)%playerCount);
+		player2.setPlayerOrder((1 + playerShift)%playerCount);
+		player3.setPlayerOrder((2 + playerShift)%playerCount);
+		player4.setPlayerOrder((3 + playerShift)%playerCount);
 		
 		System.out.println("Player 1 Player order: " + player1.getPlayerOrder());
 		System.out.println("Player 2 Player order: " + player2.getPlayerOrder());
@@ -267,6 +275,12 @@ public class GameModel {
 	public void setPlayerCount(int playerCount)
 	{
 		this.playerCount = playerCount;
+	}
+	public void updatePlayerOrder() {
+		player1.updatePlayerOrder(playerCount);	
+		player2.updatePlayerOrder(playerCount);	
+		player3.updatePlayerOrder(playerCount);	
+		player4.updatePlayerOrder(playerCount);	
 	}
 
 }

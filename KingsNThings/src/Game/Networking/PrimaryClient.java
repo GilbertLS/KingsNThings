@@ -2,6 +2,8 @@ package Game.Networking;
 
 import java.io.*;
 import java.net.*;
+
+import Game.GameController;
  
 public class PrimaryClient {
 	
