@@ -26,13 +26,19 @@ public class EventHandler {
 		{
 			System.out.println("HANDLING SET PLAYER ORDER EVENT");
 			
-			GameClient.game.setPlayerOrders(Integer.parseInt((e.getEventParameters()).trim()));
+			GameClient.game.setPlayerOrders(Integer.parseInt(e.eventParams[0]));
 		}
 		else if(e.eventId == EventList.SET_NUM_PLAYERS)
 		{
 			System.out.println("HANDLING SET NUM PLAYERS EVENT");
 			
-			GameClient.game.setPlayerCount(Integer.parseInt((e.getEventParameters()).trim()));
+			GameClient.game.setPlayerCount(Integer.parseInt(e.eventParams[0]));
+		}
+		else if(e.eventId == EventList.UPDATE_PLAYER_ORDER)
+		{
+			System.out.println("HANDLING UPDATE PLAYER ORDER EVENT");
+			
+			GameClient.game.updatePlayerOrder();
 		}
 	}
 }

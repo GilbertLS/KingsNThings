@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import Game.GameClientController;
-
 public class GameClient {
 	public static Socket connection;
 	public static GameClientController game;

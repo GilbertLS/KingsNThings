@@ -1,5 +1,7 @@
-package Game;
+package Game.Networking;
 import java.util.Vector;
+
+import Game.PlayerRack;
 
 /*
  * Represents one of the player of a Kings N' Things Game.
@@ -20,12 +22,17 @@ public class Player {
 		this.gold = 0;
 	}
 
-	public void setPlayerOrder(int startIndex, int numPlayers) {
-		this.playerOrder = startIndex % numPlayers;
+	public void setPlayerOrder(int startIndex) {
+		this.playerOrder = startIndex;
 		
 	}
 
 	public int getPlayerOrder() {
 		return playerOrder;
+	}
+
+	public void updatePlayerOrder(int playerCount) {
+		playerOrder = (playerOrder++)%playerCount;
+		
 	}
 }

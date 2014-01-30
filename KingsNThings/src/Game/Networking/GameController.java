@@ -167,8 +167,9 @@ public class GameController implements Runnable {
 
 	private void assignInitialPlayerOrder(int startPlayerIndex) {
 		
-		String[] args = new String[1];
-		args[0] = Integer.toString(startPlayerIndex);	
+		String[] args = new String[2];
+		args[0] = Integer.toString(startPlayerIndex);
+		args[1] = Integer.toString(numClients);
 		
 		GameControllerEventHandler.sendEvent(new Event(EventList.SET_PLAYER_ORDER, args));
 		

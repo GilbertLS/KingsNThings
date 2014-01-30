@@ -1,6 +1,8 @@
-package Game;
+package Game.Networking;
 
 import java.util.Vector;
+
+import Game.GameView;
 
 public class GameClientController {
 	private GameModel gameModel; 	//conceptual model of a Kings N' things Game
@@ -17,5 +19,10 @@ public class GameClientController {
 
 	public void setPlayerCount(int numPlayers) {
 		gameModel.setPlayerCount(numPlayers);
+	}
+
+	public void updatePlayerOrder() {
+		gameModel.updatePlayerOrder();
+		
 	}	
 }
