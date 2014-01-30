@@ -13,15 +13,23 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class GameView extends Application {
-    
+    BorderPane root;
+    VBox rightPanel;
+    HBox bottomPanel;
+    BoardView board;
+    PlayerList playerList;
+    RackView rack;
+    Scene gameScene;
+	
+	
     @Override
     public void start(Stage primaryStage) {   	
         BorderPane root = new BorderPane();
         
-        VBox rightPanel = new VBox();
+        rightPanel = new VBox();
         root.setRight(rightPanel);
         
-        HBox bottomPanel = new HBox();
+        bottomPanel = new HBox();
         root.setBottom(bottomPanel);
         
         //BOARDVIEW TEST
@@ -34,23 +42,23 @@ public class GameView extends Application {
         HexTile[] array7 = new HexTile[] {new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), null, null, null};
         HexTile[][] tiles = {array1, array2, array3, array4, array5, array6, array7};
         
-        BoardView board = new BoardView(tiles);
+        board = new BoardView(tiles);
         root.setCenter(board);        
         
-        PlayerList playerList = new PlayerList(Arrays.asList(new PlayerPanel("Player 1", 0), new PlayerPanel("Player 2", 0), new PlayerPanel("Player 3", 0), new PlayerPanel("Player 4", 0)));
+        playerList = new PlayerList(Arrays.asList(new PlayerPanel("Player 1", 0), new PlayerPanel("Player 2", 0), new PlayerPanel("Player 3", 0), new PlayerPanel("Player 4", 0)));
         rightPanel.getChildren().add(playerList);
         
         ArrayList<ThingView> arr = new ArrayList<ThingView>();
         for(int i = 0; i < 10; i++)
         	arr.add(new ThingView());
-        RackView rack = new RackView(FXCollections.observableList((arr)));
+        rack = new RackView(FXCollections.observableList((arr)));
         bottomPanel.getChildren().add(rack);
                 
-        Scene scene = new Scene(root, 1200, 800);
-        scene.getStylesheets().add("gui/myStyle.css");
+        Scene gameScene = new Scene(root, 1200, 800);
+        gameScene.getStylesheets().add("gui/myStyle.css");
         
         primaryStage.setTitle("Kings N Things");
-        primaryStage.setScene(scene);
+        primaryStage.setScene(gameScene);
         primaryStage.show();
     }
 
