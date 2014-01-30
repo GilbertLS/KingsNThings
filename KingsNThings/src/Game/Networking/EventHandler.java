@@ -40,5 +40,9 @@ public class EventHandler {
 			
 			GameClient.game.updatePlayerOrder();
 		}
+		else if(e.eventId == EventList.TEST_EVENT)
+		{
+			GameClient.game.gameView.playerList.getChildren().get(0).setStyle("-fx-background-color: 'red'");
+		}
 	}
 }

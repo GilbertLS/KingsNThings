@@ -1,5 +1,7 @@
 package Game.Networking;
 
+import gui.GameView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,10 +14,12 @@ public class GameClient {
 	public static Socket connection;
 	public static GameClientController game;
 	
+	public GameView gameView;
+	
 	private boolean isReady = false;
 
-	public GameClient(){
-		
+	public GameClient(GameView g){
+		gameView = g;
 	}
 	
 	public void ConnectToHost( String address ){
@@ -24,7 +28,7 @@ public class GameClient {
 		try { 
 			connection = new Socket(address, Protocol.GAMEPORT);
 	        
-	        game = new GameClientController();
+	        game = new GameClientController(gameView);
 	        
 	        System.out.println("CREATED NEW GAME CLIENT CONTROLLER");
 	        
@@ -32,6 +36,15 @@ public class GameClient {
 	        Thread thread = new Thread(eventReceiver);
 	        
 	        thread.start();
+	        try {
+	        	Thread.sleep(2000);
+	        }
+	        catch (InterruptedException e)
+	        {
+	        	
+	        }
+	        
+	        EventHandler.HandleEvent((new Event(EventList.TEST_EVENT)).toString());
 	        
 	        System.out.println("CREATING EVENT RECIEVER");	        
 	        

@@ -170,6 +170,7 @@ public class GameController implements Runnable {
 		System.out.println("First Player is player with index: " + highestRollPlayerIndex);
 		
 		assignInitialPlayerOrder(highestRollPlayerIndex);
+		GameControllerEventHandler.sendEvent(new Event(EventList.TEST_EVENT));
 	}
 
 	private void assignInitialPlayerOrder(int startPlayerIndex) {
