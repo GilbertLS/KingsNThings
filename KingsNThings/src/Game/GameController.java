@@ -54,9 +54,9 @@ public class GameController implements Runnable {
 	    	 
 	    	numClients = servers.size();
 	    	 
-	 		String[] args = new String[1];
-			args[0] = Integer.toString(numClients);	
-			GameControllerEventHandler.sendEvent(new Event(EventList.SET_NUM_PLAYERS, args));
+	 		 String[] args = new String[1];
+			 args[0] = Integer.toString(numClients);	
+			 GameControllerEventHandler.sendEvent(new Event(EventList.SET_NUM_PLAYERS, args));
 	    	 
 	    	//GAME START
 	    	System.out.println("GAME HAS BEGUN!");
@@ -104,6 +104,8 @@ public class GameController implements Runnable {
 		//gameView.drawInitGame();
 		
 		determineInitialPlayerOrder();
+		
+		playPhases();
 		
 	}
 	
@@ -181,4 +183,18 @@ public class GameController implements Runnable {
 		GameControllerEventHandler.sendEvent(new Event(EventList.SET_PLAYER_ORDER, args));
 		
 	}
+	
+	private void playPhases(){
+		
+		PlayBattlePhase();
+	}
+	
+	private void PlayBattlePhase(){
+		Response r = GameControllerEventHandler.sendEvent(
+			new Event(EventList.GET_CONTESTED_ZONES)
+		);
+		
+	}
+
+	
 }

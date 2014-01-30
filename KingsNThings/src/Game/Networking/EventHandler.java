@@ -1,5 +1,7 @@
 package Game.Networking;
 
+import java.util.List;
+
 public class EventHandler {
 	public static void HandleEvent( String input ){
 		Event e = Event.Destringify( input );
@@ -39,6 +41,25 @@ public class EventHandler {
 			System.out.println("HANDLING UPDATE PLAYER ORDER EVENT");
 			
 			GameClient.game.updatePlayerOrder();
+		}
+		else if(e.eventId == EventList.BEGIN_BATTLE)
+		{
+			
+		}
+		else if(e.eventId == EventList.GET_CONTESTED_ZONES)
+		{
+			List<int[]> contestedZones = GameClient.game.gameModel.boardController.GetContestedZones();
+			
+			String[] args = new String[contestedZones.size()];
+			
+			int i = 0;
+			for(int[] zone : contestedZones){
+				args[i++] = zone[0] + "," + zone[1];
+			}
+			
+			EventHandler.SendEvent(
+				new Event(EventList.GET_CONTESTED_ZONES, args)
+			);
 		}
 	}
 }

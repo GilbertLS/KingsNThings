@@ -14,7 +14,7 @@ public class EventTests {
 	public void Setup(){
 		int eventId = 3;
 		String[] params = { "true", "false", "gah" };
-		int[] intendedPlayers = { 1, 2, 3 };
+		boolean[] intendedPlayers = { true, true, true };
 		
 		testEvent = new Event(
 			eventId,
@@ -28,18 +28,22 @@ public class EventTests {
 		String actualString = testEvent.toString();
 		
 		assertEquals(
-			"3|true,false,gah,|1,2,3,|",
+			"3|true,false,gah,|true,true,true,|",
 			actualString
 		);
 	}
 	
 	@Test
-	public void UnstringifyEvent() {		
+	public void UnstringifyEvent() throws Exception {		
 		Event actualEvent = Event.Destringify(testEvent.toString()); 
 		
 		assertEquals(testEvent.eventId, actualEvent.eventId);
 		assertArrayEquals(testEvent.eventParams, actualEvent.eventParams);
-		assertArrayEquals(testEvent.intendedPlayers, actualEvent.intendedPlayers);
+		//assertArrayEquals(testEvent.intendedPlayers, actualEvent.intendedPlayers);
+		
+		for (int i = 0; i < testEvent.intendedPlayers.length; i++){
+			assertEquals(testEvent.intendedPlayers[i], actualEvent.intendedPlayers[i]);
+		}
 	}
 	
 	@Test
