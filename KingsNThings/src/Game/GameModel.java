@@ -12,7 +12,7 @@ import Game.GameConstants.Terrain;
  */
 public class GameModel {
 	//--------GAME OBJECTS-----------
-	private GameBoard gameBoard;						//board holding the Hex Tiles in play
+	//private GameBoard gameBoard;						//board holding the Hex Tiles in play
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
 	private Player player1, player2, player3, player4;	//Players of the game
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
@@ -21,13 +21,16 @@ public class GameModel {
 	private Dice dice;									//Object to emulate up to 4 dice
 	private int playerCount;
 	
+	public BoardController boardController;
+	
 	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
-		this.gameBoard = new GameBoard();
+		GameBoard gameBoard = new GameBoard();
 		
 		//initialize unusedTiles
 		createHexTiles();
+		setUpHexTiles(gameBoard);
 		
 		this.player1 = new Player(0);
 		this.player2 = new Player(1);
@@ -44,6 +47,7 @@ public class GameModel {
 		
 		dice = new Dice();
 		
+		boardController = new BoardController(gameBoard);
 	}
 	private void createNewSpecialCharacters() {
 		this.unownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
@@ -150,7 +154,7 @@ public class GameModel {
 		Collections.shuffle(unownedCharacters);
 	}
 	
-	public void setUpHexTiles() {
+	public void setUpHexTiles(GameBoard gameBoard) {
 		int x=0, y=0;	//current tile coordinates
 		
 		//add center tile
@@ -260,14 +264,14 @@ public class GameModel {
 	public void shuffleUnusedTiles() {
 		Collections.shuffle(unusedTiles);
 	}
-	public void rollTwoDice() {
-		dice.rollTwoDice();
+	public int rollDice() {
+		return dice.rollDice();
 	}
 	
-	public int getDie1Value(){return dice.getDie1Value();}
-	public int getDie2Value(){return dice.getDie2Value();}
-	public int getDie3Value(){return dice.getDie3Value();}
-	public int getDie4Value(){return dice.getDie4Value();}
+	public int[] rollDice(int numDice){
+		return dice.rollDice(numDice);
+	}
+	
 	
 	public void setPlayerCount(int playerCount)
 	{

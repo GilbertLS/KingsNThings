@@ -64,25 +64,11 @@ public class GameRouter implements Runnable {
 		System.out.println("SENDING EVENT " + e.toString() + " TO GAME CLIENT - " + myID);
 		out.println(e.toString());
 		
-		if(e.eventId == EventList.SET_PLAYER_ORDER)
-		{
-			int numPlayers = Integer.parseInt(e.eventParams[1]);
-			
-			myPlayerOrder = (myPlayerOrder + (numPlayers - Integer.parseInt(e.eventParams[0]))) % numPlayers;
-			
-			System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
-		}
-		else if(e.eventId == EventList.UPDATE_PLAYER_ORDER)
-		{
-			int numPlayers = Integer.parseInt(e.eventParams[0]);
-			
-			myPlayerOrder = (myPlayerOrder + 1) % numPlayers;
-			
-			System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
-		}
+		if(e.eventId == EventList.SET_PLAYER_ORDER || e.eventId == EventList.UPDATE_PLAYER_ORDER)
+			updateGameRouterID(e);
 		
 		//if necessary, wait for a response
-		if(e.eventId == EventList.ROLL_DICE)
+		if(e.expectsResponseEvent)
 		{
 			String returnEvent;
 			try {
@@ -97,5 +83,16 @@ public class GameRouter implements Runnable {
 			}
 		}
 		return null;
+	}
+
+	private void updateGameRouterID(Event e) {
+		int numPlayers = Integer.parseInt(e.eventParams[0]);
+		
+		if(e.eventId == EventList.SET_PLAYER_ORDER)
+			myPlayerOrder = (myPlayerOrder + (numPlayers - Integer.parseInt(e.eventParams[1]))) % numPlayers;
+		else if(e.eventId == EventList.UPDATE_PLAYER_ORDER)
+			myPlayerOrder = (myPlayerOrder + 1) % numPlayers;
+	
+		System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
 	}
 }

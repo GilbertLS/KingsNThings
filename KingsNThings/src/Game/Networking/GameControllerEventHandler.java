@@ -14,7 +14,7 @@ public class GameControllerEventHandler {
 			{
 				if(e.expectsResponseEvent)
 				{
-					Response rollResponse = i.sendEvent(new Event(e.eventId, e.eventParams));
+					Response rollResponse = i.sendEvent(new Event(e.eventId, e.eventParams, e.intendedPlayers, e.expectsResponseEvent));
 					s += Integer.toString(i.myID) + rollResponse.message;
 				}
 				else

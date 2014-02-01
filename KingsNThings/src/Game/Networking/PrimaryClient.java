@@ -1,14 +1,25 @@
 package Game.Networking;
 
+import gui.GameView;
+
 import java.io.*;
 import java.net.*;
 
+import javafx.application.Application;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import Game.GameController;
  
-public class PrimaryClient {
+public class PrimaryClient extends Application {
+	static GameView gameView;
+	static String[] a;
 	
     public static void main(String[] args) {
-         
+    	a = args;
+    	launch(args);
+    }
+    
+    public static void begin(String[] args) {
         if (args.length != 2) {
             System.err.println(
                 "Usage: java EchoClient <host name> <port number>");
@@ -79,7 +90,7 @@ public class PrimaryClient {
     		catch (IOException e) {}
     		try { 
 	    		HostGame();
-    		} catch (UnknownHostException e ){}
+    		} catch (Exception e ){}
     		
     		return true;
     	} else if (command.equals(Protocol.GETHOSTEDSERVERS)) {
@@ -93,7 +104,7 @@ public class PrimaryClient {
 					out.println(Protocol.HOSTSERVER);
 					socket.close(); 
 					
-					GameClient client = new GameClient();
+					GameClient client = new GameClient(gameView);
 					client.ConnectToHost(input[1]);
 					
 					return true;
@@ -105,11 +116,26 @@ public class PrimaryClient {
     	return false;
     }
     
-    private static void HostGame() throws UnknownHostException {
+    private static void HostGame() throws Exception {
     	Runnable server = new GameController();
     	Thread thread = new Thread(server);
     	thread.start();
-    	GameClient client = new GameClient();
+    	Thread.sleep(2000);
+    	GameClient client = new GameClient(gameView);
     	client.ConnectToHost(((GameController)server).address);
     }
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		
+		// TODO Auto-generated method stub
+		BorderPane root = new BorderPane();
+		gameView = new GameView(root);
+		
+		primaryStage.setTitle("Kings N Things");
+        primaryStage.setScene(gameView);
+        primaryStage.show();
+        
+        begin(a);
+	}
 }

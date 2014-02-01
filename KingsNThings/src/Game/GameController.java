@@ -40,32 +40,32 @@ public class GameController implements Runnable {
 	
 	public void StartServer(){
 	    try {
-	    	 ServerSocket serverSocket = new ServerSocket(Protocol.GAMEPORT);
-	    	 while (!checkStartGame()) {
-		        Socket clientSocket = serverSocket.accept();
-		        System.out.println("A client has joined the game");
+	    	ServerSocket serverSocket = new ServerSocket(Protocol.GAMEPORT);
+	    	while (!checkStartGame()) {
+		       Socket clientSocket = serverSocket.accept();
+		       System.out.println("A client has joined the game");
 		        
-		        GameRouter gameRouter = new GameRouter(clientSocket);
-		        Thread thread = new Thread(gameRouter);
-		        thread.start();
-		        
-		        while(!gameRouter.ready()){}      
-	    	 }
+		       GameRouter gameRouter = new GameRouter(clientSocket);
+		       Thread thread = new Thread(gameRouter);
+		       thread.start();
+		       
+		       while(!gameRouter.ready()){}      
+	    	}
 	    	 
-	    	 numClients = servers.size();
+	    	numClients = servers.size();
 	    	 
-	 		String[] args = new String[1];
-			args[0] = Integer.toString(numClients);	
-			GameControllerEventHandler.sendEvent(new Event(EventList.SET_NUM_PLAYERS, args));
+	 		 String[] args = new String[1];
+			 args[0] = Integer.toString(numClients);	
+			 GameControllerEventHandler.sendEvent(new Event(EventList.SET_NUM_PLAYERS, args));
 	    	 
-	    	 //GAME START
-	    	 System.out.println("GAME HAS BEGUN!");
+	    	//GAME START
+	    	System.out.println("GAME HAS BEGUN!");
 	    	 
-	    	 initialSetup();
+	    	initialSetup();
 	    	 
-	    	 //player setup logic
+	    	//player setup logic
 	    	 
-	    	 //play game turns while game is not won
+	    	//play game turns while game is not won
 	    } catch (IOException e) {
 	    	System.out.println("IO Error");
 	    }
@@ -104,6 +104,8 @@ public class GameController implements Runnable {
 		//gameView.drawInitGame();
 		
 		determineInitialPlayerOrder();
+		
+		playPhases();
 		
 	}
 	
@@ -170,15 +172,30 @@ public class GameController implements Runnable {
 		System.out.println("First Player is player with index: " + highestRollPlayerIndex);
 		
 		assignInitialPlayerOrder(highestRollPlayerIndex);
+		GameControllerEventHandler.sendEvent(new Event(EventList.TEST_EVENT));
 	}
 
 	private void assignInitialPlayerOrder(int startPlayerIndex) {
 		
 		String[] args = new String[2];
-		args[0] = Integer.toString(startPlayerIndex);
-		args[1] = Integer.toString(numClients);
+		args[0] = Integer.toString(numClients);
+		args[1] = Integer.toString(startPlayerIndex);
 		
 		GameControllerEventHandler.sendEvent(new Event(EventList.SET_PLAYER_ORDER, args));
 		
 	}
+	
+	private void playPhases(){
+		
+		PlayBattlePhase();
+	}
+	
+	private void PlayBattlePhase(){
+		Response r = GameControllerEventHandler.sendEvent(
+			new Event(EventList.GET_CONTESTED_ZONES)
+		);
+		
+	}
+
+	
 }
