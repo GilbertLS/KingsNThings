@@ -3,15 +3,12 @@ package Game.Networking;
 public class Event {
 	public int eventId = -1;
 	public String[] eventParams = new String[0];
-	public boolean[] intendedPlayers = new boolean[4];
+	public boolean[] intendedPlayers = new boolean[]{ true, true, true, true };
 	public static String delimiter = "|";
 	public static String elementDelimiter = ",";
 	public boolean expectsResponseEvent = false;
 	
-	public Event(){
-		intendedPlayers = new boolean[]{ true, true, true, true };
-		
-	}
+	public Event(){}
 	
 	public Event EventId(int eventId) {
 		this.eventId = eventId;

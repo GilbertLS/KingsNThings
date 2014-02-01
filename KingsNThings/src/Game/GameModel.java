@@ -15,6 +15,7 @@ public class GameModel {
 	//private GameBoard gameBoard;						//board holding the Hex Tiles in play
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
 	private Player player1, player2, player3, player4;	//Players of the game
+	private Player currPlayer;
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
 	private Vector<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
 	private Vector<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
@@ -36,6 +37,17 @@ public class GameModel {
 		}
 		
 		return null;
+	}
+	
+	public void SetCurrentPlayer(int playerNum){
+		if ( playerNum == 0 ) { currPlayer = player1; }
+		if ( playerNum == 1 ) { currPlayer = player2; }
+		if ( playerNum == 2 ) { currPlayer = player3; }
+		if ( playerNum == 3 ) { currPlayer = player4; }
+	}
+	
+	public Player GetCurrentPlayer(){
+		return currPlayer;
 	}
 	
 	//-----------INITIAL SETUP METHODS--------------------
@@ -159,8 +171,6 @@ public class GameModel {
 		{
 			unusedTiles.add(new HexTile(Terrain.DESERT));
 		}
-		
-		setUpHexTiles();
 	}
 
 	public void randomizePlayingCup() {
