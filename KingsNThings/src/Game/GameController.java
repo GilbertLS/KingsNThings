@@ -1,21 +1,21 @@
 package Game;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import Game.GameConstants.Terrain;
+import Game.GameConstants.ThingType;
 import Game.Networking.Event;
 import Game.Networking.EventList;
+import Game.Networking.GameClient;
 import Game.Networking.GameControllerEventHandler;
 import Game.Networking.GameRouter;
 import Game.Networking.Protocol;
@@ -51,12 +51,20 @@ public class GameController implements Runnable {
 		       
 		       while(!gameRouter.ready()){}      
 	    	}
+	    	
+	    	//Collections.sort(servers);
+	    	serverSocket.close();
 	    	 
 	    	numClients = servers.size();
 	    	 
-	 		 String[] args = new String[1];
-			 args[0] = Integer.toString(numClients);	
-			 GameControllerEventHandler.sendEvent(new Event(EventList.SET_NUM_PLAYERS, args));
+	 		String[] args = new String[1];
+			args[0] = Integer.toString(numClients);	
+			GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.SET_NUM_PLAYERS)
+					.EventParameters(args)
+				
+			);
 	    	 
 	    	//GAME START
 	    	System.out.println("GAME HAS BEGUN!");
@@ -137,17 +145,17 @@ public class GameController implements Runnable {
 					intendedPlayers[i] = false;
 			}
 			
-			Event e = new Event(EventList.ROLL_DICE, new String[0],intendedPlayers, true);
-			Response playerRollsString = GameControllerEventHandler.sendEvent(e);
+			Event e = new Event()
+				.EventId(EventList.ROLL_DICE)
+				.IntendedPlayers(intendedPlayers)
+				.ExpectsResponse(true);
 			
-			String[] responses = playerRollsString.message.split(" ");
+			Response[] playerRolls = GameControllerEventHandler.sendEvent(e);
 			
-			System.out.println(playerRollsString.message);
-			
-			for(int i=0; i<responses.length; i++)
+			for(int i=0; i<playerRolls.length; i++)
 			{
-				int currentIndex = Character.getNumericValue(responses[i].charAt(0));
-				int currentRoll = Character.getNumericValue(responses[i].charAt(1));
+				int currentIndex = playerRolls[i].fromPlayer;
+				int currentRoll = Character.getNumericValue(playerRolls[i].message.charAt(0));
 				
 				if(currentRoll > highestRoll)
 				{
@@ -156,10 +164,10 @@ public class GameController implements Runnable {
 				}
 			}	
 			
-			for(int i=0; i<responses.length; i++)
+			for(int i=0; i<playerRolls.length; i++)
 			{
-				int currentIndex = Character.getNumericValue(responses[i].charAt(0));
-				int currentRoll = Character.getNumericValue(responses[i].charAt(1));
+				int currentIndex = playerRolls[i].fromPlayer;
+				int currentRoll = Character.getNumericValue(playerRolls[i].message.charAt(0));
 				
 				if (currentRoll < highestRoll)
 				{
@@ -172,7 +180,6 @@ public class GameController implements Runnable {
 		System.out.println("First Player is player with index: " + highestRollPlayerIndex);
 		
 		assignInitialPlayerOrder(highestRollPlayerIndex);
-		GameControllerEventHandler.sendEvent(new Event(EventList.TEST_EVENT));
 	}
 
 	private void assignInitialPlayerOrder(int startPlayerIndex) {
@@ -181,20 +188,65 @@ public class GameController implements Runnable {
 		args[0] = Integer.toString(numClients);
 		args[1] = Integer.toString(startPlayerIndex);
 		
-		GameControllerEventHandler.sendEvent(new Event(EventList.SET_PLAYER_ORDER, args));
-		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.SET_PLAYER_ORDER )
+					.EventParameters( args )
+			);
 	}
 	
 	private void playPhases(){
+		ChangePlayerOrder();
 		
 		PlayBattlePhase();
 	}
 	
+	private void ChangePlayerOrder(){
+		
+	}
+	
 	private void PlayBattlePhase(){
-		Response r = GameControllerEventHandler.sendEvent(
-			new Event(EventList.GET_CONTESTED_ZONES)
+		DoTestBattle();
+	}
+	
+	private void DoTestBattle(){
+		Thing thing = new Creature(Terrain.DESERT);
+		Thing otherThing = new Creature(Terrain.JUNGLE);
+		Player player = GameClient.game.gameModel.GetPlayer(1);
+		Player player2 = GameClient.game.gameModel.GetPlayer(2);
+		
+		GameClient.game.gameModel.boardController.AddThingToTile(thing, player, 0, 0);
+		GameClient.game.gameModel.boardController.AddThingToTile(otherThing, player2, 0, 0);
+		GameClient.game.gameModel.boardController.AddThingToTile(thing, player, -1, -1);
+		GameClient.game.gameModel.boardController.AddThingToTile(otherThing, player2, -1, -1);
+		
+		Response[] r = GameControllerEventHandler.sendEvent(
+			new Event().EventId(EventList.GET_CONTESTED_ZONES)
+				.ExpectsResponse(true)
+				.IntendedPlayers(new boolean[]{ true, false, false, false})
 		);
 		
+		
+		String[] contestedZones = r[0].castToStringArray();
+		for(String s : contestedZones){
+			String[] coordinateString = s.split("SPLIT");
+			
+			GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId( EventList.BEGIN_BATTLE)
+						.EventParameters( coordinateString )
+			);
+			
+			Response[] r2 = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId( EventList.GET_MAGIC_ROLLS)
+						.EventParameters( coordinateString )
+			);
+			
+			// Parse magic rolls and send event to inflict magic dmg
+		}
+		
+		System.out.println("CONTESTED ZONES:" + r[0].message);
 	}
 
 	
