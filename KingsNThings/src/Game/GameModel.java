@@ -23,6 +23,21 @@ public class GameModel {
 	
 	public BoardController boardController;
 	
+	public Player GetPlayer(int playerNum){
+		switch( playerNum ){
+		case(1):
+			return player1;
+		case(2):
+			return player2;
+		case(3):
+			return player3;
+		case(4):
+			return player4;
+		}
+		
+		return null;
+	}
+	
 	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
@@ -31,10 +46,10 @@ public class GameModel {
 		//initialize unusedTiles
 		createHexTiles();
 		
-		this.player1 = new Player(0);
-		this.player2 = new Player(1);
-		this.player3 = new Player(2);
-		this.player4 = new Player(3);
+		this.player1 = new Player(1);
+		this.player2 = new Player(2);
+		this.player3 = new Player(3);
+		this.player4 = new Player(4);
 		
 		//initialize playing cup
 		createNewThings();
@@ -143,6 +158,8 @@ public class GameModel {
 		{
 			unusedTiles.add(new HexTile(Terrain.DESERT));
 		}
+		
+		setUpHexTiles();
 	}
 
 	public void randomizePlayingCup() {

@@ -1,65 +1,37 @@
 package Game.Networking;
 
 public class Event {
-	public int eventId;
-	public String[] eventParams;
-	public boolean[] intendedPlayers;
+	public int eventId = -1;
+	public String[] eventParams = new String[0];
+	public boolean[] intendedPlayers = new boolean[4];
 	public static String delimiter = "|";
 	public static String elementDelimiter = ",";
-	public boolean expectsResponseEvent;
+	public boolean expectsResponseEvent = false;
 	
-	public Event(
-		int eventId
-	) {
-		this.eventId = eventId;
-		this.eventParams = new String[0];
-		this.intendedPlayers = new boolean[4];
-		this.expectsResponseEvent = false;
+	public Event(){
+		intendedPlayers = new boolean[]{ true, true, true, true };
 		
-		for(int i=0; i<4; i++){intendedPlayers[i] = true;}
 	}
 	
-	public Event(
-		int eventId,
-		String[] eventParams,
-		boolean[] intendedPlayers
-	) {
+	public Event EventId(int eventId) {
 		this.eventId = eventId;
+		return this;
+	}
+	
+	public Event EventParameters(String[] eventParams){
 		this.eventParams = eventParams;
+		return this;
+	}
+	
+	public Event IntendedPlayers(boolean[] intendedPlayers){
 		this.intendedPlayers = intendedPlayers;
-		this.expectsResponseEvent = false;
+		return this;
 	}
 	
-	public Event(
-			int eventId,
-			boolean[] intendedPlayers
-		) {
-			this.eventId = eventId;
-			this.eventParams = new String[0];
-			this.intendedPlayers = intendedPlayers;
-			this.expectsResponseEvent = false;
-		}
-	
-	public Event(int eventId, String[] args) {
-		this.eventId = eventId;
-		this.eventParams = args;
-		this.intendedPlayers = new boolean[4];
-		this.expectsResponseEvent = false;
-		
-		for(int i=0; i<4; i++){intendedPlayers[i] = true;}
+	public Event ExpectsResponse(boolean expectsResponse){
+		this.expectsResponseEvent = expectsResponse;
+		return this;
 	}
-	
-	public Event(
-			int eventId,
-			String[] eventParams,
-			boolean[] intendedPlayers,
-			boolean expectsResponseEvent
-		) {
-			this.eventId = eventId;
-			this.eventParams = eventParams;
-			this.intendedPlayers = intendedPlayers;
-			this.expectsResponseEvent = expectsResponseEvent;
-		}
 
 	public static Event Destringify (
 		String stringifiedEvent
@@ -86,11 +58,10 @@ public class Event {
 			intendedPlayers[i] = Boolean.parseBoolean(intendedPlayersString[i]);
 		}
 		
-		Event e = new Event(
-			eventId,
-			eventParams,
-			intendedPlayers
-		);
+		Event e = new Event()
+					.EventId(eventId)
+					.EventParameters(eventParams)
+					.IntendedPlayers(intendedPlayers);
 		
 		return e;
 	}
