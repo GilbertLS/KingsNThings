@@ -56,6 +56,21 @@ public class GameController implements Runnable {
 	    	serverSocket.close();
 	    	 
 	    	numClients = servers.size();
+	    	
+	    	for(GameRouter gr : servers){
+	    		boolean[] intendedPlayers = new boolean[4];
+	    		
+	    		intendedPlayers[gr.myID] = true;
+	    		
+	    		String[] eventParams = new String[]{ "" + gr.myID };
+	    		
+	    		Event e = new Event()
+	    					.EventId(EventList.SET_CURRENT_PLAYER)
+	    					.EventParameters(eventParams)
+	    					.IntendedPlayers(intendedPlayers);
+	    		
+	    		GameControllerEventHandler.sendEvent(e);
+	    	}
 	    	 
 	 		String[] args = new String[1];
 			args[0] = Integer.toString(numClients);	

@@ -41,6 +41,7 @@ public class GameControllerEventHandler {
 					gr.sendEvent(new Event()
 						.EventId( e.eventId )
 						.EventParameters( e.eventParams )
+						.IntendedPlayers(e.intendedPlayers)
 					);
 				}
 			}
