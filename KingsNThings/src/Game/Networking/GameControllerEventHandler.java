@@ -3,27 +3,54 @@ package Game.Networking;
 import Game.GameController;
 
 public class GameControllerEventHandler {
-	public static Response sendEvent(Event e)
-	{	
-		String s = "";
+	public static Response[] sendEvent(Event e)
+	{
 		
+		int numResponses = 0;
 		
-		for(GameRouter i : GameController.servers)
+		for(GameRouter i : GameController.servers){
+			if(e.intendedPlayers[i.myID] == true && e.expectsResponseEvent){
+				numResponses++;
+			}
+		}
+		
+		Response[] responses = new Response[numResponses];
+		
+		int i = 0;
+		
+		for(GameRouter gr : GameController.servers)
 		{
-			if(e.intendedPlayers[i.myID] == true)
+			if(e.intendedPlayers[gr.myID] == true)
 			{
 				if(e.expectsResponseEvent)
 				{
-					Response rollResponse = i.sendEvent(new Event(e.eventId, e.eventParams, e.intendedPlayers, e.expectsResponseEvent));
-					s += Integer.toString(i.myID) + rollResponse.message;
+					
+					Response rollResponse = gr.sendEvent(
+							new Event()
+								.EventId(e.eventId)
+								.EventParameters(e.eventParams)
+								.IntendedPlayers(e.intendedPlayers)
+								.ExpectsResponse(e.expectsResponseEvent)
+					);
+					
+					rollResponse.fromPlayer = gr.myID;
+					responses[i++] = rollResponse;
 				}
 				else
 				{
-					i.sendEvent(new Event(e.eventId, e.eventParams));
+					gr.sendEvent(new Event()
+						.EventId( e.eventId )
+						.EventParameters( e.eventParams )
+					);
 				}
 			}
 		}
-		System.out.println("HERE IS THE RETURN MESSAGE FROM ALL CLIENTS: " + s);
-		return new Response(s);				
+		for (int j = 0; j < responses.length; j++){
+			System.out.println("Response from player: " 
+								+ responses[j].fromPlayer
+								+ " response: "
+								+ responses[j].message);
+		}
+		return responses;			
 	}
 }

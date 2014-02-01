@@ -16,11 +16,10 @@ public class EventTests {
 		String[] params = { "true", "false", "gah" };
 		boolean[] intendedPlayers = { true, true, true };
 		
-		testEvent = new Event(
-			eventId,
-			params,
-			intendedPlayers
-		);
+		testEvent = new Event()
+			.EventId(eventId)
+			.EventParameters(params)
+			.IntendedPlayers(intendedPlayers);
 	}
 	
 	@Test
@@ -47,8 +46,17 @@ public class EventTests {
 	}
 	
 	@Test
+	public void UnstringifyEventGetParams() throws Exception {		
+		Event actualEvent = Event.Destringify(testEvent.toString()); 
+		
+		String s = actualEvent.getEventParameters();
+		
+		assertEquals("true false gah ", s);
+	}
+	
+	@Test
 	public void CreateEventOneParameter(){
-		Event event = new Event(3);
+		Event event = new Event().EventId(0);
 		
 		Event.Destringify(event.toString());
 	}

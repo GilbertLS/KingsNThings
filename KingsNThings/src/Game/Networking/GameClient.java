@@ -35,18 +35,8 @@ public class GameClient {
 	        Runnable eventReceiver = new EventReceiver( connection );
 	        Thread thread = new Thread(eventReceiver);
 	        
+	        System.out.println("CREATING EVENT RECIEVER");	
 	        thread.start();
-	        try {
-	        	Thread.sleep(2000);
-	        }
-	        catch (InterruptedException e)
-	        {
-	        	
-	        }
-	        
-	        EventHandler.HandleEvent((new Event(EventList.TEST_EVENT)).toString());
-	        
-	        System.out.println("CREATING EVENT RECIEVER");	        
 	        
 		} catch (IOException e){
 			System.out.print("Unable to connect to game");
