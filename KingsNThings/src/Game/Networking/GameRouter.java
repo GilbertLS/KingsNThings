@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Game.GameController;
 
-public class GameRouter implements Runnable {
+public class GameRouter implements Runnable, Comparable<GameRouter> {
 	
 	private Socket connection;
 	private boolean ready = false;
@@ -94,5 +94,9 @@ public class GameRouter implements Runnable {
 			myPlayerOrder = (myPlayerOrder + 1) % numPlayers;
 	
 		System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
+	}
+	
+	public int compareTo(GameRouter g){
+		return this.myPlayerOrder - ((GameRouter)g).myPlayerOrder;
 	}
 }

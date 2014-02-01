@@ -19,14 +19,13 @@ public class BoardController {
 		for(int i = -3; i < 4; i++){
 			for(int j = -3; j < 4; j++){
 				int numPlayers = 0;
+	
+				if (gameBoard.getTile(i, j) == null){ continue; }
 				
-				if(gameBoard.getTile(i, j) != null)
-				{
-					if (!gameBoard.getTile(i, j).player1Things.isEmpty()) { numPlayers++; }
-					if (!gameBoard.getTile(i, j).player2Things.isEmpty()) { numPlayers++; }
-					if (!gameBoard.getTile(i, j).player3Things.isEmpty()) { numPlayers++; }
-					if (!gameBoard.getTile(i, j).player4Things.isEmpty()) { numPlayers++; }
-				}
+				if (!gameBoard.getTile(i, j).player1Things.isEmpty()) { numPlayers++; }
+				if (!gameBoard.getTile(i, j).player2Things.isEmpty()) { numPlayers++; }
+				if (!gameBoard.getTile(i, j).player3Things.isEmpty()) { numPlayers++; }
+				if (!gameBoard.getTile(i, j).player4Things.isEmpty()) { numPlayers++; }
 				
 				if(numPlayers > 1){
 					conflictedTiles.add(new int[]{ i, j });
@@ -35,5 +34,9 @@ public class BoardController {
 		}
 		
 		return conflictedTiles;
+	}
+	
+	public void AddThingToTile(Thing thing, Player player, int tileX, int tileY){
+		gameBoard.getTile(tileX, tileY).AddThingToTile(player, thing);
 	}
 }

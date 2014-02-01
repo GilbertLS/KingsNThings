@@ -1,7 +1,9 @@
 package Game;
 import java.util.Vector;
+
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
+import Game.Networking.GameClient;
 
 /*
  * This class represents a single Hex Tile in a Kings N' Things Game
@@ -33,6 +35,18 @@ public class HexTile implements IIncomable{
 		this.fort = new Vector<Fort>(GameConstants.MAX_NUM_FORTS_PER_HEX);
 		
 		this.specialIncome = new Vector<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
+	}
+	
+	public void AddThingToTile(Player player, Thing thing){
+		if ( player.GetPlayerNum() == 1 ){
+			player1Things.add(thing);
+		} else if ( player.GetPlayerNum() == 2 ){
+			player2Things.add(thing);
+		} else if ( player.GetPlayerNum() == 3 ){
+			player3Things.add(thing);
+		} else if ( player.GetPlayerNum() == 4 ){
+			player4Things.add(thing);
+		}
 	}
 
 }
