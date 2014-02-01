@@ -12,7 +12,7 @@ import Game.GameConstants.Terrain;
  */
 public class GameModel {
 	//--------GAME OBJECTS-----------
-	private GameBoard gameBoard;						//board holding the Hex Tiles in play
+	//private GameBoard gameBoard;						//board holding the Hex Tiles in play
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
 	private Player player1, player2, player3, player4;	//Players of the game
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
@@ -41,10 +41,11 @@ public class GameModel {
 	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
-		this.gameBoard = new GameBoard();
+		GameBoard gameBoard = new GameBoard();
 		
 		//initialize unusedTiles
 		createHexTiles();
+		setUpHexTiles(gameBoard);
 		
 		this.player1 = new Player(1);
 		this.player2 = new Player(2);
@@ -170,7 +171,7 @@ public class GameModel {
 		Collections.shuffle(unownedCharacters);
 	}
 	
-	public void setUpHexTiles() {
+	public void setUpHexTiles(GameBoard gameBoard) {
 		int x=0, y=0;	//current tile coordinates
 		
 		//add center tile
