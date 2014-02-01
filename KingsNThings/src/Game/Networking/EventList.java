@@ -11,5 +11,7 @@ public class EventList {
 	public static final int GET_MAGIC_ROLLS = 7;
 	public static final int GET_RANGED_ROLLS = 8;
 	public static final int GET_OTHER_ROLLS = 9;
+	public static final int SET_CURRENT_PLAYER = 10;
 	public static final int TEST_EVENT = 999;
+	public static final int NULL_EVENT = -1;
 }

@@ -39,4 +39,8 @@ public class BoardController {
 	public void AddThingToTile(Thing thing, Player player, int tileX, int tileY){
 		gameBoard.getTile(tileX, tileY).AddThingToTile(player, thing);
 	}
+	
+	public boolean HasThingsOnTile(Player player, int tileX, int tileY){
+		return gameBoard.getTile(tileX, tileY).HasThingsOnTile(player);
+	}
 }
