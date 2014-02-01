@@ -1,0 +1,7 @@
+Features for first iteration:
+
+set up game
+choose creatures
+basic movement
+basic combat
+combat resolution
