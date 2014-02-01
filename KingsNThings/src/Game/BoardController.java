@@ -16,13 +16,17 @@ public class BoardController {
 		List<int[]> conflictedTiles = new ArrayList<int[]>();
 		int[] addTiles = new int[2];
 		
-		for(int i = 0; i < gameBoard.dimensions; i++){
-			for(int j = 0; j < gameBoard.dimensions; j++){
+		for(int i = -3; i < 4; i++){
+			for(int j = -3; j < 4; j++){
 				int numPlayers = 0;
-				if (!gameBoard.getTile(i, j).player1Things.isEmpty()) { numPlayers++; }
-				if (!gameBoard.getTile(i, j).player2Things.isEmpty()) { numPlayers++; }
-				if (!gameBoard.getTile(i, j).player3Things.isEmpty()) { numPlayers++; }
-				if (!gameBoard.getTile(i, j).player4Things.isEmpty()) { numPlayers++; }
+				
+				if(gameBoard.getTile(i, j) != null)
+				{
+					if (!gameBoard.getTile(i, j).player1Things.isEmpty()) { numPlayers++; }
+					if (!gameBoard.getTile(i, j).player2Things.isEmpty()) { numPlayers++; }
+					if (!gameBoard.getTile(i, j).player3Things.isEmpty()) { numPlayers++; }
+					if (!gameBoard.getTile(i, j).player4Things.isEmpty()) { numPlayers++; }
+				}
 				
 				if(numPlayers > 1){
 					conflictedTiles.add(new int[]{ i, j });
