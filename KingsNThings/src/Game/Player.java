@@ -10,6 +10,10 @@ public class Player {
 	private int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
 	
+	public int GetPlayerNum(){
+		return playerNum;
+	}
+	
 	public Player(int playerNum)
 	{
 		this.playerRack = new PlayerRack();
