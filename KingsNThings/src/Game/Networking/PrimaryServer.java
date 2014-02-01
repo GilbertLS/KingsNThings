@@ -22,7 +22,8 @@ public class PrimaryServer implements Runnable {
 	 
 	    int portNumber = Integer.parseInt(args[0]);
 	    try {
-		    ServerSocket socket1 = new ServerSocket(portNumber);
+		    @SuppressWarnings("resource")
+			ServerSocket socket1 = new ServerSocket(portNumber);
 	        while (true) {
 		        Socket s = socket1.accept();
 		        Runnable runnable = new PrimaryServer(s);

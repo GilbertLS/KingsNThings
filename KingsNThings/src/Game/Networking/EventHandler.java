@@ -14,7 +14,7 @@ public class EventHandler {
 		EventSender.Send( eventString );
 	}
 	
-	private static void HandleEvent( Event e ){
+	public static void HandleEvent( Event e ){
 		if (e.eventId == EventList.READY){}
 		else if (e.eventId == EventList.ROLL_DICE)
 		{
@@ -22,7 +22,12 @@ public class EventHandler {
 			
 			String[] args = new String[1];
 			args[0] = Integer.toString((int)Math.ceil(Math.random()*6));
-			EventHandler.SendEvent(new Event(EventList.ROLL_DICE, args));
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.ROLL_DICE)
+						.EventParameters(args)
+			);
 		}
 		else if(e.eventId == EventList.SET_PLAYER_ORDER)
 		{
@@ -54,11 +59,14 @@ public class EventHandler {
 			
 			int i = 0;
 			for(int[] zone : contestedZones){
-				args[i++] = zone[0] + "," + zone[1];
+				args[i++] = zone[0] + "SPLIT" + zone[1];
+				System.out.println(args[i-1]);
 			}
 			
 			EventHandler.SendEvent(
-				new Event(EventList.GET_CONTESTED_ZONES, args)
+				new Event()
+					.EventId( EventList.GET_CONTESTED_ZONES )
+					.EventParameters(args)
 			);
 		}
 		else if(e.eventId == EventList.TEST_EVENT)
