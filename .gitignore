@@ -124,3 +124,9 @@ KingsNThings/src/Game/Networking/GameController.class
 KingsNThings/src/Game/Networking/GameControllerEventHandler.class
 KingsNThings/src/Game/Networking/GameRouter.class
 KingsNThings/src/Game/Networking/Response.class
+*.class
+KingsNThings/.metadata/.plugins/org.eclipse.core.resources/.root/5.tree
+KingsNThings/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.debug.ui.prefs
+KingsNThings/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.editors.prefs
+KingsNThings/.metadata/.plugins/org.eclipse.ui.editors/dialog_settings.xml
+KingsNThings/.metadata/.plugins/org.eclipse.ui.ide/dialog_settings.xml

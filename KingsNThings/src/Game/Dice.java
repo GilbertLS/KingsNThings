@@ -1,28 +1,42 @@
 package Game;
 
-/*
- * This class emulates up to 4 dice
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class Dice {
 	//individual die values
-	private static int die1Value, die2Value, die3Value, die4Value;
+	private int[] dieValues;
+	//private List<DiceView> diceViews;
 	
-	public Dice()
-	{
-		die1Value = 0;
-		die2Value = 0;
-		die3Value = 0;
-		die4Value = 0;
+	public Dice(){
+		new Dice(4);
 	}
 	
-	public void rollTwoDice()
-	{
-		die1Value = (int)Math.ceil(Math.random()*GameConstants.DIE_1_SIDES);
-		die2Value = (int)Math.ceil(Math.random()*GameConstants.DIE_2_SIDES);
+	public Dice(int numDice) {
+		dieValues = new int[numDice];
+		//diceViews = new DiceView[numDice]();
 	}
 	
-	public int getDie1Value(){return die1Value;}
-	public int getDie2Value(){return die2Value;}
-	public int getDie3Value(){return die3Value;}
-	public int getDie4Value(){return die4Value;}
+	public int rollDice(){
+		//die1Value = (int)Math.ceil(Math.random()*GameConstants.DIE_1_SIDES);
+		dieValues[0] = (int)Math.ceil(Math.random()*GameConstants.DIE_1_SIDES);
+		// diceView[0].Update( dieValues[0] );
+		return dieValues[0];
+	}
+	
+	public int[] rollDice( int numDice ){
+		if (numDice > dieValues.length) { 
+			numDice = dieValues.length;
+		}
+		
+		int[] diceRolls = new int[numDice];
+		
+		for (int i = 0; i < numDice; i++) {
+			dieValues[i] = (int)Math.ceil(Math.random()*GameConstants.DIE_1_SIDES);
+			// diceView.Update( dieValues[i] );
+			diceRolls[i] = dieValues[i];
+		}
+		
+		return diceRolls;
+	}
 }

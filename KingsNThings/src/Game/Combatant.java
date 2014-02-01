@@ -2,6 +2,7 @@ package Game;
 
 import Game.GameConstants.SpecialType;
 import Game.GameConstants.ThingType;
+import Game.Networking.GameClient;
 
 /*
  * This class adds functionality to the Thing class to facilitate combat.
@@ -20,4 +21,8 @@ public abstract class Combatant extends Thing{
 		this.combatValue = combatValue;
 		this.specialType = specialType;
 	}
+	
+	//public int Attack(){
+	
+	//}
 }
