@@ -8,4 +8,5 @@ public class EventList {
 	public static final int BEGIN_BATTLE = 4;
 	public static final int GET_CONTESTED_ZONES = 5;
 	public static final int UPDATE_PLAYER_ORDER = 6;
+	public static final int TEST_EVENT = 999;
 }

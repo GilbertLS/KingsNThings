@@ -12,19 +12,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-public class GameView extends Application {
-    BorderPane root;
-    VBox rightPanel;
-    HBox bottomPanel;
-    BoardView board;
-    PlayerList playerList;
-    RackView rack;
-    Scene gameScene;
+public class GameView extends Scene {
+    public BorderPane root;
+    public VBox rightPanel;
+    public HBox bottomPanel;
+    public BoardView board;
+    public PlayerList playerList;
+    public RackView rack;
 	
-	
-    @Override
-    public void start(Stage primaryStage) {   	
-        BorderPane root = new BorderPane();
+    public GameView(BorderPane r) {
+    	super(r, 1200, 800);
+    	root = r; 
         
         rightPanel = new VBox();
         root.setRight(rightPanel);
@@ -53,17 +51,7 @@ public class GameView extends Application {
         	arr.add(new ThingView());
         rack = new RackView(FXCollections.observableList((arr)));
         bottomPanel.getChildren().add(rack);
-                
-        Scene gameScene = new Scene(root, 1200, 800);
-        gameScene.getStylesheets().add("gui/myStyle.css");
         
-        primaryStage.setTitle("Kings N Things");
-        primaryStage.setScene(gameScene);
-        primaryStage.show();
+        this.getStylesheets().add("gui/myStyle.css");
     }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-    
 }
