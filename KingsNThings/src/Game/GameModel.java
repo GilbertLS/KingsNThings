@@ -448,8 +448,8 @@ public class GameModel {
 		
 		//PLAYER 1 THINGS (REVERSE ORDER)
 		initializeThingsString += "Witch Doctor" + "SPLIT"
-									+ "DESERT" + "SPLIT" 
-									+ 3 + "SPLIT" 
+									+ "JUNGLE" + "SPLIT" 
+									+ 2 + "SPLIT" 
 									+ GameConstants.WitchDoctorImageBack + "SPLIT" 
 									+ GameConstants.WitchDoctorImageFront +"SPLIT"
 									+ "MAGIC";
