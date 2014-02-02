@@ -160,7 +160,6 @@ public class GameModel {
 			unusedTiles.add(new HexTile(Terrain.DESERT));
 		}
 		
-		setUpHexTiles();
 	}
 
 	public void randomizePlayingCup() {

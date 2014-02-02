@@ -10,28 +10,17 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
-public class RackView extends ListView<ThingView> {
-	ObservableList<ThingView> items;
-	 RackView thisList = this;
-	
+public class RackView extends ThingViewList {	
 	RackView(ObservableList<ThingView> l) {
 		super(l);
 		
-		getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		setOrientation(Orientation.HORIZONTAL);
-		getStyleClass().add("rack");
-		setPrefHeight(70);
-		setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
-            @Override
-            public ListCell<ThingView> call(ListView<ThingView> param) {
-                return new ThingCell();
-            }
-        });
-		
-		this.getChildren().addListener(new ListChangeListener() {
+		view.getChildrenUnmodifiable().addListener(new ListChangeListener() {
 	        @Override
 	        public void onChanged(Change change) {
-	        	thisList.setPrefWidth((thisList.getItems().size() * 64.5));
+	        	if (view.getItems().size() <= 10)
+	        		view.setPrefWidth(64.25 * 10);
+	        	else
+	        		view.setPrefWidth((view.getItems().size() * 64.5));
 	        }
 		});
 	}
