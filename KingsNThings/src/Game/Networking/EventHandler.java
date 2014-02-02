@@ -2,6 +2,7 @@ package Game.Networking;
 
 import java.util.List;
 
+import javafx.application.Platform;
 import Game.HexTile;
 
 public class EventHandler {
@@ -101,9 +102,15 @@ public class EventHandler {
 			String[] unusedHexTileStrings = unusedHexTileString.split("/");
 			
 			HexTile[][] h = GameClient.game.gameModel.setInitialHexTiles(boardHexTileStrings);
+			final HexTile[][] h2 = h;
 			GameClient.game.gameModel.setInitialUnusedHexTiles(unusedHexTileStrings);
 			
-			GameClient.game.gameView.board.setTiles(h);
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.board.setTiles(h2);
+		        }
+		    });
 		}
 		else if (e.eventId == EventList.SET_CREATURES)
 		{
