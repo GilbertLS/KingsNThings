@@ -30,16 +30,12 @@ public class TilePreview extends VBox {
 		view4.getStyleClass().add("preview-list");
 		viewNeutral.getStyleClass().add("preview-list");
 		
-		view1.setPrefWidth(400);
-		view2.setPrefWidth(400);
-		view3.setPrefWidth(400);
-		view4.setPrefWidth(400);
-		viewNeutral.setPrefWidth(400);
-		
 		this.getChildren().add(view1);
 		this.getChildren().add(view2);
 		this.getChildren().add(view3);
 		this.getChildren().add(view4);
+		
+		this.setPrefWidth(300);
 	}
 	
 	public void show() {
