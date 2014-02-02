@@ -12,16 +12,19 @@ public abstract class Thing {
 	ThingType thingType;		//type of thing (enum defined in GameConstants class
 	String name;				//display name of this Thing
 	HexTile currentTile;
+	public String backFileName, frontFileName;
 	
-	public Thing(ThingType thingType, String name)
+	public Thing(ThingType thingType, String name, String backFileName, String frontFileName)
 	{
-		this.thingID = thingIDCount;
-		thingIDCount++;
+		this.thingID = thingIDCount++;
 		
 		this.thingType = thingType;
 		this.name = name;
 		
 		this.isFlipped = true;
+		
+		this.backFileName = backFileName;
+		this.frontFileName = frontFileName;
 		
 		this.currentTile = null;
 	}

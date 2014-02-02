@@ -3,11 +3,13 @@ package Game.Networking;
 public class Response {
 	public String message;
 	public int fromPlayer;
+	public int eventId;
 	
-	public Response(String message)
+	public Response(Event e)
 	{
-		this.message = message;
+		this.message = e.getEventParameters();
 		this.fromPlayer = -1;
+		this.eventId = e.eventId;
 	}
 	
 	public int castToInt()

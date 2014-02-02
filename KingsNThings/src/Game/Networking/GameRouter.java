@@ -75,8 +75,7 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 				//get the message back from the GameClient 
 				returnEvent = in.readLine();
 				
-				String responseString = (Event.Destringify(returnEvent)).getEventParameters();
-				return new Response(responseString);
+				return new Response(Event.Destringify(returnEvent));
 				
 			} catch (IOException e1) {
 				e1.printStackTrace();

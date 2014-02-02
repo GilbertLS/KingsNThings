@@ -48,5 +48,22 @@ public class HexTile implements IIncomable{
 			player4Things.add(thing);
 		}
 	}
+	
+	public boolean HasThingsOnTile(Player player){
+		if ( player.GetPlayerNum() == 1 ){
+			return !player1Things.isEmpty();
+		} else if ( player.GetPlayerNum() == 2 ){
+			return !player2Things.isEmpty();
+		} else if ( player.GetPlayerNum() == 3 ){
+			return !player3Things.isEmpty();
+		} else if ( player.GetPlayerNum() == 4 ){
+			return !player4Things.isEmpty();
+		}
+		return false;
+	}
+
+	public Terrain getTerrain() {
+		return terrain;
+	}
 
 }

@@ -1,6 +1,5 @@
 package Game;
 
-import Game.GameConstants.SpecialType;
 import Game.GameConstants.ThingType;
 
 /*
@@ -10,18 +9,34 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 
 	//temp
 	private static int specialCharacterID = 0;
-	public SpecialCharacter()
+	public SpecialCharacter(String backFileName, String frontFileName)
 	{
-		super(ThingType.SPECIAL_CHARACTER, "specialCharacter" + specialCharacterID, SpecialType.NONE, (int)Math.ceil(Math.random()*6));
-		this.currentTile = null;
+		super(ThingType.SPECIAL_CHARACTER, "specialCharacter" + specialCharacterID++, (int)Math.ceil(Math.random()*6), backFileName, frontFileName);
 	}
 	
-	//temp (for terrain lord)
-	private static int terrainLordID = 0;
-	public SpecialCharacter(int temp)
+	public SpecialCharacter(ThingType thingType, String backFileName, String frontFileName)
 	{
-		super(ThingType.TERRAIN_LORD, "terrainLord" + terrainLordID, SpecialType.NONE, (int)Math.ceil(Math.random()*6));
-		this.currentTile = null;
+		super(thingType, "terrianLord" + specialCharacterID++, (int)Math.ceil(Math.random()*6), backFileName, frontFileName);
+	}
+	
+	public SpecialCharacter IsFlying(boolean isFlying){
+		super.isFlying = isFlying;
+		return this;
+	}
+	
+	public SpecialCharacter IsMagic(boolean isMagic){
+		super.isMagic = isMagic;
+		return this;
+	}
+	
+	public SpecialCharacter IsRange(boolean isRange){
+		super.isRange = isRange;
+		return this;
+	}
+	
+	public SpecialCharacter IsCharge(boolean isCharge){
+		super.isCharge = isCharge;
+		return this;
 	}
 	
 	//need method for special ability

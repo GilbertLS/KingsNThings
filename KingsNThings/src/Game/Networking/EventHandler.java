@@ -73,5 +73,45 @@ public class EventHandler {
 		{
 			GameClient.game.gameView.playerList.getChildren().get(0).setStyle("-fx-background-color: 'red'");
 		}
+		else if (e.eventId == EventList.GET_MAGIC_ROLLS){
+			int tileX = Integer.parseInt(e.eventParams[0]);
+			int tileY = Integer.parseInt(e.eventParams[1]);
+			
+			if (!GameClient.game.gameModel.boardController.HasThingsOnTile(
+					GameClient.game.gameModel.GetCurrentPlayer(), 
+					tileX, 
+					tileY
+				)) {
+				
+			}
+		}
+		else if (e.eventId == EventList.SET_CURRENT_PLAYER){
+			int playerNum = Integer.parseInt(e.eventParams[0]);
+			
+			GameClient.game.gameModel.SetCurrentPlayer(playerNum);
+		}
+		else if (e.eventId == EventList.SET_HEX_TILES)
+		{
+			String boardHexTilesString = e.eventParams[0];
+			String unusedHexTileString = e.eventParams[1];
+			
+			String[] boardHexTileStrings = boardHexTilesString.split("/");
+			String[] unusedHexTileStrings = unusedHexTileString.split("/");
+			
+			GameClient.game.gameModel.setInitialHexTiles(boardHexTileStrings);
+			GameClient.game.gameModel.setInitialUnusedHexTiles(unusedHexTileStrings);
+			
+			//GameClient.game.gameModel.printCurrentBoardTiles();
+		}
+		else if (e.eventId == EventList.SET_CREATURES)
+		{
+			String creaturesString = e.eventParams[0];
+			
+			String[] creaturesStrings = creaturesString.split("/");
+			
+			GameClient.game.gameModel.setPlayingCup(creaturesStrings);
+			
+			//GameClient.game.gameModel.printCurrentBoardTiles();
+		}
 	}
 }
