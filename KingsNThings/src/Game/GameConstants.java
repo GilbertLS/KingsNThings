@@ -33,7 +33,7 @@ public final class GameConstants {
 	//The different type of Settlements
 	public static enum SettlementType {VILLAGE, CITY}
 	
-	//The different type of Settlements
+	//thing image paths
 	public static final String PlaceHolderImageFront = "C_Fort_375.png";
 	public static final String PlaceHolderImageBack = "C_Fort_375.png";
 	public static final String TowerImageBack = "C_Fort_375.png";
@@ -48,6 +48,68 @@ public final class GameConstants {
 	public static final String WatusiImageFront = "C_Fort_375.png";
 	public static final String SkeletonsImageBack = "C_Fort_375.png";
 	public static final String SkeletonsImageFront = "C_Fort_375.png";
+	public static final String DwarvesImageBack = "C_Fort_375.png";
+	public static final String DwarvesImageFront = "C_Fort_375.png";
+	public static final String GiantImageBack = "C_Fort_375.png";
+	public static final String GiantImageFront = "C_Fort_375.png";
+	public static final String BrownKnightImageBack = "C_Fort_375.png";
+	public static final String BrownKnightImageFront = "C_Fort_375.png";
+	public static final String ElephantImageBack = "C_Fort_375.png";
+	public static final String ElephantImageFront = "C_Fort_375.png";
+	public static final String GiantSpiderImageBack = "C_Fort_375.png";
+	public static final String GiantSpiderImageFront = "C_Fort_375.png";
+	public static final String OldDragonImageBack = "C_Fort_375.png";
+	public static final String OldDragonImageFront = "C_Fort_375.png";
+	public static final String BanditsImageBack = "C_Fort_375.png";
+	public static final String BanditsImageFront = "C_Fort_375.png";
+	public static final String CrawlingVinesImageBack = "C_Fort_375.png";
+	public static final String CrawlingVinesImageFront = "C_Fort_375.png";
+	public static final String WalkingTreeImageBack = "C_Fort_375.png";
+	public static final String WalkingTreeImageFront = "C_Fort_375.png";
+	public static final String DruidImageBack = "C_Fort_375.png";
+	public static final String DruidImageFront = "C_Fort_375.png";
+	public static final String NomadsImageBack = "C_Fort_375.png";
+	public static final String NomadsImageFront = "C_Fort_375.png";
+	public static final String CrocodilesImageBack = "C_Fort_375.png";
+	public static final String CrocodilesImageFront = "C_Fort_375.png";
+	public static final String DervishImageBack = "C_Fort_375.png";
+	public static final String DervishImageFront = "C_Fort_375.png";
+	public static final String GreenKnightImageBack = "C_Fort_375.png";
+	public static final String GreenKnightImageFront = "C_Fort_375.png";
+	public static final String SandwormImageBack = "C_Fort_375.png";
+	public static final String SandwormImageFront = "C_Fort_375.png";
+	public static final String PterodactylWarriorsImageBack = "C_Fort_375.png";
+	public static final String PterodactylWarriorsImageFront = "C_Fort_375.png";
+	public static final String GreatHunterImageBack = "C_Fort_375.png";
+	public static final String GreatHunterImageFront = "C_Fort_375.png";
+	public static final String PygmiesImageBack = "C_Fort_375.png";
+	public static final String PygmiesImageFront = "C_Fort_375.png";
+	public static final String GenieImageBack = "C_Fort_375.png";
+	public static final String GenieImageFront = "C_Fort_375.png";
+	public static final String FarmersImageBack = "C_Fort_375.png";
+	public static final String FarmersImageFront = "C_Fort_375.png";
+	public static final String CamelCorpsImageBack = "C_Fort_375.png";
+	public static final String CamelCorpsImageFront = "C_Fort_375.png";
+	public static final String CentaurImageBack = "C_Fort_375.png";
+	public static final String CentaurImageFront = "C_Fort_375.png";
+	public static final String BuffaloHerdImageBack = "C_Fort_375.png";
+	public static final String BuffaloHerdImageFront = "C_Fort_375.png";
+	public static final String GiantApeImageBack = "C_Fort_375.png";
+	public static final String GiantApeImageFront = "C_Fort_375.png";
+	public static final String BlackKnightImageBack = "C_Fort_375.png";
+	public static final String BlackKnightImageFront = "C_Fort_375.png";
+	public static final String DarkWizardImageBack = "C_Fort_375.png";
+	public static final String DarkWizardImageFront = "C_Fort_375.png";
+	public static final String TribesmanImageBack = "C_Fort_375.png";
+	public static final String TribesmanImageFront = "C_Fort_375.png";
+	public static final String VampireBatImageBack = "C_Fort_375.png";
+	public static final String VampireBatImageFront = "C_Fort_375.png";
+	public static final String TigersImageBack = "C_Fort_375.png";
+	public static final String TigersImageFront = "C_Fort_375.png";
+	public static final String VillainsImageBack = "C_Fort_375.png";
+	public static final String VillainsImageFront = "C_Fort_375.png";
+	public static final String GiantLizardImageBack = "C_Fort_375.png";
+	public static final String GiantLizardImageFront = "C_Fort_375.png";
 	
 	//-------------/end ENUMS---------------
 	
@@ -84,6 +146,8 @@ public final class GameConstants {
 	//event types
 	public static final int PLAYERS_ROLL = 0;
 	public static final int UPDATE_PLAYER_ORDER = 1;
+
+
 
 
 
