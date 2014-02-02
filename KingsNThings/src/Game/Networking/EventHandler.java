@@ -90,5 +90,18 @@ public class EventHandler {
 			
 			GameClient.game.gameModel.SetCurrentPlayer(playerNum);
 		}
+		else if (e.eventId == EventList.SET_HEX_TILES)
+		{
+			String boardHexTilesString = e.eventParams[0];
+			String unusedHexTileString = e.eventParams[1];
+			
+			String[] boardHexTileStrings = boardHexTilesString.split("/");
+			String[] unusedHexTileStrings = unusedHexTileString.split("/");
+			
+			GameClient.game.gameModel.setInitialHexTiles(boardHexTileStrings);
+			GameClient.game.gameModel.setInitialUnusedHexTiles(unusedHexTileStrings);
+			
+			//GameClient.game.gameModel.printCurrentBoardTiles();
+		}
 	}
 }

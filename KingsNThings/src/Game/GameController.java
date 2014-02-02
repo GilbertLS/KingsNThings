@@ -128,10 +128,27 @@ public class GameController implements Runnable {
 		
 		determineInitialPlayerOrder();
 		
+		initializeHexTiles();
+		
 		playPhases();
 		
 	}
 	
+	private void initializeHexTiles() {
+		String[] initializeHexTilesStrings = GameModel.initializeHexTiles().split(" ");
+		
+		String[] args = new String[2];
+		args[0] = initializeHexTilesStrings[0];
+		args[1] = initializeHexTilesStrings[1];
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.SET_HEX_TILES )
+					.EventParameters( args )
+			);
+		
+	}
+
 	private void determineInitialPlayerOrder() {
 		
 		//array to hold player rolls

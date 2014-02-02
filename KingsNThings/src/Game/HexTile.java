@@ -62,4 +62,8 @@ public class HexTile implements IIncomable{
 		return false;
 	}
 
+	public Terrain getTerrain() {
+		return terrain;
+	}
+
 }
