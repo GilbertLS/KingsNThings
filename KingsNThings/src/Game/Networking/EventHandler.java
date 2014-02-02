@@ -101,14 +101,13 @@ public class EventHandler {
 			String[] boardHexTileStrings = boardHexTilesString.split("/");
 			String[] unusedHexTileStrings = unusedHexTileString.split("/");
 			
-			HexTile[][] h = GameClient.game.gameModel.setInitialHexTiles(boardHexTileStrings);
-			final HexTile[][] h2 = h;
+			final HexTile[][] h = GameClient.game.gameModel.setInitialHexTiles(boardHexTileStrings);
 			GameClient.game.gameModel.setInitialUnusedHexTiles(unusedHexTileStrings);
 			
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
-		        	GameClient.game.gameView.board.setTiles(h2);
+		        	GameClient.game.gameView.board.setTiles(h);
 		        }
 		    });
 		}

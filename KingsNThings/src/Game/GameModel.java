@@ -1,5 +1,6 @@
 package Game;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Vector;
@@ -16,9 +17,9 @@ public class GameModel {
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
 	private Player player1, player2, player3, player4;	//Players of the game
 	private Player currPlayer;
-	private Vector<Thing> playingCup;					//Container to hold unplayed Things
-	private Vector<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
-	private Vector<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
+	private ArrayList<Thing> playingCup;					//Container to hold unplayed Things
+	private ArrayList<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
+	private ArrayList<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
 	private Dice dice;									//Object to emulate up to 4 dice
 	private int playerCount;
 	private GameBoard gameBoard;
@@ -69,14 +70,14 @@ public class GameModel {
 		//initialize Special Characters (and store in unownedCharacters)
 		createNewSpecialCharacters();
 		
-		ownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
+		ownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
 		dice = new Dice();
 		
 		boardController = new BoardController(gameBoard);
 	}
 	private void createNewSpecialCharacters() {
-		this.unownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
+		this.unownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
 		//REMOVED FOR ITERATION 1
 		/*
@@ -99,7 +100,7 @@ public class GameModel {
 		*/
 	}
 	private void createNewThings() {
-		this.playingCup = new Vector<Thing>(GameConstants.MAX_NUM_THINGS);
+		this.playingCup = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS);
 		
 		//REMOVED FOR ITERATION 1
 		/*
@@ -448,6 +449,216 @@ public class GameModel {
 	public static String initializeCreatures() {
 		String initializeThingsString = "";
 		
+		//PLAYER 4 THINGS (reverse order)
+		//Stack 3
+		initializeThingsString += "Buffalo Herd" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 3 + "SPLIT" 
+				+ GameConstants.BuffaloHerdImageBack + "SPLIT" 
+				+ GameConstants.BuffaloHerdImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Giant Ape" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 5 + "SPLIT" 
+				+ GameConstants.GiantApeImageBack + "SPLIT" 
+				+ GameConstants.GiantApeImageFront +"SPLIT";
+		initializeThingsString += "/";
+		
+		//Stack 2
+		initializeThingsString += "Black Knight" + "SPLIT"
+				+ "SWAMP" + "SPLIT" 
+				+ 3 + "SPLIT" 
+				+ GameConstants.BlackKnightImageBack + "SPLIT" 
+				+ GameConstants.BlackKnightImageFront +"SPLIT"
+				+ "CHARGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Dark Wizard" + "SPLIT"
+				+ "SWAMP" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.DarkWizardImageBack + "SPLIT" 
+				+ GameConstants.DarkWizardImageFront +"SPLIT"
+				+ "MAGIC" + "SPLIT"
+				+ "FLYING";
+		initializeThingsString += "/";
+		initializeThingsString += "Tribesman" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.TribesmanImageBack + "SPLIT" 
+				+ GameConstants.TribesmanImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Vampire Bat" + "SPLIT"
+				+ "SWAMP" + "SPLIT" 
+				+ 4 + "SPLIT" 
+				+ GameConstants.VampireBatImageBack + "SPLIT" 
+				+ GameConstants.VampireBatImageFront +"SPLIT"
+				+ "FLYING";
+		initializeThingsString += "/";
+		
+		//Stack 1
+		initializeThingsString += "Tigers" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 3 + "SPLIT" 
+				+ GameConstants.TigersImageBack + "SPLIT" 
+				+ GameConstants.TigersImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Villains" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.VillainsImageBack + "SPLIT" 
+				+ GameConstants.VillainsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Giant Lizard" + "SPLIT"
+				+ "SWAMP" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.GiantLizardImageBack + "SPLIT" 
+				+ GameConstants.GiantLizardImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Tribesman" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.TribesmanImageBack + "SPLIT" 
+				+ GameConstants.TribesmanImageFront +"SPLIT";
+		initializeThingsString += "/";
+		
+		//PLAYER 3 THINGS (reverse order)
+		//Stack 3
+		initializeThingsString += "Witch Doctor" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.WitchDoctorImageBack + "SPLIT" 
+				+ GameConstants.WitchDoctorImageFront +"SPLIT"
+				+ "MAGIC";
+		initializeThingsString += "/";
+		initializeThingsString += "Nomads" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.NomadsImageBack + "SPLIT" 
+				+ GameConstants.NomadsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Great Hunter" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 4 + "SPLIT" 
+				+ GameConstants.GreatHunterImageBack + "SPLIT" 
+				+ GameConstants.GreatHunterImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		
+		//Stack 2
+		initializeThingsString += "Pygmies" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.PygmiesImageBack + "SPLIT" 
+				+ GameConstants.PygmiesImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Genie" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 4 + "SPLIT" 
+				+ GameConstants.GenieImageBack + "SPLIT" 
+				+ GameConstants.GenieImageFront +"SPLIT"
+				+ "MAGIC";
+		initializeThingsString += "/";
+		
+		//Stack 1
+		initializeThingsString += "Farmers" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.FarmersImageBack + "SPLIT" 
+				+ GameConstants.FarmersImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Farmers" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.FarmersImageBack + "SPLIT" 
+				+ GameConstants.FarmersImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Camel Corps" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 3 + "SPLIT" 
+				+ GameConstants.CamelCorpsImageBack + "SPLIT" 
+				+ GameConstants.CamelCorpsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Centaur" + "SPLIT"
+				+ "PLAINS" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.CentaurImageBack + "SPLIT" 
+				+ GameConstants.CentaurImageFront +"SPLIT";
+		initializeThingsString += "/";
+		
+		//PLAYER 2 THINGS (reverse order)
+		//Stack 1
+		initializeThingsString += "Bandits" + "SPLIT"
+				+ "FOREST" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.BanditsImageBack + "SPLIT" 
+				+ GameConstants.BanditsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Crawling Vines" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 6 + "SPLIT" 
+				+ GameConstants.CrawlingVinesImageBack + "SPLIT" 
+				+ GameConstants.CrawlingVinesImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Walking Tree" + "SPLIT"
+				+ "FOREST" + "SPLIT" 
+				+ 5 + "SPLIT" 
+				+ GameConstants.WalkingTreeImageBack + "SPLIT" 
+				+ GameConstants.WalkingTreeImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Druid" + "SPLIT"
+				+ "FOREST" + "SPLIT" 
+				+ 3 + "SPLIT" 
+				+ GameConstants.DruidImageBack + "SPLIT" 
+				+ GameConstants.DruidImageFront +"SPLIT"
+				+ "MAGIC";
+		initializeThingsString += "/";
+		initializeThingsString += "Nomads" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.NomadsImageBack + "SPLIT" 
+				+ GameConstants.NomadsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Crocodiles" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.CrocodilesImageBack + "SPLIT" 
+				+ GameConstants.CrocodilesImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Dervish" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.DervishImageBack + "SPLIT" 
+				+ GameConstants.DervishImageFront +"SPLIT"
+				+ "MAGIC";
+		initializeThingsString += "/";
+		initializeThingsString += "Green Knight" + "SPLIT"
+				+ "FOREST" + "SPLIT" 
+				+ 4 + "SPLIT" 
+				+ GameConstants.GreenKnightImageBack + "SPLIT" 
+				+ GameConstants.GreenKnightImageFront +"SPLIT"
+				+ "CHARGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Sandworm" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 3 + "SPLIT" 
+				+ GameConstants.SandwormImageBack + "SPLIT" 
+				+ GameConstants.SandwormImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Pterodactyl Warriors" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.PterodactylWarriorsImageBack + "SPLIT" 
+				+ GameConstants.PterodactylWarriorsImageFront +"SPLIT"
+				+ "RANGE" + "SPLIT"
+				+ "FLYING";
+		initializeThingsString += "/";
+		
 		
 		//PLAYER 1 THINGS (reverse order)
 		//Stack 2
@@ -476,51 +687,51 @@ public class GameModel {
 				+ GameConstants.SkeletonsImageFront + "SPLIT";
 		initializeThingsString += "/";
 		
-		/*
+		
 		//Stack 1
-		initializeThingsString += "Skeletons" + "SPLIT"
-				+ "DESERT" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
-				+ GameConstants.SkeletonsImageFront +"SPLIT"
+		initializeThingsString += "Dwarves" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.DwarvesImageBack + "SPLIT" 
+				+ GameConstants.DwarvesImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
-		initializeThingsString += "Skeletons" + "SPLIT"
-				+ "DESERT" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
-				+ GameConstants.SkeletonsImageFront +"SPLIT"
+		initializeThingsString += "Giant" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 4 + "SPLIT" 
+				+ GameConstants.GiantImageBack + "SPLIT" 
+				+ GameConstants.GiantImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
-		initializeThingsString += "Skeletons" + "SPLIT"
+		initializeThingsString += "Brown Knight" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 4 + "SPLIT" 
+				+ GameConstants.BrownKnightImageBack + "SPLIT" 
+				+ GameConstants.BrownKnightImageFront +"SPLIT"
+				+ "CHARGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Elephant" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 4 + "SPLIT" 
+				+ GameConstants.ElephantImageBack + "SPLIT" 
+				+ GameConstants.ElephantImageFront +"SPLIT"
+				+ "CHARGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Giant Spider" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
-				+ GameConstants.SkeletonsImageFront +"SPLIT"
-				+ "RANGE";
+				+ GameConstants.GiantSpiderImageBack + "SPLIT" 
+				+ GameConstants.GiantSpiderImageFront +"SPLIT";
 		initializeThingsString += "/";
-		initializeThingsString += "Skeletons" + "SPLIT"
+		initializeThingsString += "Old Dragon" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
-				+ GameConstants.SkeletonsImageFront +"SPLIT"
-				+ "RANGE";
+				+ 4 + "SPLIT" 
+				+ GameConstants.OldDragonImageBack + "SPLIT" 
+				+ GameConstants.OldDragonImageFront +"SPLIT"
+				+ "FLYING" + "SPLIT"
+				+ "MAGIC";
 		initializeThingsString += "/";
-		initializeThingsString += "Skeletons" + "SPLIT"
-				+ "DESERT" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
-				+ GameConstants.SkeletonsImageFront +"SPLIT"
-				+ "RANGE";
-		initializeThingsString += "/";
-		initializeThingsString += "Skeletons" + "SPLIT"
-				+ "DESERT" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
-				+ GameConstants.SkeletonsImageFront +"SPLIT"
-				+ "RANGE";
-		initializeThingsString += "/";
-		*/
+		
 		
 		return initializeThingsString;
 	}
@@ -570,10 +781,9 @@ public class GameModel {
 								);
 			}
 		
-		//TEMP
-		for(Thing i: playingCup)
+		for(int i=0; i<playingCup.size(); i++)
 		{
-			System.out.println(i.toString());
+			System.out.println(playingCup.get((i)).toString());
 		}
 	}
 
