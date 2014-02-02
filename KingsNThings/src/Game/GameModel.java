@@ -15,11 +15,13 @@ public class GameModel {
 	//private GameBoard gameBoard;						//board holding the Hex Tiles in play
 	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
 	private Player player1, player2, player3, player4;	//Players of the game
+	private Player currPlayer;
 	private Vector<Thing> playingCup;					//Container to hold unplayed Things
 	private Vector<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
 	private Vector<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
 	private Dice dice;									//Object to emulate up to 4 dice
 	private int playerCount;
+	private GameBoard gameBoard;
 	
 	public BoardController boardController;
 	
@@ -38,14 +40,23 @@ public class GameModel {
 		return null;
 	}
 	
+	public void SetCurrentPlayer(int playerNum){
+		if ( playerNum == 0 ) { currPlayer = player1; }
+		if ( playerNum == 1 ) { currPlayer = player2; }
+		if ( playerNum == 2 ) { currPlayer = player3; }
+		if ( playerNum == 3 ) { currPlayer = player4; }
+	}
+	
+	public Player GetCurrentPlayer(){
+		return currPlayer;
+	}
+	
 	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
-		GameBoard gameBoard = new GameBoard();
+		gameBoard = new GameBoard();
 		
-		//initialize unusedTiles
-		createHexTiles();
-		setUpHexTiles(gameBoard);
+		unusedTiles = new LinkedList<HexTile>();
 		
 		this.player1 = new Player(1);
 		this.player2 = new Player(2);
@@ -116,10 +127,102 @@ public class GameModel {
 	}
 	
 	//create the 48 HexTiles to use for the Game
-	private void createHexTiles() {
-		unusedTiles = new LinkedList<HexTile>();
+	public static String initializeHexTiles() {		
+		String initializeHexTilesString = "";
 		
-		//add all but 4 SEA HexTiles
+		//HARD-CODING FOR FIRST ITERATION
+		initializeHexTilesString += "DESERT" + "SPLIT" + 0 + "SPLIT" + 3;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "SWAMP" + "SPLIT" + 1 + "SPLIT" + 3;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + 2 + "SPLIT" + 3;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "JUNGLE" + "SPLIT" + 3 + "SPLIT" + 3;
+		initializeHexTilesString += "/";
+		
+		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + -1 + "SPLIT" + 2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "JUNGLE" + "SPLIT" + 0 + "SPLIT" + 2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "PLAINS" + "SPLIT" + 1 + "SPLIT" + 2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + 2 + "SPLIT" + 2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "SWAMP" + "SPLIT" + 3 + "SPLIT" + 2;
+		initializeHexTilesString += "/";
+		
+		initializeHexTilesString += "FOREST" + "SPLIT" + -2 + "SPLIT" + 1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + -1 + "SPLIT" + 1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "SWAMP" + "SPLIT" + 0 + "SPLIT" + 1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FOREST" + "SPLIT" + 1 + "SPLIT" + 1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + 2 + "SPLIT" + 1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "DESERT" + "SPLIT" + 3 + "SPLIT" + 1;
+		initializeHexTilesString += "/";
+		
+		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + -3 + "SPLIT" + 0;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "PLAINS" + "SPLIT" + -2 + "SPLIT" + 0;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FOREST" + "SPLIT" + -1 + "SPLIT" + 0;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + 0 + "SPLIT" + 0;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "JUNGLE" + "SPLIT" + 1 + "SPLIT" + 0;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + 2 + "SPLIT" + 0;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FOREST" + "SPLIT" + 3 + "SPLIT" + 0;
+		initializeHexTilesString += "/";
+		
+		initializeHexTilesString += "JUNGLE" + "SPLIT" + -3 + "SPLIT" + -1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "DESERT" + "SPLIT" + -2 + "SPLIT" + -1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "SEA" + "SPLIT" + -1 + "SPLIT" + -1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "PLAINS" + "SPLIT" + 0 + "SPLIT" + -1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "SWAMP" + "SPLIT" + 1 + "SPLIT" + -1;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "PLAINS" + "SPLIT" + 2 + "SPLIT" + -1;
+		initializeHexTilesString += "/";
+		
+		initializeHexTilesString += "PLAINS" + "SPLIT" + -3 + "SPLIT" + -2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FOREST" + "SPLIT" + -2 + "SPLIT" + -2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "SWAMP" + "SPLIT" + -1 + "SPLIT" + -2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "DESERT" + "SPLIT" + 0 + "SPLIT" + -2;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FOREST" + "SPLIT" + 1 + "SPLIT" + -2;
+		initializeHexTilesString += "/";
+		
+		initializeHexTilesString += "DESERT" + "SPLIT" + -3 + "SPLIT" + -3;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + -2 + "SPLIT" + -3;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "JUNGLE" + "SPLIT" + -1 + "SPLIT" + -3;
+		initializeHexTilesString += "/";
+		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + -0 + "SPLIT" + -3;
+		initializeHexTilesString += "/";
+		
+		initializeHexTilesString += " ";
+		
+		//INITIALIZE UNUSED TILES
+		initializeHexTilesString += "FROZEN_WASTE";
+		initializeHexTilesString += "/";
+
+		
+		return initializeHexTilesString;
+		
+		//COMMENTED OUT FOR FIRST ITERATION
+		/*//add all but 4 SEA HexTiles
 		for(int i=0; i < GameConstants.NUM_SEA_TILES-4; i++)
 		{
 			unusedTiles.add(new HexTile(Terrain.SEA));
@@ -159,19 +262,10 @@ public class GameModel {
 		{
 			unusedTiles.add(new HexTile(Terrain.DESERT));
 		}
+		*/
 		
-		setUpHexTiles();
-	}
-
-	public void randomizePlayingCup() {
-		Collections.shuffle(playingCup);
-	}
-
-	public void randomizeSpecialCharacters() {
-		Collections.shuffle(unownedCharacters);
-	}
-	
-	public void setUpHexTiles(GameBoard gameBoard) {
+		//COMMENTED OUT FOR FIRST ITERATION
+		/*
 		int x=0, y=0;	//current tile coordinates
 		
 		//add center tile
@@ -254,6 +348,15 @@ public class GameModel {
 			unusedTiles.add(new HexTile(Terrain.SEA));
 		}
 		shuffleUnusedTiles();
+		*/
+	}
+
+	public void randomizePlayingCup() {
+		Collections.shuffle(playingCup);
+	}
+
+	public void randomizeSpecialCharacters() {
+		Collections.shuffle(unownedCharacters);
 	}
 	
 	public void setPlayerOrder(int firstPlayerIndex) {
@@ -299,6 +402,39 @@ public class GameModel {
 		player2.updatePlayerOrder(playerCount);	
 		player3.updatePlayerOrder(playerCount);	
 		player4.updatePlayerOrder(playerCount);	
+	}
+
+	public void setInitialHexTiles(String[] hexTileStrings) {
+		for(int i=0; i< hexTileStrings.length; i++)
+		{
+			String hexTileString = hexTileStrings[i];
+			String[] hexTileParamStrings = hexTileString.split("SPLIT");
+			
+			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(hexTileParamStrings[0]);
+			int x = Integer.parseInt(hexTileParamStrings[1]);
+			int y = Integer.parseInt(hexTileParamStrings[2]);
+			
+			gameBoard.addHexTile(new HexTile(terrain), x, y);
+		}
+		
+	}
+
+	public void setInitialUnusedHexTiles(String[] unusedHexTileStrings) {
+		for(int i=0; i< unusedHexTileStrings.length; i++)
+		{
+			String hexTileString = unusedHexTileStrings[i];
+			String[] hexTileParamStrings = hexTileString.split("SPLIT");
+			
+			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(hexTileParamStrings[0]);
+			
+			unusedTiles.add(new HexTile(terrain));
+		}
+		
+	}
+	
+	public void printCurrentBoardTiles()
+	{
+		gameBoard.printCurrentTiles();
 	}
 
 }

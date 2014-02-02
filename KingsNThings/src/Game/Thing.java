@@ -12,6 +12,7 @@ public abstract class Thing {
 	ThingType thingType;		//type of thing (enum defined in GameConstants class
 	String name;				//display name of this Thing
 	HexTile currentTile;
+	public String filename;
 	
 	public Thing(ThingType thingType, String name)
 	{
