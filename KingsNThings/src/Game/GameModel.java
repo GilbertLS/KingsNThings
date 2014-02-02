@@ -78,6 +78,8 @@ public class GameModel {
 	private void createNewSpecialCharacters() {
 		this.unownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
+		//REMOVED FOR ITERATION 1
+		/*
 		//placeholder until we get the time to determine proper values for all Special Characters
 		for(int i=0; i< Math.floor(GameConstants.MAX_NUM_SPECIAL_CHARACTERS/2); i++)
 		{
@@ -94,10 +96,13 @@ public class GameModel {
 			unownedCharacters.add(new TerrainLord(Terrain.PLAINS));
 			unownedCharacters.add(new TerrainLord(Terrain.SWAMP));
 		}
+		*/
 	}
 	private void createNewThings() {
 		this.playingCup = new Vector<Thing>(GameConstants.MAX_NUM_THINGS);
 		
+		//REMOVED FOR ITERATION 1
+		/*
 		//placeholder until we get the time to determine proper values for all Things
 		for(int i=0; i<10; i++)
 		{
@@ -124,6 +129,7 @@ public class GameModel {
 			playingCup.add(new SpecialIncome(Terrain.SWAMP));
 			playingCup.add(new SpecialIncome(Terrain.MOUNTAIN));
 		}
+		*/
 	}
 	
 	//create the 48 HexTiles to use for the Game
@@ -435,6 +441,73 @@ public class GameModel {
 	public void printCurrentBoardTiles()
 	{
 		gameBoard.printCurrentTiles();
+	}
+
+	public static String initializeCreatures() {
+		String initializeThingsString = "";
+		
+		//PLAYER 1 THINGS (REVERSE ORDER)
+		initializeThingsString += "Witch Doctor" + "SPLIT"
+									+ "DESERT" + "SPLIT" 
+									+ 3 + "SPLIT" 
+									+ GameConstants.WitchDoctorImageBack + "SPLIT" 
+									+ GameConstants.WitchDoctorImageFront +"SPLIT"
+									+ "MAGIC";
+		initializeThingsString += "/";
+		
+		return initializeThingsString;
+	}
+
+	public void setPlayingCup(String[] creatureStrings) {
+		for(int i=0; i< creatureStrings.length; i++)
+		{
+			String creatureString = creatureStrings[i];
+			String[] creatureParamsString = creatureString.split("SPLIT");
+			
+			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(creatureParamsString[1]);
+			String name = creatureParamsString[0];
+			int attackValue = Integer.parseInt(creatureParamsString[2]);
+			String backFileName = creatureParamsString[3];
+			String frontFileName = creatureParamsString[4];
+			boolean isCharge = false;
+			boolean isFlying = false;
+			boolean isMagic = false;
+			boolean isRange = false;
+			
+			if(creatureParamsString.length > 5)
+			{
+				for(int j=5; j< creatureParamsString.length; j++)
+				{
+					String special = creatureParamsString[j];
+					
+					if (special.equals("CHARGE"))
+						isCharge = true;
+						
+					if (special.equals("FLYING"))
+						isFlying = true;
+						
+					if (special.equals("MAGIC"))
+						isMagic = true;
+						
+					if (special.equals("RANGE"))
+						isRange = true;
+				}
+			}
+
+			
+			playingCup.add(new Creature(terrain, name, attackValue, backFileName, frontFileName)
+								.IsCharge(isCharge)
+								.IsFlying(isFlying)
+								.IsMagic(isMagic)
+								.IsRange(isRange)
+								);
+			}
+		
+		//TEMP
+		for(Thing i: playingCup)
+		{
+			System.out.println(i.toString());
+		}
 	}
 
 }

@@ -107,28 +107,13 @@ public class GameController implements Runnable {
 	}
 	
 	private void initialSetup() {
-		//perform initial setup of the game via the model
-		//call the view to update when necessary	
-		
-		//Vector applicablePlayers = new Vector(1);
-		//for(int i=0; i<playerCount; i++)
-		//{
-			//applicablePlayers.add(i);
-		//}
-		//Response initialHexesResponse = EventHandler.sendEvent(GET_CURRENT_CUP, applicablePlayers, null);
-		//initialHexesResponse.getHexTiles();
-		
-		//gameModel.randomizePlayingCup();
-		
-		//gameModel.randomizeSpecialCharacters();
-		
-		//gameModel.setUpHexTiles();
-		
 		//gameView.drawInitGame();
 		
 		determineInitialPlayerOrder();
 		
 		initializeHexTiles();
+		
+		initializeCreaturesCup();
 		
 		playPhases();
 		
@@ -144,6 +129,20 @@ public class GameController implements Runnable {
 		GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId( EventList.SET_HEX_TILES )
+					.EventParameters( args )
+			);
+		
+	}
+	
+	private void initializeCreaturesCup() {
+		String initializeCreaturesString = GameModel.initializeCreatures();
+		
+		String[] args = new String[1];
+		args[0] = initializeCreaturesString;
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.SET_CREATURES )
 					.EventParameters( args )
 			);
 		
