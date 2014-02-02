@@ -36,4 +36,8 @@ public class GameBoard {
 		}
 		
 	}
+
+	public HexTile[][] getTiles() {
+		return boardPieces;
+	}
 }

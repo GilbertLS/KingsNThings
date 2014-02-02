@@ -410,7 +410,7 @@ public class GameModel {
 		player4.updatePlayerOrder(playerCount);	
 	}
 
-	public void setInitialHexTiles(String[] hexTileStrings) {
+	public HexTile[][] setInitialHexTiles(String[] hexTileStrings) {
 		for(int i=0; i< hexTileStrings.length; i++)
 		{
 			String hexTileString = hexTileStrings[i];
@@ -422,6 +422,8 @@ public class GameModel {
 			
 			gameBoard.addHexTile(new HexTile(terrain), x, y);
 		}
+		
+		return gameBoard.getTiles();
 		
 	}
 
