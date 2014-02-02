@@ -30,11 +30,11 @@ public class TilePreview extends VBox {
 		view4.getStyleClass().add("preview-list");
 		viewNeutral.getStyleClass().add("preview-list");
 		
-		view1.setPrefWidth(300);
-		view2.setPrefWidth(300);
-		view3.setPrefWidth(300);
-		view4.setPrefWidth(300);
-		viewNeutral.setPrefWidth(300);
+		view1.setPrefWidth(400);
+		view2.setPrefWidth(400);
+		view3.setPrefWidth(400);
+		view4.setPrefWidth(400);
+		viewNeutral.setPrefWidth(400);
 		
 		this.getChildren().add(view1);
 		this.getChildren().add(view2);
@@ -62,11 +62,11 @@ public class TilePreview extends VBox {
 	public void changeTile(Tile t) {
 		tileRef = t;
 		
-		view1.getChildren().setAll(t.p1Things);
-		view2.getChildren().setAll(t.p2Things);
-		view3.getChildren().setAll(t.p3Things);
-		view4.getChildren().setAll(t.p4Things);
-		viewNeutral.getChildren().setAll(t.neutralThings);
+		view1 = new ThingViewList(FXCollections.observableList(t.p1Things));
+		view2 = new ThingViewList(FXCollections.observableList(t.p2Things));
+		view3 = new ThingViewList(FXCollections.observableList(t.p3Things));
+		view4 = new ThingViewList(FXCollections.observableList(t.p4Things));
+		viewNeutral = new ThingViewList(FXCollections.observableList(t.neutralThings));
 		
 		show();
 	}
