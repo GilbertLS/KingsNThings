@@ -38,8 +38,16 @@ public final class GameConstants {
 	public static final String PlaceHolderImageBack = "C_Fort_375.png";
 	public static final String TowerImageBack = "C_Fort_375.png";
 	public static final String TowerImageFront = "C_Fort_376.png";
-	public static final String WitchDoctorImageBack = "temp";
-	public static final String WitchDoctorImageFront = "temp";
+	public static final String WitchDoctorImageBack = "C_Fort_375.png";
+	public static final String WitchDoctorImageFront = "C_Fort_375.png";
+	public static final String OgreImageBack = "C_Fort_375.png";
+	public static final String OgreImageFront = "C_Fort_375.png";
+	public static final String GoblinsImageBack = "C_Fort_375.png";
+	public static final String GoblinsImageFront = "C_Fort_375.png";
+	public static final String WatusiImageBack = "C_Fort_375.png";
+	public static final String WatusiImageFront = "C_Fort_375.png";
+	public static final String SkeletonsImageBack = "C_Fort_375.png";
+	public static final String SkeletonsImageFront = "C_Fort_375.png";
 	
 	//-------------/end ENUMS---------------
 	
@@ -76,6 +84,7 @@ public final class GameConstants {
 	//event types
 	public static final int PLAYERS_ROLL = 0;
 	public static final int UPDATE_PLAYER_ORDER = 1;
+
 
 
 
