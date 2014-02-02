@@ -30,11 +30,16 @@ public final class GameConstants {
 	//The different levels a Fort can have (Tower < Keep < Castle < Citadel)
 	public static enum Level {TOWER, KEEP, CASTLE, CITADEL}
 	
-	//The different special types of Combatants there can be
-	public static enum SpecialType {NONE, FLYING, MAGIC, RANGED, CHARGE}
-	
 	//The different type of Settlements
 	public static enum SettlementType {VILLAGE, CITY}
+	
+	//The different type of Settlements
+	public static final String PlaceHolderImageFront = "C_Fort_375.png";
+	public static final String PlaceHolderImageBack = "C_Fort_375.png";
+	public static final String TowerImageBack = "C_Fort_375.png";
+	public static final String TowerImageFront = "C_Fort_376.png";
+	public static final String WitchDoctorImageBack = "temp";
+	public static final String WitchDoctorImageFront = "temp";
 	
 	//-------------/end ENUMS---------------
 	

@@ -9,8 +9,8 @@ import Game.GameConstants.ThingType;
 public class Treasure extends Thing{
 	//temp
 	private static int treasureID = 0;
-	public Treasure()
+	public Treasure(String backFileName, String frontFileName)
 	{
-		super(ThingType.TREASURE, "Treasure" + treasureID);
+		super(ThingType.TREASURE, "Treasure" + treasureID++, backFileName, frontFileName);
 	}
 }

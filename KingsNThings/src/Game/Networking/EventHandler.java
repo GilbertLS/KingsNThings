@@ -103,5 +103,15 @@ public class EventHandler {
 			
 			//GameClient.game.gameModel.printCurrentBoardTiles();
 		}
+		else if (e.eventId == EventList.SET_CREATURES)
+		{
+			String creaturesString = e.eventParams[0];
+			
+			String[] creaturesStrings = creaturesString.split("/");
+			
+			GameClient.game.gameModel.setPlayingCup(creaturesStrings);
+			
+			//GameClient.game.gameModel.printCurrentBoardTiles();
+		}
 	}
 }

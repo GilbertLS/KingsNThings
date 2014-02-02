@@ -13,6 +13,8 @@ public class EventList {
 	public static final int GET_OTHER_ROLLS = 9;
 	public static final int SET_CURRENT_PLAYER = 10;
 	public static final int SET_HEX_TILES = 11;
+	public static final int SET_CREATURES = 12;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
+
 }
