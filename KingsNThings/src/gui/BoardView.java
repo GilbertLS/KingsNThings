@@ -1,5 +1,8 @@
 package gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import Game.HexTile;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,20 +15,21 @@ import javafx.scene.layout.Region;
 public class BoardView extends Region {
 	TilePreview tilePreview;
 	
-	BoardView(HexTile[][] h, TilePreview tp)
+	BoardView(TilePreview tp)
 	{
 		tilePreview = tp;
 		
 		getStyleClass().add("board");
-		addTiles(h);
 	}
 
-	private void addTiles(HexTile[][] h) {
-		Double width 	= 120.0;
-		Double height 	= 106.0;
+	public void setTiles(HexTile[][] h) {
+		Double width 	= 100.0;
+		Double height 	= 88.0;
 		
 		setMinSize(width*6, height*7+16);
 		setMaxSize(width*6, height*7+16);
+		
+		ArrayList<Tile> list = new ArrayList<Tile>();
 		
         for (int i = 0; i < 7; i++) {
         	for (int j = 0; j < 7; j++) {
@@ -55,9 +59,11 @@ public class BoardView extends Region {
 	    		        }
 	    			});*/
 	    	        
-	    	        getChildren().add(tile);
+	    	        list.add(tile);
         		}
         	}
+        	
+        	this.getChildren().setAll(list);
         }
     }
 }

@@ -47,7 +47,8 @@ public class GameView extends Scene {
         
         tilePreview = new TilePreview();
         
-        board = new BoardView(tiles, tilePreview);
+        board = new BoardView(tilePreview);
+        board.setTiles(tiles);
         root.setCenter(board);        
         
         playerList = new PlayerList(Arrays.asList(new PlayerPanel("Player 1", 0), new PlayerPanel("Player 2", 0), new PlayerPanel("Player 3", 0), new PlayerPanel("Player 4", 0)));
