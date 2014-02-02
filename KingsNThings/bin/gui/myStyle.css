@@ -42,10 +42,10 @@
     -fx-text-fill: white;
 }
 
-.rack .scroll-bar:vertical .increment-arrow,
-.rack .scroll-bar:vertical .decrement-arrow,
-.rack .scroll-bar:vertical .increment-button,
-.rack .scroll-bar:vertical .decrement-button {
+.thingview-list .scroll-bar:vertical .increment-arrow,
+.thingview-list .scroll-bar:vertical .decrement-arrow,
+.thingview-list .scroll-bar:vertical .increment-button,
+.thingview-list .scroll-bar:vertical .decrement-button {
     -fx-padding:0;
 }
 
@@ -65,4 +65,17 @@
 	-fx-background-image: url("../res/images/T_Back.png");
 	-fx-background-repeat: stretch;
 	-fx-background-position: center center;
+}
+
+.button-box {
+	-fx-padding: 10px;
+	-fx-background-color: #000000;
+}
+
+.button-box .button {
+	-fx-margin: 10px;
+}
+
+.preview-list {
+	-fx-width: 100%;
 }
