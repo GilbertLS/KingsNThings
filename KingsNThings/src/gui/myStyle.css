@@ -55,16 +55,27 @@
 
 .tile {
 	-fx-background-color: #564456;
-	-fx-background-image: url("../res/images/Tuile_Back.png");
 	-fx-background-repeat: stretch;
 	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+}
+
+.tile:hover {
+	-fx-border: 10px;
+	-fx-border-color: red;
+}
+
+.tile:selected {
+	-fx-border: 10px;
+	-fx-border-color: red;
 }
 
 .thing {
 	-fx-background: #FFFF00;
 	-fx-background-image: url("../res/images/T_Back.png");
-	-fx-background-repeat: stretch;
+	-fx-background-repeat: no-repeat;
 	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
 }
 
 .button-box {
