@@ -3,6 +3,8 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.GameConstants;
+import Game.HexTile;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -15,6 +17,7 @@ import javafx.scene.shape.Polygon;
 
 public class Tile extends Region implements Draggable {
 	Tile thisTile = this;
+	HexTile tileRef;
 	ArrayList<ThingView> p1Things = 		new ArrayList<ThingView>();
 	ArrayList<ThingView> p2Things = 		new ArrayList<ThingView>();
 	ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
@@ -24,10 +27,13 @@ public class Tile extends Region implements Draggable {
 	ThingView economy;
 	int controllingPlayer = 0;
 	
-    public Tile(Double width, Double height)
+    public Tile(Double width, Double height, HexTile h)
     {
-    	getStyleClass().add("tile");
-    	setPrefSize(width, height);
+    	tileRef = h;
+    	
+    	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	this.getStyleClass().add("tile");
+    	this.setPrefSize(width, height);
     	
     	Polygon hex = new Polygon();
     	hex.getPoints().addAll(new Double[]{
@@ -38,8 +44,8 @@ public class Tile extends Region implements Draggable {
     		    3*width/4, 	height,
     		    width/4, 	height});
 
-        setShape(hex);
-        initListeners();
+    	this.setShape(hex);
+    	this.initListeners();
     }
     
     private ArrayList<ThingView> getView(int i) {
@@ -69,6 +75,24 @@ public class Tile extends Region implements Draggable {
     
     public void removeAll(List<ThingView> t, int player) {
     	getView(player).removeAll(t);
+    }
+    
+    private String getBackgroundFromType()
+    {
+    	if (tileRef != null) {
+    		switch (tileRef.getTerrain()) {
+    			case SEA: return "Tuile-Mer.png";
+    			case JUNGLE: return "Tuile-Jungle.png";
+    			case FROZEN_WASTE: return "Tuile-Entendue-Glacée.png";
+    			case FOREST: return "Tuile-Forêt.png";
+    			case PLAINS: return "Tuile-Plaines.png";
+    			case SWAMP: return "Tuile-Marais.png";
+    			case MOUNTAIN: return "Tuile-Montagne.png";
+    			case DESERT: return "Tuile-Desert.png";
+    		}
+    	}
+    	
+    	return "Tuile_Back.png";
     }
 
     protected void initListeners()
@@ -124,13 +148,6 @@ public class Tile extends Region implements Draggable {
 				e.setDropCompleted(success);
 				e.consume();
 			}
-		});
-		
-		focusedProperty().addListener(new ChangeListener() {
-	        @Override
-	        public void changed(ObservableValue ov, Object t, Object t1) {
-	        	thisTile.setStyle("");
-	        }
 		});
 	}
     

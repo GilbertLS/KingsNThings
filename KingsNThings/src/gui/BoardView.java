@@ -23,21 +23,21 @@ public class BoardView extends Region {
 	}
 
 	public void setTiles(HexTile[][] h) {
-		Double width 	= 100.0;
-		Double height 	= 88.0;
+		Double width 	= 120.0;
+		Double height 	= 108.0;
 		
 		setMinSize(width*6, height*7+16);
 		setMaxSize(width*6, height*7+16);
 		
 		ArrayList<Tile> list = new ArrayList<Tile>();
 		
-        for (int i = 0; i < 7; i++) {
-        	for (int j = 0; j < 7; j++) {
+        for (int i = 6; i >= 0; i--) {
+        	for (int j = 6; j >= 0; j--) {
         		if (h[i][j] != null) {
-	    	        Tile tile = new Tile(width, height);
+	    	        Tile tile = new Tile(width, height, h[i][j]);
 	    	        
-	    	        Double x = j*width - j*30 + j*4;
-	    	        Double y = i*height + j*height/2 - 3*height/2 + i + 2;
+	    	        Double x = width*3/4*(7+i) - j*width*3/4 - width*3/4*7/2;
+	    	        Double y = height/2*(7-i) - j*height/2 + height/2*7/1.4;
 	    	        tile.relocate(x, y);
 	    	        tile.setOnMouseClicked(new EventHandler<MouseEvent>(){
 	    	        	 
@@ -45,7 +45,6 @@ public class BoardView extends Region {
 	    	            public void handle(MouseEvent e) {
 	    	            	Tile t = (Tile)e.getSource();
 	    	            	tilePreview.changeTile((t));
-	    	            	t.setStyle("-fx-border: 100px; -fx-border-color: 'red';");
 	    	            }
 	    	        });
 	    	        	    	        
