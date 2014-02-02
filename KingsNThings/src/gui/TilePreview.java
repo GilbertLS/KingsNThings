@@ -47,16 +47,16 @@ public class TilePreview extends VBox {
 		
 		if (view1.getChildren().size() > 0)
 			list.add(view1);
-		else if (view2.getChildren().size() > 0)
+		if (view2.getChildren().size() > 0)
 			list.add(view2);
-		else if (view3.getChildren().size() > 0)
+		if (view3.getChildren().size() > 0)
 			list.add(view3);
-		else if (view4.getChildren().size() > 0)
+		if (view4.getChildren().size() > 0)
 			list.add(view4);
-		else if (viewNeutral.getChildren().size() > 0)
+		if (viewNeutral.getChildren().size() > 0)
 			list.add(viewNeutral);
-		
-		this.getChildren().setAll(list);
+
+		this.getChildren().setAll(view1);
 	}
 		
 	public void changeTile(Tile t) {

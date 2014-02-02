@@ -129,7 +129,7 @@ public class Tile extends Region implements Draggable {
 		focusedProperty().addListener(new ChangeListener() {
 	        @Override
 	        public void changed(ObservableValue ov, Object t, Object t1) {
-	        	thisTile.setStyle("-fx-border: 0px;");
+	        	thisTile.setStyle("");
 	        }
 		});
 	}
