@@ -448,14 +448,79 @@ public class GameModel {
 	public static String initializeCreatures() {
 		String initializeThingsString = "";
 		
-		//PLAYER 1 THINGS (REVERSE ORDER)
-		initializeThingsString += "Witch Doctor" + "SPLIT"
-									+ "JUNGLE" + "SPLIT" 
-									+ 2 + "SPLIT" 
-									+ GameConstants.WitchDoctorImageBack + "SPLIT" 
-									+ GameConstants.WitchDoctorImageFront +"SPLIT"
-									+ "MAGIC";
+		
+		//PLAYER 1 THINGS (reverse order)
+		//Stack 2
+		initializeThingsString += "Ogre" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.OgreImageBack + "SPLIT" 
+				+ GameConstants.OgreImageFront +"SPLIT";
 		initializeThingsString += "/";
+		initializeThingsString += "Goblins" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.GoblinsImageBack + "SPLIT" 
+				+ GameConstants.GoblinsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Watusi" + "SPLIT"
+				+ "JUNGLE" + "SPLIT" 
+				+ 2 + "SPLIT" 
+				+ GameConstants.WatusiImageBack + "SPLIT" 
+				+ GameConstants.WatusiImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront + "SPLIT";
+		initializeThingsString += "/";
+		
+		/*
+		//Stack 1
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		initializeThingsString += "Skeletons" + "SPLIT"
+				+ "DESERT" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.SkeletonsImageBack + "SPLIT" 
+				+ GameConstants.SkeletonsImageFront +"SPLIT"
+				+ "RANGE";
+		initializeThingsString += "/";
+		*/
 		
 		return initializeThingsString;
 	}
