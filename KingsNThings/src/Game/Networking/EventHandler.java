@@ -121,5 +121,24 @@ public class EventHandler {
 			
 			//GameClient.game.gameModel.printCurrentBoardTiles();
 		}
+		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS)
+		{
+			System.out.println("CREATING DIE ROLL RESPONSE EVENT");
+			
+			String[] args = new String[1];
+			args[0] = GameClient.game.gameModel.assignInitialThings();
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.ASSIGN_INITIAL_THINGS)
+						.EventParameters(args)
+			);
+		}
+		else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS)
+		{
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			GameClient.game.gameModel.handleAssignedInitialThings(playerIndex);
+		}
 	}
 }

@@ -14,7 +14,11 @@ public class EventList {
 	public static final int SET_CURRENT_PLAYER = 10;
 	public static final int SET_HEX_TILES = 11;
 	public static final int SET_CREATURES = 12;
+	public static final int ASSIGN_INITIAL_THINGS = 13;
+	public static final int HANDLE_ASSIGN_INITIAL_THINGS = 14;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
+
+
 
 }
