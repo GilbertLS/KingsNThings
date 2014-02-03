@@ -11,7 +11,12 @@ public class ThingView extends Label
 	{
 		thingRef = t;
 		
-		getStyleClass().add("thing");
-		setPrefSize(50, 50);
+		this.getStyleClass().add("thing");
+		this.setPrefSize(50, 50);
+		this.setBackground();
+	}
+	
+	private void setBackground() {
+		this.setStyle("-fx-background-image: url('res/images/" + this.thingRef.frontFileName + ");");
 	}
 }

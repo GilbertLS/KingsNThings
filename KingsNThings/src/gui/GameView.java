@@ -50,7 +50,7 @@ public class GameView extends Scene {
         board = new BoardView(tilePreview);
         root.setCenter(board);        
         
-        playerList = new PlayerList(Arrays.asList(new PlayerPanel("Player 1", 0), new PlayerPanel("Player 2", 0), new PlayerPanel("Player 3", 0), new PlayerPanel("Player 4", 0)));
+        playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
         
         buttonBox = new ButtonBox();

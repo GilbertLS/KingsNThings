@@ -133,12 +133,26 @@ public class EventHandler {
 						.EventId(EventList.ASSIGN_INITIAL_THINGS)
 						.EventParameters(args)
 			);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
+		        }
+		    });
 		}
 		else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS)
 		{
-			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			GameClient.game.gameModel.handleAssignedInitialThings(playerIndex);
+			System.out.println(playerIndex);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(10);
+		        }
+			});
 		}
 	}
 }

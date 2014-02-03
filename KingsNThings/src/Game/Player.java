@@ -41,4 +41,8 @@ public class Player {
 	public void addThingToRack(Thing currentThing) {
 		playerRack.addThing(currentThing);
 	}
+	
+	public PlayerRack getPlayerRack() {
+		return playerRack;
+	}
 }
