@@ -95,7 +95,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 4;
+		return servers.size() == 2;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -115,10 +115,47 @@ public class GameController implements Runnable {
 		
 		initializeCreaturesCup();
 		
+		assignInitialThings();
+		
 		playPhases();
 		
 	}
 	
+	private void assignInitialThings() {
+    	for(GameRouter gr : servers){
+    		boolean[] intendedPlayers = new boolean[4];
+    		
+    		intendedPlayers[gr.myID] = true;
+    		
+    		String[] eventParams = new String[]{ "" + gr.myID };
+    		
+    		Event e = new Event()
+    					.EventId(EventList.ASSIGN_INITIAL_THINGS)
+    					.EventParameters(eventParams)
+    					.IntendedPlayers(intendedPlayers)
+    					.ExpectsResponse(true);
+    		
+    		Response[] r = GameControllerEventHandler.sendEvent(e);
+    		
+    		for(int i=0; i<numClients; i++)
+    		{
+    			if(i == gr.myID)
+    				intendedPlayers[i] = false;
+    			else
+    				intendedPlayers[i] = true;
+    		}
+    		
+    		eventParams[0] = Integer.toString(gr.myID);
+    		
+    		e = new Event()
+				.EventId(EventList.HANDLE_ASSIGN_INITIAL_THINGS)
+				.EventParameters(eventParams)
+				.IntendedPlayers(intendedPlayers);
+
+    		GameControllerEventHandler.sendEvent(e);
+    	}
+	}
+
 	private void initializeHexTiles() {
 		String[] initializeHexTilesStrings = GameModel.initializeHexTiles().split(" ");
 		

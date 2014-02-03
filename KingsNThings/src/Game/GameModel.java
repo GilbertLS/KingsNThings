@@ -781,9 +781,55 @@ public class GameModel {
 								);
 			}
 		
+		/*
 		for(int i=0; i<playingCup.size(); i++)
 		{
 			System.out.println(playingCup.get((i)).toString());
+		}
+		*/
+	}
+
+	public String assignInitialThings() {
+		String s ="";
+		for(int i=0; i<10; i++)
+		{
+			Thing currentThing = playingCup.remove(playingCup.size()-1);
+			
+			currPlayer.addThingToRack(currentThing);
+			s += currentThing.thingID + "/";
+			
+			System.out.println(currentThing.toString());
+		}
+		
+		return s;
+	}
+
+	public void handleAssignedInitialThings(int playerIndex) {
+		Player player;
+		
+		switch(playerIndex)
+		{
+		case 0:
+			player = player1;
+			break;
+		case 1:
+			player = player2;
+			break;
+		case 2:
+			player = player3;
+			break;
+		default:
+			player = player4;
+			break;
+		}
+		
+		for(int i=0; i<10; i++)
+		{
+			Thing currentThing = playingCup.remove(playingCup.size()-1);
+			
+			player.addThingToRack(currentThing);
+			
+			System.out.println(currentThing.toString());
 		}
 	}
 
