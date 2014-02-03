@@ -15,4 +15,8 @@ public class PlayerRack {
 	public void addThing(Thing currentThing) {
 		things.add(currentThing);
 	}
+	
+	public Vector<Thing> getThings() {
+		return things;
+	}
 }

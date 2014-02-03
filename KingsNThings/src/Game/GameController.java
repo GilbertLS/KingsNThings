@@ -95,7 +95,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 2;
+		return servers.size() == 4;
 	}
 
 	public static void AddClient( GameRouter c ){
