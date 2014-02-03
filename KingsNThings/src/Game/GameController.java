@@ -132,10 +132,9 @@ public class GameController implements Runnable {
     		Event e = new Event()
     					.EventId(EventList.ASSIGN_INITIAL_THINGS)
     					.EventParameters(eventParams)
-    					.IntendedPlayers(intendedPlayers)
-    					.ExpectsResponse(true);
+    					.IntendedPlayers(intendedPlayers);
     		
-    		Response[] r = GameControllerEventHandler.sendEvent(e);
+    		GameControllerEventHandler.sendEvent(e);
     		
     		for(int i=0; i<numClients; i++)
     		{

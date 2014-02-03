@@ -14,16 +14,16 @@ public class Creature extends Combatant{
 	private Terrain terrain;	//terrain required to support this creature
 	
 	public static int creatureNum = 0;
-	public Creature(Terrain terrain, String name, int attackValue, String backFileName, String frontFileName)
+	public Creature(Terrain terrain, String name, int attackValue, String frontFileName)
 	{
-		super(ThingType.CREATURE, name, attackValue, backFileName, frontFileName);
+		super(ThingType.CREATURE, name, attackValue, frontFileName);
 		
 		this.terrain = terrain;
 	}
 	
 	public Creature(Terrain terrian)
 	{
-		super(ThingType.CREATURE, "creature"+creatureNum++, (int)Math.ceil(Math.random()*6), GameConstants.PlaceHolderImageBack, GameConstants.PlaceHolderImageFront);
+		super(ThingType.CREATURE, "creature"+creatureNum++, (int)Math.ceil(Math.random()*6), GameConstants.PlaceHolderImageFront);
 	}
 	
 	public Creature IsFlying(boolean isFlying){

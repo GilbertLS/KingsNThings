@@ -13,8 +13,6 @@ public class PlayerList extends VBox {
 	
 	public PlayerPanel getPlayerPanel(int playerNum)
 	{
-		if (this.getChildren().size() >= playerNum - 1)
-			return ((PlayerPanel)this.getChildren().get(playerNum - 1));
-		return null;
+			return ((PlayerPanel)this.getChildren().get(playerNum));
 	}
 }

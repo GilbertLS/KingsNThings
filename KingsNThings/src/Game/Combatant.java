@@ -15,9 +15,9 @@ public abstract class Combatant extends Thing{
 	protected boolean isCharge = false;
 	protected boolean isMagic = false;
 	
-	public Combatant(ThingType thingType, String name, int combatValue, String backFileName, String frontFileName)
+	public Combatant(ThingType thingType, String name, int combatValue, String frontFileName)
 	{
-		super(thingType, name, backFileName, frontFileName);
+		super(thingType, name, frontFileName);
 		
 		this.combatValue = combatValue;
 	}

@@ -10,8 +10,8 @@ public class Magic extends Thing{
 
 	//temp
 	private static int magicID = 0;
-	public Magic(String backFileName, String frontFileName)
+	public Magic(String frontFileName)
 	{
-		super(ThingType.MAGIC, "Magic" + magicID++, backFileName, frontFileName);
+		super(ThingType.MAGIC, "Magic" + magicID++, frontFileName);
 	}
 }

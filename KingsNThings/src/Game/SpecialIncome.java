@@ -14,9 +14,9 @@ public class SpecialIncome extends Thing implements IIncomable {
 	private Terrain terrain;	//terrain required to play this SpecialIncome
 	
 	private static int specialIncomeID = 0;
-	public SpecialIncome(Terrain terrain, String backFileName, String frontFileName)
+	public SpecialIncome(Terrain terrain, String frontFileName)
 	{
-		super(ThingType.SPECIAL_INCOME, "specialIncome" + specialIncomeID++, backFileName, frontFileName);
+		super(ThingType.SPECIAL_INCOME, "specialIncome" + specialIncomeID++, frontFileName);
 		
 		this.income = (int)Math.ceil(Math.random()*6);
 		this.terrain = terrain;

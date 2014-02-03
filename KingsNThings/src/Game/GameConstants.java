@@ -34,82 +34,47 @@ public final class GameConstants {
 	public static enum SettlementType {VILLAGE, CITY}
 	
 	//thing image paths
-	public static final String PlaceHolderImageFront = "C_Fort_375.png";
-	public static final String PlaceHolderImageBack = "C_Fort_375.png";
+	public static final String PlaceHolderImageFront = "Bowl.png";
+	public static final String PlaceHolderImageBack = "Bowl.png";
+	public static final String ThingImageBack = "T_Back.png";
 	public static final String TowerImageBack = "C_Fort_375.png";
 	public static final String TowerImageFront = "C_Fort_376.png";
-	public static final String WitchDoctorImageBack = "C_Fort_375.png";
-	public static final String WitchDoctorImageFront = "C_Fort_375.png";
-	public static final String OgreImageBack = "C_Fort_375.png";
-	public static final String OgreImageFront = "C_Fort_375.png";
-	public static final String GoblinsImageBack = "C_Fort_375.png";
-	public static final String GoblinsImageFront = "C_Fort_375.png";
-	public static final String WatusiImageBack = "C_Fort_375.png";
-	public static final String WatusiImageFront = "C_Fort_375.png";
-	public static final String SkeletonsImageBack = "C_Fort_375.png";
-	public static final String SkeletonsImageFront = "C_Fort_375.png";
-	public static final String DwarvesImageBack = "C_Fort_375.png";
-	public static final String DwarvesImageFront = "C_Fort_375.png";
-	public static final String GiantImageBack = "C_Fort_375.png";
-	public static final String GiantImageFront = "C_Fort_375.png";
-	public static final String BrownKnightImageBack = "C_Fort_375.png";
-	public static final String BrownKnightImageFront = "C_Fort_375.png";
-	public static final String ElephantImageBack = "C_Fort_375.png";
-	public static final String ElephantImageFront = "C_Fort_375.png";
-	public static final String GiantSpiderImageBack = "C_Fort_375.png";
-	public static final String GiantSpiderImageFront = "C_Fort_375.png";
-	public static final String OldDragonImageBack = "C_Fort_375.png";
-	public static final String OldDragonImageFront = "C_Fort_375.png";
-	public static final String BanditsImageBack = "C_Fort_375.png";
-	public static final String BanditsImageFront = "C_Fort_375.png";
-	public static final String CrawlingVinesImageBack = "C_Fort_375.png";
-	public static final String CrawlingVinesImageFront = "C_Fort_375.png";
-	public static final String WalkingTreeImageBack = "C_Fort_375.png";
-	public static final String WalkingTreeImageFront = "C_Fort_375.png";
-	public static final String DruidImageBack = "C_Fort_375.png";
-	public static final String DruidImageFront = "C_Fort_375.png";
-	public static final String NomadsImageBack = "C_Fort_375.png";
-	public static final String NomadsImageFront = "C_Fort_375.png";
-	public static final String CrocodilesImageBack = "C_Fort_375.png";
-	public static final String CrocodilesImageFront = "C_Fort_375.png";
-	public static final String DervishImageBack = "C_Fort_375.png";
-	public static final String DervishImageFront = "C_Fort_375.png";
-	public static final String GreenKnightImageBack = "C_Fort_375.png";
-	public static final String GreenKnightImageFront = "C_Fort_375.png";
-	public static final String SandwormImageBack = "C_Fort_375.png";
-	public static final String SandwormImageFront = "C_Fort_375.png";
-	public static final String PterodactylWarriorsImageBack = "C_Fort_375.png";
-	public static final String PterodactylWarriorsImageFront = "C_Fort_375.png";
-	public static final String GreatHunterImageBack = "C_Fort_375.png";
-	public static final String GreatHunterImageFront = "C_Fort_375.png";
-	public static final String PygmiesImageBack = "C_Fort_375.png";
-	public static final String PygmiesImageFront = "C_Fort_375.png";
-	public static final String GenieImageBack = "C_Fort_375.png";
-	public static final String GenieImageFront = "C_Fort_375.png";
-	public static final String FarmersImageBack = "C_Fort_375.png";
-	public static final String FarmersImageFront = "C_Fort_375.png";
-	public static final String CamelCorpsImageBack = "C_Fort_375.png";
-	public static final String CamelCorpsImageFront = "C_Fort_375.png";
-	public static final String CentaurImageBack = "C_Fort_375.png";
-	public static final String CentaurImageFront = "C_Fort_375.png";
-	public static final String BuffaloHerdImageBack = "C_Fort_375.png";
-	public static final String BuffaloHerdImageFront = "C_Fort_375.png";
-	public static final String GiantApeImageBack = "C_Fort_375.png";
-	public static final String GiantApeImageFront = "C_Fort_375.png";
-	public static final String BlackKnightImageBack = "C_Fort_375.png";
-	public static final String BlackKnightImageFront = "C_Fort_375.png";
-	public static final String DarkWizardImageBack = "C_Fort_375.png";
-	public static final String DarkWizardImageFront = "C_Fort_375.png";
-	public static final String TribesmanImageBack = "C_Fort_375.png";
-	public static final String TribesmanImageFront = "C_Fort_375.png";
-	public static final String VampireBatImageBack = "C_Fort_375.png";
-	public static final String VampireBatImageFront = "C_Fort_375.png";
-	public static final String TigersImageBack = "C_Fort_375.png";
-	public static final String TigersImageFront = "C_Fort_375.png";
-	public static final String VillainsImageBack = "C_Fort_375.png";
-	public static final String VillainsImageFront = "C_Fort_375.png";
-	public static final String GiantLizardImageBack = "C_Fort_375.png";
-	public static final String GiantLizardImageFront = "C_Fort_375.png";
+	public static final String WitchDoctorImageFront = "T_Jungle_006.png";
+	public static final String OgreImageFront = "T_Mountains_I.png";
+	public static final String GoblinsImageFront = "T_Mountains_E.png";
+	public static final String WatusiImageFront = "T_Jungle_012.png";
+	public static final String SkeletonsImageFront = "T_Desert_331.png";
+	public static final String DwarvesImageFront = "T_Mountains_N.png";
+	public static final String GiantImageFront = "T_Mountains_J.png";
+	public static final String BrownKnightImageFront = "T_Mountains_D.png";
+	public static final String ElephantImageFront = "T_Jungle_001.png";
+	public static final String GiantSpiderImageFront = "T_Desert_221.png";
+	public static final String OldDragonImageFront = "T_Desert_211.png";
+	public static final String BanditsImageFront = "T_Forest_086.png";
+	public static final String CrawlingVinesImageFront = "T_Jungle_003.png";
+	public static final String WalkingTreeImageFront = "T_Forest_098.png";
+	public static final String DruidImageFront = "T_Forest_088.png";
+	public static final String NomadsImageFront = "T_Desert_220.png";
+	public static final String CrocodilesImageFront = "T_Jungle_005.png";
+	public static final String DervishImageFront = "T_Desert_214.png";
+	public static final String GreenKnightImageFront = "T_Forest_097.png";
+	public static final String SandwormImageFront = "T_Desert_224.png";
+	public static final String PterodactylWarriorsImageFront = "T_Jungle_002.png";
+	public static final String GreatHunterImageFront = "T_Plains_021.png";
+	public static final String PygmiesImageFront = "T_Jungle_008.png";
+	public static final String GenieImageFront = "T_Desert_215.png";
+	public static final String FarmersImageFront = "T_Plains_014.png";
+	public static final String CamelCorpsImageFront = "T_Desert_219.png";
+	public static final String CentaurImageFront = "T_Plains_031.png";
+	public static final String BuffaloHerdImageFront = "T_Plains_016.png";
+	public static final String GiantApeImageFront = "T_Jungle_009.png";
+	public static final String BlackKnightImageFront = "T_Swamp_080.png";
+	public static final String DarkWizardImageFront = "T_Swamp_081.png";
+	public static final String TribesmanImageFront = "T_Plains_027.png";
+	public static final String VampireBatImageFront = "T_Swamp_084.png";
+	public static final String TigersImageFront = "T_Jungle_011.png";
+	public static final String VillainsImageFront = "T_Plains_015.png";
+	public static final String GiantLizardImageFront = "T_Swamp_065.png";
 	
 	//-------------/end ENUMS---------------
 	
@@ -146,6 +111,7 @@ public final class GameConstants {
 	//event types
 	public static final int PLAYERS_ROLL = 0;
 	public static final int UPDATE_PLAYER_ORDER = 1;
+
 
 
 

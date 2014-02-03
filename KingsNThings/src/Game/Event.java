@@ -8,8 +8,8 @@ import Game.GameConstants.ThingType;
  */
 public class Event extends Thing {
 
-	public Event(String name, String backFileName, String frontFileName)
+	public Event(String name, String frontFileName)
 	{
-		super(ThingType.EVENT, name, backFileName, frontFileName);
+		super(ThingType.EVENT, name, frontFileName);
 	}
 }

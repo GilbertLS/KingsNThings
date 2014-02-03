@@ -454,13 +454,11 @@ public class GameModel {
 		initializeThingsString += "Buffalo Herd" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.BuffaloHerdImageBack + "SPLIT" 
 				+ GameConstants.BuffaloHerdImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant Ape" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 5 + "SPLIT" 
-				+ GameConstants.GiantApeImageBack + "SPLIT" 
 				+ GameConstants.GiantApeImageFront +"SPLIT";
 		initializeThingsString += "/";
 		
@@ -468,14 +466,12 @@ public class GameModel {
 		initializeThingsString += "Black Knight" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.BlackKnightImageBack + "SPLIT" 
 				+ GameConstants.BlackKnightImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Dark Wizard" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.DarkWizardImageBack + "SPLIT" 
 				+ GameConstants.DarkWizardImageFront +"SPLIT"
 				+ "MAGIC" + "SPLIT"
 				+ "FLYING";
@@ -483,13 +479,11 @@ public class GameModel {
 		initializeThingsString += "Tribesman" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.TribesmanImageBack + "SPLIT" 
 				+ GameConstants.TribesmanImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Vampire Bat" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.VampireBatImageBack + "SPLIT" 
 				+ GameConstants.VampireBatImageFront +"SPLIT"
 				+ "FLYING";
 		initializeThingsString += "/";
@@ -498,25 +492,21 @@ public class GameModel {
 		initializeThingsString += "Tigers" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.TigersImageBack + "SPLIT" 
 				+ GameConstants.TigersImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Villains" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.VillainsImageBack + "SPLIT" 
 				+ GameConstants.VillainsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant Lizard" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.GiantLizardImageBack + "SPLIT" 
 				+ GameConstants.GiantLizardImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Tribesman" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.TribesmanImageBack + "SPLIT" 
 				+ GameConstants.TribesmanImageFront +"SPLIT";
 		initializeThingsString += "/";
 		
@@ -524,21 +514,18 @@ public class GameModel {
 		//Stack 3
 		initializeThingsString += "Witch Doctor" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
-				+ 2 + "SPLIT" 
-				+ GameConstants.WitchDoctorImageBack + "SPLIT" 
+				+ 2 + "SPLIT"  
 				+ GameConstants.WitchDoctorImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
 		initializeThingsString += "Nomads" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.NomadsImageBack + "SPLIT" 
 				+ GameConstants.NomadsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Great Hunter" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.GreatHunterImageBack + "SPLIT" 
 				+ GameConstants.GreatHunterImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
@@ -547,19 +534,16 @@ public class GameModel {
 		initializeThingsString += "Pygmies" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.PygmiesImageBack + "SPLIT" 
 				+ GameConstants.PygmiesImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Skeletons" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
 				+ GameConstants.SkeletonsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Genie" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.GenieImageBack + "SPLIT" 
 				+ GameConstants.GenieImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
@@ -567,26 +551,22 @@ public class GameModel {
 		//Stack 1
 		initializeThingsString += "Farmers" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.FarmersImageBack + "SPLIT" 
+				+ 1 + "SPLIT"  
 				+ GameConstants.FarmersImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Farmers" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.FarmersImageBack + "SPLIT" 
 				+ GameConstants.FarmersImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Camel Corps" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
-				+ 3 + "SPLIT" 
-				+ GameConstants.CamelCorpsImageBack + "SPLIT" 
+				+ 3 + "SPLIT"  
 				+ GameConstants.CamelCorpsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Centaur" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.CentaurImageBack + "SPLIT" 
 				+ GameConstants.CentaurImageFront +"SPLIT";
 		initializeThingsString += "/";
 		
@@ -595,65 +575,55 @@ public class GameModel {
 		initializeThingsString += "Bandits" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.BanditsImageBack + "SPLIT" 
 				+ GameConstants.BanditsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Crawling Vines" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 6 + "SPLIT" 
-				+ GameConstants.CrawlingVinesImageBack + "SPLIT" 
 				+ GameConstants.CrawlingVinesImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Walking Tree" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
-				+ 5 + "SPLIT" 
-				+ GameConstants.WalkingTreeImageBack + "SPLIT" 
+				+ 5 + "SPLIT"  
 				+ GameConstants.WalkingTreeImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Druid" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.DruidImageBack + "SPLIT" 
 				+ GameConstants.DruidImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
 		initializeThingsString += "Nomads" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.NomadsImageBack + "SPLIT" 
 				+ GameConstants.NomadsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Crocodiles" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
-				+ 2 + "SPLIT" 
-				+ GameConstants.CrocodilesImageBack + "SPLIT" 
+				+ 2 + "SPLIT"  
 				+ GameConstants.CrocodilesImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Dervish" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.DervishImageBack + "SPLIT" 
 				+ GameConstants.DervishImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
 		initializeThingsString += "Green Knight" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
-				+ 4 + "SPLIT" 
-				+ GameConstants.GreenKnightImageBack + "SPLIT" 
+				+ 4 + "SPLIT"  
 				+ GameConstants.GreenKnightImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Sandworm" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.SandwormImageBack + "SPLIT" 
 				+ GameConstants.SandwormImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Pterodactyl Warriors" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.PterodactylWarriorsImageBack + "SPLIT" 
 				+ GameConstants.PterodactylWarriorsImageFront +"SPLIT"
 				+ "RANGE" + "SPLIT"
 				+ "FLYING";
@@ -665,25 +635,21 @@ public class GameModel {
 		initializeThingsString += "Ogre" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.OgreImageBack + "SPLIT" 
 				+ GameConstants.OgreImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Goblins" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.GoblinsImageBack + "SPLIT" 
+				+ 1 + "SPLIT"  
 				+ GameConstants.GoblinsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Watusi" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.WatusiImageBack + "SPLIT" 
 				+ GameConstants.WatusiImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Skeletons" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
 				+ GameConstants.SkeletonsImageFront + "SPLIT";
 		initializeThingsString += "/";
 		
@@ -692,41 +658,35 @@ public class GameModel {
 		initializeThingsString += "Dwarves" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.DwarvesImageBack + "SPLIT" 
 				+ GameConstants.DwarvesImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
-				+ 4 + "SPLIT" 
-				+ GameConstants.GiantImageBack + "SPLIT" 
+				+ 4 + "SPLIT"  
 				+ GameConstants.GiantImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Brown Knight" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.BrownKnightImageBack + "SPLIT" 
 				+ GameConstants.BrownKnightImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Elephant" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.ElephantImageBack + "SPLIT" 
 				+ GameConstants.ElephantImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant Spider" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.GiantSpiderImageBack + "SPLIT" 
 				+ GameConstants.GiantSpiderImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Old Dragon" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.OldDragonImageBack + "SPLIT" 
 				+ GameConstants.OldDragonImageFront +"SPLIT"
 				+ "FLYING" + "SPLIT"
 				+ "MAGIC";
@@ -745,16 +705,15 @@ public class GameModel {
 			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(creatureParamsString[1]);
 			String name = creatureParamsString[0];
 			int attackValue = Integer.parseInt(creatureParamsString[2]);
-			String backFileName = creatureParamsString[3];
-			String frontFileName = creatureParamsString[4];
+			String frontFileName = creatureParamsString[3];
 			boolean isCharge = false;
 			boolean isFlying = false;
 			boolean isMagic = false;
 			boolean isRange = false;
 			
-			if(creatureParamsString.length > 5)
+			if(creatureParamsString.length > 4)
 			{
-				for(int j=5; j< creatureParamsString.length; j++)
+				for(int j=4; j< creatureParamsString.length; j++)
 				{
 					String special = creatureParamsString[j];
 					
@@ -773,7 +732,7 @@ public class GameModel {
 			}
 
 			
-			playingCup.add(new Creature(terrain, name, attackValue, backFileName, frontFileName)
+			playingCup.add(new Creature(terrain, name, attackValue, frontFileName)
 								.IsCharge(isCharge)
 								.IsFlying(isFlying)
 								.IsMagic(isMagic)
@@ -781,7 +740,9 @@ public class GameModel {
 								);
 			}
 		
+
 		/*
+		System.out.println("PLAYING CUP SIZE:" + playingCup.size());
 		for(int i=0; i<playingCup.size(); i++)
 		{
 			System.out.println(playingCup.get((i)).toString());
@@ -789,22 +750,7 @@ public class GameModel {
 		*/
 	}
 
-	public String assignInitialThings() {
-		String s ="";
-		for(int i=0; i<10; i++)
-		{
-			Thing currentThing = playingCup.remove(playingCup.size()-1);
-			
-			currPlayer.addThingToRack(currentThing);
-			s += currentThing.thingID + "/";
-			
-			System.out.println(currentThing.toString());
-		}
-		
-		return s;
-	}
-
-	public void handleAssignedInitialThings(int playerIndex) {
+	public void assignInitialThings(int playerIndex) {
 		Player player;
 		
 		switch(playerIndex)
@@ -828,9 +774,6 @@ public class GameModel {
 			Thing currentThing = playingCup.remove(playingCup.size()-1);
 			
 			player.addThingToRack(currentThing);
-			
-			System.out.println(currentThing.toString());
 		}
 	}
-
 }

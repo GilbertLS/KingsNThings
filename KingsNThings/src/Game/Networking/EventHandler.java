@@ -123,28 +123,22 @@ public class EventHandler {
 		}
 		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS)
 		{
-			System.out.println("CREATING DIE ROLL RESPONSE EVENT");
+			final int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()-1;
 			
-			String[] args = new String[1];
-			args[0] = GameClient.game.gameModel.assignInitialThings();
-			
-			EventHandler.SendEvent(
-					new Event()
-						.EventId(EventList.ASSIGN_INITIAL_THINGS)
-						.EventParameters(args)
-			);
+			GameClient.game.gameModel.assignInitialThings(currentPlayerIndex);
 			
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
 					GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
+					GameClient.game.gameView.playerList.getPlayerPanel(currentPlayerIndex).setThings(10);
 		        }
 		    });
 		}
 		else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS)
 		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
-			GameClient.game.gameModel.handleAssignedInitialThings(playerIndex);
+			GameClient.game.gameModel.assignInitialThings(playerIndex);
 			System.out.println(playerIndex);
 			
 			Platform.runLater(new Runnable() {

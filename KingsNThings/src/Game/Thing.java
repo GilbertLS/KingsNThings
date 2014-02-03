@@ -14,7 +14,7 @@ public abstract class Thing {
 	HexTile currentTile;
 	public String backFileName, frontFileName;
 	
-	public Thing(ThingType thingType, String name, String backFileName, String frontFileName)
+	public Thing(ThingType thingType, String name, String frontFileName)
 	{
 		this.thingID = thingIDCount++;
 		
@@ -23,7 +23,7 @@ public abstract class Thing {
 		
 		this.isFlipped = true;
 		
-		this.backFileName = backFileName;
+		this.backFileName = GameConstants.ThingImageBack;
 		this.frontFileName = frontFileName;
 		
 		this.currentTile = null;

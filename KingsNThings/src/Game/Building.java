@@ -11,7 +11,9 @@ public abstract class Building extends Combatant implements IIncomable {
 	
 	public Building(ThingType thingType, String name, int combatValue, String backFileName, String frontFileName)
 	{
-		super(thingType, name, combatValue, backFileName, frontFileName);
+		super(thingType, name, combatValue, frontFileName);
+		
+		this.backFileName = backFileName;
 		
 		this.hits = 0;
 	}
