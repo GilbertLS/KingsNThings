@@ -21,8 +21,6 @@ public class EventList {
 	public static final int HANDLE_ASSIGN_INITIAL_THINGS = 17;
 	public static final int DISTRIBUTE_INITIAL_GOLD = 18;
 	public static final int AWARD_INCOME = 19;
-	public static final int DISTRIBUTE_INITIAL_GOLD = 20;
-	public static final int AWARD_INCOME = 21;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
 

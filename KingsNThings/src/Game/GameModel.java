@@ -1,6 +1,7 @@
 package Game;
 
 import java.util.ArrayList;
+import Game.GameConstants.Terrain;
 import java.util.Collections;
 import java.util.LinkedList;
 /*
@@ -24,13 +25,13 @@ public class GameModel {
 	
 	public Player GetPlayer(int playerNum){
 		switch( playerNum ){
-		case(1):
+		case(0):
 			return player1;
-		case(2):
+		case(1):
 			return player2;
-		case(3):
+		case(2):
 			return player3;
-		case(4):
+		case(3):
 			return player4;
 		}
 		

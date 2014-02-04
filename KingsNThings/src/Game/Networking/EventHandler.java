@@ -232,7 +232,8 @@ public class EventHandler {
 			} else {
 				SendNullEvent();
 			}
-		} else if (e.eventId == EventList.REMOVE_THINGS){
+		} 
+		else if (e.eventId == EventList.REMOVE_THINGS){
 			int players = GameClient.game.gameModel.PlayerCount();
 			int tileX = Integer.parseInt(e.eventParams[players]);
 			int tileY = Integer.parseInt(e.eventParams[players+1]);
@@ -290,7 +291,8 @@ public class EventHandler {
 		        	GameClient.game.gameView.board.setTiles(h);
 		        }
 		    });
-		} else if (e.eventId == EventList.SET_CREATURES) {
+		}
+		else if (e.eventId == EventList.SET_CREATURES) {
 			String creaturesString = e.eventParams[0];
 			
 			String[] creaturesStrings = creaturesString.split("/");
@@ -311,10 +313,10 @@ public class EventHandler {
 					GameClient.game.gameView.playerList.getPlayerPanel(currentPlayerIndex).setThings(10);
 		        }
 		    });
-		} else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS) {
+		}
+		else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS) {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			GameClient.game.gameModel.assignInitialThings(playerIndex);
-			System.out.println(playerIndex);
 			
 			Platform.runLater(new Runnable() {
 		        @Override
@@ -325,8 +327,8 @@ public class EventHandler {
 		}
 		else if (e.eventId == EventList.DISTRIBUTE_INITIAL_GOLD)
 		{
-			throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
-			throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+			final int numClients = Integer.parseInt(e.eventParams[0]);
+			
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
@@ -353,12 +355,13 @@ public class EventHandler {
 		        }
 			});
 		}
-	}
 		
-	if (e.expectsResponseEvent && numberOfSends != 1){
-			throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
-	} else if (!e.expectsResponseEvent && numberOfSends != 0){
-			throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+		if (e.expectsResponseEvent && numberOfSends != 1){
+				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
+		} else if (!e.expectsResponseEvent && numberOfSends != 0){
+				throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+		}
+	}
 	
 	private static void SendNullEvent(){
 		EventHandler.SendEvent( new Event().EventId( EventList.NULL_EVENT ) );

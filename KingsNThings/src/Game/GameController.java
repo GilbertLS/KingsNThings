@@ -56,7 +56,7 @@ public class GameController implements Runnable {
 	    		
 	    		intendedPlayers[gr.myID] = true;
 	    		
-	    		String[] eventParams = new String[]{ "" + (gr.myID + 1) };
+	    		String[] eventParams = new String[]{ "" + (gr.myID) };
 	    		
 	    		Event e = new Event()
 	    					.EventId(EventList.SET_CURRENT_PLAYER)
