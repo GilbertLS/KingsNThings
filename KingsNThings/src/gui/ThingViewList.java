@@ -70,7 +70,7 @@ public class ThingViewList extends HBox {
 	 }
 	 
 	 public void setAllThings(Vector<Thing> t) {
-		 List<ThingView> list = new ArrayList();
+		 List<ThingView> list = new ArrayList<ThingView>();
 		 
 		 for (int i = 0; i < t.size(); i++) {
 			 ThingView tv = new ThingView(t.get(i));

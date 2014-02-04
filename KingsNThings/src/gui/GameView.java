@@ -7,13 +7,11 @@ import Game.Creature;
 import Game.GameConstants;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 public class GameView extends Scene {
     public BorderPane root;

@@ -1,16 +1,9 @@
 package Game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Dice {
 	//individual die values
 	private int[] dieValues;
 	//private List<DiceView> diceViews;
-	
-	public Dice(){
-		new Dice(4);
-	}
 	
 	public Dice(int numDice) {
 		dieValues = new int[numDice];

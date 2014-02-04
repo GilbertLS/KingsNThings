@@ -24,7 +24,6 @@ public class GameControllerEventHandler {
 			{
 				if(e.expectsResponseEvent)
 				{
-					
 					Response rollResponse = gr.sendEvent(
 							new Event()
 								.EventId(e.eventId)
@@ -47,9 +46,9 @@ public class GameControllerEventHandler {
 			}
 		}
 		for (int j = 0; j < responses.length; j++){
-			System.out.println("Response from player: " 
+			System.out.println("Response from player " 
 								+ responses[j].fromPlayer
-								+ " response: "
+								+ " event: " + responses[j].eventId + " message: "
 								+ responses[j].message);
 		}
 		return responses;			

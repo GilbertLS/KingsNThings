@@ -1,7 +1,6 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import Game.Creature;
 import Game.GameConstants;

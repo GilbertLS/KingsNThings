@@ -3,7 +3,6 @@ import java.util.Vector;
 
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
-import Game.Networking.GameClient;
 
 /*
  * This class represents a single Hex Tile in a Kings N' Things Game
@@ -60,6 +59,34 @@ public class HexTile implements IIncomable{
 			return !player4Things.isEmpty();
 		}
 		return false;
+	}
+	
+	public Vector<Thing> GetThings(Player player){
+		if ( player.GetPlayerNum() == 1 ){
+			return player1Things;
+		} else if ( player.GetPlayerNum() == 2 ){
+			return player2Things;
+		} else if ( player.GetPlayerNum() == 3 ){
+			return player3Things;
+		} else if ( player.GetPlayerNum() == 4 ){
+			return player4Things;
+		}
+		return null;
+	}
+	
+	public void Print(){
+		System.out.print("Player 1 things: ");
+		for(Thing thing : player1Things){ System.out.print(thing.GetThingId() + " ");}
+		System.out.println();
+		System.out.print("Player 2 things: ");
+		for(Thing thing : player2Things){ System.out.print(thing.GetThingId() + " ");}
+		System.out.println();
+		System.out.print("Player 3 things: ");
+		for(Thing thing : player3Things){ System.out.print(thing.GetThingId() + " ");}
+		System.out.println();
+		System.out.print("Player 4 things: ");
+		for(Thing thing : player4Things){ System.out.print(thing.GetThingId() + " ");}
+		System.out.println();
 	}
 
 	public Terrain getTerrain() {

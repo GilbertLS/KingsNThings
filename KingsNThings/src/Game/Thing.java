@@ -28,4 +28,19 @@ public abstract class Thing {
 		
 		this.currentTile = null;
 	}
+
+	public int GetThingId(){
+		return thingID;
+	}
+	
+	// REMOVE THIS, ONYL FOR TESTING PURPOSES
+	public void SetThingId(int thingId){
+		this.thingID = thingId;
+	}
+	
+	public boolean IsCombatant(){
+		return thingType == ThingType.CREATURE ||
+			   thingType == ThingType.SPECIAL_CHARACTER ||
+			   thingType == ThingType.TERRAIN_LORD;
+	}
 }

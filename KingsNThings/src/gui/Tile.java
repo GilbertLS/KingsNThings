@@ -3,10 +3,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import Game.GameConstants;
 import Game.HexTile;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;

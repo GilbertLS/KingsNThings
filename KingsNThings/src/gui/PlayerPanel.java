@@ -1,10 +1,8 @@
 package gui;
 
-import java.util.Arrays;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Button;
 
 public class PlayerPanel extends VBox {
 	private int playerNum;

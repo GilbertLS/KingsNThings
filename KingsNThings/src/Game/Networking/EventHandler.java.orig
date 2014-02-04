@@ -4,14 +4,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Vector;
-import javafx.application.Platform;
+
+
+import java.util.function.Predicate;
+
 import Game.Combatant;
 import Game.Creature;
+import Game.GameConstants.SpecialType;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
 import Game.Player;
 import Game.Thing;
 import Game.Utility;
+
+import javafx.application.Platform;
+import Game.HexTile;
 
 public class EventHandler {
 	public static Object lock = new Object();
@@ -101,12 +108,12 @@ public class EventHandler {
 			int tileX = Integer.parseInt(e.eventParams[0]);
 			int tileY = Integer.parseInt(e.eventParams[1]);
 			
-			
+			SpecialType specialType = SpecialType.NONE;
 			String type = e.eventParams[2];
-			boolean isMagicTurn = false, isRangedTurn = false;
 			
-			if (type.equals("Magic")) { isMagicTurn = true; }
-			if (type.equals("Ranged")) { isRangedTurn = true; }
+			if (type.equals("Magic")) { specialType = SpecialType.MAGIC; }
+			if (type.equals("Ranged")) { specialType = SpecialType.RANGED; }
+			if (type.equals("Other")) { specialType = SpecialType.NONE; }
 			
 			if (GameClient.game.gameModel.boardController.HasThingsOnTile(
 					GameClient.game.gameModel.GetCurrentPlayer(), 
@@ -128,10 +135,7 @@ public class EventHandler {
 					
 					Combatant combatant = (Combatant)thing;
 					
-					if (!(
-						( combatant.IsMagic() && isMagicTurn ) ||
-						( combatant.IsRange() && isRangedTurn ) ||
-						( !combatant.IsMagic() && !combatant.IsRange() && !isMagicTurn && !isRangedTurn ))){
+					if (combatant.GetType() != specialType ){
 						continue;
 					}
 					
@@ -157,6 +161,7 @@ public class EventHandler {
 			
 			GameClient.game.gameModel.SetCurrentPlayer(playerNum);
 		}
+<<<<<<< HEAD
 		else if (e.eventId == EventList.CHOOSE_PLAYER){
 			int tileX = Integer.parseInt(e.eventParams[0]);
 			int tileY = Integer.parseInt(e.eventParams[1]);
@@ -258,23 +263,36 @@ public class EventHandler {
 				SendNullEvent();
 			}
 		} else if (e.eventId == EventList.ADD_THING_TO_TILE){
+			SpecialType specialType = SpecialType.NONE;
 			String type = e.eventParams[0];
 			
-			boolean isMagic = false, isRanged = false;
-			
-			if (type.equals("Magic")) { isMagic = true; }
-			if (type.equals("Ranged")) { isRanged = true; }
+			if (type.equals("Magic")) { specialType = SpecialType.MAGIC; }
+			if (type.equals("Ranged")) { specialType = SpecialType.RANGED; }
+			if (type.equals("Other")) { specialType = SpecialType.NONE; }
 		
-			Creature creature = new Creature(Terrain.DESERT, 6).Magic(isMagic).Ranged(isRanged);
+			Creature creature = new Creature(Terrain.DESERT, specialType, 6);
 			creature.SetThingId(Integer.parseInt(e.eventParams[1]));
 			Player player = GameClient.game.gameModel.GetPlayer(Integer.parseInt(e.eventParams[2]));
 			
 			int tileX = Integer.parseInt(e.eventParams[3]);
 			int tileY = Integer.parseInt(e.eventParams[4]);
 			GameClient.game.gameModel.boardController.AddThingToTile(creature, player, tileX, tileY);
-		} else if (e.eventId == EventList.BATTLE_OVER) {
+		} else if (e.eventId == EventList.BATTLE_OVER){
 			System.out.println("Ending battle");
-		} else if (e.eventId == EventList.SET_HEX_TILES) {
+		}
+		
+		if (e.expectsResponseEvent && numberOfSends != 1){
+			throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
+		} else if (!e.expectsResponseEvent && numberOfSends != 0){
+			throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+		}
+	}
+	
+	private static void SendNullEvent(){
+		EventHandler.SendEvent( new Event().EventId( EventList.NULL_EVENT ) );
+=======
+		else if (e.eventId == EventList.SET_HEX_TILES)
+		{
 			String boardHexTilesString = e.eventParams[0];
 			String unusedHexTileString = e.eventParams[1];
 			
@@ -290,7 +308,9 @@ public class EventHandler {
 		        	GameClient.game.gameView.board.setTiles(h);
 		        }
 		    });
-		} else if (e.eventId == EventList.SET_CREATURES) {
+		}
+		else if (e.eventId == EventList.SET_CREATURES)
+		{
 			String creaturesString = e.eventParams[0];
 			
 			String[] creaturesStrings = creaturesString.split("/");
@@ -299,7 +319,8 @@ public class EventHandler {
 			
 			//GameClient.game.gameModel.printCurrentBoardTiles();
 		}
-		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS) {
+		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS)
+		{
 			final int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()-1;
 			
 			GameClient.game.gameModel.assignInitialThings(currentPlayerIndex);
@@ -311,7 +332,9 @@ public class EventHandler {
 					GameClient.game.gameView.playerList.getPlayerPanel(currentPlayerIndex).setThings(10);
 		        }
 		    });
-		} else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS) {
+		}
+		else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS)
+		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			GameClient.game.gameModel.assignInitialThings(playerIndex);
 			System.out.println(playerIndex);
@@ -323,15 +346,6 @@ public class EventHandler {
 		        }
 			});
 		}
-
-		if (e.expectsResponseEvent && numberOfSends != 1){
-			throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
-		} else if (!e.expectsResponseEvent && numberOfSends != 0){
-			throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
-		}
-	}
-	
-	private static void SendNullEvent(){
-		EventHandler.SendEvent( new Event().EventId( EventList.NULL_EVENT ) );
+>>>>>>> develop/develop
 	}
 }

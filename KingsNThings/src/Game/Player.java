@@ -1,5 +1,4 @@
 package Game;
-import java.util.Vector;
 
 /*
  * Represents one of the player of a Kings N' Things Game.
