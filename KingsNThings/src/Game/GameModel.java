@@ -3,11 +3,6 @@ package Game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Vector;
-
-import Game.GameConstants.ControlledBy;
-import Game.GameConstants.Terrain;
-
 /*
  * This class models a King's N' Things Game. Its methods are called at appropriate times
  * by the Game class
@@ -53,6 +48,10 @@ public class GameModel {
 		return currPlayer;
 	}
 	
+	public int PlayerCount(){
+		return playerCount;
+	}
+	
 	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
@@ -73,7 +72,7 @@ public class GameModel {
 		
 		ownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
-		dice = new Dice();
+		dice = new Dice(4);
 		
 		boardController = new BoardController(gameBoard);
 	}
@@ -734,10 +733,10 @@ public class GameModel {
 
 			
 			playingCup.add(new Creature(terrain, name, attackValue, frontFileName)
-								.IsCharge(isCharge)
-								.IsFlying(isFlying)
-								.IsMagic(isMagic)
-								.IsRange(isRange)
+								.Charge(isCharge)
+								.Flying(isFlying)
+								.Magic(isMagic)
+								.Ranged(isRange)
 								);
 			}
 		

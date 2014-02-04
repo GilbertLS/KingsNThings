@@ -28,6 +28,10 @@ public class EventReceiver implements Runnable {
 				EventHandler.HandleEvent(fromServer);
 				
 			}
-		} catch (IOException e){}
+		} catch (IOException e){	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

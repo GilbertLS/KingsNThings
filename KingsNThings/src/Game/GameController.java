@@ -5,17 +5,11 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import Game.GameConstants.Terrain;
-import Game.GameConstants.ThingType;
 import Game.Networking.Event;
 import Game.Networking.EventList;
-import Game.Networking.GameClient;
 import Game.Networking.GameControllerEventHandler;
 import Game.Networking.GameRouter;
 import Game.Networking.Protocol;
@@ -62,7 +56,7 @@ public class GameController implements Runnable {
 	    		
 	    		intendedPlayers[gr.myID] = true;
 	    		
-	    		String[] eventParams = new String[]{ "" + gr.myID };
+	    		String[] eventParams = new String[]{ "" + (gr.myID + 1) };
 	    		
 	    		Event e = new Event()
 	    					.EventId(EventList.SET_CURRENT_PLAYER)
@@ -95,7 +89,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 4;
+		return servers.size() == 2;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -301,15 +295,29 @@ public class GameController implements Runnable {
 	}
 	
 	private void DoTestBattle(){
-		Thing thing = new Creature(Terrain.DESERT);
-		Thing otherThing = new Creature(Terrain.JUNGLE);
-		Player player = GameClient.game.gameModel.GetPlayer(1);
-		Player player2 = GameClient.game.gameModel.GetPlayer(2);
-		
-		GameClient.game.gameModel.boardController.AddThingToTile(thing, player, 0, 0);
-		GameClient.game.gameModel.boardController.AddThingToTile(otherThing, player2, 0, 0);
-		GameClient.game.gameModel.boardController.AddThingToTile(thing, player, -1, -1);
-		GameClient.game.gameModel.boardController.AddThingToTile(otherThing, player2, -1, -1);
+		// REMOVE
+		GameControllerEventHandler.sendEvent(
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "1", "1", "-1", "-1" })
+		);
+		GameControllerEventHandler.sendEvent(
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "2", "2",  "-1", "-1" })
+		);
+		GameControllerEventHandler.sendEvent(
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Ranged", "3", "1", "-1", "-1" })
+		);
+		GameControllerEventHandler.sendEvent(
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Other", "4", "1", "-1", "-1" })
+		);
+		GameControllerEventHandler.sendEvent(
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "5", "2", "-1", "-1" })
+		);
+		GameControllerEventHandler.sendEvent(
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "6", "1", "0", "0" })
+		);
+		GameControllerEventHandler.sendEvent(
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "7", "2", "0", "0" })
+		);
+		//
 		
 		Response[] r = GameControllerEventHandler.sendEvent(
 			new Event().EventId(EventList.GET_CONTESTED_ZONES)
@@ -320,25 +328,113 @@ public class GameController implements Runnable {
 		
 		String[] contestedZones = r[0].castToStringArray();
 		for(String s : contestedZones){
-			String[] coordinateString = s.split("SPLIT");
+			
+			// TODO: Remove things that do not have terrain controlled
+			
+				
+			String[] coordinates = s.split("SPLIT");
 			
 			GameControllerEventHandler.sendEvent(
-					new Event()
-						.EventId( EventList.BEGIN_BATTLE)
-						.EventParameters( coordinateString )
+				new Event()
+					.EventId( EventList.BEGIN_BATTLE)
+					.EventParameters(coordinates)
 			);
-			
-			Response[] r2 = GameControllerEventHandler.sendEvent(
-					new Event()
-						.EventId( EventList.GET_MAGIC_ROLLS)
-						.EventParameters( coordinateString )
-			);
-			
-			// Parse magic rolls and send event to inflict magic dmg
-		}
-		
-		System.out.println("CONTESTED ZONES:" + r[0].message);
-	}
+			// 1 turn
+			boolean battleOver = false;
+			do {
+				Response[] targetedPlayers = GameControllerEventHandler.sendEvent(
+						new Event()
+							.EventId( EventList.CHOOSE_PLAYER )
+							.EventParameters( coordinates )
+							.ExpectsResponse(true)
+				);
+				
+				int[] attackedPlayers = new int[4];
+				Arrays.fill(attackedPlayers, -1);
+				
+				for (Response target : targetedPlayers ){
+					if (target.IsNullEvent()){
+						continue;
+					}
+					attackedPlayers[target.fromPlayer] = target.castToInt() - 1;
+				}
+				
+				for (int i = 0; i < attackedPlayers.length; i++){
+					System.out.println("Player " + i + " is attacking player " + attackedPlayers[i]);
+				}
+				
+				String[] combatTypes = new String[]{ "Magic", "Ranged", "Other" };
+				// 1 magic, ranged, other roll sequence
+				for (String combatType : combatTypes) {
+					String[] getRollParams = new String[3];
+					
+					getRollParams[0] = coordinates[0];
+					getRollParams[1] = coordinates[1];
+					getRollParams[2] = combatType;
+					
+					Response[] magicRolls = GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.GET_CREATURE_ROLLS)
+								.EventParameters( getRollParams )
+								.ExpectsResponse(true)
+					);
+					
+					String[] hits = new String[numClients+2];
+					int numActualHits = 0;
+					for (Response rolls : magicRolls){
+						if (!rolls.message.equals("") && Integer.parseInt(rolls.message.trim()) > 0){
+							numActualHits++;
+						}
+						if (rolls.IsNullEvent()){
+							hits[rolls.fromPlayer] = "0";
+						} else {
+							hits[attackedPlayers[rolls.fromPlayer]] = rolls.message;
+						}
+					}
+					
+					hits[numClients] = coordinates[0];
+					hits[numClients+1] = coordinates[1];
+		 			
+					if (numActualHits > 0){
+						Response[] removedThingsResponse = GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.INFLICT_HITS )
+								.EventParameters( hits )
+								.ExpectsResponse(true)
+						);
+						
+						String[] removedThings = new String[numClients+2];
+						
+						for( Response response : removedThingsResponse ){
+							removedThings[response.fromPlayer] = response.message;
+						}
+						
+						removedThings[numClients] = coordinates[0];
+						removedThings[numClients+1] = coordinates[1];
+						
+						if (GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.REMOVE_THINGS )
+								.EventParameters(removedThings)
+								.ExpectsResponse()
+						)[0].eventId == EventList.BATTLE_OVER){
+							battleOver = true;
+						} else {
+							battleOver = false;
+						}
+					}
+					
+					if (battleOver){
+						break;
+					}
+				} 
+				
+			} while (!battleOver);
 
-	
+			GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.BATTLE_OVER )
+			);
+		}
+	}
 }

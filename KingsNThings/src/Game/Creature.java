@@ -3,7 +3,6 @@ package Game;
 
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
-import Game.Networking.Event;
 
 /*
  * This class extends the Combatant class to add Creatures' need to be supported by 
@@ -14,6 +13,16 @@ public class Creature extends Combatant{
 	private Terrain terrain;	//terrain required to support this creature
 	
 	public static int creatureNum = 0;
+	
+	public Creature(Terrain terrian)
+	{
+		super(ThingType.CREATURE, "creature"+creatureNum++, (int)Math.ceil(Math.random()*6), GameConstants.PlaceHolderImageFront);
+	}
+	
+	public Creature(Terrain terrain, int combatValue){
+		super(ThingType.CREATURE, "creature"+creatureNum++, combatValue, GameConstants.PlaceHolderImageFront);
+	}
+	
 	public Creature(Terrain terrain, String name, int attackValue, String frontFileName)
 	{
 		super(ThingType.CREATURE, name, attackValue, frontFileName);
@@ -21,27 +30,22 @@ public class Creature extends Combatant{
 		this.terrain = terrain;
 	}
 	
-	public Creature(Terrain terrian)
-	{
-		super(ThingType.CREATURE, "creature"+creatureNum++, (int)Math.ceil(Math.random()*6), GameConstants.PlaceHolderImageFront);
-	}
-	
-	public Creature IsFlying(boolean isFlying){
+	public Creature Flying(boolean isFlying){
 		super.isFlying = isFlying;
 		return this;
 	}
 	
-	public Creature IsMagic(boolean isMagic){
+	public Creature Magic(boolean isMagic){
 		super.isMagic = isMagic;
 		return this;
 	}
 	
-	public Creature IsRange(boolean isRange){
+	public Creature Ranged(boolean isRange){
 		super.isRange = isRange;
 		return this;
 	}
 	
-	public Creature IsCharge(boolean isCharge){
+	public Creature Charge(boolean isCharge){
 		super.isCharge = isCharge;
 		return this;
 	}
