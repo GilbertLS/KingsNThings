@@ -21,4 +21,9 @@ public class SpecialIncome extends Thing implements IIncomable {
 		this.income = (int)Math.ceil(Math.random()*6);
 		this.terrain = terrain;
 	}
+	
+	public int getIncome()
+	{
+		return income;
+	}
 }

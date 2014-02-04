@@ -115,12 +115,24 @@ public class GameController implements Runnable {
 		
 		initializeCreaturesCup();
 		
+		initializeGold();
+		
 		assignInitialThings();
 		
 		playPhases();
 		
 	}
 	
+	private void initializeGold() {
+		String[] args = {"" + numClients};
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.DISTRIBUTE_INITIAL_GOLD)
+					.EventParameters(args)
+			);	
+	}
+
 	private void assignInitialThings() {
     	for(GameRouter gr : servers){
     		boolean[] intendedPlayers = new boolean[4];
@@ -263,11 +275,23 @@ public class GameController implements Runnable {
 	}
 	
 	private void playPhases(){
+		DistributeIncome();
+		
 		ChangePlayerOrder();
 		
 		PlayBattlePhase();
 	}
 	
+	private void DistributeIncome() {
+		String[] args = {"" + numClients};
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.AWARD_INCOME)
+					.EventParameters(args)
+			);			
+	}
+
 	private void ChangePlayerOrder(){
 		
 	}

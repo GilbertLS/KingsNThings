@@ -16,9 +16,10 @@ public class EventList {
 	public static final int SET_CREATURES = 12;
 	public static final int ASSIGN_INITIAL_THINGS = 13;
 	public static final int HANDLE_ASSIGN_INITIAL_THINGS = 14;
+	public static final int DISTRIBUTE_INITIAL_GOLD = 15;
+	public static final int AWARD_INCOME = 16;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
-
 
 
 }

@@ -13,8 +13,8 @@ import Game.Networking.GameClient;
  * Hex Tiles also have income, so implement the IIncomable interface
  */
 public class HexTile implements IIncomable{
-	private Terrain terrain;				//Tile's terrain type
-	private ControlledBy controlledBy;		//Faction currently controlling this Tile
+	public Terrain terrain;				//Tile's terrain type
+	public ControlledBy controlledBy;		//Faction currently controlling this Tile
 	public Vector<Thing> player1Things;	//player 1's Things in this Hex Tile
 	public Vector<Thing> player2Things;	//player 2's Things in this Hex Tile
 	public Vector<Thing> player3Things;	//player 3's Things in this Hex Tile
@@ -64,6 +64,11 @@ public class HexTile implements IIncomable{
 
 	public Terrain getTerrain() {
 		return terrain;
+	}
+	
+	public int getIncome()
+	{
+		return 1;
 	}
 
 }

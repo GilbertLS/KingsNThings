@@ -1,5 +1,6 @@
 package Game;
 
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.ThingType;
 
 /*
@@ -13,6 +14,7 @@ public abstract class Thing {
 	String name;				//display name of this Thing
 	HexTile currentTile;
 	public String backFileName, frontFileName;
+	public ControlledBy controlledBy;		//Faction currently controlling this Tile
 	
 	public Thing(ThingType thingType, String name, String frontFileName)
 	{

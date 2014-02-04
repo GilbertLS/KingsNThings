@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 
 /*
@@ -59,10 +60,10 @@ public class GameModel {
 		
 		unusedTiles = new LinkedList<HexTile>();
 		
-		this.player1 = new Player(1);
-		this.player2 = new Player(2);
-		this.player3 = new Player(3);
-		this.player4 = new Player(4);
+		this.player1 = new Player(0);
+		this.player2 = new Player(1);
+		this.player3 = new Player(2);
+		this.player4 = new Player(3);
 		
 		//initialize playing cup
 		createNewThings();
@@ -774,6 +775,67 @@ public class GameModel {
 			Thing currentThing = playingCup.remove(playingCup.size()-1);
 			
 			player.addThingToRack(currentThing);
+			currentThing.controlledBy = player.faction;
 		}
+	}
+
+	public void distributeInitialGold() {
+		player1.addGold(GameConstants.INITIAL_GOLD_AMOUNT);
+	}
+	
+	public int[] distributeIncome()
+	{
+		Player player;
+		int[] playerGoldUpdates = new int[playerCount];
+		
+		for(int i=0; i<playerCount; i++)
+		{
+			switch(i)
+			{
+			case 0:
+				player = player1;
+				break;
+			case 1:
+				player = player2;
+				break;
+			case 2:
+				player = player3;
+				break;
+			default:
+				player = player4;
+				break;
+			}
+		
+			playerGoldUpdates[i] = getIcomeForPlayer(player);
+		}
+		
+		return playerGoldUpdates;
+	}
+
+	private int getIcomeForPlayer(Player player) {
+		int gold =0;
+		
+		//gold pieces for land hexes
+		for(HexTile hArray[]: gameBoard.getTiles())
+			for(HexTile h: hArray)
+				if(h != null)
+					if(h.terrain != Terrain.SEA)
+						if(h.controlledBy == player.faction)
+							gold += h.getIncome();
+		
+		//combat values for forts
+		for(Fort f: player.forts)
+			gold+= f.getIncome();
+		
+		//special income tiles
+		for(SpecialIncome si: player.specialIncomes)
+			gold+= si.getIncome();
+		
+		//special characters
+		for(SpecialCharacter sc: player.specialCharacters)
+			gold += sc.getIncome();
+		
+		player.addGold(gold);
+		return gold;
 	}
 }

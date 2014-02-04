@@ -123,7 +123,7 @@ public class EventHandler {
 		}
 		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS)
 		{
-			final int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()-1;
+			final int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
 			
 			GameClient.game.gameModel.assignInitialThings(currentPlayerIndex);
 			
@@ -145,6 +145,38 @@ public class EventHandler {
 		        @Override
 		        public void run() {
 		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(10);
+		        }
+			});
+		}
+		else if (e.eventId == EventList.DISTRIBUTE_INITIAL_GOLD)
+		{
+			final int numClients = Integer.parseInt(e.eventParams[0]);
+			
+			GameClient.game.gameModel.distributeInitialGold();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	for(int i=0; i<numClients; i++)
+		        	{
+		        		GameClient.game.gameView.playerList.getPlayerPanel(i).setGold(10);
+		        	}
+		        }
+			});
+		}
+		else if (e.eventId == EventList.AWARD_INCOME)
+		{
+			final int numClients = Integer.parseInt(e.eventParams[0]);
+			
+			final int[] goldUpdates = GameClient.game.gameModel.distributeIncome();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	for(int i=0; i<numClients; i++)
+		        	{
+		        		GameClient.game.gameView.playerList.getPlayerPanel(i).addGold(goldUpdates[i]);
+		        	}
 		        }
 			});
 		}

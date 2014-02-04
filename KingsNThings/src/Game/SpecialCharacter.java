@@ -43,5 +43,10 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 		return this;
 	}
 	
+	public int getIncome()
+	{
+		return 1;
+	}
+	
 	//need method for special ability
 }

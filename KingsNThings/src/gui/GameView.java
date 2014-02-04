@@ -26,7 +26,7 @@ public class GameView extends Scene {
     public TilePreview tilePreview;
 	
     public GameView(BorderPane r) {
-    	super(r, 1200, 800);
+    	super(r, 1000, 600);
     	root = r; 
         
         rightPanel = new VBox();

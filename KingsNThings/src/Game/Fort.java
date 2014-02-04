@@ -8,7 +8,7 @@ import Game.GameConstants;
  * This class extends the Building class to add specific Fort functionality
  * The Level enum is defined in the GameConstants class
  */
-public class Fort extends Building {
+public class Fort extends Building implements IIncomable{
 	private Level level;	//The current level of the Fort
 	
 	public Fort(ThingType thingType, String name, int attackValue)
@@ -16,5 +16,10 @@ public class Fort extends Building {
 		super(thingType,  "Fort", 1, GameConstants.TowerImageBack, GameConstants.TowerImageFront);
 		level = Level.TOWER;
 		isRange = true;
+	}
+	
+	public int getIncome()
+	{
+		return combatValue;
 	}
 }
