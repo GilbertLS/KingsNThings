@@ -20,6 +20,7 @@ public class HexTile implements IIncomable{
 	public Vector<Thing> player4Things;	//player 4's Things in this Hex Tile
 	private Vector<Fort> fort;						//Fort for this Hex Tile (if applicable)
 	private Vector<SpecialIncome> specialIncome;	//Special Income for this Hex Tile (if applicable)
+	int x, y;
 	
 	public HexTile(Terrain terrain)
 	{

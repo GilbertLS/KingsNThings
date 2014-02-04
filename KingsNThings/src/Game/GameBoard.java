@@ -17,6 +17,8 @@ public class GameBoard {
 	
 	public void addHexTile(HexTile hexTile, int x, int y)
 	{
+		hexTile.x = x;
+		hexTile.y = y;
 		boardPieces[x+ARRAY_X_OFFSET][y+ARRAY_Y_OFFSET] = hexTile;
 	}
 
@@ -39,5 +41,13 @@ public class GameBoard {
 
 	public HexTile[][] getTiles() {
 		return boardPieces;
+	}
+	
+	public boolean isAdjacent(HexTile h1, HexTile h2)
+	{
+		return((h2.x <= h1.x+1 && h2.x >= h1.x-1)
+			&& (h2.y <= h1.y+1 && h2.y >= h1.y-1)
+			&& !(h2.x == h1.x+1 && h2.y == h1.y-1)
+			&& !(h2.x == h1.x-1 && h2.y == h1.y+1));
 	}
 }

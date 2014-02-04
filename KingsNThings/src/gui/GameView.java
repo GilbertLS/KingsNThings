@@ -64,4 +64,22 @@ public class GameView extends Scene {
         
         this.getStylesheets().add("gui/myStyle.css");
     }
+    
+    //method to give back a hextile
+    public HexTile chooseHexTile()
+    {
+    	return new HexTile(Terrain.DESERT);
+    }
+    
+    public void updateHexTile(HexTile h)
+    {
+    	//for example, display control marker
+    	
+    	//fort
+    }
+    
+    public void displayMessage(String message)
+    {
+    	//print message to user's view
+    }
 }
