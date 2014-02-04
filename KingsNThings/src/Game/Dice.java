@@ -8,10 +8,6 @@ public class Dice {
 	private int[] dieValues;
 	//private List<DiceView> diceViews;
 	
-	public Dice(){
-		new Dice(4);
-	}
-	
 	public Dice(int numDice) {
 		dieValues = new int[numDice];
 		//diceViews = new DiceView[numDice]();

@@ -13,13 +13,14 @@ public class EventTests {
 	@Before
 	public void Setup(){
 		int eventId = 3;
-		String[] params = { "true", "false", "gah" };
+		String[] params = { "true", "false", "gah", "woah", "yowdy" };
 		boolean[] intendedPlayers = { true, true, true };
 		
 		testEvent = new Event()
 			.EventId(eventId)
 			.EventParameters(params)
-			.IntendedPlayers(intendedPlayers);
+			.IntendedPlayers(intendedPlayers)
+			.ExpectsResponse(true);
 	}
 	
 	@Test
@@ -27,7 +28,7 @@ public class EventTests {
 		String actualString = testEvent.toString();
 		
 		assertEquals(
-			"3|true,false,gah,|true,true,true,|",
+			"3|true,false,gah,woah,yowdy,|true,true,true,|true|",
 			actualString
 		);
 	}
@@ -51,7 +52,7 @@ public class EventTests {
 		
 		String s = actualEvent.getEventParameters();
 		
-		assertEquals("true false gah ", s);
+		assertEquals("true false gah woah yowdy ", s);
 	}
 	
 	@Test
@@ -59,6 +60,15 @@ public class EventTests {
 		Event event = new Event().EventId(0);
 		
 		Event.Destringify(event.toString());
+	}
+	
+	@Test
+	public void DestringifyExpectsResponse(){
+		Event event = Event.Destringify(testEvent.ExpectsResponse(true).toString());
+		assertEquals(true, event.expectsResponseEvent);
+		
+		event = Event.Destringify(testEvent.ExpectsResponse(false).toString());
+		assertEquals(false, event.expectsResponseEvent);
 	}
 
 }

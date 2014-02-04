@@ -40,14 +40,18 @@ public class GameModel {
 	}
 	
 	public void SetCurrentPlayer(int playerNum){
-		if ( playerNum == 0 ) { currPlayer = player1; }
-		if ( playerNum == 1 ) { currPlayer = player2; }
-		if ( playerNum == 2 ) { currPlayer = player3; }
-		if ( playerNum == 3 ) { currPlayer = player4; }
+		if ( playerNum == 1 ) { currPlayer = player1; }
+		if ( playerNum == 2 ) { currPlayer = player2; }
+		if ( playerNum == 3 ) { currPlayer = player3; }
+		if ( playerNum == 4 ) { currPlayer = player4; }
 	}
 	
 	public Player GetCurrentPlayer(){
 		return currPlayer;
+	}
+	
+	public int PlayerCount(){
+		return playerCount;
 	}
 	
 	//-----------INITIAL SETUP METHODS--------------------
@@ -72,7 +76,7 @@ public class GameModel {
 		
 		ownedCharacters = new Vector<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
-		dice = new Dice();
+		dice = new Dice(4);
 		
 		boardController = new BoardController(gameBoard);
 	}

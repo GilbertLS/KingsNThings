@@ -22,7 +22,11 @@ public abstract class Combatant extends Thing{
 		this.specialType = specialType;
 	}
 	
-	//public int Attack(){
+	public int GetCombatValue(){
+		return combatValue;
+	}
 	
-	//}
+	public SpecialType GetType(){
+		return specialType;
+	}
 }

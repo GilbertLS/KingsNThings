@@ -21,4 +21,8 @@ public class Creature extends Combatant{
 		
 		this.terrain = terrain;
 	}
+	
+	public Creature(Terrain terrain, SpecialType specialType, int combatValue){
+		super(ThingType.CREATURE, "Creature" + creatureNum, specialType, combatValue );
+	}
 }

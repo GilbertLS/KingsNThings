@@ -20,6 +20,11 @@ public class Event {
 		return this;
 	}
 	
+	public Event EventParameter(String eventParam){
+		this.eventParams = new String[]{ eventParam };
+		return this;
+	}
+	
 	public Event IntendedPlayers(boolean[] intendedPlayers){
 		this.intendedPlayers = intendedPlayers;
 		return this;
@@ -27,6 +32,11 @@ public class Event {
 	
 	public Event ExpectsResponse(boolean expectsResponse){
 		this.expectsResponseEvent = expectsResponse;
+		return this;
+	}
+	
+	public Event ExpectsResponse(){
+		this.expectsResponseEvent = true;
 		return this;
 	}
 
@@ -38,6 +48,7 @@ public class Event {
 		int eventId = -1;
 		String[] eventParams = new String[0];
 		String[] intendedPlayersString = new String[0];
+		boolean expectsResponse = false;
 		
 		if (eventFields.length > 0) {
 			eventId = Integer.parseInt(eventFields[0]);
@@ -47,6 +58,9 @@ public class Event {
 		}
 		if (eventFields.length > 2) {
 			intendedPlayersString = eventFields[2].split("\\" + elementDelimiter);
+		}
+		if (eventFields.length > 3){
+			expectsResponse = Boolean.parseBoolean(eventFields[3]);
 		}
 		
 		boolean[] intendedPlayers = new boolean[intendedPlayersString.length];
@@ -58,7 +72,8 @@ public class Event {
 		Event e = new Event()
 					.EventId(eventId)
 					.EventParameters(eventParams)
-					.IntendedPlayers(intendedPlayers);
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(expectsResponse);
 		
 		return e;
 	}
@@ -77,6 +92,8 @@ public class Event {
 		}
 		
 		ret += delimiter;
+		
+		ret += expectsResponseEvent + delimiter;
 		
 		return ret;
 	}
