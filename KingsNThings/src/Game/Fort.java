@@ -1,8 +1,8 @@
 package Game;
 
 import Game.GameConstants.Level;
-import Game.GameConstants.SpecialType;
 import Game.GameConstants.ThingType;
+import Game.GameConstants;
 
 /*
  * This class extends the Building class to add specific Fort functionality
@@ -11,10 +11,10 @@ import Game.GameConstants.ThingType;
 public class Fort extends Building {
 	private Level level;	//The current level of the Fort
 	
-	//temp
-	private static int fortID = 0;
-	public Fort()
+	public Fort(ThingType thingType, String name, int attackValue)
 	{
-		super(ThingType.FORT, "Fort" + fortID, SpecialType.RANGED, (int)Math.ceil(Math.random()*6));
+		super(thingType,  "Fort", 1, GameConstants.TowerImageBack, GameConstants.TowerImageFront);
+		level = Level.TOWER;
+		isRange = true;
 	}
 }

@@ -1,6 +1,5 @@
 package Game;
 
-import Game.GameConstants.SpecialType;
 import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
 
@@ -9,23 +8,23 @@ import Game.Networking.GameClient;
  */
 public abstract class Combatant extends Thing{
 	//The damage dealt by this combatant
-	private int combatValue;	
+	protected int combatValue;	
+
+	protected boolean isFlying = false;
+	protected boolean isRange = false;
+	protected boolean isCharge = false;
+	protected boolean isMagic = false;
 	
-	//Combatant variation
-	private SpecialType specialType;
-	
-	public Combatant(ThingType thingType, String name, SpecialType specialType, int combatValue)
+	public Combatant(ThingType thingType, String name, SpecialType specialType, int combatValue, String frontFileName)
 	{
-		super(thingType, name);
+		super(thingType, name, frontFileName);
 		
 		this.combatValue = combatValue;
 		this.specialType = specialType;
 	}
-	
 	public int GetCombatValue(){
 		return combatValue;
 	}
-	
 	public SpecialType GetType(){
 		return specialType;
 	}

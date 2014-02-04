@@ -2,6 +2,9 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import Game.Creature;
+import Game.GameConstants;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
 import javafx.application.Application;
@@ -18,7 +21,9 @@ public class GameView extends Scene {
     public HBox bottomPanel;
     public BoardView board;
     public PlayerList playerList;
+    public ButtonBox buttonBox;
     public RackView rack;
+    public TilePreview tilePreview;
 	
     public GameView(BorderPane r) {
     	super(r, 1200, 800);
@@ -40,15 +45,22 @@ public class GameView extends Scene {
         HexTile[] array7 = new HexTile[] {new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), null, null, null};
         HexTile[][] tiles = {array1, array2, array3, array4, array5, array6, array7};
         
-        board = new BoardView(tiles);
+        tilePreview = new TilePreview();
+        
+        board = new BoardView(tilePreview);
         root.setCenter(board);        
         
-        playerList = new PlayerList(Arrays.asList(new PlayerPanel("Player 1", 0), new PlayerPanel("Player 2", 0), new PlayerPanel("Player 3", 0), new PlayerPanel("Player 4", 0)));
+        playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
+        
+        buttonBox = new ButtonBox();
+        rightPanel.getChildren().add(buttonBox);
+        
+        rightPanel.getChildren().add(tilePreview);
         
         ArrayList<ThingView> arr = new ArrayList<ThingView>();
         for(int i = 0; i < 10; i++)
-        	arr.add(new ThingView());
+        	arr.add(new ThingView(new Creature(GameConstants.Terrain.DESERT)));
         rack = new RackView(FXCollections.observableList((arr)));
         bottomPanel.getChildren().add(rack);
         

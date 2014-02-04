@@ -1,7 +1,6 @@
 package Game;
 
 import Game.GameConstants.SettlementType;
-import Game.GameConstants.SpecialType;
 import Game.GameConstants.ThingType;
 
 /*
@@ -12,9 +11,9 @@ public class Settlement extends Building {
 	
 	//temp
 	private static int settlementID = 0;
-	public Settlement()
+	public Settlement(String backFileName, String frontFileName)
 	{
-		super(ThingType.SETTLEMENT, "Settlement" + settlementID, SpecialType.RANGED, (int)Math.ceil(Math.random()*6));
+		super(ThingType.SETTLEMENT, "Settlement" + settlementID++, (int)Math.ceil(Math.random()*6), backFileName, frontFileName);
 		
 		this.settlementType = SettlementType.VILLAGE;
 	}

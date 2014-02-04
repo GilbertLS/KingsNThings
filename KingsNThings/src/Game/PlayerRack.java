@@ -11,4 +11,12 @@ public class PlayerRack {
 	{
 		this.things = new Vector<Thing>(GameConstants.MAX_NUM_THINGS_IN_RACK);
 	}
+
+	public void addThing(Thing currentThing) {
+		things.add(currentThing);
+	}
+	
+	public Vector<Thing> getThings() {
+		return things;
+	}
 }

@@ -90,4 +90,8 @@ public class HexTile implements IIncomable{
 		System.out.println();
 	}
 
+	public Terrain getTerrain() {
+		return terrain;
+	}
+
 }

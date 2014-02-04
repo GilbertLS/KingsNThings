@@ -11,7 +11,8 @@ public class PlayerList extends VBox {
 		this.getChildren().addAll(l);
 	}
 	
-	public void ReOrderPlayers()
+	public PlayerPanel getPlayerPanel(int playerNum)
 	{
+			return ((PlayerPanel)this.getChildren().get(playerNum));
 	}
 }

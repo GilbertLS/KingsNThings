@@ -1,7 +1,12 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import Game.GameConstants;
+import Game.HexTile;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
@@ -12,11 +17,23 @@ import javafx.scene.shape.Polygon;
 
 public class Tile extends Region implements Draggable {
 	Tile thisTile = this;
+	HexTile tileRef;
+	ArrayList<ThingView> p1Things = 		new ArrayList<ThingView>();
+	ArrayList<ThingView> p2Things = 		new ArrayList<ThingView>();
+	ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
+	ArrayList<ThingView> p4Things = 		new ArrayList<ThingView>();
+	ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
+	ThingView fort;
+	ThingView economy;
+	int controllingPlayer = 0;
 	
-    public Tile(Double width, Double height)
+    public Tile(Double width, Double height, HexTile h)
     {
-    	getStyleClass().add("tile");
-    	setPrefSize(width, height);
+    	tileRef = h;
+    	
+    	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	this.getStyleClass().add("tile");
+    	this.setPrefSize(width, height);
     	
     	Polygon hex = new Polygon();
     	hex.getPoints().addAll(new Double[]{
@@ -27,8 +44,55 @@ public class Tile extends Region implements Draggable {
     		    3*width/4, 	height,
     		    width/4, 	height});
 
-        setShape(hex);
-        initListeners();
+    	this.setShape(hex);
+    	this.initListeners();
+    }
+    
+    private ArrayList<ThingView> getView(int i) {
+    	if (i == 1)
+    		return p1Things;
+    	else if (i == 2)
+    		return p2Things;
+    	else if (i == 3)
+    		return p3Things;
+    	else if (i == 4)
+    		return p4Things;
+    	else
+    		return neutralThings;
+    }
+    
+    public void add(ThingView t, int player) {
+    	getView(player).add(t);
+    }
+    
+    public void addAll(List<ThingView> t, int player) {
+    	getView(player).addAll(t);
+    }
+    
+    public void remove(ThingView t, int player) {
+    	getView(player).remove(t);
+    }
+    
+    public void removeAll(List<ThingView> t, int player) {
+    	getView(player).removeAll(t);
+    }
+    
+    private String getBackgroundFromType()
+    {
+    	if (tileRef != null) {
+    		switch (tileRef.getTerrain()) {
+    			case SEA: return "Tuile-Mer.png";
+    			case JUNGLE: return "Tuile-Jungle.png";
+    			case FROZEN_WASTE: return "Tuile-Entendue-Glacée.png";
+    			case FOREST: return "Tuile-Forêt.png";
+    			case PLAINS: return "Tuile-Plaines.png";
+    			case SWAMP: return "Tuile-Marais.png";
+    			case MOUNTAIN: return "Tuile-Montagne.png";
+    			case DESERT: return "Tuile-Desert.png";
+    		}
+    	}
+    	
+    	return "Tuile_Back.png";
     }
 
     protected void initListeners()
@@ -74,7 +138,8 @@ public class Tile extends Region implements Draggable {
 						things.add(items.get(i));
 					}
 					
-					thisTile.getChildren().addAll(things);
+					//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
+					thisTile.addAll(things, 1);
 					source.getListView().getItems().removeAll(things);
 
 					success = true;
@@ -86,5 +151,5 @@ public class Tile extends Region implements Draggable {
 		});
 	}
     
-    //add all required methods for custom drawing, styling etc.
+    
 }

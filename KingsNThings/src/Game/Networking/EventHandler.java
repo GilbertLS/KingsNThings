@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Vector;
 
 
-import java.util.function.Predicate;
+import javafx.application.Platform;
 
 import Game.Combatant;
 import Game.Creature;
@@ -275,7 +275,63 @@ public class EventHandler {
 			GameClient.game.gameModel.boardController.AddThingToTile(creature, player, tileX, tileY);
 		} else if (e.eventId == EventList.BATTLE_OVER){
 			System.out.println("Ending battle");
+		} else if (e.eventId == EventList.SET_HEX_TILES)
+		{
+			String boardHexTilesString = e.eventParams[0];
+			String unusedHexTileString = e.eventParams[1];
+			
+			String[] boardHexTileStrings = boardHexTilesString.split("/");
+			String[] unusedHexTileStrings = unusedHexTileString.split("/");
+			
+			final HexTile[][] h = GameClient.game.gameModel.setInitialHexTiles(boardHexTileStrings);
+			GameClient.game.gameModel.setInitialUnusedHexTiles(unusedHexTileStrings);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.board.setTiles(h);
+		        }
+		    });
 		}
+		else if (e.eventId == EventList.SET_CREATURES)
+		{
+			String creaturesString = e.eventParams[0];
+			
+			String[] creaturesStrings = creaturesString.split("/");
+			
+			GameClient.game.gameModel.setPlayingCup(creaturesStrings);
+			
+			//GameClient.game.gameModel.printCurrentBoardTiles();
+		}
+		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS)
+		{
+			final int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()-1;
+			
+			GameClient.game.gameModel.assignInitialThings(currentPlayerIndex);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
+					GameClient.game.gameView.playerList.getPlayerPanel(currentPlayerIndex).setThings(10);
+		        }
+		    });
+		}
+		else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			GameClient.game.gameModel.assignInitialThings(playerIndex);
+			System.out.println(playerIndex);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(10);
+		        }
+			});
+		}
+	}
+
 		
 		if (e.expectsResponseEvent && numberOfSends != 1){
 			throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);

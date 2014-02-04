@@ -37,4 +37,12 @@ public class Player {
 		playerOrder = (playerOrder++)%playerCount;
 		
 	}
+
+	public void addThingToRack(Thing currentThing) {
+		playerRack.addThing(currentThing);
+	}
+	
+	public PlayerRack getPlayerRack() {
+		return playerRack;
+	}
 }

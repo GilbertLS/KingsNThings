@@ -18,6 +18,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 	ThingCell thisCell = this;
 
 	public ThingCell() {
+		getStyleClass().add("thing");
 		setAlignment(Pos.CENTER);
 		initListeners();
 	}
@@ -44,34 +45,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 		});
 
 		/* IMPLEMENT RACK REORDERING? */
-		/*setOnDragOver(new EventHandler<DragEvent>() {
-			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					e.acceptTransferModes(TransferMode.MOVE);				}
-				e.consume();
-			}		});
-		setOnDragEntered(new EventHandler<DragEvent>() {
-			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					setOpacity(0.3);				}
-			}		});
-		setOnDragExited(new EventHandler<DragEvent>() {
-			@Override public void handle(DragEvent e) {				if (e.getGestureSource() != thisCell &&						e.getDragboard().hasString()) {					setOpacity(1);				}
-			}		});
-
-		setOnDragDropped(new EventHandler<DragEvent>() {
-			@Override public void handle(DragEvent e) {
-				if (getItem() == null) {
-					return;
-				}
-
-				Dragboard db = e.getDragboard();
-				boolean success = false;
-
-				if (db.hasString()) {
-					//STUFF
-				}
-				e.setDropCompleted(success);
-
-				e.consume();
-			}
-		});*/
+		
 
 	}
 
@@ -83,7 +57,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			setStyle("");
 		} else {
 			setPrefSize(64, 64);
-			setStyle("-fx-background-image: url('res/images/T_Back.png'); -fx-background-repeat: stretch; -fx-background-position: center center;");
+			setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "');");
 		}
 	}
 }

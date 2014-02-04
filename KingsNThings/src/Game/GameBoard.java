@@ -23,4 +23,21 @@ public class GameBoard {
 	public HexTile getTile(int x, int y) {
 		return boardPieces[x+ARRAY_X_OFFSET][y+ARRAY_Y_OFFSET];
 	}
+
+	public void printCurrentTiles() {
+		for(int i=0; i<dimensions; i++){
+			for(int j=0; j<dimensions; j++){
+				if (boardPieces[i][j] == null)
+					continue;
+				
+				System.out.print(boardPieces[i][j].getTerrain()+" ");
+			}
+			System.out.println();
+		}
+		
+	}
+
+	public HexTile[][] getTiles() {
+		return boardPieces;
+	}
 }

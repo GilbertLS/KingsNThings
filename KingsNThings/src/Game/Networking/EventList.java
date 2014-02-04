@@ -15,6 +15,13 @@ public class EventList {
 	public static final int REMOVE_THINGS = 11;
 	public static final int ADD_THING_TO_TILE = 12;
 	public static final int BATTLE_OVER = 13;
+	public static final int SET_HEX_TILES = 14;
+	public static final int SET_CREATURES = 15;
+	public static final int ASSIGN_INITIAL_THINGS = 16;
+	public static final int HANDLE_ASSIGN_INITIAL_THINGS = 17;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
+
+
+
 }

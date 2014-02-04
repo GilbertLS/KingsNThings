@@ -112,31 +112,83 @@ public class GameController implements Runnable {
 	}
 	
 	private void initialSetup() {
-		//perform initial setup of the game via the model
-		//call the view to update when necessary	
-		
-		//Vector applicablePlayers = new Vector(1);
-		//for(int i=0; i<playerCount; i++)
-		//{
-			//applicablePlayers.add(i);
-		//}
-		//Response initialHexesResponse = EventHandler.sendEvent(GET_CURRENT_CUP, applicablePlayers, null);
-		//initialHexesResponse.getHexTiles();
-		
-		//gameModel.randomizePlayingCup();
-		
-		//gameModel.randomizeSpecialCharacters();
-		
-		//gameModel.setUpHexTiles();
-		
 		//gameView.drawInitGame();
 		
 		determineInitialPlayerOrder();
+		
+		initializeHexTiles();
+		
+		initializeCreaturesCup();
+		
+		assignInitialThings();
 		
 		playPhases();
 		
 	}
 	
+	private void assignInitialThings() {
+    	for(GameRouter gr : servers){
+    		boolean[] intendedPlayers = new boolean[4];
+    		
+    		intendedPlayers[gr.myID] = true;
+    		
+    		String[] eventParams = new String[]{ "" + gr.myID };
+    		
+    		Event e = new Event()
+    					.EventId(EventList.ASSIGN_INITIAL_THINGS)
+    					.EventParameters(eventParams)
+    					.IntendedPlayers(intendedPlayers);
+    		
+    		GameControllerEventHandler.sendEvent(e);
+    		
+    		for(int i=0; i<numClients; i++)
+    		{
+    			if(i == gr.myID)
+    				intendedPlayers[i] = false;
+    			else
+    				intendedPlayers[i] = true;
+    		}
+    		
+    		eventParams[0] = Integer.toString(gr.myID);
+    		
+    		e = new Event()
+				.EventId(EventList.HANDLE_ASSIGN_INITIAL_THINGS)
+				.EventParameters(eventParams)
+				.IntendedPlayers(intendedPlayers);
+
+    		GameControllerEventHandler.sendEvent(e);
+    	}
+	}
+
+	private void initializeHexTiles() {
+		String[] initializeHexTilesStrings = GameModel.initializeHexTiles().split(" ");
+		
+		String[] args = new String[2];
+		args[0] = initializeHexTilesStrings[0];
+		args[1] = initializeHexTilesStrings[1];
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.SET_HEX_TILES )
+					.EventParameters( args )
+			);
+		
+	}
+	
+	private void initializeCreaturesCup() {
+		String initializeCreaturesString = GameModel.initializeCreatures();
+		
+		String[] args = new String[1];
+		args[0] = initializeCreaturesString;
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.SET_CREATURES )
+					.EventParameters( args )
+			);
+		
+	}
+
 	private void determineInitialPlayerOrder() {
 		
 		//array to hold player rolls

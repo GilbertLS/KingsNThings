@@ -65,7 +65,7 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 		out.println(e.toString());
 		
 		if(e.eventId == EventList.SET_PLAYER_ORDER || e.eventId == EventList.UPDATE_PLAYER_ORDER)
-			updateGameRouterID(e);
+			updateGameRouterOrder(e);
 		
 		//if necessary, wait for a response
 		if(e.expectsResponseEvent)
@@ -84,7 +84,7 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 		return null;
 	}
 
-	private void updateGameRouterID(Event e) {
+	private void updateGameRouterOrder(Event e) {
 		int numPlayers = Integer.parseInt(e.eventParams[0]);
 		
 		if(e.eventId == EventList.SET_PLAYER_ORDER)

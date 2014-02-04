@@ -30,11 +30,51 @@ public final class GameConstants {
 	//The different levels a Fort can have (Tower < Keep < Castle < Citadel)
 	public static enum Level {TOWER, KEEP, CASTLE, CITADEL}
 	
-	//The different special types of Combatants there can be
-	public static enum SpecialType {NONE, FLYING, MAGIC, RANGED, CHARGE}
-	
 	//The different type of Settlements
 	public static enum SettlementType {VILLAGE, CITY}
+	
+	//thing image paths
+	public static final String PlaceHolderImageFront = "Bowl.png";
+	public static final String PlaceHolderImageBack = "Bowl.png";
+	public static final String ThingImageBack = "T_Back.png";
+	public static final String TowerImageBack = "C_Fort_375.png";
+	public static final String TowerImageFront = "C_Fort_376.png";
+	public static final String WitchDoctorImageFront = "T_Jungle_006.png";
+	public static final String OgreImageFront = "T_Mountains_I.png";
+	public static final String GoblinsImageFront = "T_Mountains_E.png";
+	public static final String WatusiImageFront = "T_Jungle_012.png";
+	public static final String SkeletonsImageFront = "T_Desert_331.png";
+	public static final String DwarvesImageFront = "T_Mountains_N.png";
+	public static final String GiantImageFront = "T_Mountains_J.png";
+	public static final String BrownKnightImageFront = "T_Mountains_D.png";
+	public static final String ElephantImageFront = "T_Jungle_001.png";
+	public static final String GiantSpiderImageFront = "T_Desert_221.png";
+	public static final String OldDragonImageFront = "T_Desert_211.png";
+	public static final String BanditsImageFront = "T_Forest_086.png";
+	public static final String CrawlingVinesImageFront = "T_Jungle_003.png";
+	public static final String WalkingTreeImageFront = "T_Forest_098.png";
+	public static final String DruidImageFront = "T_Forest_088.png";
+	public static final String NomadsImageFront = "T_Desert_220.png";
+	public static final String CrocodilesImageFront = "T_Jungle_005.png";
+	public static final String DervishImageFront = "T_Desert_214.png";
+	public static final String GreenKnightImageFront = "T_Forest_097.png";
+	public static final String SandwormImageFront = "T_Desert_224.png";
+	public static final String PterodactylWarriorsImageFront = "T_Jungle_002.png";
+	public static final String GreatHunterImageFront = "T_Plains_021.png";
+	public static final String PygmiesImageFront = "T_Jungle_008.png";
+	public static final String GenieImageFront = "T_Desert_215.png";
+	public static final String FarmersImageFront = "T_Plains_014.png";
+	public static final String CamelCorpsImageFront = "T_Desert_219.png";
+	public static final String CentaurImageFront = "T_Plains_031.png";
+	public static final String BuffaloHerdImageFront = "T_Plains_016.png";
+	public static final String GiantApeImageFront = "T_Jungle_009.png";
+	public static final String BlackKnightImageFront = "T_Swamp_080.png";
+	public static final String DarkWizardImageFront = "T_Swamp_081.png";
+	public static final String TribesmanImageFront = "T_Plains_027.png";
+	public static final String VampireBatImageFront = "T_Swamp_084.png";
+	public static final String TigersImageFront = "T_Jungle_011.png";
+	public static final String VillainsImageFront = "T_Plains_015.png";
+	public static final String GiantLizardImageFront = "T_Swamp_065.png";
 	
 	//-------------/end ENUMS---------------
 	
@@ -71,6 +111,10 @@ public final class GameConstants {
 	//event types
 	public static final int PLAYERS_ROLL = 0;
 	public static final int UPDATE_PLAYER_ORDER = 1;
+
+
+
+
 
 
 

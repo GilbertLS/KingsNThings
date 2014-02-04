@@ -1,6 +1,5 @@
 package Game;
 
-import Game.GameConstants.SpecialType;
 import Game.GameConstants.ThingType;
 
 /*
@@ -10,9 +9,11 @@ import Game.GameConstants.ThingType;
 public abstract class Building extends Combatant implements IIncomable {
 	private int hits; //number of hits currently applied to the building
 	
-	public Building(ThingType thingType, String name, SpecialType specialType, int combatValue)
+	public Building(ThingType thingType, String name, int combatValue, String backFileName, String frontFileName)
 	{
-		super(thingType, name, specialType, combatValue);
+		super(thingType, name, combatValue, frontFileName);
+		
+		this.backFileName = backFileName;
 		
 		this.hits = 0;
 	}
