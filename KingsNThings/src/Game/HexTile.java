@@ -3,7 +3,6 @@ import java.util.Vector;
 
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
-import Game.Networking.GameClient;
 
 /*
  * This class represents a single Hex Tile in a Kings N' Things Game

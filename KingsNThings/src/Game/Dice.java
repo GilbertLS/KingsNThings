@@ -1,8 +1,5 @@
 package Game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Dice {
 	//individual die values
 	private int[] dieValues;

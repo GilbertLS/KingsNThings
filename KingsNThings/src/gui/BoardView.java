@@ -1,13 +1,8 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import Game.HexTile;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ListChangeListener.Change;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;

@@ -1,8 +1,5 @@
 package Game;
 
-import java.util.Collection;
-import java.util.Vector;
-
 /*
  * This class holds all relevant constants for the Game (for example, enums, screen width/height)
  */
