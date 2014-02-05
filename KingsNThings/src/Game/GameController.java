@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import Game.Networking.Event;
 import Game.Networking.EventList;
 import Game.Networking.GameControllerEventHandler;
@@ -52,7 +53,7 @@ public class GameController implements Runnable {
 	    	numClients = servers.size();
 	    	
 	    	for(GameRouter gr : servers){
-	    		boolean[] intendedPlayers = new boolean[4];
+	    		boolean[] intendedPlayers = new boolean[numClients];
 	    		
 	    		intendedPlayers[gr.myID] = true;
 	    		
@@ -111,12 +112,96 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
+		placeControlMarkers();
+		
+		placeTower();
+		
 		assignInitialThings();
 		
 		playPhases();
 		
 	}
 	
+	private void placeControlMarkers() {
+		for(int i=0; i<3; i++)
+		{
+			for(GameRouter gr : servers){
+	    		boolean[] intendedPlayers = new boolean[numClients];
+	    		
+	    		intendedPlayers[gr.myID] = true;
+	    		
+	    		Event e = new Event()
+	    					.EventId(EventList.PLACE_CONTROL_MARKER)
+	    					.IntendedPlayers(intendedPlayers)
+	    					.ExpectsResponse(true);
+	    		
+	    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+	    		
+	    		String[] args = new String[2];
+				for (int j=0; j<responses.length; j++){
+					if(responses[j].fromPlayer == gr.myID)
+					{
+						args = responses[j].message.split(" ");
+					}
+				}
+	    		
+	    		for(int j=0; j<numClients; j++)
+	    		{
+	    			if(j == gr.myID)
+	    				intendedPlayers[j] = false;
+	    			else
+	    				intendedPlayers[j] = true;
+	    		}
+	    		
+	    		e = new Event()
+					.EventId(EventList.HANDLE_PLACE_CONTROL_MARKER)
+					.IntendedPlayers(intendedPlayers)
+	    			.EventParameters(args);
+	    		
+	    		GameControllerEventHandler.sendEvent(e);
+			}
+		}
+	}
+	
+	private void placeTower(){
+		for(GameRouter gr : servers){
+    		boolean[] intendedPlayers = new boolean[numClients];
+    		
+    		intendedPlayers[gr.myID] = true;
+    		
+    		Event e = new Event()
+    					.EventId(EventList.PLACE_TOWER)
+    					.IntendedPlayers(intendedPlayers)
+    					.ExpectsResponse(true);
+    		
+    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+    		
+    		String[] args = new String[2];
+			for (int j=0; j<responses.length; j++){
+				if(responses[j].fromPlayer == gr.myID)
+				{
+					args = responses[j].message.split(" ");
+				}
+			}
+    		
+    		for(int j=0; j<numClients; j++)
+    		{
+    			if(j == gr.myID)
+    				intendedPlayers[j] = false;
+    			else
+    				intendedPlayers[j] = true;
+    		}
+    		
+    		System.out.println("SENDING HANDLE PLACE TOWER EVENT");
+    		e = new Event()
+				.EventId(EventList.HANDLE_PLACE_TOWER)
+				.IntendedPlayers(intendedPlayers)
+    			.EventParameters(args);
+    		
+    		GameControllerEventHandler.sendEvent(e);
+		}
+	}
+
 	private void initializeGold() {
 		String[] args = {"" + numClients};
 		

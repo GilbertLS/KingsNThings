@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import Game.Creature;
 import Game.GameConstants;
+import Game.GameConstants.ControlledBy;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
 import javafx.collections.FXCollections;
@@ -68,7 +69,41 @@ public class GameView extends Scene {
     //method to give back a hextile
     public HexTile chooseHexTile()
     {
-    	return new HexTile(Terrain.DESERT);
+    	HexTile h = new HexTile(Terrain.DESERT);
+    	
+    	do
+    	{
+    		h.x = (int)(Math.floor(Math.random()*7)-3);
+    		h.y = (int)(Math.floor(Math.random()*7)-3);
+    	}while(((h.x == -3 && (h.y == 3 || h.y == 2 || h.y == 1))
+    			||(h.x == -2 && (h.y == 3 || h.y == 2))
+    			||(h.x == -1 && (h.y == 3))
+    			||(h.x == 3 && (h.y == -3 || h.y == -2 || h.y == -1))
+    			||(h.x == 2 && (h.y == -3 || h.y == -2))
+    			||(h.x == 1 && (h.y == -3))));
+    	
+    	int faction = (int)Math.floor(Math.random()*5);
+    	
+    	switch(faction)
+    	{
+    	case 0:
+    		h.controlledBy = ControlledBy.PLAYER1;
+    		break;
+    	case 1:
+    		h.controlledBy = ControlledBy.PLAYER2;
+    		break;
+    	case 2:
+    		h.controlledBy = ControlledBy.PLAYER3;
+    		break;
+    	case 3:
+    		h.controlledBy = ControlledBy.PLAYER4;
+    		break;
+    	default:
+    		h.controlledBy = ControlledBy.NEUTRAL;
+    		break;
+    	}
+    	
+    	return h;
     }
     
     public void updateHexTile(HexTile h)
@@ -80,6 +115,6 @@ public class GameView extends Scene {
     
     public void displayMessage(String message)
     {
-    	//print message to user's view
+    	System.out.println("GAME VIEW MESSAGE: " + message);
     }
 }

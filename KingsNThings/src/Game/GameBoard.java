@@ -42,12 +42,4 @@ public class GameBoard {
 	public HexTile[][] getTiles() {
 		return boardPieces;
 	}
-	
-	public boolean isAdjacent(HexTile h1, HexTile h2)
-	{
-		return((h2.x <= h1.x+1 && h2.x >= h1.x-1)
-			&& (h2.y <= h1.y+1 && h2.y >= h1.y-1)
-			&& !(h2.x == h1.x+1 && h2.y == h1.y-1)
-			&& !(h2.x == h1.x-1 && h2.y == h1.y+1));
-	}
 }

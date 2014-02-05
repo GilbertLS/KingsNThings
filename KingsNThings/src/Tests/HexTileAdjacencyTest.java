@@ -32,21 +32,21 @@ public class HexTileAdjacencyTest {
 		
 		HexTile centerTile = myBoard.getTile(0, 0);
 		
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(1,1)), true);
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(1,0)), true);
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(0,-1)), true);
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(-1,-1)), true);
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(-1,0)), true);
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(0,1)), true);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(1,1)), true);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(1,0)), true);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(0,-1)), true);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(-1,-1)), true);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(-1,0)), true);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(0,1)), true);
 		
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(-1,1)), false);
-		assertEquals(myBoard.isAdjacent(centerTile, myBoard.getTile(1,-1)), false);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(-1,1)), false);
+		assertEquals(centerTile.isAdjacent(myBoard.getTile(1,-1)), false);
 		
 		
 		HexTile edgeTile = myBoard.getTile(3,3);
-		assertEquals(myBoard.isAdjacent(edgeTile, myBoard.getTile(2,3)), true);
-		assertEquals(myBoard.isAdjacent(edgeTile, myBoard.getTile(2,2)), true);
-		assertEquals(myBoard.isAdjacent(edgeTile, myBoard.getTile(3,2)), true);
+		assertEquals(edgeTile.isAdjacent(myBoard.getTile(2,3)), true);
+		assertEquals(edgeTile.isAdjacent(myBoard.getTile(2,2)), true);
+		assertEquals(edgeTile.isAdjacent(myBoard.getTile(3,2)), true);
 	}
 
 }

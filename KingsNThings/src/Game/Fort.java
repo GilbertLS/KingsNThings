@@ -10,10 +10,11 @@ import Game.GameConstants;
  */
 public class Fort extends Building implements IIncomable{
 	private Level level;	//The current level of the Fort
+	private static int fortIndex =0;
 	
-	public Fort(ThingType thingType, String name, int attackValue)
+	public Fort()
 	{
-		super(thingType,  "Fort", 1, GameConstants.TowerImageBack, GameConstants.TowerImageFront);
+		super(ThingType.FORT,  "Fort" + fortIndex++, 1, GameConstants.TowerImageBack, GameConstants.TowerImageFront);
 		level = Level.TOWER;
 		isRange = true;
 	}

@@ -2,11 +2,14 @@ package Game.Networking;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
 import javafx.application.Platform;
 import Game.Combatant;
 import Game.Creature;
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
 import Game.Player;
@@ -208,7 +211,7 @@ public class EventHandler {
 			
 			if (numHitsTaken > 0){
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
-				Vector<Thing> things = currTile.GetThings(currentPlayer);
+				ArrayList<Thing> things = currTile.GetThings(currentPlayer);
 				
 				System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
 				System.out.print("Things:");
@@ -355,13 +358,113 @@ public class EventHandler {
 		        }
 			});
 		}
+		else if (e.eventId == EventList.PLACE_CONTROL_MARKER)
+		{
+			HexTile selectedTile;
+			
+			boolean validSelectionMade = false;
+			do
+			{
+				GameClient.game.gameView.displayMessage("Please select a tile to place a Control Marker into");
+				selectedTile = GameClient.game.gameView.chooseHexTile();
+				
+				if(GameClient.game.gameModel.isValidControlMarkerPlacement(selectedTile))
+						validSelectionMade = true;
+				else
+					GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
+				
+			}while(!validSelectionMade);
+			
+			ControlledBy faction = GameClient.game.gameModel.GetCurrentPlayer().faction;
+			
+			//update model
+			GameClient.game.gameModel.updateTileFaction(faction, selectedTile.x, selectedTile.y);
+			
+			//update view
+			GameClient.game.gameView.updateHexTile(selectedTile);
+			
+			//respond with the coords and faction of updated tile
+			System.out.println("CREATING PLACE MARKER RESPONSE EVENT");
+			
+			String[] args = {selectedTile.x +"SPLIT"+selectedTile.y, faction.name()};
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.PLACE_CONTROL_MARKER)
+						.EventParameters(args)
+			);
+		}
+		else if(e.eventId == EventList.HANDLE_PLACE_CONTROL_MARKER)
+		{			
+			String[] hexTileCoords = e.eventParams[0].split("SPLIT");
+			
+			int x = Integer.parseInt(hexTileCoords[0]);
+			int y = Integer.parseInt(hexTileCoords[1]);
+			
+			ControlledBy faction = ControlledBy.valueOf(e.eventParams[1]);
+			
+			HexTile h = GameClient.game.gameModel.updateTileFaction(faction, x, y);
+			GameClient.game.gameView.updateHexTile(h);
+		}
+		else if(e.eventId == EventList.PLACE_TOWER)
+		{
+			HexTile selectedTile;
+			
+			boolean validSelectionMade = false;
+			do
+			{
+				GameClient.game.gameView.displayMessage("Please select a tile to place a Tower on");
+				selectedTile = GameClient.game.gameView.chooseHexTile();
+				
+				if(GameClient.game.gameModel.isValidTowerPlacement(selectedTile))
+						validSelectionMade = true;
+				else
+					GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
+				
+			}while(!validSelectionMade);
+			
+			int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+			
+			//update model
+			GameClient.game.gameModel.addTower(selectedTile.x, selectedTile.y, currentPlayerIndex);
+			
+			//update view
+			GameClient.game.gameView.updateHexTile(selectedTile);
+			
+			//respond with the coords of updated tile
+			System.out.println("CREATING PLACE TOWER RESPONSE EVENT");
+			
+			String[] args = {selectedTile.x +"SPLIT"+selectedTile.y, Integer.toString(currentPlayerIndex)};
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.PLACE_TOWER)
+						.EventParameters(args)
+			);
+		}
+		else if (e.eventId == EventList.HANDLE_PLACE_TOWER)
+		{
+			String[] hexTileCoords = e.eventParams[0].split("SPLIT");
+			
+			int x = Integer.parseInt(hexTileCoords[0]);
+			int y = Integer.parseInt(hexTileCoords[1]);
+			
+			int playerIndex = Integer.parseInt(e.eventParams[1]);
+			
+			HexTile h = GameClient.game.gameModel.addTower(x, y, playerIndex);
+			//update view
+			GameClient.game.gameView.updateHexTile(h);
+		}
 		
 		if (e.expectsResponseEvent && numberOfSends != 1){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
 		} else if (!e.expectsResponseEvent && numberOfSends != 0){
 				throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
 		}
+		
+
 	}
+
 	
 	private static void SendNullEvent(){
 		EventHandler.SendEvent( new Event().EventId( EventList.NULL_EVENT ) );

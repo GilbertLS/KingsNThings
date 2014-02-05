@@ -23,6 +23,10 @@ public class EventList {
 	public static final int AWARD_INCOME = 19;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
+	public static final int PLACE_CONTROL_MARKER = 100;
+	public static final int HANDLE_PLACE_CONTROL_MARKER = 101;
+	public static final int PLACE_TOWER = 102;
+	public static final int HANDLE_PLACE_TOWER = 103;
 
 
 }

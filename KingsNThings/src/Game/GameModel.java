@@ -1,7 +1,10 @@
 package Game;
 
 import java.util.ArrayList;
+
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
+
 import java.util.Collections;
 import java.util.LinkedList;
 /*
@@ -806,22 +809,22 @@ public class GameModel {
 				break;
 			}
 		
-			playerGoldUpdates[i] = getIcomeForPlayer(player);
+			playerGoldUpdates[i] = getIncomeForPlayer(player);
 		}
 		
 		return playerGoldUpdates;
 	}
 
-	private int getIcomeForPlayer(Player player) {
+	private int getIncomeForPlayer(Player player) {
 		int gold =0;
 		
 		//gold pieces for land hexes
-		for(HexTile hArray[]: gameBoard.getTiles())
-			for(HexTile h: hArray)
-				if(h != null)
-					if(h.terrain != Terrain.SEA)
-						if(h.controlledBy == player.faction)
-							gold += h.getIncome();
+		for(HexTile h: player.ownedHexTiles)
+				if(h.terrain != Terrain.SEA)
+				{
+						gold += h.getIncome();
+						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
+				}
 		
 		//combat values for forts
 		for(Fort f: player.forts)
@@ -835,7 +838,105 @@ public class GameModel {
 		for(SpecialCharacter sc: player.specialCharacters)
 			gold += sc.getIncome();
 		
+		if(gold > 0)
+		{
+			System.out.println("GOLD HAS BEEN AWARDED TO PLAYER - " + player.GetPlayerNum() + "in the amount of " + gold);
+			System.out.println("# Hexes: " + player.ownedHexTiles.size());
+			System.out.println("# Forts: " + player.forts.size());
+			System.out.println("# Special Incomes: " + player.specialIncomes.size());
+			System.out.println("# Special Characters: " + player.specialCharacters.size());
+		}
+		
 		player.addGold(gold);
 		return gold;
+	}
+
+	public boolean isValidControlMarkerPlacement(HexTile selectedTile) {
+		if(selectedTile.controlledBy == ControlledBy.NEUTRAL)
+		{
+			if(currPlayer.ownedHexTiles.isEmpty())
+			{
+				int x = selectedTile.x;
+				int y = selectedTile.y;
+				
+				if((x == 3 && y == 1)
+						||(x == 1 && y == 3)
+						||(x == -3 && y == -1)
+						||(x == -1 && y == -3))
+					return true;
+			}
+			else
+			{
+				for(HexTile h: currPlayer.ownedHexTiles)
+				{
+					if(selectedTile.isAdjacent(h))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public HexTile updateTileFaction(ControlledBy faction, int x, int y) {
+		HexTile h = gameBoard.getTile(x, y);
+		ControlledBy oldFaction = h.controlledBy;	
+		
+		h.controlledBy = faction;
+		
+		if(faction == ControlledBy.PLAYER1)
+			player1.addHexTile(h);
+		else if(faction == ControlledBy.PLAYER2)
+			player2.addHexTile(h);
+		else if(faction == ControlledBy.PLAYER3)
+			player3.addHexTile(h);
+		else if(faction == ControlledBy.PLAYER4)
+			player4.addHexTile(h);
+		
+		if(oldFaction != ControlledBy.NEUTRAL)
+		{
+			if(oldFaction == ControlledBy.PLAYER1)
+				player1.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER2)
+				player2.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER3)
+				player3.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER4)
+				player4.removeHexTile(h);
+		}
+		
+		return h;
+	}
+
+	public boolean isValidTowerPlacement(HexTile selectedTile) {
+		return selectedTile.controlledBy == currPlayer.faction;
+	}
+
+	public HexTile addTower(int x, int y, int playerIndex) {
+		Player player;
+		
+		switch(playerIndex)
+		{
+		case 0:
+			player = player1;
+			break;
+		case 1:
+			player = player2;
+			break;
+		case 2:
+			player = player3;
+			break;
+		default:
+			player = player4;
+			break;
+		}
+		Fort f = new Fort();
+		f.controlledBy = player.faction;
+		
+		HexTile h = gameBoard.getTile(x, y);
+		
+		h.addTower(f);
+		player.addTower(f);
+		
+		return h;
 	}
 }

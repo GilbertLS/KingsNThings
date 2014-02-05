@@ -16,6 +16,7 @@ public class Player {
 	public ArrayList<Fort> forts;
 	public ArrayList<SpecialCharacter> specialCharacters;
 	public ArrayList<SpecialIncome> specialIncomes;
+	public ArrayList<HexTile> ownedHexTiles;
 	
 	
 	public int GetPlayerNum(){
@@ -49,6 +50,7 @@ public class Player {
 		forts = new ArrayList<Fort>();
 		specialCharacters = new ArrayList<SpecialCharacter>();
 		specialIncomes = new ArrayList<SpecialIncome>();
+		ownedHexTiles = new ArrayList<HexTile>();
 		
 		this.gold = 0;
 	}
@@ -77,5 +79,17 @@ public class Player {
 
 	public void addGold(int amount) {
 		gold += amount;
+	}
+
+	public void addTower(Fort f) {
+		forts.add(f);
+	}
+
+	public void addHexTile(HexTile h) {
+		ownedHexTiles.add(h);
+	}
+	
+	public void removeHexTile(HexTile h){
+		ownedHexTiles.remove(h);
 	}
 }
