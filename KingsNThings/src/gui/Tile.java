@@ -8,21 +8,22 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Polygon;
 
 public class Tile extends Region implements Draggable {
-	Tile thisTile = this;
-	HexTile tileRef;
-	ArrayList<ThingView> p1Things = 		new ArrayList<ThingView>();
-	ArrayList<ThingView> p2Things = 		new ArrayList<ThingView>();
-	ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
-	ArrayList<ThingView> p4Things = 		new ArrayList<ThingView>();
-	ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
-	ThingView fort;
-	ThingView economy;
-	int controllingPlayer = 0;
+	private Tile thisTile = this;
+	private HexTile tileRef;
+	public ArrayList<ThingView> p1Things = 		new ArrayList<ThingView>();
+	public ArrayList<ThingView> p2Things = 		new ArrayList<ThingView>();
+	public ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
+	public ArrayList<ThingView> p4Things = 		new ArrayList<ThingView>();
+	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
+	private ThingView fort;
+	private ThingView economy;
+	private int controllingPlayer = 0;
 	
     public Tile(Double width, Double height, HexTile h)
     {
@@ -91,9 +92,19 @@ public class Tile extends Region implements Draggable {
     	
     	return "Tuile_Back.png";
     }
+    
+    public HexTile getTileRef() {
+    	return this.tileRef;
+    }
 
     protected void initListeners()
 	{	
+    	this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    		@Override public void handle(MouseEvent e) {
+    			
+    		}
+    	});
+    	
 		setOnDragOver(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
 	            if (e.getGestureSource() != this && e.getDragboard().hasContent(thingRackIds)) {
