@@ -51,10 +51,10 @@ public class BoardController {
 	
 	public List<Integer> PlayersOnTile(int tileX, int tileY){
 		List<Integer> playersOnTile = new ArrayList<Integer>();
-		if (!gameBoard.getTile(tileX, tileY).player1Things.isEmpty()) { playersOnTile.add(1); }
-		if (!gameBoard.getTile(tileX, tileY).player2Things.isEmpty()) { playersOnTile.add(2); }
-		if (!gameBoard.getTile(tileX, tileY).player3Things.isEmpty()) { playersOnTile.add(3); }
-		if (!gameBoard.getTile(tileX, tileY).player4Things.isEmpty()) { playersOnTile.add(4); }
+		if (!gameBoard.getTile(tileX, tileY).player1Things.isEmpty()) { playersOnTile.add(0); }
+		if (!gameBoard.getTile(tileX, tileY).player2Things.isEmpty()) { playersOnTile.add(1); }
+		if (!gameBoard.getTile(tileX, tileY).player3Things.isEmpty()) { playersOnTile.add(2); }
+		if (!gameBoard.getTile(tileX, tileY).player4Things.isEmpty()) { playersOnTile.add(3); }
 		
 		return playersOnTile;
 	}
