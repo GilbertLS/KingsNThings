@@ -2,7 +2,9 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
+import Game.Thing;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ListCell;
@@ -59,5 +61,23 @@ public class ThingViewList extends HBox {
 	 public void removeAll(List<ThingView> l) {
 		 items.removeAll(l);
 		 view.getItems().removeAll(l);
+	 }
+	 
+	 public void setAll(List<ThingView> l) {
+		 items.clear();
+		 items.addAll(l);
+		 view.getItems().setAll(l);
+	 }
+	 
+	 public void setAllThings(Vector<Thing> t) {
+		 List<ThingView> list = new ArrayList<ThingView>();
+		 
+		 for (int i = 0; i < t.size(); i++) {
+			 ThingView tv = new ThingView(t.get(i));
+			 
+			 list.add(tv);
+		 }
+		 
+		 this.setAll(list);
 	 }
 }

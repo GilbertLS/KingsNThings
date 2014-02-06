@@ -72,7 +72,6 @@
 
 .thing {
 	-fx-background: #FFFF00;
-	-fx-background-image: url("../res/images/T_Back.png");
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center center;
 	-fx-background-size: cover, auto;

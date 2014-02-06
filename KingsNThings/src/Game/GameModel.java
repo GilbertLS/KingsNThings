@@ -1,12 +1,13 @@
 package Game;
 
 import java.util.ArrayList;
+
+import Game.GameConstants.ControlledBy;
+import Game.GameConstants.Terrain;
+import Game.Networking.GameClient;
+
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Vector;
-
-import Game.GameConstants.Terrain;
-
 /*
  * This class models a King's N' Things Game. Its methods are called at appropriate times
  * by the Game class
@@ -27,18 +28,7 @@ public class GameModel {
 	public BoardController boardController;
 	
 	public Player GetPlayer(int playerNum){
-		switch( playerNum ){
-		case(1):
-			return player1;
-		case(2):
-			return player2;
-		case(3):
-			return player3;
-		case(4):
-			return player4;
-		}
-		
-		return null;
+		return playerFromIndex(playerNum);
 	}
 	
 	public void SetCurrentPlayer(int playerNum){
@@ -52,6 +42,10 @@ public class GameModel {
 		return currPlayer;
 	}
 	
+	public int PlayerCount(){
+		return playerCount;
+	}
+	
 	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
@@ -59,10 +53,10 @@ public class GameModel {
 		
 		unusedTiles = new LinkedList<HexTile>();
 		
-		this.player1 = new Player(1);
-		this.player2 = new Player(2);
-		this.player3 = new Player(3);
-		this.player4 = new Player(4);
+		this.player1 = new Player(0);
+		this.player2 = new Player(1);
+		this.player3 = new Player(2);
+		this.player4 = new Player(3);
 		
 		//initialize playing cup
 		createNewThings();
@@ -72,7 +66,7 @@ public class GameModel {
 		
 		ownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		
-		dice = new Dice();
+		dice = new Dice(4);
 		
 		boardController = new BoardController(gameBoard);
 	}
@@ -454,13 +448,11 @@ public class GameModel {
 		initializeThingsString += "Buffalo Herd" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.BuffaloHerdImageBack + "SPLIT" 
 				+ GameConstants.BuffaloHerdImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant Ape" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 5 + "SPLIT" 
-				+ GameConstants.GiantApeImageBack + "SPLIT" 
 				+ GameConstants.GiantApeImageFront +"SPLIT";
 		initializeThingsString += "/";
 		
@@ -468,14 +460,12 @@ public class GameModel {
 		initializeThingsString += "Black Knight" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.BlackKnightImageBack + "SPLIT" 
 				+ GameConstants.BlackKnightImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Dark Wizard" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.DarkWizardImageBack + "SPLIT" 
 				+ GameConstants.DarkWizardImageFront +"SPLIT"
 				+ "MAGIC" + "SPLIT"
 				+ "FLYING";
@@ -483,13 +473,11 @@ public class GameModel {
 		initializeThingsString += "Tribesman" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.TribesmanImageBack + "SPLIT" 
 				+ GameConstants.TribesmanImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Vampire Bat" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.VampireBatImageBack + "SPLIT" 
 				+ GameConstants.VampireBatImageFront +"SPLIT"
 				+ "FLYING";
 		initializeThingsString += "/";
@@ -498,25 +486,21 @@ public class GameModel {
 		initializeThingsString += "Tigers" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.TigersImageBack + "SPLIT" 
 				+ GameConstants.TigersImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Villains" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.VillainsImageBack + "SPLIT" 
 				+ GameConstants.VillainsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant Lizard" + "SPLIT"
 				+ "SWAMP" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.GiantLizardImageBack + "SPLIT" 
 				+ GameConstants.GiantLizardImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Tribesman" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.TribesmanImageBack + "SPLIT" 
 				+ GameConstants.TribesmanImageFront +"SPLIT";
 		initializeThingsString += "/";
 		
@@ -524,21 +508,18 @@ public class GameModel {
 		//Stack 3
 		initializeThingsString += "Witch Doctor" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
-				+ 2 + "SPLIT" 
-				+ GameConstants.WitchDoctorImageBack + "SPLIT" 
+				+ 2 + "SPLIT"  
 				+ GameConstants.WitchDoctorImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
 		initializeThingsString += "Nomads" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.NomadsImageBack + "SPLIT" 
 				+ GameConstants.NomadsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Great Hunter" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.GreatHunterImageBack + "SPLIT" 
 				+ GameConstants.GreatHunterImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
@@ -547,19 +528,16 @@ public class GameModel {
 		initializeThingsString += "Pygmies" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.PygmiesImageBack + "SPLIT" 
 				+ GameConstants.PygmiesImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Skeletons" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
 				+ GameConstants.SkeletonsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Genie" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.GenieImageBack + "SPLIT" 
 				+ GameConstants.GenieImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
@@ -567,26 +545,22 @@ public class GameModel {
 		//Stack 1
 		initializeThingsString += "Farmers" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.FarmersImageBack + "SPLIT" 
+				+ 1 + "SPLIT"  
 				+ GameConstants.FarmersImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Farmers" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.FarmersImageBack + "SPLIT" 
 				+ GameConstants.FarmersImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Camel Corps" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
-				+ 3 + "SPLIT" 
-				+ GameConstants.CamelCorpsImageBack + "SPLIT" 
+				+ 3 + "SPLIT"  
 				+ GameConstants.CamelCorpsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Centaur" + "SPLIT"
 				+ "PLAINS" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.CentaurImageBack + "SPLIT" 
 				+ GameConstants.CentaurImageFront +"SPLIT";
 		initializeThingsString += "/";
 		
@@ -595,65 +569,55 @@ public class GameModel {
 		initializeThingsString += "Bandits" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.BanditsImageBack + "SPLIT" 
 				+ GameConstants.BanditsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Crawling Vines" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 6 + "SPLIT" 
-				+ GameConstants.CrawlingVinesImageBack + "SPLIT" 
 				+ GameConstants.CrawlingVinesImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Walking Tree" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
-				+ 5 + "SPLIT" 
-				+ GameConstants.WalkingTreeImageBack + "SPLIT" 
+				+ 5 + "SPLIT"  
 				+ GameConstants.WalkingTreeImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Druid" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.DruidImageBack + "SPLIT" 
 				+ GameConstants.DruidImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
 		initializeThingsString += "Nomads" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.NomadsImageBack + "SPLIT" 
 				+ GameConstants.NomadsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Crocodiles" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
-				+ 2 + "SPLIT" 
-				+ GameConstants.CrocodilesImageBack + "SPLIT" 
+				+ 2 + "SPLIT"  
 				+ GameConstants.CrocodilesImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Dervish" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.DervishImageBack + "SPLIT" 
 				+ GameConstants.DervishImageFront +"SPLIT"
 				+ "MAGIC";
 		initializeThingsString += "/";
 		initializeThingsString += "Green Knight" + "SPLIT"
 				+ "FOREST" + "SPLIT" 
-				+ 4 + "SPLIT" 
-				+ GameConstants.GreenKnightImageBack + "SPLIT" 
+				+ 4 + "SPLIT"  
 				+ GameConstants.GreenKnightImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Sandworm" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 3 + "SPLIT" 
-				+ GameConstants.SandwormImageBack + "SPLIT" 
 				+ GameConstants.SandwormImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Pterodactyl Warriors" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.PterodactylWarriorsImageBack + "SPLIT" 
 				+ GameConstants.PterodactylWarriorsImageFront +"SPLIT"
 				+ "RANGE" + "SPLIT"
 				+ "FLYING";
@@ -665,25 +629,21 @@ public class GameModel {
 		initializeThingsString += "Ogre" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.OgreImageBack + "SPLIT" 
 				+ GameConstants.OgreImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Goblins" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
-				+ 1 + "SPLIT" 
-				+ GameConstants.GoblinsImageBack + "SPLIT" 
+				+ 1 + "SPLIT"  
 				+ GameConstants.GoblinsImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Watusi" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.WatusiImageBack + "SPLIT" 
 				+ GameConstants.WatusiImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Skeletons" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.SkeletonsImageBack + "SPLIT" 
 				+ GameConstants.SkeletonsImageFront + "SPLIT";
 		initializeThingsString += "/";
 		
@@ -692,41 +652,35 @@ public class GameModel {
 		initializeThingsString += "Dwarves" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
 				+ 2 + "SPLIT" 
-				+ GameConstants.DwarvesImageBack + "SPLIT" 
 				+ GameConstants.DwarvesImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
-				+ 4 + "SPLIT" 
-				+ GameConstants.GiantImageBack + "SPLIT" 
+				+ 4 + "SPLIT"  
 				+ GameConstants.GiantImageFront +"SPLIT"
 				+ "RANGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Brown Knight" + "SPLIT"
 				+ "MOUNTAIN" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.BrownKnightImageBack + "SPLIT" 
 				+ GameConstants.BrownKnightImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Elephant" + "SPLIT"
 				+ "JUNGLE" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.ElephantImageBack + "SPLIT" 
 				+ GameConstants.ElephantImageFront +"SPLIT"
 				+ "CHARGE";
 		initializeThingsString += "/";
 		initializeThingsString += "Giant Spider" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 1 + "SPLIT" 
-				+ GameConstants.GiantSpiderImageBack + "SPLIT" 
 				+ GameConstants.GiantSpiderImageFront +"SPLIT";
 		initializeThingsString += "/";
 		initializeThingsString += "Old Dragon" + "SPLIT"
 				+ "DESERT" + "SPLIT" 
 				+ 4 + "SPLIT" 
-				+ GameConstants.OldDragonImageBack + "SPLIT" 
 				+ GameConstants.OldDragonImageFront +"SPLIT"
 				+ "FLYING" + "SPLIT"
 				+ "MAGIC";
@@ -745,16 +699,15 @@ public class GameModel {
 			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(creatureParamsString[1]);
 			String name = creatureParamsString[0];
 			int attackValue = Integer.parseInt(creatureParamsString[2]);
-			String backFileName = creatureParamsString[3];
-			String frontFileName = creatureParamsString[4];
+			String frontFileName = creatureParamsString[3];
 			boolean isCharge = false;
 			boolean isFlying = false;
 			boolean isMagic = false;
 			boolean isRange = false;
 			
-			if(creatureParamsString.length > 5)
+			if(creatureParamsString.length > 4)
 			{
-				for(int j=5; j< creatureParamsString.length; j++)
+				for(int j=4; j< creatureParamsString.length; j++)
 				{
 					String special = creatureParamsString[j];
 					
@@ -773,18 +726,190 @@ public class GameModel {
 			}
 
 			
-			playingCup.add(new Creature(terrain, name, attackValue, backFileName, frontFileName)
-								.IsCharge(isCharge)
-								.IsFlying(isFlying)
-								.IsMagic(isMagic)
-								.IsRange(isRange)
+			playingCup.add(new Creature(terrain, name, attackValue, frontFileName)
+								.Charge(isCharge)
+								.Flying(isFlying)
+								.Magic(isMagic)
+								.Ranged(isRange)
 								);
 			}
 		
+
+		/*
+		System.out.println("PLAYING CUP SIZE:" + playingCup.size());
 		for(int i=0; i<playingCup.size(); i++)
 		{
 			System.out.println(playingCup.get((i)).toString());
 		}
+		*/
 	}
 
+	public void getThingsFromCup(int playerIndex, int numThings) {
+		Player player = playerFromIndex(playerIndex);
+				
+		for(int i=0; i<numThings; i++)
+		{
+			Thing currentThing = playingCup.remove(playingCup.size()-1);
+			
+			player.addThingToRack(currentThing);
+			currentThing.controlledBy = player.faction;
+		}
+	}
+
+	public void distributeInitialGold() {
+		player1.addGold(GameConstants.INITIAL_GOLD_AMOUNT);
+	}
+	
+	public int[] distributeIncome()
+	{
+		Player player;
+		int[] playerGoldUpdates = new int[playerCount];
+		
+		for(int i=0; i<playerCount; i++)
+		{
+			player = playerFromIndex(i);
+		
+			playerGoldUpdates[i] = getIncomeForPlayer(player);
+		}
+		
+		return playerGoldUpdates;
+	}
+
+	private int getIncomeForPlayer(Player player) {
+		int gold =0;
+		
+		//gold pieces for land hexes
+		for(HexTile h: player.ownedHexTiles)
+				if(h.terrain != Terrain.SEA)
+				{
+						gold += h.getIncome();
+						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
+				}
+		
+		//combat values for forts
+		for(Fort f: player.forts)
+			gold+= f.getIncome();
+		
+		//special income tiles
+		for(SpecialIncome si: player.specialIncomes)
+			gold+= si.getIncome();
+		
+		//special characters
+		for(SpecialCharacter sc: player.specialCharacters)
+			gold += sc.getIncome();
+		
+		if(gold > 0)
+		{
+			System.out.println("GOLD HAS BEEN AWARDED TO PLAYER - " + player.GetPlayerNum() + "in the amount of " + gold);
+			System.out.println("# Hexes: " + player.ownedHexTiles.size());
+			System.out.println("# Forts: " + player.forts.size());
+			System.out.println("# Special Incomes: " + player.specialIncomes.size());
+			System.out.println("# Special Characters: " + player.specialCharacters.size());
+		}
+		
+		player.addGold(gold);
+		return gold;
+	}
+
+	public boolean isValidControlMarkerPlacement(HexTile selectedTile) {
+		if(selectedTile.controlledBy == ControlledBy.NEUTRAL)
+		{
+			if(currPlayer.ownedHexTiles.isEmpty())
+			{
+				int x = selectedTile.x;
+				int y = selectedTile.y;
+				
+				if((x == 3 && y == 1)
+						||(x == 1 && y == 3)
+						||(x == -3 && y == -1)
+						||(x == -1 && y == -3))
+					return true;
+			}
+			else
+			{
+				for(HexTile h: currPlayer.ownedHexTiles)
+				{
+					if(selectedTile.isAdjacent(h))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public HexTile updateTileFaction(int playerIndex, int x, int y) {
+		HexTile h = gameBoard.getTile(x, y);
+		ControlledBy oldFaction = h.controlledBy;	
+		
+		Player player = playerFromIndex(playerIndex);
+		ControlledBy faction = player.faction;
+		
+		h.controlledBy = faction;
+		
+		player.addHexTile(h);
+		
+		if(oldFaction != ControlledBy.NEUTRAL)
+		{
+			if(oldFaction == ControlledBy.PLAYER1)
+				player1.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER2)
+				player2.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER3)
+				player3.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER4)
+				player4.removeHexTile(h);
+		}
+		
+		return h;
+	}
+
+	public boolean isValidTowerPlacement(HexTile selectedTile) {
+		return (selectedTile.controlledBy == currPlayer.faction && selectedTile.forts.isEmpty());
+	}
+
+	public HexTile addTower(int x, int y, int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
+		
+
+		Fort f = new Fort();
+		f.controlledBy = player.faction;
+		
+		HexTile h = gameBoard.getTile(x, y);
+		
+		h.addTower(f);
+		player.addTower(f);
+		
+		return h;
+	}
+
+	public int distributeRecruits(int numPaidRecruits, int numTradeRecruits) {
+		//int numFreeRecruits = GameClient.game.gameModel.
+		
+		//getThingsFromCup();
+		
+		return 0;
+	}
+
+	public boolean playerRackTooFull() {
+		return currPlayer.rackTooFull();
+	}
+
+	public int removeExcessFromRack() {
+		return currPlayer.removeExcessFromRack();
+	}
+	
+	private Player playerFromIndex(int index)
+	{
+		switch(index)
+		{
+		case 0:
+			return player1;
+		case 1:
+			return player2;
+		case 2:
+			return player3;
+		default:
+			return player4;
+		}
+	}
 }

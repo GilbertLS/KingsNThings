@@ -11,4 +11,22 @@ public class PlayerRack {
 	{
 		this.things = new Vector<Thing>(GameConstants.MAX_NUM_THINGS_IN_RACK);
 	}
+
+	public void addThing(Thing currentThing) {
+		things.add(currentThing);
+	}
+	
+	public Vector<Thing> getThings() {
+		return things;
+	}
+
+	public boolean tooFull() {
+		return things.size()>10;
+	}
+
+	public int removeExcessFromRack() {
+		//remove excess and return num removed
+		
+		return 0;
+	}
 }

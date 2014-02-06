@@ -11,12 +11,16 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 	private static int specialCharacterID = 0;
 	public SpecialCharacter(String backFileName, String frontFileName)
 	{
-		super(ThingType.SPECIAL_CHARACTER, "specialCharacter" + specialCharacterID++, (int)Math.ceil(Math.random()*6), backFileName, frontFileName);
+		super(ThingType.SPECIAL_CHARACTER, "specialCharacter" + specialCharacterID++, (int)Math.ceil(Math.random()*6), frontFileName);
+
+		this.backFileName = backFileName;
 	}
 	
 	public SpecialCharacter(ThingType thingType, String backFileName, String frontFileName)
 	{
-		super(thingType, "terrianLord" + specialCharacterID++, (int)Math.ceil(Math.random()*6), backFileName, frontFileName);
+		super(thingType, "terrianLord" + specialCharacterID++, (int)Math.ceil(Math.random()*6), frontFileName);
+		
+		this.backFileName = backFileName;
 	}
 	
 	public SpecialCharacter IsFlying(boolean isFlying){
@@ -37,6 +41,11 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 	public SpecialCharacter IsCharge(boolean isCharge){
 		super.isCharge = isCharge;
 		return this;
+	}
+	
+	public int getIncome()
+	{
+		return 1;
 	}
 	
 	//need method for special ability

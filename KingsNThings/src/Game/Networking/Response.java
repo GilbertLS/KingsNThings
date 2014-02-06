@@ -12,6 +12,10 @@ public class Response {
 		this.eventId = e.eventId;
 	}
 	
+	public boolean IsNullEvent(){
+		return eventId == EventList.NULL_EVENT;
+	}
+	
 	public int castToInt()
 	{
 		return Integer.parseInt(message.trim());
