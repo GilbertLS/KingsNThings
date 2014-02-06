@@ -69,7 +69,10 @@ public class GameView extends Scene {
     //method to give back a hextile
     public HexTile chooseHexTile()
     {
-    	HexTile h = new HexTile(Terrain.DESERT);
+    	Tile t = this.board.getNextSelectedTile();
+    	HexTile h = t.getTileRef();
+    	
+    	/*HexTile h = new HexTile(Terrain.DESERT);
     	
     	do
     	{
@@ -101,7 +104,7 @@ public class GameView extends Scene {
     	default:
     		h.controlledBy = ControlledBy.NEUTRAL;
     		break;
-    	}
+    	}*/
     	
     	return h;
     }
