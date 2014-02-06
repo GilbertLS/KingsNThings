@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
+import Game.Networking.GameClient;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -27,18 +28,7 @@ public class GameModel {
 	public BoardController boardController;
 	
 	public Player GetPlayer(int playerNum){
-		switch( playerNum ){
-		case(0):
-			return player1;
-		case(1):
-			return player2;
-		case(2):
-			return player3;
-		case(3):
-			return player4;
-		}
-		
-		return null;
+		return playerFromIndex(playerNum);
 	}
 	
 	public void SetCurrentPlayer(int playerNum){
@@ -754,26 +744,10 @@ public class GameModel {
 		*/
 	}
 
-	public void assignInitialThings(int playerIndex) {
-		Player player;
-		
-		switch(playerIndex)
-		{
-		case 0:
-			player = player1;
-			break;
-		case 1:
-			player = player2;
-			break;
-		case 2:
-			player = player3;
-			break;
-		default:
-			player = player4;
-			break;
-		}
-		
-		for(int i=0; i<10; i++)
+	public void getThingsFromCup(int playerIndex, int numThings) {
+		Player player = playerFromIndex(playerIndex);
+				
+		for(int i=0; i<numThings; i++)
 		{
 			Thing currentThing = playingCup.remove(playingCup.size()-1);
 			
@@ -793,21 +767,7 @@ public class GameModel {
 		
 		for(int i=0; i<playerCount; i++)
 		{
-			switch(i)
-			{
-			case 0:
-				player = player1;
-				break;
-			case 1:
-				player = player2;
-				break;
-			case 2:
-				player = player3;
-				break;
-			default:
-				player = player4;
-				break;
-			}
+			player = playerFromIndex(i);
 		
 			playerGoldUpdates[i] = getIncomeForPlayer(player);
 		}
@@ -877,20 +837,16 @@ public class GameModel {
 		return false;
 	}
 
-	public HexTile updateTileFaction(ControlledBy faction, int x, int y) {
+	public HexTile updateTileFaction(int playerIndex, int x, int y) {
 		HexTile h = gameBoard.getTile(x, y);
 		ControlledBy oldFaction = h.controlledBy;	
 		
+		Player player = playerFromIndex(playerIndex);
+		ControlledBy faction = player.faction;
+		
 		h.controlledBy = faction;
 		
-		if(faction == ControlledBy.PLAYER1)
-			player1.addHexTile(h);
-		else if(faction == ControlledBy.PLAYER2)
-			player2.addHexTile(h);
-		else if(faction == ControlledBy.PLAYER3)
-			player3.addHexTile(h);
-		else if(faction == ControlledBy.PLAYER4)
-			player4.addHexTile(h);
+		player.addHexTile(h);
 		
 		if(oldFaction != ControlledBy.NEUTRAL)
 		{
@@ -908,27 +864,13 @@ public class GameModel {
 	}
 
 	public boolean isValidTowerPlacement(HexTile selectedTile) {
-		return selectedTile.controlledBy == currPlayer.faction;
+		return (selectedTile.controlledBy == currPlayer.faction && selectedTile.forts.isEmpty());
 	}
 
 	public HexTile addTower(int x, int y, int playerIndex) {
-		Player player;
+		Player player = playerFromIndex(playerIndex);
 		
-		switch(playerIndex)
-		{
-		case 0:
-			player = player1;
-			break;
-		case 1:
-			player = player2;
-			break;
-		case 2:
-			player = player3;
-			break;
-		default:
-			player = player4;
-			break;
-		}
+
 		Fort f = new Fort();
 		f.controlledBy = player.faction;
 		
@@ -938,5 +880,36 @@ public class GameModel {
 		player.addTower(f);
 		
 		return h;
+	}
+
+	public int distributeRecruits(int numPaidRecruits, int numTradeRecruits) {
+		//int numFreeRecruits = GameClient.game.gameModel.
+		
+		//getThingsFromCup();
+		
+		return 0;
+	}
+
+	public boolean playerRackTooFull() {
+		return currPlayer.rackTooFull();
+	}
+
+	public int removeExcessFromRack() {
+		return currPlayer.removeExcessFromRack();
+	}
+	
+	private Player playerFromIndex(int index)
+	{
+		switch(index)
+		{
+		case 0:
+			return player1;
+		case 1:
+			return player2;
+		case 2:
+			return player3;
+		default:
+			return player4;
+		}
 	}
 }

@@ -40,38 +40,38 @@ public class HexTile implements IIncomable{
 	}
 	
 	public void AddThingToTile(Player player, Thing thing){
-		if ( player.GetPlayerNum() == 1 ){
+		if ( player.GetPlayerNum() == 0 ){
 			player1Things.add(thing);
-		} else if ( player.GetPlayerNum() == 2 ){
+		} else if ( player.GetPlayerNum() == 1 ){
 			player2Things.add(thing);
-		} else if ( player.GetPlayerNum() == 3 ){
+		} else if ( player.GetPlayerNum() == 2 ){
 			player3Things.add(thing);
-		} else if ( player.GetPlayerNum() == 4 ){
+		} else if ( player.GetPlayerNum() == 3 ){
 			player4Things.add(thing);
 		}
 	}
 	
 	public boolean HasThingsOnTile(Player player){
-		if ( player.GetPlayerNum() == 1 ){
+		if ( player.GetPlayerNum() == 0 ){
 			return !player1Things.isEmpty();
-		} else if ( player.GetPlayerNum() == 2 ){
+		} else if ( player.GetPlayerNum() == 1 ){
 			return !player2Things.isEmpty();
-		} else if ( player.GetPlayerNum() == 3 ){
+		} else if ( player.GetPlayerNum() == 2 ){
 			return !player3Things.isEmpty();
-		} else if ( player.GetPlayerNum() == 4 ){
+		} else if ( player.GetPlayerNum() == 3 ){
 			return !player4Things.isEmpty();
 		}
 		return false;
 	}
 	
 	public ArrayList<Thing> GetThings(Player player){
-		if ( player.GetPlayerNum() == 1 ){
+		if ( player.GetPlayerNum() == 0 ){
 			return player1Things;
-		} else if ( player.GetPlayerNum() == 2 ){
+		} else if ( player.GetPlayerNum() == 1 ){
 			return player2Things;
-		} else if ( player.GetPlayerNum() == 3 ){
+		} else if ( player.GetPlayerNum() == 2 ){
 			return player3Things;
-		} else if ( player.GetPlayerNum() == 4 ){
+		} else if ( player.GetPlayerNum() == 3 ){
 			return player4Things;
 		}
 		return null;

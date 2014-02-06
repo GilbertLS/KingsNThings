@@ -17,16 +17,19 @@ public class EventList {
 	public static final int BATTLE_OVER = 13;
 	public static final int SET_HEX_TILES = 14;
 	public static final int SET_CREATURES = 15;
-	public static final int ASSIGN_INITIAL_THINGS = 16;
-	public static final int HANDLE_ASSIGN_INITIAL_THINGS = 17;
+	public static final int GET_THINGS_FROM_CUP = 16;
 	public static final int DISTRIBUTE_INITIAL_GOLD = 18;
 	public static final int AWARD_INCOME = 19;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
-	public static final int PLACE_CONTROL_MARKER = 100;
-	public static final int HANDLE_PLACE_CONTROL_MARKER = 101;
-	public static final int PLACE_TOWER = 102;
-	public static final int HANDLE_PLACE_TOWER = 103;
-
-
+	public static final int PLACE_PIECE_ON_TILE = 100;
+	public static final int HANDLE_PLACE_PIECE_ON_TILE = 101;
+	public static final int DETERMINE_NUM_PAID_THINGS = 104;
+	public static final int DISTRIBUTE_RECRUITS = 105;
+	public static final int HANDLE_DISTRIBUTE_RECRUITS = 106;
+	public static final int PLAY_THINGS = 107;
+	public static final int CHECK_PLAYER_RACK_OVERLOAD = 108;
+	public static final int HANDLE_PLAY_THINGS = 109;
+	public static final int HANDLE_CHECK_PLAYER_RACK_OVERLOAD = 110;
+	public static final int DETERMINE_NUM_TRADE_THINGS = 111;
 }

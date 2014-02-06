@@ -92,4 +92,12 @@ public class Player {
 	public void removeHexTile(HexTile h){
 		ownedHexTiles.remove(h);
 	}
+
+	public boolean rackTooFull() {
+		return playerRack.tooFull();
+	}
+
+	public int removeExcessFromRack() {
+		return playerRack.removeExcessFromRack();
+	}
 }
