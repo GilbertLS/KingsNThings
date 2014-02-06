@@ -304,27 +304,20 @@ public class EventHandler {
 			
 			//GameClient.game.gameModel.printCurrentBoardTiles();
 		}
-		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS) {
-			final int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
-			
-			GameClient.game.gameModel.assignInitialThings(currentPlayerIndex);
-			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-					GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
-					GameClient.game.gameView.playerList.getPlayerPanel(currentPlayerIndex).setThings(10);
-		        }
-		    });
-		}
-		else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS) {
+		else if (e.eventId == EventList.GET_THINGS_FROM_CUP) {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
-			GameClient.game.gameModel.assignInitialThings(playerIndex);
+			final int numThings = Integer.parseInt(e.eventParams[1]);
+			
+			final boolean isCurrentPlayer = playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+			
+			GameClient.game.gameModel.getThingsFromCup(playerIndex, numThings);
 			
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
-		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(10);
+		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(numThings);
+		        	if(isCurrentPlayer)
+		        		GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
 		        }
 			});
 		}
@@ -358,92 +351,75 @@ public class EventHandler {
 		        }
 			});
 		}
-		else if (e.eventId == EventList.PLACE_CONTROL_MARKER)
+		else if (e.eventId == EventList.PLACE_PIECE_ON_TILE)
 		{
-			HexTile selectedTile;
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			String pieceBeingPlaced = e.eventParams[1];
 			
-			boolean validSelectionMade = false;
-			do
+			if(GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() == playerIndex)
 			{
-				GameClient.game.gameView.displayMessage("Please select a tile to place a Control Marker into");
-				selectedTile = GameClient.game.gameView.chooseHexTile();
+				HexTile selectedTile;
 				
-				if(GameClient.game.gameModel.isValidControlMarkerPlacement(selectedTile))
-						validSelectionMade = true;
-				else
-					GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
+				boolean validSelectionMade = false;
+				String s;
+				do
+				{
+					s = "Please select a tile to place a " + pieceBeingPlaced + " into.";
+					GameClient.game.gameView.displayMessage(s);
+					selectedTile = GameClient.game.gameView.chooseHexTile();
+					
+					if(pieceBeingPlaced.equals("Control_Marker"))
+					{
+						validSelectionMade = GameClient.game.gameModel.isValidControlMarkerPlacement(selectedTile);
+					}
+					else if(pieceBeingPlaced.equals("Tower"))
+					{
+						validSelectionMade = GameClient.game.gameModel.isValidTowerPlacement(selectedTile);
+					}
+					else
+					{
+						GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
+					}
+					
+				}while(!validSelectionMade);
 				
-			}while(!validSelectionMade);
-			
-			ControlledBy faction = GameClient.game.gameModel.GetCurrentPlayer().faction;
-			
-			//update model
-			GameClient.game.gameModel.updateTileFaction(faction, selectedTile.x, selectedTile.y);
-			
-			//update view
-			GameClient.game.gameView.updateHexTile(selectedTile);
-			
-			//respond with the coords and faction of updated tile
-			System.out.println("CREATING PLACE MARKER RESPONSE EVENT");
-			
-			String[] args = {selectedTile.x +"SPLIT"+selectedTile.y, faction.name()};
-			
-			EventHandler.SendEvent(
-					new Event()
-						.EventId(EventList.PLACE_CONTROL_MARKER)
-						.EventParameters(args)
-			);
+				int x = selectedTile.x;
+				int y = selectedTile.y;
+				
+				if(pieceBeingPlaced.equals("Control_Marker"))
+				{
+					GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+				}
+				else if(pieceBeingPlaced.equals("Tower"))
+				{
+					GameClient.game.gameModel.addTower(x, y, playerIndex);
+				}
+				
+				//update view
+				GameClient.game.gameView.updateHexTile(selectedTile);
+				
+				//respond with the coords and playerIndex of updated tile
+				System.out.println("CREATING PLACE PIECE ON TILE RESPONSE EVENT FOR PIECE " + pieceBeingPlaced);
+				
+				String[] args = {selectedTile.x +"SPLIT"+selectedTile.y, Integer.toString(playerIndex), pieceBeingPlaced};
+				
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.PLACE_PIECE_ON_TILE)
+							.EventParameters(args)
+				);
+			}
+			else
+			{
+				String s = "Waiting for player with index " + playerIndex + " to place a " + pieceBeingPlaced +".";
+				
+				GameClient.game.gameView.displayMessage(s);
+				
+				SendNullEvent();
+			}
 		}
-		else if(e.eventId == EventList.HANDLE_PLACE_CONTROL_MARKER)
+		else if(e.eventId == EventList.HANDLE_PLACE_PIECE_ON_TILE)
 		{			
-			String[] hexTileCoords = e.eventParams[0].split("SPLIT");
-			
-			int x = Integer.parseInt(hexTileCoords[0]);
-			int y = Integer.parseInt(hexTileCoords[1]);
-			
-			ControlledBy faction = ControlledBy.valueOf(e.eventParams[1]);
-			
-			HexTile h = GameClient.game.gameModel.updateTileFaction(faction, x, y);
-			GameClient.game.gameView.updateHexTile(h);
-		}
-		else if(e.eventId == EventList.PLACE_TOWER)
-		{
-			HexTile selectedTile;
-			
-			boolean validSelectionMade = false;
-			do
-			{
-				GameClient.game.gameView.displayMessage("Please select a tile to place a Tower on");
-				selectedTile = GameClient.game.gameView.chooseHexTile();
-				
-				if(GameClient.game.gameModel.isValidTowerPlacement(selectedTile))
-						validSelectionMade = true;
-				else
-					GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
-				
-			}while(!validSelectionMade);
-			
-			int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
-			
-			//update model
-			GameClient.game.gameModel.addTower(selectedTile.x, selectedTile.y, currentPlayerIndex);
-			
-			//update view
-			GameClient.game.gameView.updateHexTile(selectedTile);
-			
-			//respond with the coords of updated tile
-			System.out.println("CREATING PLACE TOWER RESPONSE EVENT");
-			
-			String[] args = {selectedTile.x +"SPLIT"+selectedTile.y, Integer.toString(currentPlayerIndex)};
-			
-			EventHandler.SendEvent(
-					new Event()
-						.EventId(EventList.PLACE_TOWER)
-						.EventParameters(args)
-			);
-		}
-		else if (e.eventId == EventList.HANDLE_PLACE_TOWER)
-		{
 			String[] hexTileCoords = e.eventParams[0].split("SPLIT");
 			
 			int x = Integer.parseInt(hexTileCoords[0]);
@@ -451,9 +427,90 @@ public class EventHandler {
 			
 			int playerIndex = Integer.parseInt(e.eventParams[1]);
 			
-			HexTile h = GameClient.game.gameModel.addTower(x, y, playerIndex);
-			//update view
+			String pieceBeingPlaced = e.eventParams[2];
+			
+			HexTile h = null;
+			if(pieceBeingPlaced.equals("Control_Marker"))
+			{
+				h = GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+			}
+			else if(pieceBeingPlaced.equals("Tower"))
+			{
+				h = GameClient.game.gameModel.addTower(x, y, playerIndex);
+			}
 			GameClient.game.gameView.updateHexTile(h);
+		}
+		else if(e.eventId == EventList.DETERMINE_NUM_PAID_THINGS)
+		{
+			GameClient.game.gameView.displayMessage("Please select the number of paid recruits you would like");
+			int numRecruits = GameClient.game.gameView.getNumPaidRecruits();
+			
+			//respond with number of paid things desired
+			System.out.println("CREATING DETERMINE NUM PAID THINGS RESPONSE EVENT");
+			
+			String[] args = {Integer.toString(numRecruits)};
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.DETERMINE_NUM_PAID_THINGS)
+						.EventParameters(args)
+			);
+		}
+		else if(e.eventId == EventList.DETERMINE_NUM_TRADE_THINGS)
+		{
+			GameClient.game.gameView.displayMessage("Please select the number of recruits you would like to trade for");
+			int numRecruits = GameClient.game.gameView.getNumTradeRecruits();
+			
+			//respond with number of paid things desired
+			System.out.println("CREATING DETERMINE NUM TRADE THINGS RESPONSE EVENT");
+			
+			String[] args = {Integer.toString(numRecruits)};
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
+						.EventParameters(args)
+			);
+		}
+		else if(e.eventId == EventList.DISTRIBUTE_RECRUITS)
+		{
+			int numPaidRecruits = Integer.parseInt(e.eventParams[0]);
+			int numTradeRecruits = Integer.parseInt(e.eventParams[1]);
+			int playerIndex = Integer.parseInt(e.eventParams[2]);
+			
+			System.out.println("PAID RECRUITS: " + numPaidRecruits);
+			System.out.println("TRADE RECRUITS: " + numTradeRecruits);
+			
+			int totalNumRecruits = GameClient.game.gameModel.distributeRecruits(numPaidRecruits, numTradeRecruits);
+			GameClient.game.gameView.updatePlayerRack();
+			
+			//send back num things removed, thing Ids put back into cup.
+		}
+		else if(e.eventId == EventList.HANDLE_DISTRIBUTE_RECRUITS)
+		{
+			//update all other players with recruit distribution
+		}
+		else if(e.eventId == EventList.PLAY_THINGS)
+		{
+			//allow player to play things
+			//HexTile[] hexTiles = GameClient.game.gameView.playThings();
+			//GameClient.game.gameModel.updatePlayedThings(hexTiles);
+		}
+		else if(e.eventId == EventList.HANDLE_PLAY_THINGS)
+		{
+			//update all other players with played things
+		}
+		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)
+		{
+			if(GameClient.game.gameModel.playerRackTooFull())
+			{
+				int numThingsRemoved = GameClient.game.gameModel.removeExcessFromRack();
+				GameClient.game.gameView.displayMessage("You had more than 10 things on your rack. " + numThingsRemoved + " things have been removed.");
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_CHECK_PLAYER_RACK_OVERLOAD)
+		{
+			//update all other players with things placed back in the cup
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends != 1){

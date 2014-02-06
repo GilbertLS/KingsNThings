@@ -117,4 +117,17 @@ public class GameView extends Scene {
     {
     	System.out.println("GAME VIEW MESSAGE: " + message);
     }
+
+	public int getNumPaidRecruits() {
+		return 1;
+	}
+
+	public void updatePlayerRack() {
+		//re-draw the player rack for current player (because it has changed)
+		//if necessary, I can pass the appropriate rack
+	}
+
+	public int getNumTradeRecruits() {
+		return 0;
+	}
 }
