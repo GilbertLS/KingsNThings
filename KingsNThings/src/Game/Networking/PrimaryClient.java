@@ -101,7 +101,7 @@ public class PrimaryClient extends Application {
     		try { 
 	    		if (in.readLine().equals(Protocol.FOUND)) {
 	    			System.out.println("Joining game " + input[1] );
-					out.println(Protocol.HOSTSERVER);
+					out.println(Protocol.EXIT);
 					socket.close(); 
 					
 					GameClient client = new GameClient(gameView);

@@ -22,6 +22,7 @@ public class GameView extends Scene {
     public ButtonBox buttonBox;
     public RackView rack;
     public TilePreview tilePreview;
+    public DiceListView diceListView;
 	
     public GameView(BorderPane r) {
     	super(r, 1200, 800);
@@ -55,6 +56,9 @@ public class GameView extends Scene {
         rightPanel.getChildren().add(buttonBox);
         
         rightPanel.getChildren().add(tilePreview);
+        
+        diceListView = new DiceListView();
+        rightPanel.getChildren().add(diceListView);
         
         ArrayList<ThingView> arr = new ArrayList<ThingView>();
         for(int i = 0; i < 10; i++)
