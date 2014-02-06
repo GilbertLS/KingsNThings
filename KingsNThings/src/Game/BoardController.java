@@ -60,7 +60,7 @@ public class BoardController {
 	}
 	
 	public void RemoveThings(int[] thingsToRemove, Player player, int tileX, int tileY){
-		Vector<Thing> things = gameBoard.getTile(tileX, tileY).GetThings(player);
+		ArrayList<Thing> things = gameBoard.getTile(tileX, tileY).GetThings(player);
 		
 		/* removing this for visibility reasons
 		if (thingsToRemove.length > things.size()){

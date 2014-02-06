@@ -41,4 +41,14 @@ public class PlayerPanel extends VBox {
 	public int getPlayerNumber() {
 		return playerNum;
 	}
+
+	public void addGold(int i) {
+		String[] goldTextStrings = goldText.getText().split(" ");
+		
+		int prevGold = Integer.parseInt(goldTextStrings[1]);
+		
+		prevGold += i;
+		
+		goldText.setText("Gold: " + prevGold);
+	}
 }

@@ -17,6 +17,8 @@ public class GameBoard {
 	
 	public void addHexTile(HexTile hexTile, int x, int y)
 	{
+		hexTile.x = x;
+		hexTile.y = y;
 		boardPieces[x+ARRAY_X_OFFSET][y+ARRAY_Y_OFFSET] = hexTile;
 	}
 

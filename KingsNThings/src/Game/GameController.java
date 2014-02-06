@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import Game.Networking.Event;
 import Game.Networking.EventList;
 import Game.Networking.GameControllerEventHandler;
@@ -52,11 +53,11 @@ public class GameController implements Runnable {
 	    	numClients = servers.size();
 	    	
 	    	for(GameRouter gr : servers){
-	    		boolean[] intendedPlayers = new boolean[4];
+	    		boolean[] intendedPlayers = new boolean[numClients];
 	    		
 	    		intendedPlayers[gr.myID] = true;
 	    		
-	    		String[] eventParams = new String[]{ "" + (gr.myID + 1) };
+	    		String[] eventParams = new String[]{ "" + (gr.myID) };
 	    		
 	    		Event e = new Event()
 	    					.EventId(EventList.SET_CURRENT_PLAYER)
@@ -101,13 +102,17 @@ public class GameController implements Runnable {
 	}
 	
 	private void initialSetup() {
-		//gameView.drawInitGame();
-		
 		determineInitialPlayerOrder();
 		
 		initializeHexTiles();
 		
 		initializeCreaturesCup();
+		
+		initializeGold();
+		
+		placeThingsOnTile(3, "Control_Marker");
+		
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -115,36 +120,65 @@ public class GameController implements Runnable {
 		
 	}
 	
+	private void placeThingsOnTile(int numIter, String pieceToPlace) {
+		for(int i=0; i<numIter; i++)
+		{
+			for(GameRouter gr : servers){
+	    		String[] args = {""+gr.myID,pieceToPlace};
+	    		
+	    		Event e = new Event()
+	    					.EventId(EventList.PLACE_PIECE_ON_TILE)
+	    					.ExpectsResponse(true)
+	    					.EventParameters(args);
+	    		
+	    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+	    		
+	    		args = new String[3];
+				for (int j=0; j<responses.length; j++){
+					if(responses[j].fromPlayer == gr.myID)
+					{
+						args = responses[j].message.split(" ");
+					}
+				}
+	    		
+				boolean[] intendedPlayers = new boolean[4];
+	    		for(int j=0; j<numClients; j++)
+	    		{
+	    			if(j == gr.myID)
+	    				intendedPlayers[j] = false;
+	    			else
+	    				intendedPlayers[j] = true;
+	    		}
+	    		
+	    		e = new Event()
+					.EventId(EventList.HANDLE_PLACE_PIECE_ON_TILE)
+					.IntendedPlayers(intendedPlayers)
+	    			.EventParameters(args);
+	    		
+	    		GameControllerEventHandler.sendEvent(e);
+			}
+		}
+	}
+
+	private void initializeGold() {
+		String[] args = {"" + numClients};
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.DISTRIBUTE_INITIAL_GOLD)
+					.EventParameters(args)
+			);	
+	}
+
 	private void assignInitialThings() {
     	for(GameRouter gr : servers){
-    		boolean[] intendedPlayers = new boolean[4];
     		
-    		intendedPlayers[gr.myID] = true;
-    		
-    		String[] eventParams = new String[]{ "" + gr.myID };
+    		String[] eventParams = new String[]{ "" + gr.myID, "10"};
     		
     		Event e = new Event()
-    					.EventId(EventList.ASSIGN_INITIAL_THINGS)
-    					.EventParameters(eventParams)
-    					.IntendedPlayers(intendedPlayers);
+    					.EventId(EventList.GET_THINGS_FROM_CUP)
+    					.EventParameters(eventParams);
     		
-    		GameControllerEventHandler.sendEvent(e);
-    		
-    		for(int i=0; i<numClients; i++)
-    		{
-    			if(i == gr.myID)
-    				intendedPlayers[i] = false;
-    			else
-    				intendedPlayers[i] = true;
-    		}
-    		
-    		eventParams[0] = Integer.toString(gr.myID);
-    		
-    		e = new Event()
-				.EventId(EventList.HANDLE_ASSIGN_INITIAL_THINGS)
-				.EventParameters(eventParams)
-				.IntendedPlayers(intendedPlayers);
-
     		GameControllerEventHandler.sendEvent(e);
     	}
 	}
@@ -257,11 +291,95 @@ public class GameController implements Runnable {
 	}
 	
 	private void playPhases(){
-		ChangePlayerOrder();
+		distributeIncome();
 		
-		PlayBattlePhase();
+		//recruitThings();
+		
+		//PlayBattlePhase();
+		
+		ChangePlayerOrder();
 	}
 	
+	private void recruitThings() {
+		for(GameRouter gr: servers)
+		{
+			String[] args = {"" + numClients};
+			
+			//ask for number of paid recruits
+			Response[] responses = GameControllerEventHandler.sendEvent(
+					new Event()
+					.EventId(EventList.DETERMINE_NUM_PAID_THINGS)
+					.EventParameters(args)
+					.ExpectsResponse(true)
+					);
+			
+			args = new String[2];
+			for (int j=0; j<responses.length; j++){
+				if(responses[j].fromPlayer == gr.myID)
+				{
+					args[0] = responses[j].message.trim();
+				}
+			}
+			
+			//ask for number of recruits to trade for
+			responses = GameControllerEventHandler.sendEvent(
+					new Event()
+					.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
+					.EventParameters(args)
+					.ExpectsResponse(true)
+					);
+			
+			for (int j=0; j<responses.length; j++){
+				if(responses[j].fromPlayer == gr.myID)
+				{
+					args[1] = responses[j].message.trim();
+				}
+			}
+			
+			//distribute recruits
+			responses = GameControllerEventHandler.sendEvent(
+					new Event()
+					.EventId(EventList.DISTRIBUTE_RECRUITS)
+					.EventParameters(args)
+					);
+			
+			boolean[] intendedPlayers = new boolean[4];
+    		for(int j=0; j<numClients; j++)
+    		{
+    			if(j == gr.myID)
+    				intendedPlayers[j] = false;
+    			else
+    				intendedPlayers[j] = true;
+    		}
+    		
+    		GameControllerEventHandler.sendEvent(new Event()
+				.EventId(EventList.HANDLE_DISTRIBUTE_RECRUITS)
+				.IntendedPlayers(intendedPlayers)
+				.EventParameters(args)
+			);
+			
+			//place things
+			
+			//handle place things
+			
+			//deal with excess in player rack
+			
+			//handle dealing with excess in player rack
+		}
+		
+
+	}
+
+	private void distributeIncome() {
+		String[] args = {"" + numClients};
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.AWARD_INCOME)
+					.EventParameters(args)
+			);			
+	}
+
 	private void ChangePlayerOrder(){
 		
 	}
@@ -358,7 +476,7 @@ public class GameController implements Runnable {
 					String[] hits = new String[numClients+2];
 					int numActualHits = 0;
 					for (Response rolls : magicRolls){
-						if (!rolls.message.equals("") && Integer.parseInt(rolls.message.trim()) > 0){
+						if (!rolls.message.trim().equals("") && Integer.parseInt(rolls.message.trim()) > 0){
 							numActualHits++;
 						}
 						if (rolls.IsNullEvent()){

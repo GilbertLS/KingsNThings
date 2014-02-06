@@ -2,11 +2,14 @@ package Game.Networking;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
 import javafx.application.Platform;
 import Game.Combatant;
 import Game.Creature;
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
 import Game.Player;
@@ -208,7 +211,7 @@ public class EventHandler {
 			
 			if (numHitsTaken > 0){
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
-				Vector<Thing> things = currTile.GetThings(currentPlayer);
+				ArrayList<Thing> things = currTile.GetThings(currentPlayer);
 				
 				System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
 				System.out.print("Things:");
@@ -232,7 +235,8 @@ public class EventHandler {
 			} else {
 				SendNullEvent();
 			}
-		} else if (e.eventId == EventList.REMOVE_THINGS){
+		} 
+		else if (e.eventId == EventList.REMOVE_THINGS){
 			int players = GameClient.game.gameModel.PlayerCount();
 			int tileX = Integer.parseInt(e.eventParams[players]);
 			int tileY = Integer.parseInt(e.eventParams[players+1]);
@@ -290,7 +294,8 @@ public class EventHandler {
 		        	GameClient.game.gameView.board.setTiles(h);
 		        }
 		    });
-		} else if (e.eventId == EventList.SET_CREATURES) {
+		}
+		else if (e.eventId == EventList.SET_CREATURES) {
 			String creaturesString = e.eventParams[0];
 			
 			String[] creaturesStrings = creaturesString.split("/");
@@ -299,37 +304,224 @@ public class EventHandler {
 			
 			//GameClient.game.gameModel.printCurrentBoardTiles();
 		}
-		else if (e.eventId == EventList.ASSIGN_INITIAL_THINGS) {
-			final int currentPlayerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()-1;
-			
-			GameClient.game.gameModel.assignInitialThings(currentPlayerIndex);
-			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-					GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
-					GameClient.game.gameView.playerList.getPlayerPanel(currentPlayerIndex).setThings(10);
-		        }
-		    });
-		} else if (e.eventId == EventList.HANDLE_ASSIGN_INITIAL_THINGS) {
+		else if (e.eventId == EventList.GET_THINGS_FROM_CUP) {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
-			GameClient.game.gameModel.assignInitialThings(playerIndex);
-			System.out.println(playerIndex);
+			final int numThings = Integer.parseInt(e.eventParams[1]);
+			
+			final boolean isCurrentPlayer = playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+			
+			GameClient.game.gameModel.getThingsFromCup(playerIndex, numThings);
 			
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
-		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(10);
+		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(numThings);
+		        	if(isCurrentPlayer)
+		        		GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
 		        }
 			});
 		}
-
-		if (e.expectsResponseEvent && numberOfSends != 1){
-			throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
-		} else if (!e.expectsResponseEvent && numberOfSends != 0){
-			throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+		else if (e.eventId == EventList.DISTRIBUTE_INITIAL_GOLD)
+		{
+			final int numClients = Integer.parseInt(e.eventParams[0]);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	for(int i=0; i<numClients; i++)
+		        	{
+		        		GameClient.game.gameView.playerList.getPlayerPanel(i).setGold(10);
+		        	}
+		        }
+			});
 		}
+		else if (e.eventId == EventList.AWARD_INCOME)
+		{
+			final int numClients = Integer.parseInt(e.eventParams[0]);
+			
+			final int[] goldUpdates = GameClient.game.gameModel.distributeIncome();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	for(int i=0; i<numClients; i++)
+		        	{
+		        		GameClient.game.gameView.playerList.getPlayerPanel(i).addGold(goldUpdates[i]);
+		        	}
+		        }
+			});
+		}
+		else if (e.eventId == EventList.PLACE_PIECE_ON_TILE)
+		{
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			String pieceBeingPlaced = e.eventParams[1];
+			
+			if(GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() == playerIndex)
+			{
+				HexTile selectedTile;
+				
+				boolean validSelectionMade = false;
+				String s;
+				do
+				{
+					s = "Please select a tile to place a " + pieceBeingPlaced + " into.";
+					GameClient.game.gameView.displayMessage(s);
+					selectedTile = GameClient.game.gameView.chooseHexTile();
+					
+					if(pieceBeingPlaced.equals("Control_Marker"))
+					{
+						validSelectionMade = GameClient.game.gameModel.isValidControlMarkerPlacement(selectedTile);
+					}
+					else if(pieceBeingPlaced.equals("Tower"))
+					{
+						validSelectionMade = GameClient.game.gameModel.isValidTowerPlacement(selectedTile);
+					}
+					else
+					{
+						GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
+					}
+					
+				}while(!validSelectionMade);
+				
+				int x = selectedTile.x;
+				int y = selectedTile.y;
+				
+				if(pieceBeingPlaced.equals("Control_Marker"))
+				{
+					GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+				}
+				else if(pieceBeingPlaced.equals("Tower"))
+				{
+					GameClient.game.gameModel.addTower(x, y, playerIndex);
+				}
+				
+				//update view
+				GameClient.game.gameView.updateHexTile(selectedTile);
+				
+				//respond with the coords and playerIndex of updated tile
+				System.out.println("CREATING PLACE PIECE ON TILE RESPONSE EVENT FOR PIECE " + pieceBeingPlaced);
+				
+				String[] args = {selectedTile.x +"SPLIT"+selectedTile.y, Integer.toString(playerIndex), pieceBeingPlaced};
+				
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.PLACE_PIECE_ON_TILE)
+							.EventParameters(args)
+				);
+			}
+			else
+			{
+				String s = "Waiting for player with index " + playerIndex + " to place a " + pieceBeingPlaced +".";
+				
+				GameClient.game.gameView.displayMessage(s);
+				
+				SendNullEvent();
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_PLACE_PIECE_ON_TILE)
+		{			
+			String[] hexTileCoords = e.eventParams[0].split("SPLIT");
+			
+			int x = Integer.parseInt(hexTileCoords[0]);
+			int y = Integer.parseInt(hexTileCoords[1]);
+			
+			int playerIndex = Integer.parseInt(e.eventParams[1]);
+			
+			String pieceBeingPlaced = e.eventParams[2];
+			
+			HexTile h = null;
+			if(pieceBeingPlaced.equals("Control_Marker"))
+			{
+				h = GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+			}
+			else if(pieceBeingPlaced.equals("Tower"))
+			{
+				h = GameClient.game.gameModel.addTower(x, y, playerIndex);
+			}
+			GameClient.game.gameView.updateHexTile(h);
+		}
+		else if(e.eventId == EventList.DETERMINE_NUM_PAID_THINGS)
+		{
+			GameClient.game.gameView.displayMessage("Please select the number of paid recruits you would like");
+			int numRecruits = GameClient.game.gameView.getNumPaidRecruits();
+			
+			//respond with number of paid things desired
+			System.out.println("CREATING DETERMINE NUM PAID THINGS RESPONSE EVENT");
+			
+			String[] args = {Integer.toString(numRecruits)};
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.DETERMINE_NUM_PAID_THINGS)
+						.EventParameters(args)
+			);
+		}
+		else if(e.eventId == EventList.DETERMINE_NUM_TRADE_THINGS)
+		{
+			GameClient.game.gameView.displayMessage("Please select the number of recruits you would like to trade for");
+			int numRecruits = GameClient.game.gameView.getNumTradeRecruits();
+			
+			//respond with number of paid things desired
+			System.out.println("CREATING DETERMINE NUM TRADE THINGS RESPONSE EVENT");
+			
+			String[] args = {Integer.toString(numRecruits)};
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
+						.EventParameters(args)
+			);
+		}
+		else if(e.eventId == EventList.DISTRIBUTE_RECRUITS)
+		{
+			int numPaidRecruits = Integer.parseInt(e.eventParams[0]);
+			int numTradeRecruits = Integer.parseInt(e.eventParams[1]);
+			int playerIndex = Integer.parseInt(e.eventParams[2]);
+			
+			System.out.println("PAID RECRUITS: " + numPaidRecruits);
+			System.out.println("TRADE RECRUITS: " + numTradeRecruits);
+			
+			int totalNumRecruits = GameClient.game.gameModel.distributeRecruits(numPaidRecruits, numTradeRecruits);
+			GameClient.game.gameView.updatePlayerRack();
+			
+			//send back num things removed, thing Ids put back into cup.
+		}
+		else if(e.eventId == EventList.HANDLE_DISTRIBUTE_RECRUITS)
+		{
+			//update all other players with recruit distribution
+		}
+		else if(e.eventId == EventList.PLAY_THINGS)
+		{
+			//allow player to play things
+			//HexTile[] hexTiles = GameClient.game.gameView.playThings();
+			//GameClient.game.gameModel.updatePlayedThings(hexTiles);
+		}
+		else if(e.eventId == EventList.HANDLE_PLAY_THINGS)
+		{
+			//update all other players with played things
+		}
+		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)
+		{
+			if(GameClient.game.gameModel.playerRackTooFull())
+			{
+				int numThingsRemoved = GameClient.game.gameModel.removeExcessFromRack();
+				GameClient.game.gameView.displayMessage("You had more than 10 things on your rack. " + numThingsRemoved + " things have been removed.");
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_CHECK_PLAYER_RACK_OVERLOAD)
+		{
+			//update all other players with things placed back in the cup
+		}
+		
+		if (e.expectsResponseEvent && numberOfSends != 1){
+				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
+		} else if (!e.expectsResponseEvent && numberOfSends != 0){
+				throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+		}
+		
+
 	}
+
 	
 	private static void SendNullEvent(){
 		EventHandler.SendEvent( new Event().EventId( EventList.NULL_EVENT ) );

@@ -1,6 +1,11 @@
 package Game;
 
 import java.util.ArrayList;
+
+import Game.GameConstants.ControlledBy;
+import Game.GameConstants.Terrain;
+import Game.Networking.GameClient;
+
 import java.util.Collections;
 import java.util.LinkedList;
 /*
@@ -23,25 +28,14 @@ public class GameModel {
 	public BoardController boardController;
 	
 	public Player GetPlayer(int playerNum){
-		switch( playerNum ){
-		case(1):
-			return player1;
-		case(2):
-			return player2;
-		case(3):
-			return player3;
-		case(4):
-			return player4;
-		}
-		
-		return null;
+		return playerFromIndex(playerNum);
 	}
 	
 	public void SetCurrentPlayer(int playerNum){
-		if ( playerNum == 1 ) { currPlayer = player1; }
-		if ( playerNum == 2 ) { currPlayer = player2; }
-		if ( playerNum == 3 ) { currPlayer = player3; }
-		if ( playerNum == 4 ) { currPlayer = player4; }
+		if ( playerNum == 0 ) { currPlayer = player1; }
+		if ( playerNum == 1 ) { currPlayer = player2; }
+		if ( playerNum == 2 ) { currPlayer = player3; }
+		if ( playerNum == 3 ) { currPlayer = player4; }
 	}
 	
 	public Player GetCurrentPlayer(){
@@ -59,10 +53,10 @@ public class GameModel {
 		
 		unusedTiles = new LinkedList<HexTile>();
 		
-		this.player1 = new Player(1);
-		this.player2 = new Player(2);
-		this.player3 = new Player(3);
-		this.player4 = new Player(4);
+		this.player1 = new Player(0);
+		this.player2 = new Player(1);
+		this.player3 = new Player(2);
+		this.player4 = new Player(3);
 		
 		//initialize playing cup
 		createNewThings();
@@ -750,30 +744,172 @@ public class GameModel {
 		*/
 	}
 
-	public void assignInitialThings(int playerIndex) {
-		Player player;
-		
-		switch(playerIndex)
-		{
-		case 0:
-			player = player1;
-			break;
-		case 1:
-			player = player2;
-			break;
-		case 2:
-			player = player3;
-			break;
-		default:
-			player = player4;
-			break;
-		}
-		
-		for(int i=0; i<10; i++)
+	public void getThingsFromCup(int playerIndex, int numThings) {
+		Player player = playerFromIndex(playerIndex);
+				
+		for(int i=0; i<numThings; i++)
 		{
 			Thing currentThing = playingCup.remove(playingCup.size()-1);
 			
 			player.addThingToRack(currentThing);
+			currentThing.controlledBy = player.faction;
+		}
+	}
+
+	public void distributeInitialGold() {
+		player1.addGold(GameConstants.INITIAL_GOLD_AMOUNT);
+	}
+	
+	public int[] distributeIncome()
+	{
+		Player player;
+		int[] playerGoldUpdates = new int[playerCount];
+		
+		for(int i=0; i<playerCount; i++)
+		{
+			player = playerFromIndex(i);
+		
+			playerGoldUpdates[i] = getIncomeForPlayer(player);
+		}
+		
+		return playerGoldUpdates;
+	}
+
+	private int getIncomeForPlayer(Player player) {
+		int gold =0;
+		
+		//gold pieces for land hexes
+		for(HexTile h: player.ownedHexTiles)
+				if(h.terrain != Terrain.SEA)
+				{
+						gold += h.getIncome();
+						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
+				}
+		
+		//combat values for forts
+		for(Fort f: player.forts)
+			gold+= f.getIncome();
+		
+		//special income tiles
+		for(SpecialIncome si: player.specialIncomes)
+			gold+= si.getIncome();
+		
+		//special characters
+		for(SpecialCharacter sc: player.specialCharacters)
+			gold += sc.getIncome();
+		
+		if(gold > 0)
+		{
+			System.out.println("GOLD HAS BEEN AWARDED TO PLAYER - " + player.GetPlayerNum() + "in the amount of " + gold);
+			System.out.println("# Hexes: " + player.ownedHexTiles.size());
+			System.out.println("# Forts: " + player.forts.size());
+			System.out.println("# Special Incomes: " + player.specialIncomes.size());
+			System.out.println("# Special Characters: " + player.specialCharacters.size());
+		}
+		
+		player.addGold(gold);
+		return gold;
+	}
+
+	public boolean isValidControlMarkerPlacement(HexTile selectedTile) {
+		if(selectedTile.controlledBy == ControlledBy.NEUTRAL)
+		{
+			if(currPlayer.ownedHexTiles.isEmpty())
+			{
+				int x = selectedTile.x;
+				int y = selectedTile.y;
+				
+				if((x == 3 && y == 1)
+						||(x == 1 && y == 3)
+						||(x == -3 && y == -1)
+						||(x == -1 && y == -3))
+					return true;
+			}
+			else
+			{
+				for(HexTile h: currPlayer.ownedHexTiles)
+				{
+					if(selectedTile.isAdjacent(h))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public HexTile updateTileFaction(int playerIndex, int x, int y) {
+		HexTile h = gameBoard.getTile(x, y);
+		ControlledBy oldFaction = h.controlledBy;	
+		
+		Player player = playerFromIndex(playerIndex);
+		ControlledBy faction = player.faction;
+		
+		h.controlledBy = faction;
+		
+		player.addHexTile(h);
+		
+		if(oldFaction != ControlledBy.NEUTRAL)
+		{
+			if(oldFaction == ControlledBy.PLAYER1)
+				player1.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER2)
+				player2.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER3)
+				player3.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER4)
+				player4.removeHexTile(h);
+		}
+		
+		return h;
+	}
+
+	public boolean isValidTowerPlacement(HexTile selectedTile) {
+		return (selectedTile.controlledBy == currPlayer.faction && selectedTile.forts.isEmpty());
+	}
+
+	public HexTile addTower(int x, int y, int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
+		
+
+		Fort f = new Fort();
+		f.controlledBy = player.faction;
+		
+		HexTile h = gameBoard.getTile(x, y);
+		
+		h.addTower(f);
+		player.addTower(f);
+		
+		return h;
+	}
+
+	public int distributeRecruits(int numPaidRecruits, int numTradeRecruits) {
+		//int numFreeRecruits = GameClient.game.gameModel.
+		
+		//getThingsFromCup();
+		
+		return 0;
+	}
+
+	public boolean playerRackTooFull() {
+		return currPlayer.rackTooFull();
+	}
+
+	public int removeExcessFromRack() {
+		return currPlayer.removeExcessFromRack();
+	}
+	
+	private Player playerFromIndex(int index)
+	{
+		switch(index)
+		{
+		case 0:
+			return player1;
+		case 1:
+			return player2;
+		case 2:
+			return player3;
+		default:
+			return player4;
 		}
 	}
 }

@@ -1,4 +1,8 @@
 package Game;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import Game.GameConstants.ControlledBy;
 
 /*
  * Represents one of the player of a Kings N' Things Game.
@@ -8,6 +12,12 @@ public class Player {
 	private int playerNum;				//Number identifying player
 	private int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
+	public ControlledBy faction;
+	public ArrayList<Fort> forts;
+	public ArrayList<SpecialCharacter> specialCharacters;
+	public ArrayList<SpecialIncome> specialIncomes;
+	public ArrayList<HexTile> ownedHexTiles;
+	
 	
 	public int GetPlayerNum(){
 		return playerNum;
@@ -19,6 +29,28 @@ public class Player {
 		
 		this.playerNum = playerNum;
 		this.playerOrder = playerNum;
+		
+		switch(playerNum)
+		{
+		case 0:
+			faction = ControlledBy.PLAYER1;
+			break;
+		case 1:
+			faction = ControlledBy.PLAYER2;
+			break;
+		case 2:
+			faction = ControlledBy.PLAYER3;
+			break;
+		default:
+			faction = ControlledBy.PLAYER4;
+			break;
+			
+		}
+		
+		forts = new ArrayList<Fort>();
+		specialCharacters = new ArrayList<SpecialCharacter>();
+		specialIncomes = new ArrayList<SpecialIncome>();
+		ownedHexTiles = new ArrayList<HexTile>();
 		
 		this.gold = 0;
 	}
@@ -43,5 +75,29 @@ public class Player {
 	
 	public PlayerRack getPlayerRack() {
 		return playerRack;
+	}
+
+	public void addGold(int amount) {
+		gold += amount;
+	}
+
+	public void addTower(Fort f) {
+		forts.add(f);
+	}
+
+	public void addHexTile(HexTile h) {
+		ownedHexTiles.add(h);
+	}
+	
+	public void removeHexTile(HexTile h){
+		ownedHexTiles.remove(h);
+	}
+
+	public boolean rackTooFull() {
+		return playerRack.tooFull();
+	}
+
+	public int removeExcessFromRack() {
+		return playerRack.removeExcessFromRack();
 	}
 }

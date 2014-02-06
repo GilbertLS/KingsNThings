@@ -19,4 +19,14 @@ public class PlayerRack {
 	public Vector<Thing> getThings() {
 		return things;
 	}
+
+	public boolean tooFull() {
+		return things.size()>10;
+	}
+
+	public int removeExcessFromRack() {
+		//remove excess and return num removed
+		
+		return 0;
+	}
 }

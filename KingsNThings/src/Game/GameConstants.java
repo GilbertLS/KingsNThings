@@ -83,6 +83,7 @@ public final class GameConstants {
 	public static final int MAX_NUM_TILES = 48;
 	public static final int NUM_FOUR_PLAYER_TILE_RINGS = 3;
 	public static final int NUM_TWO_OR_THREE_PLAYER_TILE_RINGS = 2;
+	public static final int INITIAL_GOLD_AMOUNT = 10;
 	
 	//Dice Constants
 	public static final int DIE_1_SIDES = 6;
