@@ -110,9 +110,9 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
-		placeThingsOnTile(3, "Control_Marker");
+		//placeThingsOnTile(3, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -295,7 +295,7 @@ public class GameController implements Runnable {
 		
 		//recruitThings();
 		
-		//PlayBattlePhase();
+		PlayBattlePhase();
 		
 		ChangePlayerOrder();
 	}
@@ -391,25 +391,25 @@ public class GameController implements Runnable {
 	private void DoTestBattle(){
 		// REMOVE
 		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "1", "1", "-1", "-1" })
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "1", "0", "-1", "-1" })
 		);
 		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "2", "2",  "-1", "-1" })
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "2", "1",  "-1", "-1" })
 		);
 		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Ranged", "3", "1", "-1", "-1" })
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Ranged", "3", "0", "-1", "-1" })
 		);
 		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Other", "4", "1", "-1", "-1" })
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Other", "4", "0", "-1", "-1" })
 		);
 		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "5", "2", "-1", "-1" })
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "5", "1", "-1", "-1" })
 		);
 		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "6", "1", "0", "0" })
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "6", "0", "0", "0" })
 		);
 		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "7", "2", "0", "0" })
+				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "7", "1", "0", "0" })
 		);
 		//
 		
@@ -450,7 +450,7 @@ public class GameController implements Runnable {
 					if (target.IsNullEvent()){
 						continue;
 					}
-					attackedPlayers[target.fromPlayer] = target.castToInt() - 1;
+					attackedPlayers[target.fromPlayer] = target.castToInt();
 				}
 				
 				for (int i = 0; i < attackedPlayers.length; i++){
