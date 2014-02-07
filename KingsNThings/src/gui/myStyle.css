@@ -77,6 +77,12 @@
 	-fx-background-size: cover, auto;
 }
 
+.dice {
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+}
+
 .button-box {
 	-fx-padding: 10px;
 	-fx-background-color: #000000;
