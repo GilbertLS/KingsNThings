@@ -203,12 +203,12 @@ public class EventHandler {
 			
 			Player currentPlayer = GameClient.game.gameModel.GetCurrentPlayer();
 			
-			if (e.eventParams[currentPlayer.GetPlayerNum()-1].equals("null")){
+			if (e.eventParams[currentPlayer.GetPlayerNum()].equals("null")){
 				SendNullEvent();
 				return;
 			}
 			
-			int numHitsTaken = Integer.parseInt(e.eventParams[currentPlayer.GetPlayerNum()-1].trim());
+			int numHitsTaken = Integer.parseInt(e.eventParams[currentPlayer.GetPlayerNum()].trim());
 			
 			if (numHitsTaken > 0){
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
@@ -242,13 +242,13 @@ public class EventHandler {
 			int tileX = Integer.parseInt(e.eventParams[players]);
 			int tileY = Integer.parseInt(e.eventParams[players+1]);
 			
-			GameClient.game.gameModel.boardController.GetTile(tileX, tileY).Print();;
+			GameClient.game.gameModel.boardController.GetTile(tileX, tileY).Print();
 			
 			for(int i = 0; i < players; i++){
 				String[] thingsToRemoveStrings = e.eventParams[i].split(" ");
 				int[] thingsToRemove = Utility.CastToIntArray(thingsToRemoveStrings);
 				
-				Player player = GameClient.game.gameModel.GetPlayer(i+1);
+				Player player = GameClient.game.gameModel.GetPlayer(i);
 				GameClient.game.gameModel.boardController.RemoveThings(thingsToRemove, player, tileX, tileY);
 			}
 			
