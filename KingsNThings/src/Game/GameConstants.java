@@ -105,10 +105,8 @@ public final class GameConstants {
 	public static final int NUM_SWAMP_TILES = 6;
 	public static final int NUM_MOUNTAIN_TILES = 6;
 	public static final int NUM_DESERT_TILES = 6;
-	
-	//event types
-	public static final int PLAYERS_ROLL = 0;
-	public static final int UPDATE_PLAYER_ORDER = 1;
+
+	public static final int GOLD_PER_RECRUIT = 5;
 
 
 

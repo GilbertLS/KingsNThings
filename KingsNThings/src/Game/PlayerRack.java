@@ -29,4 +29,8 @@ public class PlayerRack {
 		
 		return 0;
 	}
+
+	public boolean hasThings(int i) {
+		return things.size() >= i;
+	}
 }

@@ -9,6 +9,7 @@ import java.util.Vector;
 import javafx.application.Platform;
 import Game.Combatant;
 import Game.Creature;
+import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
@@ -411,11 +412,7 @@ public class EventHandler {
 			}
 			else
 			{
-				String s = "Waiting for player with index " + playerIndex + " to place a " + pieceBeingPlaced +".";
-				
-				GameClient.game.gameView.displayMessage(s);
-				
-				SendNullEvent();
+				waitForOtherPlayer(playerIndex, "place a " + pieceBeingPlaced);
 			}
 		}
 		else if(e.eventId == EventList.HANDLE_PLACE_PIECE_ON_TILE)
@@ -442,35 +439,61 @@ public class EventHandler {
 		}
 		else if(e.eventId == EventList.DETERMINE_NUM_PAID_THINGS)
 		{
-			GameClient.game.gameView.displayMessage("Please select the number of paid recruits you would like");
-			int numRecruits = GameClient.game.gameView.getNumPaidRecruits();
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			//respond with number of paid things desired
-			System.out.println("CREATING DETERMINE NUM PAID THINGS RESPONSE EVENT");
-			
-			String[] args = {Integer.toString(numRecruits)};
-			
-			EventHandler.SendEvent(
-					new Event()
-						.EventId(EventList.DETERMINE_NUM_PAID_THINGS)
-						.EventParameters(args)
-			);
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
+				int numRecruits =0;
+				do
+				{
+					GameClient.game.gameView.displayMessage("Please select the number of paid recruits you would like");
+					numRecruits = GameClient.game.gameView.getNumPaidRecruits();
+				}while(!GameClient.game.gameModel.GetCurrentPlayer().canAffordRecruits(numRecruits));
+				
+				//respond with number of paid things desired
+				System.out.println("CREATING DETERMINE NUM PAID THINGS RESPONSE EVENT");
+				
+				String[] args = {Integer.toString(numRecruits)};
+				
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.DETERMINE_NUM_PAID_THINGS)
+							.EventParameters(args)
+				);
+			}
+			else
+			{
+				waitForOtherPlayer(playerIndex, "select a number of paid things to take");
+			}
 		}
 		else if(e.eventId == EventList.DETERMINE_NUM_TRADE_THINGS)
 		{
-			GameClient.game.gameView.displayMessage("Please select the number of recruits you would like to trade for");
-			int numRecruits = GameClient.game.gameView.getNumTradeRecruits();
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			//respond with number of paid things desired
-			System.out.println("CREATING DETERMINE NUM TRADE THINGS RESPONSE EVENT");
-			
-			String[] args = {Integer.toString(numRecruits)};
-			
-			EventHandler.SendEvent(
-					new Event()
-						.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
-						.EventParameters(args)
-			);
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
+				int numRecruits =0;
+				do
+				{
+					GameClient.game.gameView.displayMessage("Please select the number of recruits you would like to trade for");
+					numRecruits = GameClient.game.gameView.getNumTradeRecruits();
+				}while(!GameClient.game.gameModel.GetCurrentPlayer().canTradeForRecruits(numRecruits));
+				
+				//respond with number of paid things desired
+				System.out.println("CREATING DETERMINE NUM TRADE THINGS RESPONSE EVENT");
+				
+				String[] args = {Integer.toString(numRecruits)};
+				
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
+							.EventParameters(args)
+				);
+			}
+			else
+			{
+				waitForOtherPlayer(playerIndex, "select a number of things to trade");
+			}
 		}
 		else if(e.eventId == EventList.DISTRIBUTE_RECRUITS)
 		{
@@ -482,6 +505,8 @@ public class EventHandler {
 			System.out.println("TRADE RECRUITS: " + numTradeRecruits);
 			
 			int totalNumRecruits = GameClient.game.gameModel.distributeRecruits(numPaidRecruits, numTradeRecruits);
+			
+			//pass thigns
 			GameClient.game.gameView.updatePlayerRack();
 			
 			//send back num things removed, thing Ids put back into cup.
@@ -523,6 +548,14 @@ public class EventHandler {
 	}
 
 	
+	private static void waitForOtherPlayer(int playerIndex, String actionBeingTaken) {
+		String s = "Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".";
+		
+		GameClient.game.gameView.displayMessage(s);
+		
+		SendNullEvent();		
+	}
+
 	private static void SendNullEvent(){
 		EventHandler.SendEvent( new Event().EventId( EventList.NULL_EVENT ) );
 	}
