@@ -19,7 +19,7 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> player2Things;	//player 2's Things in this Hex Tile
 	public ArrayList<Thing> player3Things;	//player 3's Things in this Hex Tile
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
-	public ArrayList<Fort> forts;						//Fort for this Hex Tile (if applicable)
+	public Fort fort;						//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public int x;
 	public int y;
@@ -34,7 +34,7 @@ public class HexTile implements IIncomable{
 		this.player3Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
 		this.player4Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
 		
-		this.forts = new ArrayList<Fort>(GameConstants.MAX_NUM_FORTS_PER_HEX);
+		this.fort = null;
 		
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 	}
@@ -110,7 +110,7 @@ public class HexTile implements IIncomable{
 	}
 
 	public void addTower(Fort f) {
-		forts.add(f);
+		fort = f;
 	}
 
 }
