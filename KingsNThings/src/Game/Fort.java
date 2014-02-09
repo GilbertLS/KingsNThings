@@ -23,4 +23,8 @@ public class Fort extends Building implements IIncomable{
 	{
 		return combatValue;
 	}
+	
+	public Level getLevel() {
+		return level;
+	}
 }

@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import Game.HexTile;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 
 public class BoardView extends Region {
-	private BoardView thisBoard= this;
+	private BoardView 	thisBoard = this;
 	private TilePreview tilePreview;
-	public Tile lastSelectedTile;
+	public 	Tile 		lastSelectedTile;
 	
 	BoardView(TilePreview tp)
 	{
@@ -19,8 +20,8 @@ public class BoardView extends Region {
 	}
 
 	public void setTiles(HexTile[][] h) {
-		Double width 	= 90.0;
-		Double height 	= 81.0;
+		Double width 	= 108.0;
+		Double height 	= 96.0;
 		
 		setMinSize(width*6, height*7+16);
 		setMaxSize(width*6, height*7+16);
@@ -78,5 +79,17 @@ public class BoardView extends Region {
 	
 	public void clearLastSelectedTile() {
 	   this.lastSelectedTile = null;
+	}
+	
+	public Tile getTileByHex(HexTile h) {
+		for (Node n : this.getChildren()) {
+			if (n.getClass() == Tile.class) {
+				Tile t = (Tile)n;
+				if (t.getTileRef() == h) {
+					return t;
+				}
+			}
+		}
+		return null;
 	}
 }

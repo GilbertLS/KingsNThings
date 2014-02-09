@@ -1,5 +1,7 @@
 package Game.Networking;
 
+import gui.Tile;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -359,7 +361,8 @@ public class EventHandler {
 			
 			if(GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() == playerIndex)
 			{
-				HexTile selectedTile;
+				Tile selectedTile;
+				HexTile selectedHex;
 				
 				boolean validSelectionMade = false;
 				String s;
@@ -367,15 +370,16 @@ public class EventHandler {
 				{
 					s = "Please select a tile to place a " + pieceBeingPlaced + " into.";
 					GameClient.game.gameView.displayMessage(s);
-					selectedTile = GameClient.game.gameView.chooseHexTile();
+					selectedTile = GameClient.game.gameView.chooseTile();
+					selectedHex = selectedTile.getTileRef();
 					
 					if(pieceBeingPlaced.equals("Control_Marker"))
 					{
-						validSelectionMade = GameClient.game.gameModel.isValidControlMarkerPlacement(selectedTile);
+						validSelectionMade = GameClient.game.gameModel.isValidControlMarkerPlacement(selectedHex);
 					}
 					else if(pieceBeingPlaced.equals("Tower"))
 					{
-						validSelectionMade = GameClient.game.gameModel.isValidTowerPlacement(selectedTile);
+						validSelectionMade = GameClient.game.gameModel.isValidTowerPlacement(selectedHex);
 					}
 					else
 					{
@@ -384,8 +388,8 @@ public class EventHandler {
 					
 				}while(!validSelectionMade);
 				
-				int x = selectedTile.x;
-				int y = selectedTile.y;
+				int x = selectedHex.x;
+				int y = selectedHex.y;
 				
 				if(pieceBeingPlaced.equals("Control_Marker"))
 				{
@@ -397,12 +401,18 @@ public class EventHandler {
 				}
 				
 				//update view
-				GameClient.game.gameView.updateHexTile(selectedTile);
+				final Tile finalSelection = selectedTile;
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+			        	finalSelection.update();
+			        }
+				});
 				
 				//respond with the coords and playerIndex of updated tile
 				System.out.println("CREATING PLACE PIECE ON TILE RESPONSE EVENT FOR PIECE " + pieceBeingPlaced);
 				
-				String[] args = {selectedTile.x +"SPLIT"+selectedTile.y, Integer.toString(playerIndex), pieceBeingPlaced};
+				String[] args = {selectedHex.x +"SPLIT"+selectedHex.y, Integer.toString(playerIndex), pieceBeingPlaced};
 				
 				EventHandler.SendEvent(
 						new Event()
@@ -435,7 +445,15 @@ public class EventHandler {
 			{
 				h = GameClient.game.gameModel.addTower(x, y, playerIndex);
 			}
-			GameClient.game.gameView.updateHexTile(h);
+			
+			//update tile
+			final HexTile finalHex = h;
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.updateHexTile(finalHex);
+		        }
+			});
 		}
 		else if(e.eventId == EventList.DETERMINE_NUM_PAID_THINGS)
 		{
