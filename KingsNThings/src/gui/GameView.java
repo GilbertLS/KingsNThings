@@ -70,54 +70,15 @@ public class GameView extends Scene {
         this.getStylesheets().add("gui/myStyle.css");
     }
     
-    //method to give back a hextile
-    public HexTile chooseHexTile()
-    {
-    	Tile t = this.board.getNextSelectedTile();
-    	HexTile h = t.getTileRef();
-    	
-    	/*HexTile h = new HexTile(Terrain.DESERT);
-    	
-    	do
-    	{
-    		h.x = (int)(Math.floor(Math.random()*7)-3);
-    		h.y = (int)(Math.floor(Math.random()*7)-3);
-    	}while(((h.x == -3 && (h.y == 3 || h.y == 2 || h.y == 1))
-    			||(h.x == -2 && (h.y == 3 || h.y == 2))
-    			||(h.x == -1 && (h.y == 3))
-    			||(h.x == 3 && (h.y == -3 || h.y == -2 || h.y == -1))
-    			||(h.x == 2 && (h.y == -3 || h.y == -2))
-    			||(h.x == 1 && (h.y == -3))));
-    	
-    	int faction = (int)Math.floor(Math.random()*5);
-    	
-    	switch(faction)
-    	{
-    	case 0:
-    		h.controlledBy = ControlledBy.PLAYER1;
-    		break;
-    	case 1:
-    		h.controlledBy = ControlledBy.PLAYER2;
-    		break;
-    	case 2:
-    		h.controlledBy = ControlledBy.PLAYER3;
-    		break;
-    	case 3:
-    		h.controlledBy = ControlledBy.PLAYER4;
-    		break;
-    	default:
-    		h.controlledBy = ControlledBy.NEUTRAL;
-    		break;
-    	}*/
-    	
-    	return h;
+    //method to give back a tile
+    public Tile chooseTile()
+    {  	
+    	return this.board.getNextSelectedTile();
     }
     
     public void updateHexTile(HexTile h)
     {
-    	//control marker
-    	
-    	//fort
+    	this.board.getTileByHex(h).update();
     }
     
     public void displayMessage(String message)

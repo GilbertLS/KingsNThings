@@ -864,7 +864,7 @@ public class GameModel {
 	}
 
 	public boolean isValidTowerPlacement(HexTile selectedTile) {
-		return (selectedTile.controlledBy == currPlayer.faction && selectedTile.forts.isEmpty());
+		return (selectedTile.controlledBy == currPlayer.faction && selectedTile.fort == null);
 	}
 
 	public HexTile addTower(int x, int y, int playerIndex) {

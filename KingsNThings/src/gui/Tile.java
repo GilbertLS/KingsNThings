@@ -3,9 +3,13 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.GameConstants.ControlledBy;
 import Game.HexTile;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -95,6 +99,66 @@ public class Tile extends Region implements Draggable {
     
     public HexTile getTileRef() {
     	return this.tileRef;
+    }
+    
+    public void update() {
+    	this.getChildren().clear();
+    	
+    	ArrayList<Node> list = new ArrayList<Node>();
+    	
+    	String markerPath = getMarkerString();
+    	
+    	if (markerPath != null) {
+	    	Image img = new Image("res/images/" + markerPath);
+	    	ImageView imgView = new ImageView(img);
+	    	imgView.setFitHeight(25);
+	    	imgView.setFitWidth(25);
+	    	imgView.setX(this.getWidth()/4);
+	    	list.add(imgView);
+    	}
+    	
+    	String fortPath = getFortString();
+    	
+    	if (fortPath != null) {
+	    	Image img = new Image("res/images/" + fortPath);
+	    	ImageView imgView = new ImageView(img);
+	    	imgView.setFitHeight(40);
+	    	imgView.setFitWidth(40);
+	    	imgView.setX(this.getWidth()/2 - imgView.getFitWidth()/2);
+	    	imgView.setY(this.getHeight()/2 - imgView.getFitHeight()/2);
+	    	list.add(imgView);
+    	}
+    	
+    	this.getChildren().setAll(list);
+    	
+    }
+    
+    private String getMarkerString() {
+    	if (tileRef != null) {
+    		switch (tileRef.controlledBy) {
+    			case PLAYER1: return "CM_411.png";
+    			case PLAYER2: return "CM_412.png";
+    			case PLAYER3: return "CM_413.png";
+    			case PLAYER4: return "CM_414.png";
+    			default: return null;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    private String getFortString() {
+    	if (tileRef != null && tileRef.fort != null) {
+    		switch (tileRef.fort.getLevel()) {
+    			case TOWER: return "C_Fort_375.png";
+    			case KEEP: return "C_Fort_377.png";
+    			case CASTLE: return "C_Fort_379.png";
+    			case CITADEL: return "C_Fort_381.png";
+    			default: return null;
+    		}
+    	}
+    	
+    	return null;
     }
 
     protected void initListeners()

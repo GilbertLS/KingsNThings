@@ -110,9 +110,9 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
-		//placeThingsOnTile(3, "Control_Marker");
+		placeThingsOnTile(3, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
