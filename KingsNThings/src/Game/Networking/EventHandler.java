@@ -326,6 +326,8 @@ public class EventHandler {
 		{
 			final int numClients = Integer.parseInt(e.eventParams[0]);
 			
+			GameClient.game.gameModel.distributeInitialGold();
+			
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
@@ -437,83 +439,73 @@ public class EventHandler {
 			}
 			GameClient.game.gameView.updateHexTile(h);
 		}
-		else if(e.eventId == EventList.DETERMINE_NUM_PAID_THINGS)
+		else if(e.eventId == EventList.ENTER_NUMBER)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			String purposeForNumber = e.eventParams[1];
 			
 			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 			{
-				int numRecruits =0;
+				int number =0;
+				boolean isValidSelection = false;
 				do
 				{
-					GameClient.game.gameView.displayMessage("Please select the number of paid recruits you would like");
-					numRecruits = GameClient.game.gameView.getNumPaidRecruits();
-				}while(!GameClient.game.gameModel.GetCurrentPlayer().canAffordRecruits(numRecruits));
+					GameClient.game.gameView.displayMessage("Please select the number of " + purposeForNumber + " you would like.");
+					
+					if(purposeForNumber.equals("Paid Recruits"))
+					{
+						if(playerIndex == 0)
+							number = GameClient.game.gameView.getNumPaidRecruits();
+						else
+							number = 0;
+						
+						isValidSelection = GameClient.game.gameModel.GetCurrentPlayer().canAffordRecruits(number);
+					}
+					else if(purposeForNumber.equals("Trade Recruits"))
+					{
+						number = GameClient.game.gameView.getNumTradeRecruits();
+						isValidSelection = GameClient.game.gameModel.GetCurrentPlayer().canTradeForRecruits(number);
+					}
+					
+					if(!isValidSelection)
+						GameClient.game.gameView.displayMessage("Invalid selection, please try again");
+						
+				}while(!isValidSelection);
 				
 				//respond with number of paid things desired
-				System.out.println("CREATING DETERMINE NUM PAID THINGS RESPONSE EVENT");
+				System.out.println("CREATING DETERMINE ENTER NUMBER RESPONSE EVENT FOR "+ purposeForNumber);
 				
-				String[] args = {Integer.toString(numRecruits)};
+				String[] args = {Integer.toString(number)};
 				
 				EventHandler.SendEvent(
 						new Event()
-							.EventId(EventList.DETERMINE_NUM_PAID_THINGS)
+							.EventId(EventList.ENTER_NUMBER)
 							.EventParameters(args)
 				);
 			}
 			else
 			{
-				waitForOtherPlayer(playerIndex, "select a number of paid things to take");
+				waitForOtherPlayer(playerIndex, "select a number of "+ purposeForNumber+" to take.");
 			}
 		}
-		else if(e.eventId == EventList.DETERMINE_NUM_TRADE_THINGS)
+		else if(e.eventId == EventList.DETERMINE_TOTAL_NUM_RECRUITS)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			int numPaidRecruits = Integer.parseInt(e.eventParams[1]);
+			int numTradeRecruits = Integer.parseInt(e.eventParams[2]);
 			
-			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
-			{
-				int numRecruits =0;
-				do
-				{
-					GameClient.game.gameView.displayMessage("Please select the number of recruits you would like to trade for");
-					numRecruits = GameClient.game.gameView.getNumTradeRecruits();
-				}while(!GameClient.game.gameModel.GetCurrentPlayer().canTradeForRecruits(numRecruits));
-				
-				//respond with number of paid things desired
-				System.out.println("CREATING DETERMINE NUM TRADE THINGS RESPONSE EVENT");
-				
-				String[] args = {Integer.toString(numRecruits)};
-				
-				EventHandler.SendEvent(
-						new Event()
-							.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
-							.EventParameters(args)
-				);
-			}
-			else
-			{
-				waitForOtherPlayer(playerIndex, "select a number of things to trade");
-			}
-		}
-		else if(e.eventId == EventList.DISTRIBUTE_RECRUITS)
-		{
-			int numPaidRecruits = Integer.parseInt(e.eventParams[0]);
-			int numTradeRecruits = Integer.parseInt(e.eventParams[1]);
-			int playerIndex = Integer.parseInt(e.eventParams[2]);
+			int numRecruits = GameClient.game.gameModel.GetCurrentPlayer().determineNumRecruits(numPaidRecruits, numTradeRecruits);
 			
-			System.out.println("PAID RECRUITS: " + numPaidRecruits);
-			System.out.println("TRADE RECRUITS: " + numTradeRecruits);
+			//respond with number of paid things desired
+			System.out.println("CREATING DETERMINE TOTAL NUM RECRUITS EVENT");
 			
-			int totalNumRecruits = GameClient.game.gameModel.distributeRecruits(numPaidRecruits, numTradeRecruits);
+			String[] args = {Integer.toString(numRecruits)};
 			
-			//pass thigns
-			GameClient.game.gameView.updatePlayerRack();
-			
-			//send back num things removed, thing Ids put back into cup.
-		}
-		else if(e.eventId == EventList.HANDLE_DISTRIBUTE_RECRUITS)
-		{
-			//update all other players with recruit distribution
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.DETERMINE_TOTAL_NUM_RECRUITS)
+						.EventParameters(args)
+			);
 		}
 		else if(e.eventId == EventList.PLAY_THINGS)
 		{
@@ -536,6 +528,20 @@ public class EventHandler {
 		else if(e.eventId == EventList.HANDLE_CHECK_PLAYER_RACK_OVERLOAD)
 		{
 			//update all other players with things placed back in the cup
+		}
+		else if(e.eventId == EventList.PAY_GOLD)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			final int gold = Integer.parseInt(e.eventParams[1]);
+			
+			GameClient.game.gameModel.playerFromIndex(playerIndex).payGold(gold);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        		GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).payGold(gold);
+		        }
+			});
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends != 1){

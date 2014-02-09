@@ -106,7 +106,17 @@ public class Player {
 	}
 
 	public boolean canAffordRecruits(int numRecruits) {
+		System.out.println("HERE!!" + numRecruits + " " + gold);
 		
-		return gold>numRecruits*GameConstants.GOLD_PER_RECRUIT;
+		return gold >= numRecruits*GameConstants.GOLD_PER_RECRUIT;
+	}
+
+	public void payGold(int gold) {
+		this.gold -= gold;
+	}
+
+	public int determineNumRecruits(int numPaidRecruits, int i) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

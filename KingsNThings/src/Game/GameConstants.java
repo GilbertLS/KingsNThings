@@ -72,6 +72,8 @@ public final class GameConstants {
 	public static final String TigersImageFront = "T_Jungle_011.png";
 	public static final String VillainsImageFront = "T_Plains_015.png";
 	public static final String GiantLizardImageFront = "T_Swamp_065.png";
+	public static final String MountainMenImageFront = "T_Mountains_A.png";
+	public static final String CyclopsImageFront = "T_Mountains_Q.png";
 	
 	//-------------/end ENUMS---------------
 	
@@ -107,6 +109,8 @@ public final class GameConstants {
 	public static final int NUM_DESERT_TILES = 6;
 
 	public static final int GOLD_PER_RECRUIT = 5;
+
+
 
 
 

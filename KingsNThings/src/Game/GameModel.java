@@ -443,6 +443,23 @@ public class GameModel {
 	public static String initializeCreatures() {
 		String initializeThingsString = "";
 		
+		//THINGS RECRUITED
+		initializeThingsString += "Goblins" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.GoblinsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Mountain Men" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 1 + "SPLIT" 
+				+ GameConstants.MountainMenImageFront +"SPLIT";
+		initializeThingsString += "/";
+		initializeThingsString += "Cyclops" + "SPLIT"
+				+ "MOUNTAIN" + "SPLIT" 
+				+ 5 + "SPLIT" 
+				+ GameConstants.CyclopsImageFront +"SPLIT";
+		initializeThingsString += "/";
+		
 		//PLAYER 4 THINGS (reverse order)
 		//Stack 3
 		initializeThingsString += "Buffalo Herd" + "SPLIT"
@@ -827,6 +844,14 @@ public class GameModel {
 			}
 			else
 			{
+				for(int i=0; i<playerCount; i++)
+				{
+					if(i != currPlayer.GetPlayerNum())
+						for(HexTile h: playerFromIndex(i).ownedHexTiles)
+							if(h.isAdjacent(selectedTile))
+								return false;
+				}
+				
 				for(HexTile h: currPlayer.ownedHexTiles)
 				{
 					if(selectedTile.isAdjacent(h))
@@ -882,14 +907,6 @@ public class GameModel {
 		return h;
 	}
 
-	public int distributeRecruits(int numPaidRecruits, int numTradeRecruits) {
-		//int numFreeRecruits = GameClient.game.gameModel.
-		
-		//getThingsFromCup();
-		
-		return 0;
-	}
-
 	public boolean playerRackTooFull() {
 		return currPlayer.rackTooFull();
 	}
@@ -898,7 +915,7 @@ public class GameModel {
 		return currPlayer.removeExcessFromRack();
 	}
 	
-	private Player playerFromIndex(int index)
+	public Player playerFromIndex(int index)
 	{
 		switch(index)
 		{

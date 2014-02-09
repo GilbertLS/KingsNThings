@@ -137,4 +137,6 @@ public class GameView extends Scene {
 	public int getNumTradeRecruits() {
 		return 0;
 	}
+	
+	
 }
