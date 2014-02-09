@@ -10,7 +10,7 @@ import Game.GameConstants.ControlledBy;
 public class Player {
 	private PlayerRack playerRack;		//Rack to hold currently unplayed Things
 	private int playerNum;				//Number identifying player
-	private int gold;					//current gold stash of this player
+	public int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
 	public ControlledBy faction;
 	public ArrayList<Fort> forts;
@@ -99,5 +99,14 @@ public class Player {
 
 	public int removeExcessFromRack() {
 		return playerRack.removeExcessFromRack();
+	}
+
+	public boolean canTradeForRecruits(int numRecruits) {
+		return playerRack.hasThings(numRecruits * 2);
+	}
+
+	public boolean canAffordRecruits(int numRecruits) {
+		
+		return gold>numRecruits*GameConstants.GOLD_PER_RECRUIT;
 	}
 }
