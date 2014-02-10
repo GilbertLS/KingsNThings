@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-
 import javafx.application.Platform;
 import Game.Combatant;
 import Game.Creature;
-import Game.GameConstants.ControlledBy;
+import Game.GameConstants.BattleTurn;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
 import Game.Player;
@@ -129,20 +127,14 @@ public class EventHandler {
 						continue;
 					}
 					
+					BattleTurn turn;
+					if (isMagicTurn){ turn = BattleTurn.MAGIC; }
+					else if (isRangedTurn){ turn = BattleTurn.RANGED; }
+					else { turn = BattleTurn.OTHER; }
+					
 					Combatant combatant = (Combatant)thing;
 					
-					if (!(
-						( combatant.IsMagic() && isMagicTurn ) ||
-						( combatant.IsRange() && isRangedTurn ) ||
-						( !combatant.IsMagic() && !combatant.IsRange() && !isMagicTurn && !isRangedTurn ))){
-						continue;
-					}
-					
-					int roll = GameClient.game.gameModel.rollDice();
-					
-					if (roll <= combatant.GetCombatValue() ){
-						rolls++;
-					}
+					rolls += combatant.GetCombatRoll(turn, true);
 				}
 				
 				EventHandler.SendEvent(
@@ -219,14 +211,23 @@ public class EventHandler {
 					System.out.print(thing.GetThingId() + " ");
 				}
 				
-				String[] thingsToRemove = new String[numHitsTaken];
-				BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-				try {
-					for (int i = 0; i < numHitsTaken; i++){
-						thingsToRemove[i] = bufferRead.readLine();
-					}
-				} catch (Exception ex){}
+				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
+				String[] thingsToRemove = new String[numHitsToApply];
+				
+				BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+				if (things.size() > numHitsTaken){
+					try {
+						for (int i = 0; i < numHitsTaken; i++){
+							thingsToRemove[i] = bufferRead.readLine();
+						}
+					} catch (Exception ex){}
+				} else {
+					int i = 0;
+					for (Thing t : things){
+						thingsToRemove[i++] = "" + t.thingID;
+					}
+				}
 				EventHandler.SendEvent(
 					new Event()
 						.EventId(EventList.INFLICT_HITS)

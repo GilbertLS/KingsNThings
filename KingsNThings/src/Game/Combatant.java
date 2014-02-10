@@ -1,6 +1,8 @@
 package Game;
 
+import Game.GameConstants.BattleTurn;
 import Game.GameConstants.ThingType;
+import Game.Networking.GameClient;
 
 /*
  * This class adds functionality to the Thing class to facilitate combat.
@@ -39,5 +41,34 @@ public abstract class Combatant extends Thing{
 	
 	public boolean IsMagic(){
 		return isMagic;
+	}
+	
+	// remove promptView
+	public int GetCombatRoll(
+			BattleTurn turn,
+			boolean promptView
+	){
+		int rolls = 0;
+		if (!(
+				( this.IsMagic() && turn == BattleTurn.MAGIC ) ||
+				( this.IsRange() && turn == BattleTurn.RANGED ) ||
+				( !this.IsMagic() && !this.IsRange() && !( turn == BattleTurn.MAGIC) && !( turn == BattleTurn.RANGED )))){
+				return 0;
+			}
+			
+			int numRolls = isCharge ? 2 : 1;
+			for (int i = 0; i < numRolls; i++){
+				int roll = GameClient.game.gameModel.rollDice();
+				
+				if (promptView){
+					GameClient.game.gameView.diceListView.RollDice(0, roll);
+				}
+				
+				if (roll <= this.GetCombatValue() ){
+					rolls++;
+				}
+			}
+			
+		return rolls;	
 	}
 }

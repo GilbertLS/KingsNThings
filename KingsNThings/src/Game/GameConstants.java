@@ -110,10 +110,12 @@ public final class GameConstants {
 	public static final int PLAYERS_ROLL = 0;
 	public static final int UPDATE_PLAYER_ORDER = 1;
 
-
-
-
-
+	//battle turns
+	public static enum BattleTurn {
+		MAGIC,
+		RANGED,
+		OTHER
+	}
 
 
 	//--------------/end INTEGERS
