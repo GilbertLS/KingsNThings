@@ -115,7 +115,7 @@ public class GameView extends Scene {
     
     public void updateHexTile(HexTile h)
     {
-    	//for example, display control marker
+    	//control marker
     	
     	//fort
     }
@@ -126,7 +126,7 @@ public class GameView extends Scene {
     }
 
 	public int getNumPaidRecruits() {
-		return 1;
+		return 2;
 	}
 
 	public void updatePlayerRack() {

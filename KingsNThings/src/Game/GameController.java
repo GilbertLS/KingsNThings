@@ -325,6 +325,8 @@ public class GameController implements Runnable {
 				}
 			}
 			
+			//pay for recruits
+			
 			//ask for number of recruits to trade for
 			responses = GameControllerEventHandler.sendEvent(
 					new Event()
@@ -339,6 +341,9 @@ public class GameController implements Runnable {
 					args[1] = responses[j].message.trim();
 				}
 			}
+			
+			//select recruits to trade
+			//loop until valid selection is made
 			
 			//distribute recruits
 			responses = GameControllerEventHandler.sendEvent(
