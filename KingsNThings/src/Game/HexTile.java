@@ -124,5 +124,16 @@ public class HexTile implements IIncomable{
 	public void addTower(Fort f) {
 		fort = f;
 	}
-
+	
+	public int distance(HexTile h)
+	{
+		int dx = h.x - x;
+		int dy = h.y - y;
+		
+		if((dx < 0 && dy >= 0)
+			||(dx >= 0 && dy <0))
+			return (Math.abs(dx) + Math.abs(dy));
+		else
+			return Math.max(Math.abs(dx), Math.abs(dy));
+	}
 }

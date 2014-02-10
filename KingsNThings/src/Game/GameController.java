@@ -110,9 +110,9 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
-		//placeThingsOnTile(3, "Control_Marker");
+		placeThingsOnTile(3, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -334,11 +334,26 @@ public class GameController implements Runnable {
 		
 		recruitThings();
 		
+		playThings();
+		
+		moveThings();
+		
 		PlayBattlePhase();
 		
 		ChangePlayerOrder();
 	}
 	
+	private void moveThings() {
+		//for each client
+		
+		//choose a hex with units
+		
+		//choose units
+		
+		//choose hex to move to (within valid distance)
+		
+	}
+
 	private void recruitThings() {
 		for(GameRouter gr: servers)
 		{
@@ -417,10 +432,6 @@ public class GameController implements Runnable {
     					.EventParameters(args);
     		
     		GameControllerEventHandler.sendEvent(e);
-			
-			/*//place things
-			
-			//handle place things
 			
 			//deal with excess in player rack
 			

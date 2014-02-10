@@ -95,3 +95,15 @@
 .preview-list {
 	-fx-width: 100%;
 }
+
+.message
+{
+	-fx-background-color: #232323;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
+	-fx-text-fill: white;
+}
+
+.message .label {
+	-fx-text-fill: white;
+}

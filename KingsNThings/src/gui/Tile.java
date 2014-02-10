@@ -3,7 +3,9 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -28,6 +30,7 @@ public class Tile extends Region implements Draggable {
 	public ThingView fort;
 	public ThingView economy;
 	private int controllingPlayer = 0;
+	private CurrentPhase currentPhase;
 	
     public Tile(Double width, Double height, HexTile h)
     {
@@ -117,6 +120,7 @@ public class Tile extends Region implements Draggable {
 	    	list.add(imgView);
     	}
     	
+    	
     	String fortPath = getFortString();
     	
     	if (fortPath != null) {
@@ -197,29 +201,35 @@ public class Tile extends Region implements Draggable {
 		
 		setOnDragDropped(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
-				Dragboard 	db 		= e.getDragboard();
-				boolean 	success = false;
-
-				if (db.hasContent(thingRackIds)) {
-					ThingCell 					source 		= (ThingCell)e.getGestureSource();
-					ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
-					ObservableList<ThingView> 	items		= source.getListView().getItems();
-					ArrayList<ThingView> 		things		= new ArrayList<ThingView>();
-
-					for (Integer i : listOfIds) {
-						things.add(items.get(i));
+					Dragboard 	db 		= e.getDragboard();
+					boolean 	success = false;
+	
+					if (db.hasContent(thingRackIds)) {
+						ThingCell 					source 		= (ThingCell)e.getGestureSource();
+						ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
+						ObservableList<ThingView> 	items		= source.getListView().getItems();
+						ArrayList<ThingView> 		things		= new ArrayList<ThingView>();
+						
+						if(((GameView)getScene()).currentPhase == CurrentPhase.PLAY_THINGS)
+						{
+							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+							{
+								for (Integer i : listOfIds) {
+									things.add(items.get(i));
+								}
+								
+								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
+								thisTile.addAll(things, 1);
+								source.getListView().getItems().removeAll(things);
+			
+								success = true;
+							}
+						}
 					}
 					
-					//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
-					thisTile.addAll(things, 1);
-					source.getListView().getItems().removeAll(things);
-
-					success = true;
+					e.setDropCompleted(success);
+					e.consume();
 				}
-				
-				e.setDropCompleted(success);
-				e.consume();
-			}
 		});
 	}
     

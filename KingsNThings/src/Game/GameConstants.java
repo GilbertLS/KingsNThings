@@ -5,7 +5,14 @@ package Game;
  */
 public final class GameConstants {
 	//-----------ENUMS-------------------
-	
+
+	public static enum CurrentPhase {
+		MOVEMENT,
+		BATTLE,
+		NULL, 
+		PLAY_THINGS
+	}
+
 	//The different types of possible terrain in the game
 	//(Note that all except "Sea" are considered "Land")
 	public static enum Terrain {SEA, JUNGLE, FROZEN_WASTE, FOREST, PLAINS, SWAMP, MOUNTAIN, DESERT}

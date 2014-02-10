@@ -106,8 +106,6 @@ public class Player {
 	}
 
 	public boolean canAffordRecruits(int numRecruits) {
-		System.out.println("HERE!!" + numRecruits + " " + gold);
-		
 		return gold >= numRecruits*GameConstants.GOLD_PER_RECRUIT;
 	}
 

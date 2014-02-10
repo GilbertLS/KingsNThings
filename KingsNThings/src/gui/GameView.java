@@ -1,11 +1,14 @@
 package gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import Game.Creature;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
 import Game.Thing;
@@ -25,6 +28,8 @@ public class GameView extends Scene {
     public RackView rack;
     public TilePreview tilePreview;
     public DiceListView diceListView;
+    public MessageView messageView;
+    public CurrentPhase currentPhase = CurrentPhase.NULL;
 	
     public GameView(BorderPane r) {
     	super(r, 1000, 600);
@@ -54,6 +59,9 @@ public class GameView extends Scene {
         playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
         
+        messageView = new MessageView();
+        rightPanel.getChildren().add(messageView);
+        
         buttonBox = new ButtonBox();
         rightPanel.getChildren().add(buttonBox);
         
@@ -61,6 +69,7 @@ public class GameView extends Scene {
         
         diceListView = new DiceListView();
         rightPanel.getChildren().add(diceListView);
+        
         
         ArrayList<ThingView> arr = new ArrayList<ThingView>();
         for(int i = 0; i < 10; i++)
@@ -84,11 +93,18 @@ public class GameView extends Scene {
     
     public void displayMessage(String message)
     {
-    	System.out.println("GAME VIEW MESSAGE: " + message);
+    	messageView.displayMessage(message);
+    }
+    
+    public void clearMessage()
+    {
+    	messageView.clearMessage();
     }
 
 	public int getNumPaidRecruits() {
-		return 2;
+		Scanner in = new Scanner(System.in);
+		
+		return in.nextInt();
 	}
 
 	public void updatePlayerRack() {
@@ -101,9 +117,9 @@ public class GameView extends Scene {
 	}
 
 	public String playThings() {
-		//play things to hexTiles, return tiles added to
-		//for each thing played, please send append to s a string of the form:
-		//<HexTile x>SPLIT<HexTile y> <ThingID>/
+		Scanner in = new Scanner(System.in);
+		
+		in.nextInt();
 		
 		String s ="";
 		HexTile hypotheticalTile = new HexTile(Terrain.SEA);
@@ -113,6 +129,10 @@ public class GameView extends Scene {
 		s += hypotheticalTile.x + "SPLIT" + hypotheticalTile.y+ " " + hypotheticalThing.thingID + "/";
 		
 		return s;
+	}
+
+	public void setPhase(CurrentPhase currentPhase) {
+		this.currentPhase = currentPhase;	
 	}
 	
 	

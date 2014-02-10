@@ -13,6 +13,7 @@ import Game.Combatant;
 import Game.Creature;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
 import Game.Player;
@@ -159,7 +160,7 @@ public class EventHandler {
 			}
 		}
 		else if (e.eventId == EventList.SET_CURRENT_PLAYER){
-			int playerNum = Integer.parseInt(e.eventParams[0]);
+			final int playerNum = Integer.parseInt(e.eventParams[0]);
 			
 			GameClient.game.gameModel.SetCurrentPlayer(playerNum);
 		}
@@ -359,7 +360,12 @@ public class EventHandler {
 		else if (e.eventId == EventList.PLACE_PIECE_ON_TILE)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			String pieceBeingPlaced = e.eventParams[1];
+			final String pieceBeingPlacedString;
+			
+			if(e.eventParams[1].equals("Control_Marker"))
+				pieceBeingPlacedString = "Control Marker";
+			else
+				pieceBeingPlacedString = e.eventParams[1];
 			
 			if(GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() == playerIndex)
 			{
@@ -367,54 +373,66 @@ public class EventHandler {
 				HexTile selectedHex;
 				
 				boolean validSelectionMade = false;
-				String s;
+				
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.displayMessage("Please select a tile to place a " + pieceBeingPlacedString + " into.");
+			        }
+				});
 				do
-				{
-					s = "Please select a tile to place a " + pieceBeingPlaced + " into.";
-					GameClient.game.gameView.displayMessage(s);
+				{										
 					selectedTile = GameClient.game.gameView.chooseTile();
 					selectedHex = selectedTile.getTileRef();
 					
-					if(pieceBeingPlaced.equals("Control_Marker"))
+					if(pieceBeingPlacedString.equals("Control Marker"))
 					{
 						validSelectionMade = GameClient.game.gameModel.isValidControlMarkerPlacement(selectedHex);
 					}
-					else if(pieceBeingPlaced.equals("Tower"))
+					else if(pieceBeingPlacedString.equals("Tower"))
 					{
 						validSelectionMade = GameClient.game.gameModel.isValidTowerPlacement(selectedHex);
 					}
 					else
 					{
-						GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
+						Platform.runLater(new Runnable() {
+					        @Override
+					        public void run() {
+					        	GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
+					        }
+						});
+						
 					}
 					
-				}while(!validSelectionMade);
+				}while(!validSelectionMade);				
 				
 				int x = selectedHex.x;
 				int y = selectedHex.y;
 				
-				if(pieceBeingPlaced.equals("Control_Marker"))
+				if(pieceBeingPlacedString.equals("Control Marker"))
 				{
 					GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
 				}
-				else if(pieceBeingPlaced.equals("Tower"))
+				else if(pieceBeingPlacedString.equals("Tower"))
 				{
 					GameClient.game.gameModel.addTower(x, y, playerIndex);
 				}
 				
 				//update view
 				final Tile finalSelection = selectedTile;
+				//update view
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
+			        	GameClient.game.gameView.clearMessage();
 			        	finalSelection.update();
 			        }
 				});
 				
 				//respond with the coords and playerIndex of updated tile
-				System.out.println("CREATING PLACE PIECE ON TILE RESPONSE EVENT FOR PIECE " + pieceBeingPlaced);
+				System.out.println("CREATING PLACE PIECE ON TILE RESPONSE EVENT FOR PIECE " + pieceBeingPlacedString);
 				
-				String[] args = {selectedHex.x +"SPLIT"+selectedHex.y, Integer.toString(playerIndex), pieceBeingPlaced};
+				String[] args = {selectedHex.x +"SPLIT"+selectedHex.y, Integer.toString(playerIndex), e.eventParams[1]};
 				
 				EventHandler.SendEvent(
 						new Event()
@@ -424,7 +442,7 @@ public class EventHandler {
 			}
 			else
 			{
-				waitForOtherPlayer(playerIndex, "place a " + pieceBeingPlaced);
+				waitForOtherPlayer(playerIndex, "place a " + pieceBeingPlacedString);
 			}
 		}
 		else if(e.eventId == EventList.HANDLE_PLACE_PIECE_ON_TILE)
@@ -460,16 +478,20 @@ public class EventHandler {
 		else if(e.eventId == EventList.ENTER_NUMBER)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			String purposeForNumber = e.eventParams[1];
+			final String purposeForNumber = e.eventParams[1];
 			
 			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 			{
 				int number =0;
 				boolean isValidSelection = false;
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+			        	GameClient.game.gameView.displayMessage("Please select the number of " + purposeForNumber + " you would like.");
+			        }
+				});
 				do
 				{
-					GameClient.game.gameView.displayMessage("Please select the number of " + purposeForNumber + " you would like.");
-					
 					if(purposeForNumber.equals("Paid Recruits"))
 					{
 						if(playerIndex == 0)
@@ -486,9 +508,21 @@ public class EventHandler {
 					}
 					
 					if(!isValidSelection)
-						GameClient.game.gameView.displayMessage("Invalid selection, please try again");
+						Platform.runLater(new Runnable() {
+					        @Override
+					        public void run() {
+								GameClient.game.gameView.displayMessage("Invalid selection, please try again");
+					        }
+						});
+
 						
 				}while(!isValidSelection);
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.clearMessage();
+			        }
+				});
 				
 				//respond with number of paid things desired
 				System.out.println("CREATING DETERMINE ENTER NUMBER RESPONSE EVENT FOR "+ purposeForNumber);
@@ -531,8 +565,12 @@ public class EventHandler {
 			
 			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 			{
+				GameClient.game.gameView.setPhase(CurrentPhase.PLAY_THINGS);
+				
 				//drag and drop things to tiles
 				String thingPlayedParamsString = GameClient.game.gameView.playThings();
+				
+				GameClient.game.gameView.setPhase(CurrentPhase.NULL);
 				
 				String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
 				
@@ -565,8 +603,15 @@ public class EventHandler {
 		{
 			if(GameClient.game.gameModel.playerRackTooFull())
 			{
-				int numThingsRemoved = GameClient.game.gameModel.removeExcessFromRack();
-				GameClient.game.gameView.displayMessage("You had more than 10 things on your rack. " + numThingsRemoved + " things have been removed.");
+				final int numThingsRemoved = GameClient.game.gameModel.removeExcessFromRack();
+				
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+			        	GameClient.game.gameView.displayMessage("You had more than 10 things on your rack. " + numThingsRemoved + " things have been removed.");		        	
+			        }
+				});
+				
 			}
 		}
 		else if(e.eventId == EventList.HANDLE_CHECK_PLAYER_RACK_OVERLOAD)
@@ -593,15 +638,22 @@ public class EventHandler {
 		} else if (!e.expectsResponseEvent && numberOfSends != 0){
 				throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
 		}
-		
 
 	}
 
 	
-	private static void waitForOtherPlayer(int playerIndex, String actionBeingTaken) {
+	private static void waitForOtherPlayer(final int playerIndex, final String actionBeingTaken) {
 		String s = "Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".";
 		
-		GameClient.game.gameView.displayMessage(s);
+		//needs GameControllerEventHandler to be multi-threaded
+		/*
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	GameClient.game.gameView.displayMessage("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
+	        }
+		});*/
+
 		
 		SendNullEvent();		
 	}
