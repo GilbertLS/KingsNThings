@@ -318,7 +318,7 @@ public class EventHandler {
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
-		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(numThings);
+		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).addThings(numThings);
 		        	if(isCurrentPlayer)
 		        		GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
 		        }
@@ -527,13 +527,39 @@ public class EventHandler {
 		}
 		else if(e.eventId == EventList.PLAY_THINGS)
 		{
-			//allow player to play things
-			//HexTile[] hexTiles = GameClient.game.gameView.playThings();
-			//GameClient.game.gameModel.updatePlayedThings(hexTiles);
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
+				//drag and drop things to tiles
+				String thingPlayedParamsString = GameClient.game.gameView.playThings();
+				
+				String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
+				
+				GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+				
+				GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+				
+				//send changes
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.PLAY_THINGS)
+							.EventParameter(thingPlayedParamsString)
+				);
+			}
+			else
+			{
+				waitForOtherPlayer(playerIndex, "play their things");
+			}
 		}
 		else if(e.eventId == EventList.HANDLE_PLAY_THINGS)
 		{
-			//update all other players with played things
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+			
+			GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+			
+			GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
 		}
 		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)
 		{

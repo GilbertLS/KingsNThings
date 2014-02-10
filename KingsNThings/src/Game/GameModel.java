@@ -1,5 +1,8 @@
 package Game;
 
+import gui.ThingView;
+import gui.Tile;
+
 import java.util.ArrayList;
 
 import Game.GameConstants.ControlledBy;
@@ -927,6 +930,42 @@ public class GameModel {
 			return player3;
 		default:
 			return player4;
+		}
+	}
+
+	public void updatePlayerRack(String[] thingsPlayedStrings, int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
+		
+		for(String s: thingsPlayedStrings)
+		{
+			String[] paramsString = s.split(" ");
+			
+			int thingID = Integer.parseInt(paramsString[1]);
+			
+			if(player.hasInRack(thingID))
+				player.removeFromRack(thingID);
+		}	
+	}
+
+	public void updateHexTiles(String[] thingsPlayedStrings, int playerIndex) {		
+		for(String s: thingsPlayedStrings)
+		{
+			if(s != null)
+			{
+				System.out.println("S is :" + s);
+				
+				String[] paramsString = s.split(" ");
+				String[] hexParamsString = paramsString[0].split("SPLIT");
+				
+				int x = Integer.parseInt(hexParamsString[0]);
+				int y = Integer.parseInt(hexParamsString[1]);
+				
+				int thingID = Integer.parseInt(paramsString[1]);
+				
+				Thing thingPlayed = playerFromIndex(playerIndex).getThingByID(thingID);
+				
+				gameBoard.getTile(x, y).AddThingToTile(playerIndex, thingPlayed);
+			}
 		}
 	}
 }

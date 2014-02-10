@@ -8,6 +8,7 @@ import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
+import Game.Thing;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -97,6 +98,21 @@ public class GameView extends Scene {
 
 	public int getNumTradeRecruits() {
 		return 0;
+	}
+
+	public String playThings() {
+		//play things to hexTiles, return tiles added to
+		//for each thing played, please send append to s a string of the form:
+		//<HexTile x>SPLIT<HexTile y> <ThingID>/
+		
+		String s ="";
+		HexTile hypotheticalTile = new HexTile(Terrain.SEA);
+		Thing hypotheticalThing = new Creature(Terrain.SEA);
+		
+		//e.g.
+		s += hypotheticalTile.x + "SPLIT" + hypotheticalTile.y+ " " + hypotheticalThing.thingID + "/";
+		
+		return s;
 	}
 	
 	

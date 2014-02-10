@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 
 public class ThingView extends Label
 {
-	Thing thingRef;
+	public Thing thingRef;
 	
 	public ThingView(Thing t)
 	{

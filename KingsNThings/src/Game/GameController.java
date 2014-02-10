@@ -90,7 +90,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 2;
+		return servers.size() == 4;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -110,16 +110,55 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
-		placeThingsOnTile(3, "Control_Marker");
+		//placeThingsOnTile(3, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
+		
+		playThings();
 		
 		playPhases();
 		
 	}
 	
+	private void playThings() {
+    		
+		for(GameRouter gr: servers)
+		{
+			String[] args  = {""+gr.myID, ""};
+    		Event e = new Event()
+    					.EventId(EventList.PLAY_THINGS)
+    					.ExpectsResponse(true)
+    					.EventParameters(args);
+    		
+    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+
+			for (int j=0; j<responses.length; j++){
+				if(responses[j].fromPlayer == gr.myID)
+				{
+					args[1] = responses[j].message;
+				}
+			}
+    		
+			boolean[] intendedPlayers = new boolean[4];
+    		for(int j=0; j<numClients; j++)
+    		{
+    			if(j == gr.myID)
+    				intendedPlayers[j] = false;
+    			else
+    				intendedPlayers[j] = true;
+    		}
+    		
+    		e = new Event()
+				.EventId(EventList.HANDLE_PLAY_THINGS)
+				.IntendedPlayers(intendedPlayers)
+    		    .EventParameters(args);
+    		
+    		GameControllerEventHandler.sendEvent(e);
+		}
+	}
+
 	private void placeThingsOnTile(int numIter, String pieceToPlace) {
 		for(int i=0; i<numIter; i++)
 		{
@@ -371,13 +410,13 @@ public class GameController implements Runnable {
 			}
 			
     		
-			/*args[1] = totalNumRecruits;
+			args[1] = totalNumRecruits;
     		
     		Event e = new Event()
     					.EventId(EventList.GET_THINGS_FROM_CUP)
     					.EventParameters(args);
     		
-    		GameControllerEventHandler.sendEvent(e);*/
+    		GameControllerEventHandler.sendEvent(e);
 			
 			/*//place things
 			

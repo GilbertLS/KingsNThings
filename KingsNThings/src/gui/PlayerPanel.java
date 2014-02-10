@@ -53,7 +53,7 @@ public class PlayerPanel extends VBox {
 	}
 	
 	public void addThings(int i) {
-		String[] thingsTextStrings = goldText.getText().split(" ");
+		String[] thingsTextStrings = thingText.getText().split(" ");
 		
 		int prevNumThings = Integer.parseInt(thingsTextStrings[1]);
 		

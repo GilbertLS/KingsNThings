@@ -25,8 +25,8 @@ public class Tile extends Region implements Draggable {
 	public ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
 	public ArrayList<ThingView> p4Things = 		new ArrayList<ThingView>();
 	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
-	private ThingView fort;
-	private ThingView economy;
+	public ThingView fort;
+	public ThingView economy;
 	private int controllingPlayer = 0;
 	
     public Tile(Double width, Double height, HexTile h)

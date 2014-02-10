@@ -51,6 +51,18 @@ public class HexTile implements IIncomable{
 		}
 	}
 	
+	public void AddThingToTile(int playerIndex, Thing thing){
+		if ( playerIndex == 0 ){
+			player1Things.add(thing);
+		} else if ( playerIndex == 1 ){
+			player2Things.add(thing);
+		} else if ( playerIndex == 2 ){
+			player3Things.add(thing);
+		} else if ( playerIndex == 3 ){
+			player4Things.add(thing);
+		}
+	}
+	
 	public boolean HasThingsOnTile(Player player){
 		if ( player.GetPlayerNum() == 0 ){
 			return !player1Things.isEmpty();
