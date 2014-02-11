@@ -7,6 +7,7 @@ import java.util.Scanner;
 import Game.Creature;
 import Game.GameClientController;
 import Game.GameConstants;
+import Game.Player;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
@@ -121,25 +122,14 @@ public class GameView extends Scene {
 		
 		returnString = "";
 		
-		//example for playign things
-		if(currentPhase == CurrentPhase.PLAY_THINGS)
-		{
-			userInputDone = false;
-			try {
-				do{
-					Thread.sleep(500);
-				}while(!userInputDone);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else if(currentPhase == CurrentPhase.MOVEMENT)
-		{
-			do
-			{
-				
-			}while(returnString.equals(""));
+		userInputDone = false;
+		try {
+			do{
+				Thread.sleep(500);
+			}while(!userInputDone);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		this.currentPhase = CurrentPhase.NULL;
@@ -159,7 +149,10 @@ public class GameView extends Scene {
 	public void showHideAllTiles(boolean show) {
 		board.showHideAllTiles(show);
 	}
-
+	public void updateTiles(ArrayList<HexTile> hexTiles, int playerIndex) {
+		// TODO Auto-generated method stub
+		
+	}
 		
 	public void setCurrentPlayer(int p) {
 		this.currPlayerNum = p;

@@ -565,7 +565,7 @@ public class EventHandler {
 		}
 		else if(e.eventId == EventList.PLAY_THINGS)
 		{
-			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
 			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 			{
@@ -588,11 +588,18 @@ public class EventHandler {
 				
 				if(!thingPlayedParamsString.equals(""))
 				{
-					String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
+					final String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
 					
 					GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
 					
 					GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+					
+					Platform.runLater(new Runnable() {
+				        @Override
+				        public void run() {
+				        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
+				        }
+					});
 				}
 				
 				//send changes
@@ -609,15 +616,25 @@ public class EventHandler {
 		}
 		else if(e.eventId == EventList.HANDLE_PLAY_THINGS)
 		{
-			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
 			if(e.eventParams.length == 2)
 			{
-				String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
 				
 				GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
 				
 				GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+				
+				final ArrayList<HexTile> hexTiles = GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings);
+				
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.updateTiles(hexTiles, playerIndex);	
+			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
+			        }
+				});
 			}
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)

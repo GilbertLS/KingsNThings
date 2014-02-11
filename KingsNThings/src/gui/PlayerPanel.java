@@ -72,4 +72,14 @@ public class PlayerPanel extends VBox {
 		goldText.setText("Gold: " + prevGold);
 		
 	}
+
+	public void removeThings(int i) {
+		String[] thingsTextStrings = thingText.getText().split(" ");
+		
+		int prevNumThings = Integer.parseInt(thingsTextStrings[1]);
+		
+		prevNumThings -= i;
+		
+		thingText.setText("Rack: " + prevNumThings);
+	}
 }

@@ -26,7 +26,7 @@ public class GameModel {
 	private ArrayList<SpecialCharacter> ownedCharacters;	//Container to hold in-play Special Characters
 	private Dice dice;									//Object to emulate up to 4 dice
 	private int playerCount;
-	private GameBoard gameBoard;
+	public GameBoard gameBoard;
 	
 	public BoardController boardController;
 	
