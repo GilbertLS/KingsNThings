@@ -955,20 +955,24 @@ public class GameModel {
 		
 		for(String s: thingsPlayedStrings)
 		{
-			if(s != null)
-			{
-				String[] paramsString = s.split(" ");
-				String[] hexParamsString = paramsString[0].split("SPLIT");
+			String[] paramsString = s.split(" ");
+			String[] hexParamsString = paramsString[0].split("SPLIT");
 				
-				int x = Integer.parseInt(hexParamsString[0]);
-				int y = Integer.parseInt(hexParamsString[1]);
+			int x = Integer.parseInt(hexParamsString[0]);
+			int y = Integer.parseInt(hexParamsString[1]);
 				
-				int thingID = Integer.parseInt(paramsString[1]);
+			int thingID = Integer.parseInt(paramsString[1]);
 				
-				Thing thingPlayed = player.getThingByID(thingID);
+			Thing thingPlayed = player.getThingByID(thingID);
 				
-				gameBoard.getTile(x, y).AddThingToTile(playerIndex, thingPlayed);
-			}
+			gameBoard.getTile(x, y).AddThingToTile(playerIndex, thingPlayed);
 		}
+	}
+
+	public boolean isValidMove(String attemptedMoveString) {
+		// TODO Auto-generated method stub
+		
+		//check validity of passed movement string
+		return true;
 	}
 }

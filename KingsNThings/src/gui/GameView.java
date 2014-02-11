@@ -33,6 +33,7 @@ public class GameView extends Scene {
     public CurrentPhase currentPhase = CurrentPhase.NULL;
     public boolean userInputDone = false;
 	protected boolean inputTextUpdated = false;
+	String returnString = "";
 	
     public GameView(BorderPane r) {
     	super(r, 1000, 600);
@@ -121,35 +122,36 @@ public class GameView extends Scene {
 		return Integer.parseInt(inputView.getInput());
 	}
 	
-	public String waitForPhaseCompletion(CurrentPhase currentPhase){
+	public String performPhase(CurrentPhase currentPhase){
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
 		
-		String s = "";
-		
-		userInputDone = false;
-		try {
-			do{
-				Thread.sleep(500);
-			}while(!userInputDone);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		returnString = "";
 		
 		//example for playign things
 		if(currentPhase == CurrentPhase.PLAY_THINGS)
 		{
-			HexTile hypotheticalTile = new HexTile(Terrain.SEA);
-			Thing hypotheticalThing = new Creature(Terrain.SEA);
-			
-			//e.g.
-			s += hypotheticalTile.x + "SPLIT" + hypotheticalTile.y+ " " + hypotheticalThing.thingID + "/";
+			userInputDone = false;
+			try {
+				do{
+					Thread.sleep(500);
+				}while(!userInputDone);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if(currentPhase == CurrentPhase.MOVEMENT)
+		{
+			do
+			{
+				
+			}while(returnString.equals(""));
 		}
 		
 		this.currentPhase = CurrentPhase.NULL;
 		
-		return s;
+		return returnString;
 	}
 
 	public void updatePlayerRack() {
@@ -160,6 +162,15 @@ public class GameView extends Scene {
 	public int getNumTradeRecruits() {
 		return 0;
 	}
-	
+
+	public void showHideAllTiles(boolean show) {
+		board.showHideAllTiles(show);
+	}
+
+	public void revertMove(String attemptedMoveString) {
+		// TODO Auto-generated method stub
+		//undo changes implied by passed string
+		
+	}
 	
 }
