@@ -51,6 +51,18 @@ public class HexTile implements IIncomable{
 		}
 	}
 	
+	public void AddThingToTile(int playerIndex, Thing thing){
+		if ( playerIndex == 0 ){
+			player1Things.add(thing);
+		} else if ( playerIndex == 1 ){
+			player2Things.add(thing);
+		} else if ( playerIndex == 2 ){
+			player3Things.add(thing);
+		} else if ( playerIndex == 3 ){
+			player4Things.add(thing);
+		}
+	}
+	
 	public boolean HasThingsOnTile(Player player){
 		if ( player.GetPlayerNum() == 0 ){
 			return !player1Things.isEmpty();
@@ -112,5 +124,16 @@ public class HexTile implements IIncomable{
 	public void addTower(Fort f) {
 		fort = f;
 	}
-
+	
+	public int distance(HexTile h)
+	{
+		int dx = h.x - x;
+		int dy = h.y - y;
+		
+		if((dx < 0 && dy >= 0)
+			||(dx >= 0 && dy <0))
+			return (Math.abs(dx) + Math.abs(dy));
+		else
+			return Math.max(Math.abs(dx), Math.abs(dy));
+	}
 }

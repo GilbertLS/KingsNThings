@@ -1,13 +1,17 @@
 package gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import Game.Creature;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
+import Game.Thing;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -24,6 +28,11 @@ public class GameView extends Scene {
     public RackView rack;
     public TilePreview tilePreview;
     public DiceListView diceListView;
+    public MessageView messageView;
+    public InputView inputView;
+    public CurrentPhase currentPhase = CurrentPhase.NULL;
+    public boolean userInputDone = false;
+	protected boolean inputTextUpdated = false;
 	
     public GameView(BorderPane r) {
     	super(r, 1000, 600);
@@ -53,6 +62,12 @@ public class GameView extends Scene {
         playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
         
+        messageView = new MessageView();
+        rightPanel.getChildren().add(messageView);
+        
+        inputView = new InputView();
+        rightPanel.getChildren().add(inputView);
+        
         buttonBox = new ButtonBox();
         rightPanel.getChildren().add(buttonBox);
         
@@ -60,6 +75,7 @@ public class GameView extends Scene {
         
         diceListView = new DiceListView();
         rightPanel.getChildren().add(diceListView);
+        
         
         ArrayList<ThingView> arr = new ArrayList<ThingView>();
         for(int i = 0; i < 10; i++)
@@ -83,11 +99,57 @@ public class GameView extends Scene {
     
     public void displayMessage(String message)
     {
-    	System.out.println("GAME VIEW MESSAGE: " + message);
+    	messageView.displayMessage(message);
+    }
+    
+    public void clearMessage()
+    {
+    	messageView.clearMessage();
     }
 
 	public int getNumPaidRecruits() {
-		return 2;
+		inputTextUpdated = false;
+		try {
+			do{
+				Thread.sleep(500);
+			}while(!inputTextUpdated);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return Integer.parseInt(inputView.getInput());
+	}
+	
+	public String waitForPhaseCompletion(CurrentPhase currentPhase){
+		//pass and set phase, update controls accordingly, exit when "Done" is pressed
+		this.currentPhase = currentPhase;
+		
+		String s = "";
+		
+		userInputDone = false;
+		try {
+			do{
+				Thread.sleep(500);
+			}while(!userInputDone);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//example for playign things
+		if(currentPhase == CurrentPhase.PLAY_THINGS)
+		{
+			HexTile hypotheticalTile = new HexTile(Terrain.SEA);
+			Thing hypotheticalThing = new Creature(Terrain.SEA);
+			
+			//e.g.
+			s += hypotheticalTile.x + "SPLIT" + hypotheticalTile.y+ " " + hypotheticalThing.thingID + "/";
+		}
+		
+		this.currentPhase = CurrentPhase.NULL;
+		
+		return s;
 	}
 
 	public void updatePlayerRack() {
@@ -98,4 +160,6 @@ public class GameView extends Scene {
 	public int getNumTradeRecruits() {
 		return 0;
 	}
+	
+	
 }

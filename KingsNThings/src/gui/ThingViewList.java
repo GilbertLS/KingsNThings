@@ -34,7 +34,7 @@ public class ThingViewList extends HBox {
 		
 		this.getChildren().add(view);
 		this.getStyleClass().add("thingview-list");
-	}
+	 }
 	 
 	 public void add(ThingView t) {
 		 items.add(t);
