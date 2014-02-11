@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import Game.Creature;
 import Game.GameConstants;
+import Game.Player;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
@@ -128,25 +129,14 @@ public class GameView extends Scene {
 		
 		returnString = "";
 		
-		//example for playign things
-		if(currentPhase == CurrentPhase.PLAY_THINGS)
-		{
-			userInputDone = false;
-			try {
-				do{
-					Thread.sleep(500);
-				}while(!userInputDone);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else if(currentPhase == CurrentPhase.MOVEMENT)
-		{
-			do
-			{
-				
-			}while(returnString.equals(""));
+		userInputDone = false;
+		try {
+			do{
+				Thread.sleep(500);
+			}while(!userInputDone);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		this.currentPhase = CurrentPhase.NULL;
@@ -167,9 +157,8 @@ public class GameView extends Scene {
 		board.showHideAllTiles(show);
 	}
 
-	public void revertMove(String attemptedMoveString) {
+	public void updateTiles(ArrayList<HexTile> hexTiles, int playerIndex) {
 		// TODO Auto-generated method stub
-		//undo changes implied by passed string
 		
 	}
 	

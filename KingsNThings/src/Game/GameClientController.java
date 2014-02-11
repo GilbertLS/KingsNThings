@@ -1,5 +1,7 @@
 package Game;
 
+import java.util.ArrayList;
+
 import gui.GameView;
 
 public class GameClientController {
@@ -23,5 +25,26 @@ public class GameClientController {
 	public void updatePlayerOrder() {
 		gameModel.updatePlayerOrder();
 		
+	}
+
+	public ArrayList<HexTile> parsePlayedThingsStrings(
+			String[] thingsPlayedStrings) {
+		
+		ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+		
+		for(String s: thingsPlayedStrings)
+		{
+			String[] paramsString = s.split(" ");
+			String[] hexParamsString = paramsString[0].split("SPLIT");
+				
+			int x = Integer.parseInt(hexParamsString[0]);
+			int y = Integer.parseInt(hexParamsString[1]);
+				
+			int thingID = Integer.parseInt(paramsString[1]);
+				
+			hexTiles.add(gameModel.gameBoard.getTile(x, y));
+		}
+		
+		return hexTiles;
 	}	
 }

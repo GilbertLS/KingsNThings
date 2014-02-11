@@ -218,7 +218,9 @@ public class Tile extends Region implements Draggable {
 						ObservableList<ThingView> 	items		= source.getListView().getItems();
 						ArrayList<ThingView> 		things		= new ArrayList<ThingView>();
 						
-						if(((GameView)getScene()).currentPhase == CurrentPhase.PLAY_THINGS)
+						GameView gv = (GameView)getScene();
+						
+						if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 						{
 							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
 							{
@@ -231,6 +233,9 @@ public class Tile extends Region implements Draggable {
 								source.getListView().getItems().removeAll(things);
 								
 								success = true;
+								
+								for(ThingView t: things)
+									gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 							}
 						}
 					}

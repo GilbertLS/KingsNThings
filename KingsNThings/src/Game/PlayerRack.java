@@ -51,11 +51,15 @@ public class PlayerRack {
 	}
 
 	public void removeFromRack(int thingID) {
+		ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
+		
 		for(Thing t: things)
 		{
 			if(t.thingID == thingID)
-				things.remove(t);
+				thingsToRemove.add(t);
 		}
+		
+		things.removeAll(thingsToRemove);
 	}
 
 	public Thing getThing(int thingID) {
