@@ -77,13 +77,17 @@ public class HexTile implements IIncomable{
 	}
 	
 	public ArrayList<Thing> GetThings(Player player){
-		if ( player.GetPlayerNum() == 0 ){
+		return GetThings(player.GetPlayerNum());
+	}
+	
+	public ArrayList<Thing> GetThings(int player){
+		if ( player == 0 ){
 			return player1Things;
-		} else if ( player.GetPlayerNum() == 1 ){
+		} else if ( player == 1 ){
 			return player2Things;
-		} else if ( player.GetPlayerNum() == 2 ){
+		} else if ( player == 2 ){
 			return player3Things;
-		} else if ( player.GetPlayerNum() == 3 ){
+		} else if ( player == 3 ){
 			return player4Things;
 		}
 		return null;

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-
 import Game.Creature;
+import Game.GameClientController;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 
 public class GameView extends Scene {
+	private GameClientController controller;
     public BorderPane root;
     public VBox rightPanel;
     public HBox bottomPanel;
@@ -33,9 +34,11 @@ public class GameView extends Scene {
     public CurrentPhase currentPhase = CurrentPhase.NULL;
     public boolean userInputDone = false;
 	protected boolean inputTextUpdated = false;
+	private int currPlayerNum;
 	
     public GameView(BorderPane r) {
     	super(r, 1000, 600);
+    	controller = null;
     	root = r; 
         
         rightPanel = new VBox();
@@ -44,17 +47,7 @@ public class GameView extends Scene {
         bottomPanel = new HBox();
         root.setBottom(bottomPanel);
         
-        //BOARDVIEW TEST
-        HexTile[] array1 = new HexTile[] {null, null, null, new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA)};
-        HexTile[] array2 = new HexTile[] {null, null, new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA)};
-        HexTile[] array3 = new HexTile[] {null, new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA)};
-        HexTile[] array4 = new HexTile[] {new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA)};
-        HexTile[] array5 = new HexTile[] {new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), null};
-        HexTile[] array6 = new HexTile[] {new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), null, null};
-        HexTile[] array7 = new HexTile[] {new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), new HexTile(Terrain.SEA), null, null, null};
-        HexTile[][] tiles = {array1, array2, array3, array4, array5, array6, array7};
-        
-        tilePreview = new TilePreview();
+        tilePreview = new TilePreview(0);
         
         board = new BoardView(tilePreview);
         root.setCenter(board);        
@@ -161,5 +154,17 @@ public class GameView extends Scene {
 		return 0;
 	}
 	
+	public void setCurrentPlayer(int p) {
+		this.currPlayerNum = p;
+		this.tilePreview.setPlayerNum(p);
+	}
+	
+	public Integer getCurrentPlayer() {
+		return this.currPlayerNum;
+	}
+	
+	public void setController(GameClientController c) {
+		this.controller = c;
+	}
 	
 }
