@@ -92,4 +92,16 @@ public class BoardView extends Region {
 		}
 		return null;
 	}
+	
+	public void showHideAllTiles(boolean show) {
+		for (Node n : this.getChildren()) {
+			if (n.getClass() == Tile.class) {
+				Tile t = (Tile)n;
+					if(show)
+						t.showTile();
+					else
+						t.hideTile();
+			}
+		}		
+	}
 }

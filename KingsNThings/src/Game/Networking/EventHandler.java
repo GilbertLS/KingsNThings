@@ -494,10 +494,7 @@ public class EventHandler {
 				{
 					if(purposeForNumber.equals("Paid Recruits"))
 					{
-						if(playerIndex == 0)
-							number = GameClient.game.gameView.getNumPaidRecruits();
-						else
-							number = 0;
+						number = GameClient.game.gameView.getNumPaidRecruits();
 						
 						isValidSelection = GameClient.game.gameModel.GetCurrentPlayer().canAffordRecruits(number);
 					}
@@ -573,7 +570,7 @@ public class EventHandler {
 				});
 				
 				//drag and drop things to tiles
-				String thingPlayedParamsString = GameClient.game.gameView.waitForPhaseCompletion(CurrentPhase.PLAY_THINGS);
+				String thingPlayedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.PLAY_THINGS);
 				
 				Platform.runLater(new Runnable() {
 			        @Override
@@ -582,11 +579,14 @@ public class EventHandler {
 			        }
 				});
 				
-				String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
-				
-				GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
-				
-				GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+				if(!thingPlayedParamsString.equals(""))
+				{
+					String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
+					
+					GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+					
+					GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+				}
 				
 				//send changes
 				EventHandler.SendEvent(
@@ -603,11 +603,54 @@ public class EventHandler {
 		else if(e.eventId == EventList.HANDLE_PLAY_THINGS)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
 			
-			GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+			if(e.eventParams.length == 2)
+			{
+				String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				
+				GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+				
+				GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+			}
+		}
+		else if(e.eventId == EventList.MOVE_THINGS)
+		{
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+			        	GameClient.game.gameView.displayMessage("Please move your Things");		        	
+			        }
+				});
+				
+				
+				String thingsMovedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.MOVEMENT);
+				
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.clearMessage();
+			        }
+				});
+				
+				String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
+				
+				GameClient.game.gameModel.updateHexTiles(thingsMovedParamsStrings, playerIndex);
+				
+				//send changes
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.MOVE_THINGS)
+							.EventParameter(thingsMovedParamsString)
+				);
+			}
+			else
+			{
+				waitForOtherPlayer(playerIndex, "move their things");
+			}
 		}
 		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)
 		{

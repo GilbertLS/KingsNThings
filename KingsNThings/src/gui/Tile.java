@@ -85,6 +85,11 @@ public class Tile extends Region implements Draggable {
     private String getBackgroundFromType()
     {
     	if (tileRef != null) {
+    		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+    		{
+    			return "Tuile_Back.png";
+    		}
+    		else
     		switch (tileRef.getTerrain()) {
     			case SEA: return "Tuile-Mer.png";
     			case JUNGLE: return "Tuile-Jungle.png";
@@ -132,6 +137,9 @@ public class Tile extends Region implements Draggable {
 	    	imgView.setY(this.getHeight()/2 - imgView.getFitHeight()/2);
 	    	list.add(imgView);
     	}
+    	
+    	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
+    		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
     	
     	this.getChildren().setAll(list);
     	
@@ -222,8 +230,6 @@ public class Tile extends Region implements Draggable {
 								thisTile.addAll(things, 1);
 								source.getListView().getItems().removeAll(things);
 								
-								
-			
 								success = true;
 							}
 						}
@@ -234,6 +240,27 @@ public class Tile extends Region implements Draggable {
 				}
 		});
 	}
-    
-    
+
+	public void showTile() {
+		String s ="";
+		
+		switch (tileRef.getTerrain()) {
+			case SEA: s = "Tuile-Mer.png"; break;
+			case JUNGLE: s ="Tuile-Jungle.png"; break;
+			case FROZEN_WASTE: s = "Tuile-Entendue-Glacée.png"; break;
+			case FOREST: s = "Tuile-Forêt.png"; break;
+			case PLAINS: s ="Tuile-Plaines.png"; break;
+			case SWAMP: s ="Tuile-Marais.png"; break;
+			case MOUNTAIN: s ="Tuile-Montagne.png"; break;
+			case DESERT: s ="Tuile-Desert.png"; break;
+		}
+    	
+    	this.setStyle("-fx-background-image: url(/res/images/ " + s + "); ");
+	}
+	
+	public void hideTile() {
+		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");
+	}
+		   
 }
