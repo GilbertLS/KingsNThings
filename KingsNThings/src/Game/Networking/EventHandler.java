@@ -565,12 +565,22 @@ public class EventHandler {
 			
 			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 			{
-				GameClient.game.gameView.setPhase(CurrentPhase.PLAY_THINGS);
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+			        	GameClient.game.gameView.displayMessage("Please play your Things");		        	
+			        }
+				});
 				
 				//drag and drop things to tiles
-				String thingPlayedParamsString = GameClient.game.gameView.playThings();
+				String thingPlayedParamsString = GameClient.game.gameView.waitForPhaseCompletion(CurrentPhase.PLAY_THINGS);
 				
-				GameClient.game.gameView.setPhase(CurrentPhase.NULL);
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.clearMessage();
+			        }
+				});
 				
 				String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
 				

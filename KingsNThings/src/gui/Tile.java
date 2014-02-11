@@ -221,6 +221,8 @@ public class Tile extends Region implements Draggable {
 								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
 								thisTile.addAll(things, 1);
 								source.getListView().getItems().removeAll(things);
+								
+								
 			
 								success = true;
 							}

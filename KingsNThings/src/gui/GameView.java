@@ -29,7 +29,10 @@ public class GameView extends Scene {
     public TilePreview tilePreview;
     public DiceListView diceListView;
     public MessageView messageView;
+    public InputView inputView;
     public CurrentPhase currentPhase = CurrentPhase.NULL;
+    public boolean userInputDone = false;
+	protected boolean inputTextUpdated = false;
 	
     public GameView(BorderPane r) {
     	super(r, 1000, 600);
@@ -61,6 +64,9 @@ public class GameView extends Scene {
         
         messageView = new MessageView();
         rightPanel.getChildren().add(messageView);
+        
+        inputView = new InputView();
+        rightPanel.getChildren().add(inputView);
         
         buttonBox = new ButtonBox();
         rightPanel.getChildren().add(buttonBox);
@@ -102,9 +108,48 @@ public class GameView extends Scene {
     }
 
 	public int getNumPaidRecruits() {
-		Scanner in = new Scanner(System.in);
+		inputTextUpdated = false;
+		try {
+			do{
+				Thread.sleep(500);
+			}while(!inputTextUpdated);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		return in.nextInt();
+		return Integer.parseInt(inputView.getInput());
+	}
+	
+	public String waitForPhaseCompletion(CurrentPhase currentPhase){
+		//pass and set phase, update controls accordingly, exit when "Done" is pressed
+		this.currentPhase = currentPhase;
+		
+		String s = "";
+		
+		userInputDone = false;
+		try {
+			do{
+				Thread.sleep(500);
+			}while(!userInputDone);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//example for playign things
+		if(currentPhase == CurrentPhase.PLAY_THINGS)
+		{
+			HexTile hypotheticalTile = new HexTile(Terrain.SEA);
+			Thing hypotheticalThing = new Creature(Terrain.SEA);
+			
+			//e.g.
+			s += hypotheticalTile.x + "SPLIT" + hypotheticalTile.y+ " " + hypotheticalThing.thingID + "/";
+		}
+		
+		this.currentPhase = CurrentPhase.NULL;
+		
+		return s;
 	}
 
 	public void updatePlayerRack() {
@@ -114,25 +159,6 @@ public class GameView extends Scene {
 
 	public int getNumTradeRecruits() {
 		return 0;
-	}
-
-	public String playThings() {
-		Scanner in = new Scanner(System.in);
-		
-		in.nextInt();
-		
-		String s ="";
-		HexTile hypotheticalTile = new HexTile(Terrain.SEA);
-		Thing hypotheticalThing = new Creature(Terrain.SEA);
-		
-		//e.g.
-		s += hypotheticalTile.x + "SPLIT" + hypotheticalTile.y+ " " + hypotheticalThing.thingID + "/";
-		
-		return s;
-	}
-
-	public void setPhase(CurrentPhase currentPhase) {
-		this.currentPhase = currentPhase;	
 	}
 	
 	
