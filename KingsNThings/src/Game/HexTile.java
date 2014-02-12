@@ -142,23 +142,7 @@ public class HexTile implements IIncomable{
 	}
 
 	public boolean hasThingWithID(String id, int playerIndex) {
-		ArrayList<Thing> thingsToCheck = new ArrayList<Thing>();
-		
-		switch(playerIndex)
-		{
-		case 0:
-			thingsToCheck = player1Things;
-			break;
-		case 1:
-			thingsToCheck = player1Things;
-			break;
-		case 2:
-			thingsToCheck = player3Things;
-			break;
-		case 3:
-			thingsToCheck = player4Things;
-			break;
-		}
+		ArrayList<Thing> thingsToCheck = playerThingsFromIndex(playerIndex);
 		
 		for(Thing t: thingsToCheck)
 		{
@@ -169,32 +153,44 @@ public class HexTile implements IIncomable{
 		return false;
 	}
 
-	public void removeThingByID(String id, int playerIndex) {
-		ArrayList<Thing> thingsToCheck = new ArrayList<Thing>();
-		
-		switch(playerIndex)
-		{
-		case 0:
-			thingsToCheck = player1Things;
-			break;
-		case 1:
-			thingsToCheck = player1Things;
-			break;
-		case 2:
-			thingsToCheck = player3Things;
-			break;
-		case 3:
-			thingsToCheck = player4Things;
-			break;
-		}
+	public void removeThing(int id, int playerIndex) {
+		ArrayList<Thing> thingsToCheck = playerThingsFromIndex(playerIndex);
 		
 		Thing thingToRemove = null;
 		for(Thing t: thingsToCheck)
 		{
-			if(t.thingID == Integer.parseInt(id))
+			if(t.thingID == id)
 				thingToRemove = t;
 		}
 		
 		thingsToCheck.remove(thingToRemove);
+	}
+
+	public Thing getThingFromTileByID(Integer id, int playerIndex) {
+		ArrayList<Thing> thingsToCheck = new ArrayList<Thing>();
+		
+		Thing thingToRemove = null;
+		for(Thing t: thingsToCheck)
+		{
+			if(t.thingID == id)
+				return t;
+		}
+		
+		return null;
+	}
+	
+	public ArrayList<Thing> playerThingsFromIndex(int index)
+	{
+		switch(index)
+		{
+		case 0:
+			return player1Things;
+		case 1:
+			return player1Things;
+		case 2:
+			return player3Things;
+		default:
+			return player4Things;
+		}
 	}
 }

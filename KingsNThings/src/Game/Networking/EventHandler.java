@@ -614,7 +614,7 @@ public class EventHandler {
 					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
 					GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 					
-					GameClient.game.gameModel.updateHexTiles(hexTiles, thingIDs, playerIndex);
+					GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
 					
 					GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				}
@@ -642,7 +642,7 @@ public class EventHandler {
 				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
 				GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updateHexTiles(hexTiles, thingIDs, playerIndex);
+				GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
 				
 				GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				
@@ -679,9 +679,17 @@ public class EventHandler {
 			        }
 				});
 				
-				String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
-				
-				//GameClient.game.gameModel.updateHexTiles(thingsMovedParamsStrings, playerIndex);
+				if(!thingsMovedParamsString.equals(""))
+				{
+					final String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
+					
+					ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
+					ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+					GameClient.game.parseMovedThingsStrings(thingsMovedParamsStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+					
+					GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				}
 				
 				//send changes
 				EventHandler.SendEvent(
@@ -693,6 +701,29 @@ public class EventHandler {
 			else
 			{
 				waitForOtherPlayer(playerIndex, "move their things");
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_MOVE_THINGS)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			if(e.eventParams.length == 2)
+			{
+				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
+				ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+				
+				GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				
+				final ArrayList<HexTile> hexTilesCopy = GameClient.game.amalgamateHexTiles(tilesFrom, tilesTo);
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+			        }
+				});
 			}
 		}
 		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)

@@ -947,7 +947,7 @@ public class GameModel {
 				player.removeFromRack(i);
 	}
 
-	public void updateHexTiles(ArrayList<HexTile> hexTiles, ArrayList<Integer> thingIDs, int playerIndex) {		
+	public void updatePlayedThings(ArrayList<HexTile> hexTiles, ArrayList<Integer> thingIDs, int playerIndex) {		
 		Player player = playerFromIndex(playerIndex);
 		
 		int i=0;
@@ -966,5 +966,23 @@ public class GameModel {
 		
 		//check validity of passed movement string
 		return true;
+	}
+
+	public void updatedMovedThings(ArrayList<HexTile> tilesFrom,
+			ArrayList<HexTile> tilesTo, ArrayList<Integer> thingIDs,
+			int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
+		
+		int i=0;
+		for(Integer id: thingIDs)
+		{
+			HexTile fromTile = tilesFrom.get(i);
+			HexTile toTile = tilesTo.get(i);
+			
+			Thing thingPlayed = fromTile.getThingFromTileByID(id, playerIndex);
+			
+			fromTile.removeThing(id, playerIndex); 
+			toTile.AddThingToTile(playerIndex, thingPlayed);
+		}
 	}
 }

@@ -36,4 +36,5 @@ public class EventList {
 	public static final int ENTER_NUMBER = 113;
 	public static final int DETERMINE_TOTAL_NUM_RECRUITS = 114;
 	public static final int MOVE_THINGS = 115;
+	public static final int HANDLE_MOVE_THINGS = 116;
 }
