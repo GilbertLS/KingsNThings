@@ -150,7 +150,10 @@ public class GameView extends Scene {
 		board.showHideAllTiles(show);
 	}
 	public void updateTiles(ArrayList<HexTile> hexTiles, int playerIndex) {
-		// TODO Auto-generated method stub	
+		for(HexTile h: hexTiles)
+		{
+			this.board.getTileByHex(h).updateThings(playerIndex);
+		}
 	}
 		
 	public void setCurrentPlayer(int p) {

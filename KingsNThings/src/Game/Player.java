@@ -114,10 +114,7 @@ public class Player {
 	}
 
 	public int determineNumRecruits(int numPaidRecruits, int numTradeRecruits) {
-		if (playerNum == 0)
 			return (int)Math.ceil(ownedHexTiles.size()/2.0) + numPaidRecruits + numTradeRecruits;
-		else
-			return 0;
 	}
 
 	public boolean hasInRack(int thingID) {

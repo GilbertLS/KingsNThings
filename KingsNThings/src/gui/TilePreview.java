@@ -49,7 +49,7 @@ public class TilePreview extends VBox {
 		if (viewNeutral.getChildren().size() > 0)
 			list.add(viewNeutral);
 
-		this.getChildren().setAll(view1);
+		this.getChildren().setAll(list);
 	}
 		
 	public void changeTile(Tile t) {

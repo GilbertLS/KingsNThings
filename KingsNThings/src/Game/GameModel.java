@@ -781,6 +781,9 @@ public class GameModel {
 
 	public void distributeInitialGold() {
 		player1.addGold(GameConstants.INITIAL_GOLD_AMOUNT);
+		player2.addGold(GameConstants.INITIAL_GOLD_AMOUNT);
+		player3.addGold(GameConstants.INITIAL_GOLD_AMOUNT);
+		player4.addGold(GameConstants.INITIAL_GOLD_AMOUNT);
 	}
 	
 	public int[] distributeIncome()

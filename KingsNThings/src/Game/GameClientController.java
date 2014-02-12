@@ -56,4 +56,16 @@ public class GameClientController {
 			System.out.println("HEXTILE: x-" + h.x + " y-" +h.y+ " THINGID: " + thingIDs.get(i));
 		}
 	}	
+	
+	public ArrayList<HexTile> parseToUniqueHexTiles(ArrayList<HexTile> hexTiles) {
+		ArrayList<HexTile> seenTiles = new ArrayList<HexTile>();
+		
+		for(HexTile h: hexTiles)
+		{
+			if(!seenTiles.contains(h))
+				seenTiles.add(h);
+		}
+		
+		return seenTiles;
+	}	
 }

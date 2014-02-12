@@ -359,7 +359,14 @@ public class EventHandler {
 		        public void run() {
 				    GameClient.game.gameView.displayMessage("You have been awarded" + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()]);		   
 				    }
-			});     	
+			});   
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.clearMessage();
+		        }
+			});
 			
 			Platform.runLater(new Runnable() {
 		        @Override
@@ -418,7 +425,13 @@ public class EventHandler {
 						
 					}
 					
-				}while(!validSelectionMade);				
+				}while(!validSelectionMade);		
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.clearMessage();
+			        }
+				});
 				
 				int x = selectedHex.x;
 				int y = selectedHex.y;
@@ -604,14 +617,6 @@ public class EventHandler {
 					GameClient.game.gameModel.updateHexTiles(hexTiles, thingIDs, playerIndex);
 					
 					GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
-					
-					final ArrayList<Integer> thingIDsCopy = thingIDs;
-					Platform.runLater(new Runnable() {
-				        @Override
-				        public void run() {
-				        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
-				        	}
-					});  
 				}
 				
 				//send changes
@@ -641,7 +646,7 @@ public class EventHandler {
 				
 				GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				
-				final ArrayList<HexTile> hexTilesCopy = hexTiles;
+				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
 				final ArrayList<Integer> thingIDsCopy = thingIDs;
 				Platform.runLater(new Runnable() {
 			        @Override

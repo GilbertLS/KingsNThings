@@ -252,8 +252,10 @@ public class Tile extends Region implements Draggable {
 								}
 								
 								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
-								thisTile.addAll(things, 0);
+								thisTile.addAll(things, gv.getCurrentPlayer());
 								source.getListView().getItems().removeAll(things);
+								
+								gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(things.size());;
 								
 								success = true;
 								
@@ -270,7 +272,7 @@ public class Tile extends Region implements Draggable {
 								}
 								
 								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
-								thisTile.addAll(things, 0);
+								thisTile.addAll(things, gv.getCurrentPlayer());
 								source.getListView().getItems().removeAll(things);
 								
 								success = true;
