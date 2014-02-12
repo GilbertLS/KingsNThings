@@ -119,12 +119,31 @@ public class EventHandler {
 			int tileX = Integer.parseInt(e.eventParams[0]);
 			int tileY = Integer.parseInt(e.eventParams[1]);
 			
+			String message;
 			
 			String type = e.eventParams[2];
 			boolean isMagicTurn = false, isRangedTurn = false;
 			
-			if (type.equals("Magic")) { isMagicTurn = true; }
-			if (type.equals("Ranged")) { isRangedTurn = true; }
+			if (type.equals("Magic")) { 
+				isMagicTurn = true; 
+				message = "Roll for magic";
+			}
+			else if (type.equals("Ranged")) { 
+				isRangedTurn = true;
+				message = "Roll for ranged";
+			}
+			else {
+				message = "Roll for others";
+			}
+			
+			final String message2 = message;
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					GameView.battleView.messageView.displayMessage(message2);
+				}
+			});
+			
 			
 			if (GameClient.game.gameModel.boardController.HasThingsOnTile(
 					GameClient.game.gameModel.GetCurrentPlayer(), 
@@ -163,6 +182,13 @@ public class EventHandler {
 			} else {
 				SendNullEvent();
 			}
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					GameView.battleView.messageView.clearMessage();
+				}
+			});
 		}
 		else if (e.eventId == EventList.SET_CURRENT_PLAYER){
 			final int playerNum = Integer.parseInt(e.eventParams[0]);
