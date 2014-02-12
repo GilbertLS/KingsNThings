@@ -55,6 +55,7 @@ public class TilePreview extends VBox {
 	}
 	
 	public ThingViewList GetThingList(int playerNum){
+		System.out.println("REMOVING PLAYERS THINGS: " + playerNum);
 		if( playerNum == 0 ){
 			return view1;
 		} else if ( playerNum == 1 ){
