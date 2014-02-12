@@ -6,6 +6,7 @@ import java.util.List;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
+import Game.Networking.GameClient;
 import Game.HexTile;
 import Game.Thing;
 import javafx.collections.ObservableList;
@@ -243,42 +244,77 @@ public class Tile extends Region implements Draggable {
 						
 						GameView gv = (GameView)getScene();
 						
-						if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
+						if(gv.currentPhase != CurrentPhase.NULL)
 						{
-							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+							
+							if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 							{
-								for (Integer i : listOfIds) {
-									things.add(items.get(i));
+								if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+								{
+									for (Integer i : listOfIds) {
+										things.add(items.get(i));
+									}
+									
+									thisTile.addAll(things, gv.getCurrentPlayer());
+									source.getListView().getItems().removeAll(things);
+									
+									String originalTileString = (String)e.getDragboard().getContent(originalTile);
+									
+									success = true;
+									
+									gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(things.size());
+									
+									for(ThingView t: things)
+										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 								}
-								
-								thisTile.addAll(things, gv.getCurrentPlayer());
-								source.getListView().getItems().removeAll(things);
-								
-								gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(things.size());;
-								
-								success = true;
-								
-								for(ThingView t: things)
-									gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 							}
-						}
-						else if(gv.currentPhase == CurrentPhase.MOVEMENT)
-						{
-							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+							else if(gv.currentPhase == CurrentPhase.MOVEMENT)
 							{
-								for (Integer i : listOfIds) {
-									things.add(items.get(i));
+
+								if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+								{
+									for (Integer i : listOfIds) {
+										things.add(items.get(i));
+									}
+									
+									thisTile.addAll(things, gv.getCurrentPlayer());
+									source.getListView().getItems().removeAll(things);
+									
+									String originalTileString = (String)e.getDragboard().getContent(originalTile);
+									
+									success = true;
+									
+									//check roll in model
+									boolean spawnCreatures = GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y);
+									
+									if(spawnCreatures)
+									{
+										//handle creatures
+									}
+									else
+									{
+										update();
+									}
+									
+									for(ThingView t: things)
+										gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 								}
-								
-								thisTile.addAll(things, gv.getCurrentPlayer());
-								source.getListView().getItems().removeAll(things);
-								
-								String originalTileString = (String)e.getDragboard().getContent(originalTile);
-								
-								success = true;
-								
-								for(ThingView t: things)
-									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
+								else
+								{
+									for (Integer i : listOfIds) {
+										things.add(items.get(i));
+									}
+									
+									thisTile.addAll(things, gv.getCurrentPlayer());
+									source.getListView().getItems().removeAll(things);
+									
+									String originalTileString = (String)e.getDragboard().getContent(originalTile);
+									
+									success = true;
+									
+									for(ThingView t: things)
+										gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
+								}
 							}
 						}
 					}

@@ -983,6 +983,11 @@ public class GameModel {
 			
 			fromTile.removeThing(id, playerIndex); 
 			toTile.AddThingToTile(playerIndex, thingPlayed);
+			
+			if(!player.ownedHexTiles.contains(toTile))
+			{
+				updateTileFaction(playerIndex, toTile.x, toTile.y);
+			}
 		}
 	}
 }

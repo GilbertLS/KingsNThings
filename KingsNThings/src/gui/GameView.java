@@ -161,6 +161,7 @@ public class GameView extends Scene {
 		for(HexTile h: hexTiles)
 		{
 			this.board.getTileByHex(h).updateThings(playerIndex);
+			this.board.getTileByHex(h).update();
 		}
 	}
 		
