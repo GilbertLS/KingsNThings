@@ -137,6 +137,12 @@ public class BattleView extends Scene {
 		
 	}
 	
+	public void RemoveThings(int[] thingIds){
+		for (int thingId : thingIds){
+			RemoveThingFromBattle(thingId);
+		}
+	}
+	
 	public int[] inflictHits(int numHitsTaken) {
 		UpdateMessage("Select " + numHitsTaken + " things to discard.");
 		

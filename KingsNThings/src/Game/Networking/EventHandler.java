@@ -299,6 +299,7 @@ public class EventHandler {
 				
 				Player player = GameClient.game.gameModel.GetPlayer(i);
 				GameClient.game.gameModel.boardController.RemoveThings(thingsToRemove, player, tileX, tileY);
+				GameView.battleView.RemoveThings(thingsToRemove);
 			}
 			
 			GameClient.game.gameModel.boardController.GetTile(tileX, tileY).Print();
