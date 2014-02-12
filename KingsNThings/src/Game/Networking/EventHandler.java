@@ -1,12 +1,12 @@
 package Game.Networking;
 
+import gui.GameView;
 import gui.Tile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javafx.application.Platform;
 import Game.Combatant;
@@ -14,6 +14,7 @@ import Game.Creature;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
+import Game.GameConstants.BattleTurn;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
 import Game.Player;
@@ -82,6 +83,16 @@ public class EventHandler {
 			int tileY = Integer.parseInt(e.eventParams[1]);
 			
 			System.out.println("Beginning battle on tile x:" + tileX + "y: " + tileY);
+			GameClient.game.gameView.StartBattle(tileX, tileY);
+			while(!GameView.BattleOccuring()){
+				Thread.sleep(1000);
+			}
+		} else if (e.eventId == EventList.BATTLE_OVER){
+			GameClient.game.gameView.EndBattle();
+			
+			while(GameView.BattleOccuring()){
+				Thread.sleep(1000);
+			}
 		}
 		else if(e.eventId == EventList.GET_CONTESTED_ZONES)
 		{
@@ -133,20 +144,14 @@ public class EventHandler {
 						continue;
 					}
 					
+					BattleTurn turn;
+					if (isMagicTurn){ turn = BattleTurn.MAGIC; }
+					else if (isRangedTurn){ turn = BattleTurn.RANGED; }
+					else { turn = BattleTurn.OTHER; }
+					
 					Combatant combatant = (Combatant)thing;
 					
-					if (!(
-						( combatant.IsMagic() && isMagicTurn ) ||
-						( combatant.IsRange() && isRangedTurn ) ||
-						( !combatant.IsMagic() && !combatant.IsRange() && !isMagicTurn && !isRangedTurn ))){
-						continue;
-					}
-					
-					int roll = GameClient.game.gameModel.rollDice();
-					
-					if (roll <= combatant.GetCombatValue() ){
-						rolls++;
-					}
+					rolls += combatant.GetCombatRoll(turn, true);
 				}
 				
 				EventHandler.SendEvent(
@@ -224,20 +229,30 @@ public class EventHandler {
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
 				ArrayList<Thing> things = currTile.GetThings(currentPlayer);
 				
-				System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
-				System.out.print("Things:");
-				for (Thing thing : things){
-					System.out.print(thing.GetThingId() + " ");
-				}
+				//System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
+				//System.out.print("Things:");
+				//for (Thing thing : things){
+					//System.out.print(thing.GetThingId() + " ");
+				//}
 				
-				String[] thingsToRemove = new String[numHitsTaken];
+				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
+				
+				String[] thingsToRemove = new String[numHitsToApply];
+				
 				BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-				try {
-					for (int i = 0; i < numHitsTaken; i++){
-						thingsToRemove[i] = bufferRead.readLine();
+				if (things.size() > numHitsTaken){
+					try {
+						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
+						for (int i = 0; i < tilesToRemove.length; i++){
+							thingsToRemove[i] = "" + tilesToRemove[i];
+						}
+					} catch (Exception ex){}
+				} else {
+					int i = 0;
+					for (Thing t : things){
+						thingsToRemove[i++] = "" + t.thingID;
 					}
-				} catch (Exception ex){}
-				
+				}
 				EventHandler.SendEvent(
 					new Event()
 						.EventId(EventList.INFLICT_HITS)
@@ -265,7 +280,6 @@ public class EventHandler {
 			GameClient.game.gameModel.boardController.GetTile(tileX, tileY).Print();
 			
 			boolean battleOver = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size() <= 1;
-			System.out.println(GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size());
 			
 			if ( battleOver ){
 				EventHandler.SendEvent(new Event().EventId(EventList.BATTLE_OVER));
@@ -280,9 +294,12 @@ public class EventHandler {
 			if (type.equals("Magic")) { isMagic = true; }
 			if (type.equals("Ranged")) { isRanged = true; }
 		
-			Creature creature = new Creature(Terrain.DESERT, 6).Magic(isMagic).Ranged(isRanged);
+			Creature creature = new Creature(Terrain.DESERT, "C1", 6, GameConstants.GiantImageFront).Magic(isMagic).Ranged(isRanged);
 			creature.SetThingId(Integer.parseInt(e.eventParams[1]));
+			
 			Player player = GameClient.game.gameModel.GetPlayer(Integer.parseInt(e.eventParams[2]));
+			
+			creature.controlledBy = player.faction;
 			
 			int tileX = Integer.parseInt(e.eventParams[3]);
 			int tileY = Integer.parseInt(e.eventParams[4]);
@@ -357,10 +374,24 @@ public class EventHandler {
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
+				    GameClient.game.gameView.displayMessage("You have been awarded" + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()]);		   
+				    }
+			});   
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.clearMessage();
+		        }
+			});
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
 		        	for(int i=0; i<numClients; i++)
 		        	{
 		        		GameClient.game.gameView.playerList.getPlayerPanel(i).addGold(goldUpdates[i]);
-		        	}
+		        	}	
 		        }
 			});
 		}
@@ -411,7 +442,13 @@ public class EventHandler {
 						
 					}
 					
-				}while(!validSelectionMade);				
+				}while(!validSelectionMade);		
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.clearMessage();
+			        }
+				});
 				
 				int x = selectedHex.x;
 				int y = selectedHex.y;
@@ -590,16 +627,13 @@ public class EventHandler {
 				{
 					final String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
 					
-					GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+					ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+					GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 					
-					GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+					GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
 					
-					Platform.runLater(new Runnable() {
-				        @Override
-				        public void run() {
-				        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
-				        }
-					});
+					GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				}
 				
 				//send changes
@@ -621,18 +655,21 @@ public class EventHandler {
 			if(e.eventParams.length == 2)
 			{
 				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+				GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+				GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+				GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				
-				final ArrayList<HexTile> hexTiles = GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings);
-				
+				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
+				final ArrayList<Integer> thingIDsCopy = thingIDs;
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
-						GameClient.game.gameView.updateTiles(hexTiles, playerIndex);	
-			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
 			        }
 				});
 			}
@@ -650,7 +687,6 @@ public class EventHandler {
 			        }
 				});
 				
-				
 				String thingsMovedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.MOVEMENT);
 				
 				Platform.runLater(new Runnable() {
@@ -660,9 +696,17 @@ public class EventHandler {
 			        }
 				});
 				
-				String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
-				
-				GameClient.game.gameModel.updateHexTiles(thingsMovedParamsStrings, playerIndex);
+				if(!thingsMovedParamsString.equals(""))
+				{
+					final String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
+					
+					ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
+					ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+					GameClient.game.parseMovedThingsStrings(thingsMovedParamsStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+					
+					GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				}
 				
 				//send changes
 				EventHandler.SendEvent(
@@ -674,6 +718,29 @@ public class EventHandler {
 			else
 			{
 				waitForOtherPlayer(playerIndex, "move their things");
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_MOVE_THINGS)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			if(e.eventParams.length == 2)
+			{
+				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
+				ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+				
+				GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				
+				final ArrayList<HexTile> hexTilesCopy = GameClient.game.amalgamateHexTiles(tilesFrom, tilesTo);
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+			        }
+				});
 			}
 		}
 		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)
@@ -708,6 +775,43 @@ public class EventHandler {
 		        		GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).payGold(gold);
 		        }
 			});
+		} else if (e.eventId == EventList.GET_RETREAT ){
+			int tileX = Integer.parseInt(e.eventParams[0]);
+			int tileY = Integer.parseInt(e.eventParams[1]);
+			
+			Player currentPlayer = GameClient.game.gameModel.GetCurrentPlayer();
+			List<Integer> playersOnTile = GameClient.game.gameModel.boardController
+											.PlayersOnTile(tileX, tileY);
+			
+			if (playersOnTile.contains(currentPlayer.GetPlayerNum())) {
+				/*System.out.println("Would you like to retreat (y/n)?");
+				char answer = 'a';
+				
+				do {
+					BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+					try {
+						answer = bufferRead.readLine().charAt(0);
+					} catch (Exception ex){}
+					
+					System.out.println(answer);
+				} while (answer != 'y' && answer != 'n');*/
+				
+				boolean retreat = GameView.battleView.GetSurrender();
+				String answer;
+				if (retreat == true){
+					answer = "y";
+				} else {
+					answer = "n";
+				}
+				
+				EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.GET_RETREAT)
+						.EventParameter("" + answer)
+				);
+			} else {
+				SendNullEvent();
+			}
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends != 1){

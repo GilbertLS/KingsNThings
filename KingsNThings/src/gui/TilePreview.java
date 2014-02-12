@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import Game.Creature;
 import Game.GameConstants;
+import Game.HexTile;
+import Game.Thing;
 import javafx.collections.FXCollections;
 import javafx.scene.layout.VBox;
 
@@ -49,7 +51,20 @@ public class TilePreview extends VBox {
 		if (viewNeutral.getChildren().size() > 0)
 			list.add(viewNeutral);
 
-		this.getChildren().setAll(view1);
+		this.getChildren().setAll(list);
+	}
+	
+	public ThingViewList GetThingList(int playerNum){
+		if( playerNum == 1 ){
+			return view1;
+		} else if ( playerNum == 2 ){
+			return view2;
+		} else if ( playerNum == 3){
+			return view3;
+		} else if ( playerNum == 4 ){
+			return view4;
+		}
+		return null;
 	}
 		
 	public void changeTile(Tile t) {
@@ -80,5 +95,39 @@ public class TilePreview extends VBox {
 	public void setPlayerNum(int i) {
 		this.playerNum = i;
 		this.setSelectable();
+	}
+	
+		public void changeTile(HexTile tile){
+		ThingView thingView;
+		
+		ArrayList<ThingView> arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.player1Things){
+			thingView = new ThingView(thing);
+			
+			arr.add(thingView);
+		}
+		view1 = new ThingViewList(FXCollections.observableList((arr)));
+		
+		arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.player2Things){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
+		}
+		view2 = new ThingViewList(FXCollections.observableList((arr)));
+		
+		arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.player3Things){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
+		}
+		view3 = new ThingViewList(FXCollections.observableList((arr)));
+		
+		arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.player4Things){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
+		}
+		view4 = new ThingViewList(FXCollections.observableList((arr)));
+		show();
 	}
 }

@@ -28,10 +28,8 @@ public class GameClientController {
 		
 	}
 
-	public ArrayList<HexTile> parsePlayedThingsStrings(
-			String[] thingsPlayedStrings) {
-		
-		ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+	public void parsePlayedThingsStrings(
+			String[] thingsPlayedStrings, ArrayList<HexTile> hexTiles, ArrayList<Integer> thingIDs, int playerIndex) {
 		
 		for(String s: thingsPlayedStrings)
 		{
@@ -40,12 +38,86 @@ public class GameClientController {
 				
 			int x = Integer.parseInt(hexParamsString[0]);
 			int y = Integer.parseInt(hexParamsString[1]);
-				
-			int thingID = Integer.parseInt(paramsString[1]);
-				
-			hexTiles.add(gameModel.gameBoard.getTile(x, y));
+			HexTile currTile = gameModel.gameBoard.getTile(x, y);
+			
+			int id = Integer.parseInt(paramsString[1]);
+			if(thingIDs.contains(id))
+			{
+				int idIndex = thingIDs.indexOf(id);
+				thingIDs.remove(idIndex);
+				hexTiles.remove(idIndex);
+			}
+			thingIDs.add(id);
+			hexTiles.add(currTile);
+		}
+		for(int i=0; i<thingIDs.size(); i++)
+		{
+			HexTile h = hexTiles.get(i);
+			System.out.println("HEXTILE: x-" + h.x + " y-" +h.y+ " THINGID: " + thingIDs.get(i));
+		}
+	}	
+	
+	public ArrayList<HexTile> parseToUniqueHexTiles(ArrayList<HexTile> hexTiles) {
+		ArrayList<HexTile> seenTiles = new ArrayList<HexTile>();
+		
+		for(HexTile h: hexTiles)
+		{
+			if(!seenTiles.contains(h))
+				seenTiles.add(h);
 		}
 		
-		return hexTiles;
+		return seenTiles;
+	}
+
+	public void parseMovedThingsStrings(String[] thingsPlayedStrings,
+			ArrayList<HexTile> tilesFrom, ArrayList<HexTile> tilesTo,
+			ArrayList<Integer> thingIDs, int playerIndex) {
+		
+		for(String s: thingsPlayedStrings)
+		{
+			String[] paramsString = s.split(" ");
+			String[] fromTileParamsString = paramsString[0].split("SPLIT");
+			String[] toTileParamsString = paramsString[1].split("SPLIT");
+				
+			int tileFromX = Integer.parseInt(fromTileParamsString[0]);
+			int tileFromY = Integer.parseInt(fromTileParamsString[1]);
+			
+			int tileToX = Integer.parseInt(toTileParamsString[0]);
+			int tileToY = Integer.parseInt(toTileParamsString[1]);
+			
+			HexTile fromTile = gameModel.gameBoard.getTile(tileFromX, tileFromY);
+			HexTile toTile = gameModel.gameBoard.getTile(tileToX, tileToY);
+			
+			int id = Integer.parseInt(paramsString[1]);
+			
+			if(thingIDs.contains(id))
+			{
+				int idIndex = thingIDs.indexOf(id);
+				tilesTo.set(idIndex, toTile);
+			}
+			else
+			{
+				thingIDs.add(id);
+				tilesFrom.add(fromTile);
+				tilesTo.add(toTile);
+			}
+		}
+	}
+
+	public ArrayList<HexTile> amalgamateHexTiles(ArrayList<HexTile> tilesFrom,
+			ArrayList<HexTile> tilesTo) {
+		ArrayList<HexTile> returnTiles = new ArrayList<HexTile>();
+		
+		for(HexTile h: tilesFrom)
+		{
+			returnTiles.add(h);
+		}
+		
+		for(HexTile h: tilesTo)
+		{
+			returnTiles.add(h);
+		}
+		
+		return returnTiles;
 	}	
 }

@@ -20,8 +20,8 @@ public class BoardView extends Region {
 	}
 
 	public void setTiles(HexTile[][] h) {
-		Double width 	= 108.0;
-		Double height 	= 96.0;
+		Double width 	= 90.0;
+		Double height 	= 81.0;
 		
 		setMinSize(width*6, height*7+16);
 		setMaxSize(width*6, height*7+16);
