@@ -5,7 +5,14 @@ package Game;
  */
 public final class GameConstants {
 	//-----------ENUMS-------------------
-	
+
+	public static enum CurrentPhase {
+		MOVEMENT,
+		BATTLE,
+		NULL, 
+		PLAY_THINGS
+	}
+
 	//The different types of possible terrain in the game
 	//(Note that all except "Sea" are considered "Land")
 	public static enum Terrain {SEA, JUNGLE, FROZEN_WASTE, FOREST, PLAINS, SWAMP, MOUNTAIN, DESERT}
@@ -72,6 +79,8 @@ public final class GameConstants {
 	public static final String TigersImageFront = "T_Jungle_011.png";
 	public static final String VillainsImageFront = "T_Plains_015.png";
 	public static final String GiantLizardImageFront = "T_Swamp_065.png";
+	public static final String MountainMenImageFront = "T_Mountains_A.png";
+	public static final String CyclopsImageFront = "T_Mountains_Q.png";
 	
 	//-------------/end ENUMS---------------
 	
@@ -114,6 +123,8 @@ public final class GameConstants {
 		RANGED,
 		OTHER
 	}
+
+
 
 
 	//--------------/end INTEGERS

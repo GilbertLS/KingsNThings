@@ -94,7 +94,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 2;
+		return servers.size() == 4;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -114,16 +114,55 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
-		//placeThingsOnTile(3, "Control_Marker");
+		placeThingsOnTile(3, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
+		
+		playThings();
 		
 		playPhases();
 		
 	}
 	
+	private void playThings() {
+    		
+		for(GameRouter gr: servers)
+		{
+			String[] args  = {""+gr.myID, ""};
+    		Event e = new Event()
+    					.EventId(EventList.PLAY_THINGS)
+    					.ExpectsResponse(true)
+    					.EventParameters(args);
+    		
+    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+
+			for (int j=0; j<responses.length; j++){
+				if(responses[j].fromPlayer == gr.myID)
+				{
+					args[1] = responses[j].message;
+				}
+			}
+    		
+			boolean[] intendedPlayers = new boolean[4];
+    		for(int j=0; j<numClients; j++)
+    		{
+    			if(j == gr.myID)
+    				intendedPlayers[j] = false;
+    			else
+    				intendedPlayers[j] = true;
+    		}
+    		
+    		e = new Event()
+				.EventId(EventList.HANDLE_PLAY_THINGS)
+				.IntendedPlayers(intendedPlayers)
+    		    .EventParameters(args);
+    		
+    		GameControllerEventHandler.sendEvent(e);
+		}
+	}
+
 	private void placeThingsOnTile(int numIter, String pieceToPlace) {
 		for(int i=0; i<numIter; i++)
 		{
@@ -297,36 +336,58 @@ public class GameController implements Runnable {
 	private void playPhases(){
 		distributeIncome();
 		
-		//recruitThings();
+		recruitThings();
+		
+		playThings();
+		
+		moveThings();
 		
 		PlayBattlePhase();
 		
 		ChangePlayerOrder();
 	}
 	
+	private void moveThings() {
+		//for each client
+		
+		//choose a hex with units
+		
+		//choose units
+		
+		//choose hex to move to (within valid distance)
+		
+	}
+
 	private void recruitThings() {
 		for(GameRouter gr: servers)
 		{
-			String[] args = {"" + numClients};
+			int numPaidRecruits = 0;
+			
+			String[] args = {"" + gr.myID,"Paid Recruits",""};
 			
 			//ask for number of paid recruits
 			Response[] responses = GameControllerEventHandler.sendEvent(
 					new Event()
-					.EventId(EventList.DETERMINE_NUM_PAID_THINGS)
+					.EventId(EventList.ENTER_NUMBER)
 					.EventParameters(args)
 					.ExpectsResponse(true)
 					);
 			
-			args = new String[2];
 			for (int j=0; j<responses.length; j++){
 				if(responses[j].fromPlayer == gr.myID)
 				{
-					args[0] = responses[j].message.trim();
+					numPaidRecruits = Integer.parseInt(responses[j].message.trim());
 				}
 			}
 			
+			args[1] = Integer.toString(numPaidRecruits*GameConstants.GOLD_PER_RECRUIT);			
 			//pay for recruits
+			GameControllerEventHandler.sendEvent(new Event()
+					.EventId(EventList.PAY_GOLD)
+					.EventParameters(args)
+					);
 			
+			/*args[1] = "Trade Recruits";
 			//ask for number of recruits to trade for
 			responses = GameControllerEventHandler.sendEvent(
 					new Event()
@@ -343,37 +404,42 @@ public class GameController implements Runnable {
 			}
 			
 			//select recruits to trade
-			//loop until valid selection is made
+			 */
 			
-			//distribute recruits
+			//determine total number of recruits
+			boolean[] intendedPlayers = new boolean[numClients];
+			intendedPlayers[gr.myID] = true;
+			
+			args[1] = Integer.toString(numPaidRecruits);
+			args[2] = "0";
 			responses = GameControllerEventHandler.sendEvent(
 					new Event()
-					.EventId(EventList.DISTRIBUTE_RECRUITS)
+					.EventId(EventList.DETERMINE_TOTAL_NUM_RECRUITS)
+					.IntendedPlayers(intendedPlayers)
 					.EventParameters(args)
+					.ExpectsResponse(true)
 					);
 			
-			boolean[] intendedPlayers = new boolean[4];
-    		for(int j=0; j<numClients; j++)
-    		{
-    			if(j == gr.myID)
-    				intendedPlayers[j] = false;
-    			else
-    				intendedPlayers[j] = true;
-    		}
+			String totalNumRecruits = "";
+			for (int j=0; j<responses.length; j++){
+				if(responses[j].fromPlayer == gr.myID)
+				{
+					 totalNumRecruits = responses[j].message.trim();
+				}
+			}
+			
     		
-    		GameControllerEventHandler.sendEvent(new Event()
-				.EventId(EventList.HANDLE_DISTRIBUTE_RECRUITS)
-				.IntendedPlayers(intendedPlayers)
-				.EventParameters(args)
-			);
-			
-			//place things
-			
-			//handle place things
+			args[1] = totalNumRecruits;
+    		
+    		Event e = new Event()
+    					.EventId(EventList.GET_THINGS_FROM_CUP)
+    					.EventParameters(args);
+    		
+    		GameControllerEventHandler.sendEvent(e);
 			
 			//deal with excess in player rack
 			
-			//handle dealing with excess in player rack
+			//handle dealing with excess in player rack*/
 		}
 		
 

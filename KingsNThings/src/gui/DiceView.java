@@ -19,7 +19,7 @@ public class DiceView extends Region {
 	}
 	
 	private String getBackgroundFromRoll(){
-		return "dice-" + roll + ".png";
+		return "dice_" + roll + ".png";
 	}
 	
 	public void RollDice(int roll){	

@@ -3,9 +3,15 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.GameConstants;
+import Game.GameConstants.ControlledBy;
+import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -21,9 +27,10 @@ public class Tile extends Region implements Draggable {
 	public ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
 	public ArrayList<ThingView> p4Things = 		new ArrayList<ThingView>();
 	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
-	private ThingView fort;
-	private ThingView economy;
+	public ThingView fort;
+	public ThingView economy;
 	private int controllingPlayer = 0;
+	private CurrentPhase currentPhase;
 	
     public Tile(Double width, Double height, HexTile h)
     {
@@ -78,6 +85,11 @@ public class Tile extends Region implements Draggable {
     private String getBackgroundFromType()
     {
     	if (tileRef != null) {
+    		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+    		{
+    			return "Tuile_Back.png";
+    		}
+    		else
     		switch (tileRef.getTerrain()) {
     			case SEA: return "Tuile-Mer.png";
     			case JUNGLE: return "Tuile-Jungle.png";
@@ -95,6 +107,70 @@ public class Tile extends Region implements Draggable {
     
     public HexTile getTileRef() {
     	return this.tileRef;
+    }
+    
+    public void update() {
+    	this.getChildren().clear();
+    	
+    	ArrayList<Node> list = new ArrayList<Node>();
+    	
+    	String markerPath = getMarkerString();
+    	
+    	if (markerPath != null) {
+	    	Image img = new Image("res/images/" + markerPath);
+	    	ImageView imgView = new ImageView(img);
+	    	imgView.setFitHeight(25);
+	    	imgView.setFitWidth(25);
+	    	imgView.setX(this.getWidth()/4);
+	    	list.add(imgView);
+    	}
+    	
+    	
+    	String fortPath = getFortString();
+    	
+    	if (fortPath != null) {
+	    	Image img = new Image("res/images/" + fortPath);
+	    	ImageView imgView = new ImageView(img);
+	    	imgView.setFitHeight(40);
+	    	imgView.setFitWidth(40);
+	    	imgView.setX(this.getWidth()/2 - imgView.getFitWidth()/2);
+	    	imgView.setY(this.getHeight()/2 - imgView.getFitHeight()/2);
+	    	list.add(imgView);
+    	}
+    	
+    	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
+    		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	
+    	this.getChildren().setAll(list);
+    	
+    }
+    
+    private String getMarkerString() {
+    	if (tileRef != null) {
+    		switch (tileRef.controlledBy) {
+    			case PLAYER1: return "CM_411.png";
+    			case PLAYER2: return "CM_412.png";
+    			case PLAYER3: return "CM_413.png";
+    			case PLAYER4: return "CM_414.png";
+    			default: return null;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    private String getFortString() {
+    	if (tileRef != null && tileRef.fort != null) {
+    		switch (tileRef.fort.getLevel()) {
+    			case TOWER: return "C_Fort_375.png";
+    			case KEEP: return "C_Fort_377.png";
+    			case CASTLE: return "C_Fort_379.png";
+    			case CITADEL: return "C_Fort_381.png";
+    			default: return null;
+    		}
+    	}
+    	
+    	return null;
     }
 
     protected void initListeners()
@@ -133,31 +209,63 @@ public class Tile extends Region implements Draggable {
 		
 		setOnDragDropped(new EventHandler<DragEvent>() {
 			@Override public void handle(DragEvent e) {
-				Dragboard 	db 		= e.getDragboard();
-				boolean 	success = false;
-
-				if (db.hasContent(thingRackIds)) {
-					ThingCell 					source 		= (ThingCell)e.getGestureSource();
-					ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
-					ObservableList<ThingView> 	items		= source.getListView().getItems();
-					ArrayList<ThingView> 		things		= new ArrayList<ThingView>();
-
-					for (Integer i : listOfIds) {
-						things.add(items.get(i));
+					Dragboard 	db 		= e.getDragboard();
+					boolean 	success = false;
+	
+					if (db.hasContent(thingRackIds)) {
+						ThingCell 					source 		= (ThingCell)e.getGestureSource();
+						ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
+						ObservableList<ThingView> 	items		= source.getListView().getItems();
+						ArrayList<ThingView> 		things		= new ArrayList<ThingView>();
+						
+						GameView gv = (GameView)getScene();
+						
+						if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
+						{
+							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+							{
+								for (Integer i : listOfIds) {
+									things.add(items.get(i));
+								}
+								
+								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
+								thisTile.addAll(things, 1);
+								source.getListView().getItems().removeAll(things);
+								
+								success = true;
+								
+								for(ThingView t: things)
+									gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
+							}
+						}
 					}
 					
-					//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
-					thisTile.addAll(things, 1);
-					source.getListView().getItems().removeAll(things);
-
-					success = true;
+					e.setDropCompleted(success);
+					e.consume();
 				}
-				
-				e.setDropCompleted(success);
-				e.consume();
-			}
 		});
 	}
-    
-    
+
+	public void showTile() {
+		String s ="";
+		
+		switch (tileRef.getTerrain()) {
+			case SEA: s = "Tuile-Mer.png"; break;
+			case JUNGLE: s ="Tuile-Jungle.png"; break;
+			case FROZEN_WASTE: s = "Tuile-Entendue-Glacée.png"; break;
+			case FOREST: s = "Tuile-Forêt.png"; break;
+			case PLAINS: s ="Tuile-Plaines.png"; break;
+			case SWAMP: s ="Tuile-Marais.png"; break;
+			case MOUNTAIN: s ="Tuile-Montagne.png"; break;
+			case DESERT: s ="Tuile-Desert.png"; break;
+		}
+    	
+    	this.setStyle("-fx-background-image: url(/res/images/ " + s + "); ");
+	}
+	
+	public void hideTile() {
+		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");
+	}
+		   
 }
