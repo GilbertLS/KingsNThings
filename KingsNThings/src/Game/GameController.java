@@ -94,7 +94,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 4;
+		return servers.size() == 2;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -114,13 +114,13 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
-		placeThingsOnTile(3, "Control_Marker");
+		//placeThingsOnTile(3, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
-		assignInitialThings();
+		//assignInitialThings();
 		
-		playThings();
+		//playThings();
 		
 		playPhases();
 		
@@ -334,57 +334,27 @@ public class GameController implements Runnable {
 	}
 	
 	private void playPhases(){
-		do
-		{
-		distributeIncome();
+		//distributeIncome();
 		
-		recruitThings();
+		//recruitThings();
 		
-		playThings();
+		//playThings();
 		
-		moveThings();
+		//moveThings();
 		
-		}while(true);
+		PlayBattlePhase();
 		
-		//PlayBattlePhase();
-		
-		//ChangePlayerOrder();
+		ChangePlayerOrder();
 	}
 	
 	private void moveThings() {
-		for(GameRouter gr: servers)
-		{
-			String[] args  = {""+gr.myID, ""};
-    		Event e = new Event()
-    					.EventId(EventList.MOVE_THINGS)
-    					.ExpectsResponse(true)
-    					.EventParameters(args);
-    		
-    		Response[] responses = GameControllerEventHandler.sendEvent(e);
-
-			for (int j=0; j<responses.length; j++){
-				if(responses[j].fromPlayer == gr.myID)
-				{
-					args[1] = responses[j].message;
-				}
-			}
-    		
-			boolean[] intendedPlayers = new boolean[4];
-    		for(int j=0; j<numClients; j++)
-    		{
-    			if(j == gr.myID)
-    				intendedPlayers[j] = false;
-    			else
-    				intendedPlayers[j] = true;
-    		}
-    		
-    		e = new Event()
-				.EventId(EventList.HANDLE_MOVE_THINGS)
-				.IntendedPlayers(intendedPlayers)
-    		    .EventParameters(args);
-    		
-    		GameControllerEventHandler.sendEvent(e);
-		}
+		//for each client
+		
+		//choose a hex with units
+		
+		//choose units
+		
+		//choose hex to move to (within valid distance)
 		
 	}
 
