@@ -77,6 +77,12 @@
 	-fx-background-size: cover, auto;
 }
 
+.dice {
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+}
+
 .button-box {
 	-fx-padding: 10px;
 	-fx-background-color: #000000;
@@ -88,4 +94,30 @@
 
 .preview-list {
 	-fx-width: 100%;
+}
+
+.message
+{
+	-fx-background-color: #232323;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
+	-fx-text-fill: white;
+	-fx-padding: 10px;
+}
+
+.message .label {
+	-fx-text-fill: white;
+}
+
+.input
+{
+	-fx-background-color: #232323;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
+	-fx-text-fill: white;
+	-fx-padding: 10px;
+}
+
+.input .label {
+	-fx-text-fill: white;
 }

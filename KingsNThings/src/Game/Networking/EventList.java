@@ -32,4 +32,8 @@ public class EventList {
 	public static final int HANDLE_PLAY_THINGS = 109;
 	public static final int HANDLE_CHECK_PLAYER_RACK_OVERLOAD = 110;
 	public static final int DETERMINE_NUM_TRADE_THINGS = 111;
+	public static final int PAY_GOLD = 112;
+	public static final int ENTER_NUMBER = 113;
+	public static final int DETERMINE_TOTAL_NUM_RECRUITS = 114;
+	public static final int MOVE_THINGS = 115;
 }

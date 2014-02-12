@@ -19,7 +19,7 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> player2Things;	//player 2's Things in this Hex Tile
 	public ArrayList<Thing> player3Things;	//player 3's Things in this Hex Tile
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
-	public ArrayList<Fort> forts;						//Fort for this Hex Tile (if applicable)
+	public Fort fort;						//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public int x;
 	public int y;
@@ -34,7 +34,7 @@ public class HexTile implements IIncomable{
 		this.player3Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
 		this.player4Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
 		
-		this.forts = new ArrayList<Fort>(GameConstants.MAX_NUM_FORTS_PER_HEX);
+		this.fort = null;
 		
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 	}
@@ -47,6 +47,18 @@ public class HexTile implements IIncomable{
 		} else if ( player.GetPlayerNum() == 2 ){
 			player3Things.add(thing);
 		} else if ( player.GetPlayerNum() == 3 ){
+			player4Things.add(thing);
+		}
+	}
+	
+	public void AddThingToTile(int playerIndex, Thing thing){
+		if ( playerIndex == 0 ){
+			player1Things.add(thing);
+		} else if ( playerIndex == 1 ){
+			player2Things.add(thing);
+		} else if ( playerIndex == 2 ){
+			player3Things.add(thing);
+		} else if ( playerIndex == 3 ){
 			player4Things.add(thing);
 		}
 	}
@@ -65,13 +77,17 @@ public class HexTile implements IIncomable{
 	}
 	
 	public ArrayList<Thing> GetThings(Player player){
-		if ( player.GetPlayerNum() == 0 ){
+		return GetThings(player.GetPlayerNum());
+	}
+	
+	public ArrayList<Thing> GetThings(int player){
+		if ( player == 0 ){
 			return player1Things;
-		} else if ( player.GetPlayerNum() == 1 ){
+		} else if ( player == 1 ){
 			return player2Things;
-		} else if ( player.GetPlayerNum() == 2 ){
+		} else if ( player == 2 ){
 			return player3Things;
-		} else if ( player.GetPlayerNum() == 3 ){
+		} else if ( player == 3 ){
 			return player4Things;
 		}
 		return null;
@@ -110,7 +126,18 @@ public class HexTile implements IIncomable{
 	}
 
 	public void addTower(Fort f) {
-		forts.add(f);
+		fort = f;
 	}
-
+	
+	public int distance(HexTile h)
+	{
+		int dx = h.x - x;
+		int dy = h.y - y;
+		
+		if((dx < 0 && dy >= 0)
+			||(dx >= 0 && dy <0))
+			return (Math.abs(dx) + Math.abs(dy));
+		else
+			return Math.max(Math.abs(dx), Math.abs(dy));
+	}
 }

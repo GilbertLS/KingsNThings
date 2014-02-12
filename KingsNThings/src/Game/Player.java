@@ -8,9 +8,9 @@ import Game.GameConstants.ControlledBy;
  * Represents one of the player of a Kings N' Things Game.
  */
 public class Player {
-	private PlayerRack playerRack;		//Rack to hold currently unplayed Things
+	public PlayerRack playerRack;		//Rack to hold currently unplayed Things
 	private int playerNum;				//Number identifying player
-	private int gold;					//current gold stash of this player
+	public int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
 	public ControlledBy faction;
 	public ArrayList<Fort> forts;
@@ -99,5 +99,36 @@ public class Player {
 
 	public int removeExcessFromRack() {
 		return playerRack.removeExcessFromRack();
+	}
+
+	public boolean canTradeForRecruits(int numRecruits) {
+		return playerRack.hasThings(numRecruits * 2);
+	}
+
+	public boolean canAffordRecruits(int numRecruits) {
+		return gold >= numRecruits*GameConstants.GOLD_PER_RECRUIT;
+	}
+
+	public void payGold(int gold) {
+		this.gold -= gold;
+	}
+
+	public int determineNumRecruits(int numPaidRecruits, int numTradeRecruits) {
+		if (playerNum == 0)
+			return (int)Math.ceil(ownedHexTiles.size()/2.0) + numPaidRecruits + numTradeRecruits;
+		else
+			return 0;
+	}
+
+	public boolean hasInRack(int thingID) {
+		return playerRack.hasThing(thingID);
+	}
+
+	public void removeFromRack(int thingID) {
+		playerRack.removeFromRack(thingID);
+	}
+
+	public Thing getThingByID(int thingID) {
+		return playerRack.getThing(thingID);
 	}
 }

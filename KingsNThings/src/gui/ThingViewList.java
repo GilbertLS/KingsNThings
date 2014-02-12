@@ -34,7 +34,7 @@ public class ThingViewList extends HBox {
 		
 		this.getChildren().add(view);
 		this.getStyleClass().add("thingview-list");
-	}
+	 }
 	 
 	 public void add(ThingView t) {
 		 items.add(t);
@@ -69,7 +69,7 @@ public class ThingViewList extends HBox {
 		 view.getItems().setAll(l);
 	 }
 	 
-	 public void setAllThings(Vector<Thing> t) {
+	 public void setAllThings(List<Thing> t) {
 		 List<ThingView> list = new ArrayList<ThingView>();
 		 
 		 for (int i = 0; i < t.size(); i++) {
