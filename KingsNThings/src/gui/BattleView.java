@@ -211,10 +211,16 @@ public class BattleView extends Scene {
 		});
 	}
 	
-	public void RemoveThingFromBattle(int thingId){
-		int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
-		ThingViewList list = tilePreview.GetThingList(currPlayer);
+	public void RemoveThingFromBattle(final int thingId){
+		final int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+		final ThingViewList list = tilePreview.GetThingList(currPlayer);
 		
-		list.removeByThingId(thingId);
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	list.removeByThingId(thingId);
+	        }
+	    });
+		
 	}
 }
