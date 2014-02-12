@@ -27,10 +27,8 @@ public class GameClientController {
 		
 	}
 
-	public ArrayList<HexTile> parsePlayedThingsStrings(
-			String[] thingsPlayedStrings) {
-		
-		ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+	public void parsePlayedThingsStrings(
+			String[] thingsPlayedStrings, ArrayList<HexTile> hexTiles, ArrayList<Integer> thingIDs, int playerIndex) {
 		
 		for(String s: thingsPlayedStrings)
 		{
@@ -39,12 +37,22 @@ public class GameClientController {
 				
 			int x = Integer.parseInt(hexParamsString[0]);
 			int y = Integer.parseInt(hexParamsString[1]);
-				
-			int thingID = Integer.parseInt(paramsString[1]);
-				
-			hexTiles.add(gameModel.gameBoard.getTile(x, y));
+			HexTile currTile = gameModel.gameBoard.getTile(x, y);
+			
+			int id = Integer.parseInt(paramsString[1]);
+			if(thingIDs.contains(id))
+			{
+				int idIndex = thingIDs.indexOf(id);
+				thingIDs.remove(idIndex);
+				hexTiles.remove(idIndex);
+			}
+			thingIDs.add(id);
+			hexTiles.add(currTile);
 		}
-		
-		return hexTiles;
+		for(int i=0; i<thingIDs.size(); i++)
+		{
+			HexTile h = hexTiles.get(i);
+			System.out.println("HEXTILE: x-" + h.x + " y-" +h.y+ " THINGID: " + thingIDs.get(i));
+		}
 	}	
 }

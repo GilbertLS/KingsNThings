@@ -350,10 +350,17 @@ public class EventHandler {
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
+				    GameClient.game.gameView.displayMessage("You have been awarded" + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()]);		   
+				    }
+			});     	
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
 		        	for(int i=0; i<numClients; i++)
 		        	{
 		        		GameClient.game.gameView.playerList.getPlayerPanel(i).addGold(goldUpdates[i]);
-		        	}
+		        	}	
 		        }
 			});
 		}
@@ -583,16 +590,21 @@ public class EventHandler {
 				{
 					final String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
 					
-					GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+					ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+					GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 					
-					GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+					GameClient.game.gameModel.updateHexTiles(hexTiles, thingIDs, playerIndex);
 					
+					GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
+					
+					final ArrayList<Integer> thingIDsCopy = thingIDs;
 					Platform.runLater(new Runnable() {
 				        @Override
 				        public void run() {
-				        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
-				        }
-					});
+				        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
+				        	}
+					});  
 				}
 				
 				//send changes
@@ -614,18 +626,21 @@ public class EventHandler {
 			if(e.eventParams.length == 2)
 			{
 				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+				GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+				GameClient.game.gameModel.updateHexTiles(hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+				GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				
-				final ArrayList<HexTile> hexTiles = GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings);
-				
+				final ArrayList<HexTile> hexTilesCopy = hexTiles;
+				final ArrayList<Integer> thingIDsCopy = thingIDs;
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
-						GameClient.game.gameView.updateTiles(hexTiles, playerIndex);	
-			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
 			        }
 				});
 			}
@@ -643,7 +658,6 @@ public class EventHandler {
 			        }
 				});
 				
-				
 				String thingsMovedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.MOVEMENT);
 				
 				Platform.runLater(new Runnable() {
@@ -655,7 +669,7 @@ public class EventHandler {
 				
 				String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
 				
-				GameClient.game.gameModel.updateHexTiles(thingsMovedParamsStrings, playerIndex);
+				//GameClient.game.gameModel.updateHexTiles(thingsMovedParamsStrings, playerIndex);
 				
 				//send changes
 				EventHandler.SendEvent(

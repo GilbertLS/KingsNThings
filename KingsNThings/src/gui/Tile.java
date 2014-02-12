@@ -54,13 +54,13 @@ public class Tile extends Region implements Draggable {
     }
     
     private ArrayList<ThingView> getView(int i) {
-    	if (i == 1)
+    	if (i == 0)
     		return p1Things;
-    	else if (i == 2)
+    	else if (i == 1)
     		return p2Things;
-    	else if (i == 3)
+    	else if (i == 2)
     		return p3Things;
-    	else if (i == 4)
+    	else if (i == 3)
     		return p4Things;
     	else
     		return neutralThings;
@@ -229,7 +229,25 @@ public class Tile extends Region implements Draggable {
 								}
 								
 								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
-								thisTile.addAll(things, 1);
+								thisTile.addAll(things, 0);
+								source.getListView().getItems().removeAll(things);
+								
+								success = true;
+								
+								for(ThingView t: things)
+									gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
+							}
+						}
+						else if(gv.currentPhase == CurrentPhase.MOVEMENT)
+						{
+							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+							{
+								for (Integer i : listOfIds) {
+									things.add(items.get(i));
+								}
+								
+								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
+								thisTile.addAll(things, 0);
 								source.getListView().getItems().removeAll(things);
 								
 								success = true;

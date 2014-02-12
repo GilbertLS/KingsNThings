@@ -158,8 +158,7 @@ public class GameView extends Scene {
 	}
 
 	public void updateTiles(ArrayList<HexTile> hexTiles, int playerIndex) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 	
 }

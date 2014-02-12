@@ -936,36 +936,25 @@ public class GameModel {
 		}
 	}
 
-	public void updatePlayerRack(String[] thingsPlayedStrings, int playerIndex) {
+	public void updatePlayerRack(ArrayList<Integer> thingIDs, int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
-		
-		for(String s: thingsPlayedStrings)
-		{
-			String[] paramsString = s.split(" ");
-			
-			int thingID = Integer.parseInt(paramsString[1]);
-			
-			if(player.hasInRack(thingID))
-				player.removeFromRack(thingID);
-		}	
+
+		for(Integer i: thingIDs)
+			if(player.hasInRack(i))
+				player.removeFromRack(i);
 	}
 
-	public void updateHexTiles(String[] thingsPlayedStrings, int playerIndex) {		
+	public void updateHexTiles(ArrayList<HexTile> hexTiles, ArrayList<Integer> thingIDs, int playerIndex) {		
 		Player player = playerFromIndex(playerIndex);
 		
-		for(String s: thingsPlayedStrings)
+		int i=0;
+		for(HexTile h: hexTiles)
 		{
-			String[] paramsString = s.split(" ");
-			String[] hexParamsString = paramsString[0].split("SPLIT");
-				
-			int x = Integer.parseInt(hexParamsString[0]);
-			int y = Integer.parseInt(hexParamsString[1]);
-				
-			int thingID = Integer.parseInt(paramsString[1]);
-				
+			int thingID = thingIDs.get(i++);
+			
 			Thing thingPlayed = player.getThingByID(thingID);
 				
-			gameBoard.getTile(x, y).AddThingToTile(playerIndex, thingPlayed);
+			gameBoard.getTile(h.x, h.y).AddThingToTile(playerIndex, thingPlayed);
 		}
 	}
 

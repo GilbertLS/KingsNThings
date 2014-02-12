@@ -136,4 +136,61 @@ public class HexTile implements IIncomable{
 		else
 			return Math.max(Math.abs(dx), Math.abs(dy));
 	}
+
+	public boolean hasThingWithID(String id, int playerIndex) {
+		ArrayList<Thing> thingsToCheck = new ArrayList<Thing>();
+		
+		switch(playerIndex)
+		{
+		case 0:
+			thingsToCheck = player1Things;
+			break;
+		case 1:
+			thingsToCheck = player1Things;
+			break;
+		case 2:
+			thingsToCheck = player3Things;
+			break;
+		case 3:
+			thingsToCheck = player4Things;
+			break;
+		}
+		
+		for(Thing t: thingsToCheck)
+		{
+			if(t.thingID == Integer.parseInt(id))
+				return true;
+		}
+		
+		return false;
+	}
+
+	public void removeThingByID(String id, int playerIndex) {
+		ArrayList<Thing> thingsToCheck = new ArrayList<Thing>();
+		
+		switch(playerIndex)
+		{
+		case 0:
+			thingsToCheck = player1Things;
+			break;
+		case 1:
+			thingsToCheck = player1Things;
+			break;
+		case 2:
+			thingsToCheck = player3Things;
+			break;
+		case 3:
+			thingsToCheck = player4Things;
+			break;
+		}
+		
+		Thing thingToRemove = null;
+		for(Thing t: thingsToCheck)
+		{
+			if(t.thingID == Integer.parseInt(id))
+				thingToRemove = t;
+		}
+		
+		thingsToCheck.remove(thingToRemove);
+	}
 }
