@@ -124,6 +124,20 @@ public final class GameConstants {
 		OTHER
 	}
 
+	public static ControlledBy controlledByFromIndex(Integer currentPlayer) {
+		switch(currentPlayer)
+		{
+		case 0:
+			return ControlledBy.PLAYER1;
+		case 1:
+			return ControlledBy.PLAYER2;
+		case 2:
+			return ControlledBy.PLAYER3;
+		default:
+			return ControlledBy.PLAYER4;
+		}
+	}
+
 
 
 
