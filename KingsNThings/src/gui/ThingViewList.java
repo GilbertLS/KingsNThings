@@ -59,8 +59,9 @@ public class ThingViewList extends HBox {
 	 public void removeByThingId(int id) {
 		 ThingView remove = null;
 		 
-		 for (ThingView tv : items) {
+		 for (ThingView tv : view.getItems()) {
 			 if (tv.thingRef.thingID == id) {
+				 System.out.println("REMOVED ITEM: " + id);
 				 remove = tv;
 				 break;
 			 }
