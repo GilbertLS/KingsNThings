@@ -3,7 +3,10 @@ package gui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import Game.Creature;
 import Game.GameConstants;
@@ -13,16 +16,18 @@ import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
 import Game.Thing;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.application.Platform;
 
 public class GameView extends Scene {
+    public static BattleView battleView = null;
+    public static List<Integer> selectedThings = new ArrayList<Integer>();
+	
     public BorderPane root;
     public VBox rightPanel;
     public HBox bottomPanel;
@@ -40,7 +45,7 @@ public class GameView extends Scene {
 	String returnString = "";
 	
     public GameView(BorderPane r) {
-    	super(r, 1000, 600);
+    	super(r, 800, 500);
     	root = r; 
         
         rightPanel = new VBox();
@@ -155,39 +160,53 @@ public class GameView extends Scene {
 	public int getNumTradeRecruits() {
 		return 0;
 	}
-		Platform.runLater(new Runnable() {
-			public void run(){
-				BorderPane p = new BorderPane();
-				Scene battleView = new BattleView(p);
-				
-				Stage battleStage = new Stage();
-				battleStage.setTitle("Combat Time!");
-				battleStage.setScene(battleView);
-                 
-				//battleStage.setX(battleStage.getX() + 150);
-				//battleStage.setY(battleStage.getY() + 150);
-  
-			}
-		});
+
+	public void showHideAllTiles(boolean show) {
+		board.showHideAllTiles(show);
+	}
+
 	public void updateTiles(ArrayList<HexTile> hexTiles, int playerIndex) {
 		// TODO Auto-generated method stub
 		
 	}
-	public void StartBattle(int tileX, int tileY){	
+	
+	public static boolean BattleOccuring(){
+		if(GameView.battleView != null){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void StartBattle(final int tileX, final int tileY){	
 		Platform.runLater(new Runnable() {
 			public void run(){
 				BorderPane p = new BorderPane();
-				Scene battleView = new BattleView(p);
+				BattleView battleView = new BattleView(p, tileX, tileY);
 				
-				Stage battleStage = new Stage();
+				GameView.battleView = battleView;
+				
+				/*Stage battleStage = new Stage();
 				battleStage.setTitle("Combat Time!");
 				battleStage.setScene(battleView);
                  
 				//battleStage.setX(battleStage.getX() + 150);
 				//battleStage.setY(battleStage.getY() + 150);
   
-				battleStage.show();
+				battleStage.show();*/
 			}
 		});
+	}
+	
+	public void EndBattle(){
+		if (GameView.BattleOccuring()){
+			Platform.runLater(new Runnable(){
+				public void run(){
+					GameView.battleView.battleStage.close();
+					GameView.battleView = null;
+				}
+			});
+		}
+	}
 	
 }

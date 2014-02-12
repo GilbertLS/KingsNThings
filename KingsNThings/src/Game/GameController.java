@@ -773,6 +773,10 @@ public class GameController implements Runnable {
 					}
 					
 					if (battleOver){
+						GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.BATTLE_OVER )
+						);
 						break;
 					}
 				} 

@@ -1,5 +1,6 @@
 package Game;
 
+import gui.GameView;
 import Game.GameConstants.BattleTurn;
 import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
@@ -61,7 +62,7 @@ public abstract class Combatant extends Thing{
 				int roll = GameClient.game.gameModel.rollDice();
 				
 				if (promptView){
-					GameClient.game.gameView.diceListView.RollDice(0, roll);
+					GameView.battleView.RollDice(0, roll);
 				}
 				
 				if (roll <= this.GetCombatValue() ){

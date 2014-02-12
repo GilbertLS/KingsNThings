@@ -1,11 +1,13 @@
 package Game.Networking;
 
+import gui.GameView;
 import gui.Tile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import javafx.application.Platform;
 import Game.Combatant;
 import Game.Creature;
@@ -82,6 +84,15 @@ public class EventHandler {
 			
 			System.out.println("Beginning battle on tile x:" + tileX + "y: " + tileY);
 			GameClient.game.gameView.StartBattle(tileX, tileY);
+			while(!GameView.BattleOccuring()){
+				Thread.sleep(1000);
+			}
+		} else if (e.eventId == EventList.BATTLE_OVER){
+			GameClient.game.gameView.EndBattle();
+			
+			while(GameView.BattleOccuring()){
+				Thread.sleep(1000);
+			}
 		}
 		else if(e.eventId == EventList.GET_CONTESTED_ZONES)
 		{
@@ -211,11 +222,11 @@ public class EventHandler {
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
 				ArrayList<Thing> things = currTile.GetThings(currentPlayer);
 				
-				System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
-				System.out.print("Things:");
-				for (Thing thing : things){
-					System.out.print(thing.GetThingId() + " ");
-				}
+				//System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
+				//System.out.print("Things:");
+				//for (Thing thing : things){
+					//System.out.print(thing.GetThingId() + " ");
+				//}
 				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
@@ -224,8 +235,9 @@ public class EventHandler {
 				BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 				if (things.size() > numHitsTaken){
 					try {
-						for (int i = 0; i < numHitsTaken; i++){
-							thingsToRemove[i] = bufferRead.readLine();
+						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
+						for (int i = 0; i < tilesToRemove.length; i++){
+							thingsToRemove[i] = "" + tilesToRemove[i];
 						}
 					} catch (Exception ex){}
 				} else {
@@ -275,9 +287,12 @@ public class EventHandler {
 			if (type.equals("Magic")) { isMagic = true; }
 			if (type.equals("Ranged")) { isRanged = true; }
 		
-			Creature creature = new Creature(Terrain.DESERT, 6).Magic(isMagic).Ranged(isRanged);
+			Creature creature = new Creature(Terrain.DESERT, "C1", 6, GameConstants.GiantImageFront).Magic(isMagic).Ranged(isRanged);
 			creature.SetThingId(Integer.parseInt(e.eventParams[1]));
+			
 			Player player = GameClient.game.gameModel.GetPlayer(Integer.parseInt(e.eventParams[2]));
+			
+			creature.controlledBy = player.faction;
 			
 			int tileX = Integer.parseInt(e.eventParams[3]);
 			int tileY = Integer.parseInt(e.eventParams[4]);
@@ -703,7 +718,7 @@ public class EventHandler {
 		        		GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).payGold(gold);
 		        }
 			});
-		} 	} else if (e.eventId == EventList.GET_RETREAT ){
+		} else if (e.eventId == EventList.GET_RETREAT ){
 			int tileX = Integer.parseInt(e.eventParams[0]);
 			int tileY = Integer.parseInt(e.eventParams[1]);
 			
@@ -712,7 +727,7 @@ public class EventHandler {
 											.PlayersOnTile(tileX, tileY);
 			
 			if (playersOnTile.contains(currentPlayer.GetPlayerNum())) {
-				System.out.println("Would you like to retreat (y/n)?");
+				/*System.out.println("Would you like to retreat (y/n)?");
 				char answer = 'a';
 				
 				do {
@@ -722,7 +737,15 @@ public class EventHandler {
 					} catch (Exception ex){}
 					
 					System.out.println(answer);
-				} while (answer != 'y' && answer != 'n');
+				} while (answer != 'y' && answer != 'n');*/
+				
+				boolean retreat = GameView.battleView.GetSurrender();
+				String answer;
+				if (retreat == true){
+					answer = "y";
+				} else {
+					answer = "n";
+				}
 				
 				EventHandler.SendEvent(
 					new Event()
@@ -732,6 +755,7 @@ public class EventHandler {
 			} else {
 				SendNullEvent();
 			}
+		}
 		
 		if (e.expectsResponseEvent && numberOfSends != 1){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
