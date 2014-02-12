@@ -127,7 +127,10 @@ public class BattleView extends Scene {
 	public void SetupPlayerThings(){
 		HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
 		
-		TilePreview tilePreview = new TilePreview();
+		TilePreview tilePreview = new TilePreview(
+				GameClient.game.gameView.getCurrentPlayer()
+		);
+		
 		tilePreview.changeTile(tile);
 		
 		leftPanel.getChildren().add(tilePreview);
