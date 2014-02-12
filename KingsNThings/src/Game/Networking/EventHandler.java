@@ -241,12 +241,10 @@ public class EventHandler {
 				
 				BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 				if (things.size() > numHitsTaken){
-					try {
 						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
 						for (int i = 0; i < tilesToRemove.length; i++){
 							thingsToRemove[i] = "" + tilesToRemove[i];
 						}
-					} catch (Exception ex){}
 				} else {
 					int i = 0;
 					for (Thing t : things){

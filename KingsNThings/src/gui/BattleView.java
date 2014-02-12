@@ -215,14 +215,6 @@ public class BattleView extends Scene {
 		int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
 		ThingViewList list = tilePreview.GetThingList(currPlayer);
 		
-		ThingView removeThing = null;
-		for(ThingView t : list.items){
-			if (t.thingRef.thingID == thingId){
-				removeThing = t;
-			}
-		}
-		
-		list.remove(removeThing);
-		
+		list.removeByThingId(thingId);
 	}
 }
