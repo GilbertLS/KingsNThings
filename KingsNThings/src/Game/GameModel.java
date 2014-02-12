@@ -968,7 +968,7 @@ public class GameModel {
 		return true;
 	}
 
-	public void updatedMovedThings(ArrayList<HexTile> tilesFrom,
+	public void updateMovedThings(ArrayList<HexTile> tilesFrom,
 			ArrayList<HexTile> tilesTo, ArrayList<Integer> thingIDs,
 			int playerIndex) {
 		Player player = playerFromIndex(playerIndex);

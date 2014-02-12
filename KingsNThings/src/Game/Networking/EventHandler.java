@@ -369,19 +369,9 @@ public class EventHandler {
 			
 			final int[] goldUpdates = GameClient.game.gameModel.distributeIncome();
 			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-				    GameClient.game.gameView.displayMessage("You have been awarded" + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()]);		   
-				    }
-			});   
+			GameClient.game.sendMessageToView("You have been awarded" + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()]);		   
 			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-					GameClient.game.gameView.clearMessage();
-		        }
-			});
+			GameClient.game.clearMessageOnView();
 			
 			Platform.runLater(new Runnable() {
 		        @Override
@@ -410,12 +400,8 @@ public class EventHandler {
 				
 				boolean validSelectionMade = false;
 				
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-						GameClient.game.gameView.displayMessage("Please select a tile to place a " + pieceBeingPlacedString + " into.");
-			        }
-				});
+				GameClient.game.sendMessageToView("Please select a tile to place a " + pieceBeingPlacedString + " into.");
+				
 				do
 				{										
 					selectedTile = GameClient.game.gameView.chooseTile();
@@ -431,22 +417,12 @@ public class EventHandler {
 					}
 					else
 					{
-						Platform.runLater(new Runnable() {
-					        @Override
-					        public void run() {
-					        	GameClient.game.gameView.displayMessage("The tile you selected is invalid, please choose a new tile");
-					        }
-						});
+						GameClient.game.sendMessageToView("The tile you selected is invalid, please choose a new tile");
 						
 					}
 					
 				}while(!validSelectionMade);		
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-						GameClient.game.gameView.clearMessage();
-			        }
-				});
+				GameClient.game.clearMessageOnView();
 				
 				int x = selectedHex.x;
 				int y = selectedHex.y;
@@ -526,12 +502,7 @@ public class EventHandler {
 			{
 				int number =0;
 				boolean isValidSelection = false;
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-			        	GameClient.game.gameView.displayMessage("Please select the number of " + purposeForNumber + " you would like.");
-			        }
-				});
+				GameClient.game.sendMessageToView("Please select the number of " + purposeForNumber + " you would like.");
 				do
 				{
 					if(purposeForNumber.equals("Paid Recruits"))
@@ -547,21 +518,11 @@ public class EventHandler {
 					}
 					
 					if(!isValidSelection)
-						Platform.runLater(new Runnable() {
-					        @Override
-					        public void run() {
-								GameClient.game.gameView.displayMessage("Invalid selection, please try again");
-					        }
-						});
+						GameClient.game.sendMessageToView("Invalid selection, please try again");
 
 						
 				}while(!isValidSelection);
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-						GameClient.game.gameView.clearMessage();
-			        }
-				});
+				GameClient.game.clearMessageOnView();
 				
 				//respond with number of paid things desired
 				System.out.println("CREATING DETERMINE ENTER NUMBER RESPONSE EVENT FOR "+ purposeForNumber);
@@ -604,22 +565,12 @@ public class EventHandler {
 			
 			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 			{
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-			        	GameClient.game.gameView.displayMessage("Please play your Things");		        	
-			        }
-				});
+				GameClient.game.sendMessageToView("Please play your Things");		        	
 				
 				//drag and drop things to tiles
 				String thingPlayedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.PLAY_THINGS);
 				
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-						GameClient.game.gameView.clearMessage();
-			        }
-				});
+				GameClient.game.clearMessageOnView();
 				
 				if(!thingPlayedParamsString.equals(""))
 				{
@@ -678,21 +629,11 @@ public class EventHandler {
 			
 			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 			{
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-			        	GameClient.game.gameView.displayMessage("Please move your Things");		        	
-			        }
-				});
+				GameClient.game.sendMessageToView("Please move your Things");		        	
 				
 				String thingsMovedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.MOVEMENT);
 				
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-						GameClient.game.gameView.clearMessage();
-			        }
-				});
+				GameClient.game.clearMessageOnView();
 				
 				if(!thingsMovedParamsString.equals(""))
 				{
@@ -703,7 +644,7 @@ public class EventHandler {
 					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
 					GameClient.game.parseMovedThingsStrings(thingsMovedParamsStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
 					
-					GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+					GameClient.game.gameModel.updateMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
 				}
 				
 				//send changes
@@ -730,7 +671,7 @@ public class EventHandler {
 				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
 				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				GameClient.game.gameModel.updateMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
 				
 				final ArrayList<HexTile> hexTilesCopy = GameClient.game.amalgamateHexTiles(tilesFrom, tilesTo);
 				Platform.runLater(new Runnable() {
@@ -747,13 +688,7 @@ public class EventHandler {
 			{
 				final int numThingsRemoved = GameClient.game.gameModel.removeExcessFromRack();
 				
-				Platform.runLater(new Runnable() {
-			        @Override
-			        public void run() {
-			        	GameClient.game.gameView.displayMessage("You had more than 10 things on your rack. " + numThingsRemoved + " things have been removed.");		        	
-			        }
-				});
-				
+				GameClient.game.sendMessageToView("You had more than 10 things on your rack. " + numThingsRemoved + " things have been removed.");		        	
 			}
 		}
 		else if(e.eventId == EventList.HANDLE_CHECK_PLAYER_RACK_OVERLOAD)
@@ -826,12 +761,8 @@ public class EventHandler {
 		
 		//needs GameControllerEventHandler to be multi-threaded
 		/*
-		Platform.runLater(new Runnable() {
-	        @Override
-	        public void run() {
-	        	GameClient.game.gameView.displayMessage("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
-	        }
-		});*/
+			GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
+		 */
 
 		
 		SendNullEvent();		

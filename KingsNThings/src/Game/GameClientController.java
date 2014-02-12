@@ -2,6 +2,8 @@ package Game;
 
 import java.util.ArrayList;
 
+import javafx.application.Platform;
+import Game.Networking.GameClient;
 import gui.GameView;
 
 public class GameClientController {
@@ -87,7 +89,7 @@ public class GameClientController {
 			HexTile fromTile = gameModel.gameBoard.getTile(tileFromX, tileFromY);
 			HexTile toTile = gameModel.gameBoard.getTile(tileToX, tileToY);
 			
-			int id = Integer.parseInt(paramsString[1]);
+			int id = Integer.parseInt(paramsString[2]);
 			
 			if(thingIDs.contains(id))
 			{
@@ -119,4 +121,24 @@ public class GameClientController {
 		
 		return returnTiles;
 	}	
+	
+	public void sendMessageToView(final String message)
+	{
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	gameView.displayMessage(message);		        	
+	        }
+		});
+	}
+	
+	public void clearMessageOnView()
+	{
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	gameView.clearMessage();		        	
+	        }
+		});
+	}
 }
