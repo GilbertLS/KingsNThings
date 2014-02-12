@@ -106,6 +106,6 @@ public class Event {
 			s += eventParams[i] + " ";
 		}
 		
-		return s;
+		return s.trim();
 	}
 }

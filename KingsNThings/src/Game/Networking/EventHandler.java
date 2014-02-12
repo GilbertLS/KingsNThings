@@ -78,6 +78,7 @@ public class EventHandler {
 			int tileY = Integer.parseInt(e.eventParams[1]);
 			
 			System.out.println("Beginning battle on tile x:" + tileX + "y: " + tileY);
+			GameClient.game.gameView.StartBattle(tileX, tileY);
 		}
 		else if(e.eventId == EventList.GET_CONTESTED_ZONES)
 		{
@@ -257,7 +258,6 @@ public class EventHandler {
 			GameClient.game.gameModel.boardController.GetTile(tileX, tileY).Print();
 			
 			boolean battleOver = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size() <= 1;
-			System.out.println(GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size());
 			
 			if ( battleOver ){
 				EventHandler.SendEvent(new Event().EventId(EventList.BATTLE_OVER));
@@ -538,6 +538,35 @@ public class EventHandler {
 		else if(e.eventId == EventList.HANDLE_CHECK_PLAYER_RACK_OVERLOAD)
 		{
 			//update all other players with things placed back in the cup
+		} else if (e.eventId == EventList.GET_RETREAT ){
+			int tileX = Integer.parseInt(e.eventParams[0]);
+			int tileY = Integer.parseInt(e.eventParams[1]);
+			
+			Player currentPlayer = GameClient.game.gameModel.GetCurrentPlayer();
+			List<Integer> playersOnTile = GameClient.game.gameModel.boardController
+											.PlayersOnTile(tileX, tileY);
+			
+			if (playersOnTile.contains(currentPlayer.GetPlayerNum())) {
+				System.out.println("Would you like to retreat (y/n)?");
+				char answer = 'a';
+				
+				do {
+					BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+					try {
+						answer = bufferRead.readLine().charAt(0);
+					} catch (Exception ex){}
+					
+					System.out.println(answer);
+				} while (answer != 'y' && answer != 'n');
+				
+				EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.GET_RETREAT)
+						.EventParameter("" + answer)
+				);
+			} else {
+				SendNullEvent();
+			}
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends != 1){

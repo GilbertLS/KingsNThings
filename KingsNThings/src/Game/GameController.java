@@ -684,6 +684,27 @@ public class GameController implements Runnable {
 							battleOver = false;
 						}
 					}
+					if (!battleOver && numActualHits != 0){
+						Response[] retreats = GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.GET_RETREAT )
+								.EventParameters( coordinates )
+								.ExpectsResponse()
+						);
+						
+						int numLeft = 0;
+						for (Response retreat : retreats) {
+							if (retreat.eventId == EventList.NULL_EVENT){
+								continue;
+							}
+							if (retreat.message.equals("n")){
+								numLeft++;
+							} 
+						}
+						if (numLeft < 2){
+							battleOver = true;
+						}
+					}
 					
 					if (battleOver){
 						break;

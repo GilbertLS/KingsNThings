@@ -8,11 +8,14 @@ import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class GameView extends Scene {
     public BorderPane root;
@@ -136,5 +139,23 @@ public class GameView extends Scene {
 
 	public int getNumTradeRecruits() {
 		return 0;
+	}
+	
+	public void StartBattle(int tileX, int tileY){	
+		Platform.runLater(new Runnable() {
+			public void run(){
+				BorderPane p = new BorderPane();
+				Scene battleView = new BattleView(p);
+				
+				Stage battleStage = new Stage();
+				battleStage.setTitle("Combat Time!");
+				battleStage.setScene(battleView);
+                 
+				//battleStage.setX(battleStage.getX() + 150);
+				//battleStage.setY(battleStage.getY() + 150);
+  
+				battleStage.show();
+			}
+		});
 	}
 }
