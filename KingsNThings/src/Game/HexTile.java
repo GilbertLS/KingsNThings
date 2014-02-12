@@ -167,9 +167,8 @@ public class HexTile implements IIncomable{
 	}
 
 	public Thing getThingFromTileByID(Integer id, int playerIndex) {
-		ArrayList<Thing> thingsToCheck = new ArrayList<Thing>();
-		
-		Thing thingToRemove = null;
+		ArrayList<Thing> thingsToCheck = playerThingsFromIndex(playerIndex);
+
 		for(Thing t: thingsToCheck)
 		{
 			if(t.thingID == id)
@@ -186,7 +185,7 @@ public class HexTile implements IIncomable{
 		case 0:
 			return player1Things;
 		case 1:
-			return player1Things;
+			return player2Things;
 		case 2:
 			return player3Things;
 		default:

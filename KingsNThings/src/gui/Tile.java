@@ -251,7 +251,6 @@ public class Tile extends Region implements Draggable {
 									things.add(items.get(i));
 								}
 								
-								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
 								thisTile.addAll(things, gv.getCurrentPlayer());
 								source.getListView().getItems().removeAll(things);
 								
@@ -271,14 +270,15 @@ public class Tile extends Region implements Draggable {
 									things.add(items.get(i));
 								}
 								
-								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
 								thisTile.addAll(things, gv.getCurrentPlayer());
 								source.getListView().getItems().removeAll(things);
+								
+								String originalTileString = (String)e.getDragboard().getContent(originalTile);
 								
 								success = true;
 								
 								for(ThingView t: things)
-									gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
+									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 							}
 						}
 					}
