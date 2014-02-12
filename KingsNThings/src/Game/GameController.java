@@ -94,7 +94,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 4;
+		return servers.size() == 2;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -116,7 +116,7 @@ public class GameController implements Runnable {
 		
 		placeThingsOnTile(3, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -338,17 +338,18 @@ public class GameController implements Runnable {
 		{
 		distributeIncome();
 		
-		recruitThings();
+		//recruitThings();
 		
-		playThings();
+		//playThings();
 		
 		moveThings();
 		
-		}while(true);
-		
-		//PlayBattlePhase();
+		PlayBattlePhase();
 		
 		//ChangePlayerOrder();
+		
+		}while(true);
+
 	}
 	
 	private void moveThings() {
@@ -673,7 +674,7 @@ public class GameController implements Runnable {
 	
 	private void DoBattle(){
 		// REMOVE
-		AddTestThingsToTile();
+		//AddTestThingsToTile();
 		//
 		
 		Response[] r = GameControllerEventHandler.sendEvent(

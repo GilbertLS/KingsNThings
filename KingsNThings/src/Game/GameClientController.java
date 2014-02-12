@@ -91,17 +91,18 @@ public class GameClientController {
 			
 			int id = Integer.parseInt(paramsString[2]);
 			
+			/*
 			if(thingIDs.contains(id))
 			{
 				int idIndex = thingIDs.indexOf(id);
 				tilesTo.set(idIndex, toTile);
 			}
 			else
-			{
+			{*/
 				thingIDs.add(id);
 				tilesFrom.add(fromTile);
 				tilesTo.add(toTile);
-			}
+			//}
 		}
 	}
 
@@ -140,5 +141,22 @@ public class GameClientController {
 	        	gameView.clearMessage();		        	
 	        }
 		});
+	}
+
+	public boolean rollForCreatures(int playerIndex, int x, int y) {
+		int roll = 1; //hard coded for iteration 1
+		
+		boolean defendingCreatures = false;
+		if(roll != 1 && roll != 6)
+		{
+			defendingCreatures = true;
+		}
+		else
+		{
+			gameModel.updateTileFaction(playerIndex, x, y);
+		}
+
+		
+		return defendingCreatures;
 	}
 }
