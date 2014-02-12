@@ -25,7 +25,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class GameView extends Scene {
-	private GameClientController controller;
 	public static BattleView battleView = null;
     public static List<Integer> selectedThings = new ArrayList<Integer>();
 	
@@ -48,7 +47,6 @@ public class GameView extends Scene {
 	
     public GameView(BorderPane r) {
     	super(r, 1000, 600);
-    	controller = null;
     	root = r; 
         
         rightPanel = new VBox();
@@ -172,10 +170,6 @@ public class GameView extends Scene {
 	
 	public Integer getCurrentPlayer() {
 		return this.currPlayerNum;
-	}
-	
-	public void setController(GameClientController c) {
-		this.controller = c;
 	}
 	
 	public static boolean BattleOccuring(){

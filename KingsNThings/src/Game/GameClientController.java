@@ -14,7 +14,6 @@ public class GameClientController {
 	{
 		gameModel = new GameModel();
 		gameView = g;
-		gameView.setController(this);
 	}
 
 	public void setPlayerOrders(int firstPlayerIndex) {

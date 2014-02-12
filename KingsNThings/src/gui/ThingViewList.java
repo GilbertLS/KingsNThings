@@ -2,8 +2,6 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-
 import Game.Thing;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
@@ -14,8 +12,8 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 public class ThingViewList extends HBox {
-	public ListView<ThingView> view;
-	public ArrayList<ThingView> items;
+	protected ListView<ThingView> view;
+	protected ArrayList<ThingView> items;
 	
 	 ThingViewList(ObservableList<ThingView> l) {
 		view = new ListView<ThingView>(l);
@@ -58,6 +56,20 @@ public class ThingViewList extends HBox {
 		 }
 	 }
 	 
+	 public void removeByThingId(int id) {
+		 ThingView remove = null;
+		 
+		 for (ThingView tv : items) {
+			 if (tv.thingRef.thingID == id) {
+				 remove = tv;
+				 break;
+			 }
+		 }
+		 
+		 items.remove(remove);
+		 view.getItems().remove(remove);
+	 }
+	 
 	 public void removeAll(List<ThingView> l) {
 		 items.removeAll(l);
 		 view.getItems().removeAll(l);
@@ -79,5 +91,9 @@ public class ThingViewList extends HBox {
 		 }
 		 
 		 this.setAll(list);
+	 }
+	 
+	 public void disable() {
+		 this.view.setMouseTransparent(true);
 	 }
 }

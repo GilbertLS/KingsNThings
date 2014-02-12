@@ -55,13 +55,13 @@ public class TilePreview extends VBox {
 	}
 	
 	public ThingViewList GetThingList(int playerNum){
-		if( playerNum == 1 ){
+		if( playerNum == 0 ){
 			return view1;
-		} else if ( playerNum == 2 ){
+		} else if ( playerNum == 1 ){
 			return view2;
-		} else if ( playerNum == 3){
+		} else if ( playerNum == 2 ){
 			return view3;
-		} else if ( playerNum == 4 ){
+		} else if ( playerNum == 3 ){
 			return view4;
 		}
 		return null;
@@ -82,14 +82,14 @@ public class TilePreview extends VBox {
 	
 	private void setSelectable() {
 		if (this.playerNum != 0)
-			view1.setOnMouseClicked(null);
+			view1.disable();
 		else if (this.playerNum != 1)
-			view2.setOnMouseClicked(null);
+			view2.disable();
 		else if (this.playerNum != 2)
-			view3.setOnMouseClicked(null);
+			view3.disable();
 		else if (this.playerNum != 3)
-			view4.setOnMouseClicked(null);
-		viewNeutral.setOnMouseClicked(null);
+			view4.disable();
+		viewNeutral.disable();
 	}
 	
 	public void setPlayerNum(int i) {
@@ -97,7 +97,7 @@ public class TilePreview extends VBox {
 		this.setSelectable();
 	}
 	
-		public void changeTile(HexTile tile){
+	public void changeTile(HexTile tile){
 		ThingView thingView;
 		
 		ArrayList<ThingView> arr = new ArrayList<ThingView>();
