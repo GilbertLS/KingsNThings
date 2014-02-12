@@ -136,14 +136,7 @@ public class EventHandler {
 				message = "Roll for others";
 			}
 			
-			final String message2 = message;
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					GameView.battleView.messageView.displayMessage(message2);
-				}
-			});
-			
+			GameView.battleView.UpdateMessage(message);
 			
 			if (GameClient.game.gameModel.boardController.HasThingsOnTile(
 					GameClient.game.gameModel.GetCurrentPlayer(), 
@@ -183,12 +176,9 @@ public class EventHandler {
 				SendNullEvent();
 			}
 			
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					GameView.battleView.messageView.clearMessage();
-				}
-			});
+
+			GameView.battleView.ClearMessage();
+				
 		}
 		else if (e.eventId == EventList.SET_CURRENT_PLAYER){
 			final int playerNum = Integer.parseInt(e.eventParams[0]);
@@ -299,7 +289,7 @@ public class EventHandler {
 				
 				Player player = GameClient.game.gameModel.GetPlayer(i);
 				GameClient.game.gameModel.boardController.RemoveThings(thingsToRemove, player, tileX, tileY);
-				GameView.battleView.RemoveThings(thingsToRemove);
+				GameView.battleView.RemoveThings(thingsToRemove, player.GetPlayerNum());
 			}
 			
 			GameClient.game.gameModel.boardController.GetTile(tileX, tileY).Print();

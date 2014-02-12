@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+
 import Game.Creature;
 import Game.GameClientController;
 import Game.GameConstants;
@@ -15,6 +16,7 @@ import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
+import Game.Networking.GameClient;
 import Game.Thing;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -203,6 +205,14 @@ public class GameView extends Scene {
 	
 	public void EndBattle(){
 		if (GameView.BattleOccuring()){
+			
+			HexTile hexTile = GameClient.game.gameModel.boardController.GetTile(
+				GameView.battleView.tileX, 
+				GameView.battleView.tileY
+			);
+			
+			GameClient.game.gameView.board.getTileByHex(hexTile).updateThings();
+			
 			Platform.runLater(new Runnable(){
 				public void run(){
 					GameView.battleView.battleStage.close();
