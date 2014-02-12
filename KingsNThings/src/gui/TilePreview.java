@@ -16,15 +16,9 @@ public class TilePreview extends VBox {
 	ThingViewList view4 = 		new ThingViewList(FXCollections.observableList(new ArrayList<ThingView>()));
 	ThingViewList viewNeutral = new ThingViewList(FXCollections.observableList(new ArrayList<ThingView>()));
 	Tile tileRef;
+	int playerNum;
 	
-	TilePreview() {
-		for(int i = 0; i < 10; i++) {
-			view1.add(new ThingView(new Creature(GameConstants.Terrain.DESERT)));
-			view2.add(new ThingView(new Creature(GameConstants.Terrain.DESERT)));
-			view3.add(new ThingView(new Creature(GameConstants.Terrain.DESERT)));
-			view4.add(new ThingView(new Creature(GameConstants.Terrain.DESERT)));
-		}
-		
+	TilePreview(int num) {		
 		view1.getStyleClass().add("preview-list");
 		view2.getStyleClass().add("preview-list");
 		view3.getStyleClass().add("preview-list");
@@ -35,6 +29,10 @@ public class TilePreview extends VBox {
 		this.getChildren().add(view2);
 		this.getChildren().add(view3);
 		this.getChildren().add(view4);
+		this.getChildren().add(viewNeutral);
+		
+		this.playerNum = num;
+		this.setSelectable();
 		
 		this.setPrefSize(300,280);
 	}
@@ -78,10 +76,28 @@ public class TilePreview extends VBox {
 		view4 = new ThingViewList(FXCollections.observableList(t.p4Things));
 		viewNeutral = new ThingViewList(FXCollections.observableList(t.neutralThings));
 		
+		setSelectable();
 		show();
 	}
 	
-	public void changeTile(HexTile tile){
+	private void setSelectable() {
+		if (this.playerNum != 0)
+			view1.setOnMouseClicked(null);
+		else if (this.playerNum != 1)
+			view2.setOnMouseClicked(null);
+		else if (this.playerNum != 2)
+			view3.setOnMouseClicked(null);
+		else if (this.playerNum != 3)
+			view4.setOnMouseClicked(null);
+		viewNeutral.setOnMouseClicked(null);
+	}
+	
+	public void setPlayerNum(int i) {
+		this.playerNum = i;
+		this.setSelectable();
+	}
+	
+		public void changeTile(HexTile tile){
 		ThingView thingView;
 		
 		ArrayList<ThingView> arr = new ArrayList<ThingView>();

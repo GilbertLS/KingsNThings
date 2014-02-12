@@ -168,6 +168,13 @@ public class EventHandler {
 			final int playerNum = Integer.parseInt(e.eventParams[0]);
 			
 			GameClient.game.gameModel.SetCurrentPlayer(playerNum);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.setCurrentPlayer(playerNum);
+		        }
+		    });
 		}
 		else if (e.eventId == EventList.CHOOSE_PLAYER){
 			int tileX = Integer.parseInt(e.eventParams[0]);
@@ -367,10 +374,24 @@ public class EventHandler {
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {
+				    GameClient.game.gameView.displayMessage("You have been awarded" + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()]);		   
+				    }
+			});   
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.clearMessage();
+		        }
+			});
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
 		        	for(int i=0; i<numClients; i++)
 		        	{
 		        		GameClient.game.gameView.playerList.getPlayerPanel(i).addGold(goldUpdates[i]);
-		        	}
+		        	}	
 		        }
 			});
 		}
@@ -421,7 +442,13 @@ public class EventHandler {
 						
 					}
 					
-				}while(!validSelectionMade);				
+				}while(!validSelectionMade);		
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.clearMessage();
+			        }
+				});
 				
 				int x = selectedHex.x;
 				int y = selectedHex.y;
@@ -600,16 +627,13 @@ public class EventHandler {
 				{
 					final String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
 					
-					GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+					ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+					GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 					
-					GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+					GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
 					
-					Platform.runLater(new Runnable() {
-				        @Override
-				        public void run() {
-				        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
-				        }
-					});
+					GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				}
 				
 				//send changes
@@ -631,18 +655,21 @@ public class EventHandler {
 			if(e.eventParams.length == 2)
 			{
 				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
+				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+				GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updateHexTiles(thingsPlayedStrings, playerIndex);
+				GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updatePlayerRack(thingsPlayedStrings, playerIndex);
+				GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
 				
-				final ArrayList<HexTile> hexTiles = GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings);
-				
+				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
+				final ArrayList<Integer> thingIDsCopy = thingIDs;
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
-						GameClient.game.gameView.updateTiles(hexTiles, playerIndex);	
-			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingsPlayedStrings.length);
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
 			        }
 				});
 			}
@@ -660,7 +687,6 @@ public class EventHandler {
 			        }
 				});
 				
-				
 				String thingsMovedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.MOVEMENT);
 				
 				Platform.runLater(new Runnable() {
@@ -670,9 +696,17 @@ public class EventHandler {
 			        }
 				});
 				
-				String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
-				
-				GameClient.game.gameModel.updateHexTiles(thingsMovedParamsStrings, playerIndex);
+				if(!thingsMovedParamsString.equals(""))
+				{
+					final String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
+					
+					ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
+					ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+					GameClient.game.parseMovedThingsStrings(thingsMovedParamsStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+					
+					GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				}
 				
 				//send changes
 				EventHandler.SendEvent(
@@ -684,6 +718,29 @@ public class EventHandler {
 			else
 			{
 				waitForOtherPlayer(playerIndex, "move their things");
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_MOVE_THINGS)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			if(e.eventParams.length == 2)
+			{
+				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
+				ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
+				ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+				
+				GameClient.game.gameModel.updatedMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				
+				final ArrayList<HexTile> hexTilesCopy = GameClient.game.amalgamateHexTiles(tilesFrom, tilesTo);
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+			        }
+				});
 			}
 		}
 		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)

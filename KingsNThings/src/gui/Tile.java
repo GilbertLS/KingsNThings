@@ -7,6 +7,7 @@ import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
+import Game.Thing;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -22,10 +23,10 @@ import javafx.scene.shape.Polygon;
 public class Tile extends Region implements Draggable {
 	private Tile thisTile = this;
 	private HexTile tileRef;
-	public ArrayList<ThingView> p1Things = 		new ArrayList<ThingView>();
-	public ArrayList<ThingView> p2Things = 		new ArrayList<ThingView>();
-	public ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
-	public ArrayList<ThingView> p4Things = 		new ArrayList<ThingView>();
+	public ArrayList<ThingView> p1Things = 			new ArrayList<ThingView>();
+	public ArrayList<ThingView> p2Things = 			new ArrayList<ThingView>();
+	public ArrayList<ThingView> p3Things = 			new ArrayList<ThingView>();
+	public ArrayList<ThingView> p4Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
 	public ThingView fort;
 	public ThingView economy;
@@ -54,13 +55,13 @@ public class Tile extends Region implements Draggable {
     }
     
     private ArrayList<ThingView> getView(int i) {
-    	if (i == 1)
+    	if (i == 0)
     		return p1Things;
-    	else if (i == 2)
+    	else if (i == 1)
     		return p2Things;
-    	else if (i == 3)
+    	else if (i == 2)
     		return p3Things;
-    	else if (i == 4)
+    	else if (i == 3)
     		return p4Things;
     	else
     		return neutralThings;
@@ -80,6 +81,28 @@ public class Tile extends Region implements Draggable {
     
     public void removeAll(List<ThingView> t, int player) {
     	getView(player).removeAll(t);
+    }
+    
+    public void addThing(Thing t) {
+    	ThingView tv = new ThingView(t);
+    	getView(t.getControlledByNum()).add(tv);
+    }
+    
+    public void removeThing(Thing t) {
+    	ThingView tv = new ThingView(t);
+    	getView(t.getControlledByNum()).remove(tv);
+    }
+    
+    public void updateThings(int playerNum) {
+    	ArrayList<ThingView> listOfTvs = getView(playerNum);
+    	ArrayList<Thing> listOfThings = this.tileRef.GetThings(playerNum);
+    	
+    	listOfTvs.clear();
+    	
+    	for(Thing t : listOfThings) {
+    		ThingView tv = new ThingView(t);
+    		listOfTvs.add(tv);
+    	}
     }
     
     private String getBackgroundFromType()
@@ -229,7 +252,27 @@ public class Tile extends Region implements Draggable {
 								}
 								
 								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
-								thisTile.addAll(things, 1);
+								thisTile.addAll(things, gv.getCurrentPlayer());
+								source.getListView().getItems().removeAll(things);
+								
+								gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(things.size());;
+								
+								success = true;
+								
+								for(ThingView t: things)
+									gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
+							}
+						}
+						else if(gv.currentPhase == CurrentPhase.MOVEMENT)
+						{
+							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+							{
+								for (Integer i : listOfIds) {
+									things.add(items.get(i));
+								}
+								
+								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
+								thisTile.addAll(things, gv.getCurrentPlayer());
 								source.getListView().getItems().removeAll(things);
 								
 								success = true;
