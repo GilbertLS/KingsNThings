@@ -163,6 +163,13 @@ public class EventHandler {
 			final int playerNum = Integer.parseInt(e.eventParams[0]);
 			
 			GameClient.game.gameModel.SetCurrentPlayer(playerNum);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.setCurrentPlayer(playerNum);
+		        }
+		    });
 		}
 		else if (e.eventId == EventList.CHOOSE_PLAYER){
 			int tileX = Integer.parseInt(e.eventParams[0]);

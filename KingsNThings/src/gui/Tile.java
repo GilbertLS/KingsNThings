@@ -7,6 +7,7 @@ import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
+import Game.Thing;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -22,10 +23,10 @@ import javafx.scene.shape.Polygon;
 public class Tile extends Region implements Draggable {
 	private Tile thisTile = this;
 	private HexTile tileRef;
-	public ArrayList<ThingView> p1Things = 		new ArrayList<ThingView>();
-	public ArrayList<ThingView> p2Things = 		new ArrayList<ThingView>();
-	public ArrayList<ThingView> p3Things = 		new ArrayList<ThingView>();
-	public ArrayList<ThingView> p4Things = 		new ArrayList<ThingView>();
+	public ArrayList<ThingView> p1Things = 			new ArrayList<ThingView>();
+	public ArrayList<ThingView> p2Things = 			new ArrayList<ThingView>();
+	public ArrayList<ThingView> p3Things = 			new ArrayList<ThingView>();
+	public ArrayList<ThingView> p4Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
 	public ThingView fort;
 	public ThingView economy;
@@ -80,6 +81,28 @@ public class Tile extends Region implements Draggable {
     
     public void removeAll(List<ThingView> t, int player) {
     	getView(player).removeAll(t);
+    }
+    
+    public void addThing(Thing t) {
+    	ThingView tv = new ThingView(t);
+    	getView(t.getControlledByNum()).add(tv);
+    }
+    
+    public void removeThing(Thing t) {
+    	ThingView tv = new ThingView(t);
+    	getView(t.getControlledByNum()).remove(tv);
+    }
+    
+    public void updateThings(int playerNum) {
+    	ArrayList<ThingView> listOfTvs = getView(playerNum);
+    	ArrayList<Thing> listOfThings = this.tileRef.GetThings(playerNum);
+    	
+    	listOfTvs.clear();
+    	
+    	for(Thing t : listOfThings) {
+    		ThingView tv = new ThingView(t);
+    		listOfTvs.add(tv);
+    	}
     }
     
     private String getBackgroundFromType()

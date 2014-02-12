@@ -45,4 +45,14 @@ public abstract class Thing {
 			   thingType == ThingType.SPECIAL_CHARACTER ||
 			   thingType == ThingType.TERRAIN_LORD;
 	}
+	
+	public int getControlledByNum() {
+		switch(controlledBy) {
+			case PLAYER1: return 1;
+			case PLAYER2: return 2;
+			case PLAYER3: return 3;
+			case PLAYER4: return 4;
+			default: return 0;
+		}
+	}
 }
