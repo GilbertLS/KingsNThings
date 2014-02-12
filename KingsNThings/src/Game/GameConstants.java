@@ -117,10 +117,12 @@ public final class GameConstants {
 
 	public static final int GOLD_PER_RECRUIT = 5;
 
-
-
-
-
+	//battle turns
+	public static enum BattleTurn {
+		MAGIC,
+		RANGED,
+		OTHER
+	}
 
 
 

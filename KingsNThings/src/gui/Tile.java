@@ -251,14 +251,34 @@ public class Tile extends Region implements Draggable {
 									things.add(items.get(i));
 								}
 								
-								//MODIFY THIS SO IT IS PLAYING PERSONS NUMBER
-								thisTile.addAll(things, ((GameView)getScene()).getCurrentPlayer());
+								thisTile.addAll(things, gv.getCurrentPlayer());
 								source.getListView().getItems().removeAll(things);
+								
+								gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(things.size());;
 								
 								success = true;
 								
 								for(ThingView t: things)
 									gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
+							}
+						}
+						else if(gv.currentPhase == CurrentPhase.MOVEMENT)
+						{
+							if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
+							{
+								for (Integer i : listOfIds) {
+									things.add(items.get(i));
+								}
+								
+								thisTile.addAll(things, gv.getCurrentPlayer());
+								source.getListView().getItems().removeAll(things);
+								
+								String originalTileString = (String)e.getDragboard().getContent(originalTile);
+								
+								success = true;
+								
+								for(ThingView t: things)
+									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 							}
 						}
 					}

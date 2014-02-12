@@ -1,7 +1,13 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import Game.Player;
+import Game.Thing;
+import Game.GameConstants.CurrentPhase;
+import Game.Networking.GameClient;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
@@ -21,19 +27,51 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 
 	protected void initListeners()
 	{	
-			
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				if (getItem() == null){
+					return;
+				}
+				
+				List<ThingView> list = getListView().getSelectionModel().getSelectedItems();
+				
+				Player currPlayer = GameClient.game.gameModel.GetCurrentPlayer();
+				GameView.selectedThings.clear();
+				for (ThingView thing : list){
+					if (thing.thingRef.controlledBy != currPlayer.faction){
+						continue;
+					}
+					
+					int thingId = thing.thingRef.thingID;
+					
+					GameView.selectedThings.add(thingId);
+				}
+				
+				System.out.println(GameView.selectedThings);
+			}
+		});
+		
 		setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent e) {
 				if (getItem() == null) {
 					return;
 				}
-
-				ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
 				
-				Dragboard db = startDragAndDrop(TransferMode.MOVE);
-				ClipboardContent content = new ClipboardContent();
-				content.put(thingRackIds, selectedIds);
-				db.setContent(content);
+				GameView gv = (GameView)getScene();
+
+				if(gv.currentPhase == CurrentPhase.MOVEMENT || gv.currentPhase == CurrentPhase.PLAY_THINGS)
+				{
+					ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
+					
+					Dragboard db = startDragAndDrop(TransferMode.MOVE);
+					ClipboardContent content = new ClipboardContent();
+					content.put(thingRackIds, selectedIds);
+			
+					content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + " ");
+				
+					db.setContent(content);
+				}
 
 				//db.setDragView(arg0);
 				e.consume();;
@@ -44,7 +82,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 		
 
 	}
-
+	
 	@Override
 	protected void updateItem(ThingView t, boolean b) {
 		super.updateItem(t, b);
