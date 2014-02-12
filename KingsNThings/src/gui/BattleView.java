@@ -158,7 +158,7 @@ public class BattleView extends Scene {
 			System.out.println("--------------");
 			System.out.println(thingId);
 			thingsToRemove[i++] = thingId;
-			//RemoveThingFromBattle(thingId);
+			RemoveThingFromBattle(thingId);
 		}
 		ClearMessage();
 		

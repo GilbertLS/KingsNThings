@@ -80,4 +80,8 @@ public class ThingViewList extends HBox {
 		 
 		 this.setAll(list);
 	 }
+	 
+	 public void disable() {
+		 this.view.setMouseTransparent(true);
+	 }
 }
