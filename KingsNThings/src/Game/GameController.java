@@ -116,7 +116,7 @@ public class GameController implements Runnable {
 		
 		placeThingsOnTile(3, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -685,6 +685,12 @@ public class GameController implements Runnable {
 		
 		
 		String[] contestedZones = r[0].castToStringArray();
+		
+		System.out.println("CONTESTED ZONES:" + contestedZones);
+		
+		if(contestedZones[0].equals(""))
+			return;
+			
 		for(String s : contestedZones){
 			
 			// TODO: Remove things that do not have terrain controlled

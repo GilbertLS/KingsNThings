@@ -129,6 +129,30 @@ public class TilePreview extends VBox {
 			arr.add(thingView);
 		}
 		view4 = new ThingViewList(FXCollections.observableList((arr)));
+		
+
+		if(tile.fort != null)
+		{
+			ThingViewList thingViewForFort;
+			switch(tile.controlledBy)
+			{
+			case PLAYER1:
+				thingViewForFort = view1;
+				break;
+			case PLAYER2:
+				thingViewForFort = view2;
+				break;
+			case PLAYER3:
+				thingViewForFort = view3;
+				break;
+			default:
+				thingViewForFort = view4;
+				break;
+			}
+			
+			thingViewForFort.add(new ThingView(tile.fort));
+		}
+		
 		show();
 	}
 }

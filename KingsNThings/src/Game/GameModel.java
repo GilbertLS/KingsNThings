@@ -903,8 +903,7 @@ public class GameModel {
 
 	public HexTile addTower(int x, int y, int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
-		
-
+	
 		Fort f = new Fort();
 		f.controlledBy = player.faction;
 		

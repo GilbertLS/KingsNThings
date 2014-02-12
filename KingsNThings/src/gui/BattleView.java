@@ -156,6 +156,7 @@ public class BattleView extends Scene {
 		int i = 0;
 		for (Integer thingId : GameView.selectedThings){
 			System.out.println("--------------");
+			System.out.println("--------------");
 			System.out.println(thingId);
 			thingsToRemove[i++] = thingId;
 			RemoveThingFromBattle(thingId);

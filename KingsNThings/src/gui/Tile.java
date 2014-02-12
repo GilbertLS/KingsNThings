@@ -29,8 +29,8 @@ public class Tile extends Region implements Draggable {
 	public ArrayList<ThingView> p3Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> p4Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
-	public ThingView fort;
-	public ThingView economy;
+	public ThingView fort = null;
+	public ThingView economy = null;
 	private int controllingPlayer = 0;
 	private CurrentPhase currentPhase;
 	
@@ -55,7 +55,7 @@ public class Tile extends Region implements Draggable {
     	this.initListeners();
     }
     
-    private ArrayList<ThingView> getView(int i) {
+    public ArrayList<ThingView> getView(int i) {
     	if (i == 0)
     		return p1Things;
     	else if (i == 1)
@@ -160,6 +160,9 @@ public class Tile extends Region implements Draggable {
 	    	imgView.setX(this.getWidth()/2 - imgView.getFitWidth()/2);
 	    	imgView.setY(this.getHeight()/2 - imgView.getFitHeight()/2);
 	    	list.add(imgView);
+	    	
+	    	if(fort == null)
+	    		fort = new ThingView(tileRef.fort);
     	}
     	
     	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
