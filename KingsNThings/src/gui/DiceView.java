@@ -1,39 +1,25 @@
 package gui;
 
-import java.util.Random;
-
-import Game.Networking.GameClient;
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 
 public class DiceView extends Region {
 	private int roll = 1;
 	private boolean isPrompted = false;
 	private boolean isEnabled = false;
+	private DiceView thisDice = this;
 	
 	public DiceView(){
 		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
 		this.setPrefSize(50,50);
     	this.getStyleClass().add("dice");
     	this.initListeners();
-    	
-    	//remove this
-    	isEnabled = true;
 	}
 	
 	private String getBackgroundFromRoll(){
-		return "dice-" + roll + ".png";
+		return "dice_" + roll + ".png";
 	}
 	
 	public void RollDice(int roll){	
@@ -43,29 +29,37 @@ public class DiceView extends Region {
 		this.isPrompted = true;
 		
 		PromptForRoll();
+
+		while(thisDice.isEnabled){
+			try {
+			Thread.sleep(1000); } catch (Exception e ){}
+		}
+		System.out.println("GOT OUT");
 	}
 	
 	
 	private void UpdateDice(){
 		setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
-		//thisDice.isEnabled = false;
 		isPrompted = false;
-		roll = new Random().nextInt(6) + 1;
+		isEnabled = false;
 	};
 	
 	public void PromptForRoll(){
-		if (!this.isPrompted){
-			setStyle( getStyle() + "-fx-border-color: yellow;");
-			setStyle( getStyle() + "-fx-border-width: 3;");
-			setStyle( getStyle() + "-fx-border-style: solid;");
-		}
+		Platform.runLater(new Runnable(){
+			@Override
+			public void run() {
+				setStyle( getStyle() + "-fx-border-color: yellow;");
+				setStyle( getStyle() + "-fx-border-width: 3;");
+				setStyle( getStyle() + "-fx-border-style: solid;");
+			}
+		});
 	}
 	
 	private void initListeners(){
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent e) {
-	        	if (isEnabled){
+	        	if (thisDice.isEnabled){
 	        		UpdateDice();
 	        	}
 	        }

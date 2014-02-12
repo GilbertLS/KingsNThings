@@ -1,8 +1,13 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import Game.Player;
+import Game.Thing;
 import Game.GameConstants.CurrentPhase;
+import Game.Networking.GameClient;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
@@ -22,7 +27,31 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 
 	protected void initListeners()
 	{	
-			
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				if (getItem() == null){
+					return;
+				}
+				
+				List<ThingView> list = getListView().getSelectionModel().getSelectedItems();
+				
+				Player currPlayer = GameClient.game.gameModel.GetCurrentPlayer();
+				GameView.selectedThings.clear();
+				for (ThingView thing : list){
+					if (thing.thingRef.controlledBy != currPlayer.faction){
+						continue;
+					}
+					
+					int thingId = thing.thingRef.thingID;
+					
+					GameView.selectedThings.add(thingId);
+				}
+				
+				System.out.println(GameView.selectedThings);
+			}
+		});
+		
 		setOnDragDetected(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent e) {
 				if (getItem() == null) {
@@ -53,7 +82,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 		
 
 	}
-
+	
 	@Override
 	protected void updateItem(ThingView t, boolean b) {
 		super.updateItem(t, b);

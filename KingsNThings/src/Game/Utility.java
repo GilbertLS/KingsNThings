@@ -5,7 +5,11 @@ public class Utility {
 		int[] ints = new int[strings.length];
 		
 		for (int i = 0; i < strings.length; i++){
-			ints[i] = Integer.parseInt(strings[i]);
+			try {
+				ints[i] = Integer.parseInt(strings[i]);
+			} catch (Exception e){
+				ints[i] = -1;
+			}
 		}
 		
 		return ints;
