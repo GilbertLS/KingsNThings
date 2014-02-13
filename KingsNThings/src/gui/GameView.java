@@ -38,7 +38,6 @@ public class GameView extends Scene {
     public ButtonBox buttonBox;
     public RackView rack;
     public TilePreview tilePreview;
-    public DiceListView diceListView;
     public MessageView messageView;
     public InputView inputView;
     public CurrentPhase currentPhase = CurrentPhase.NULL;
@@ -76,11 +75,7 @@ public class GameView extends Scene {
         buttonBox = new ButtonBox();
         rightPanel.getChildren().add(buttonBox);
         
-        rightPanel.getChildren().add(tilePreview);
-        
-        diceListView = new DiceListView();
-        rightPanel.getChildren().add(diceListView);
-        
+        rightPanel.getChildren().add(tilePreview);        
         
         ArrayList<ThingView> arr = new ArrayList<ThingView>();
         for(int i = 0; i < 10; i++)
