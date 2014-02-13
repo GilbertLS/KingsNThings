@@ -187,9 +187,14 @@ public class GameView extends Scene {
 		Platform.runLater(new Runnable() {
 			public void run(){
 				BorderPane p = new BorderPane();
+
 				BattleView battleView = new BattleView(p, tileX, tileY);
 				
 				GameView.battleView = battleView;
+				String style = "-fx-background-image: url(/res/images/ " + getBackgroundFromType(tileX, tileY) + ");";
+				
+				p.setStyle(style);
+
 				
 				/*Stage battleStage = new Stage();
 				battleStage.setTitle("Combat Time!");
@@ -201,6 +206,26 @@ public class GameView extends Scene {
 				battleStage.show();*/
 			}
 		});
+	}
+	
+	 private String getBackgroundFromType(int tileX, int tileY) {
+		 HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
+		 if(tile.controlledBy == ControlledBy.NEUTRAL) {
+			return "Tuile_Back.png";
+		 } else {
+			 switch (tile.getTerrain()) {
+			 	case SEA: return "Tuile-Mer.png";
+				case JUNGLE: return "Tuile-Jungle.png";
+				case FROZEN_WASTE: return "Tuile-Entendue-Glacée.png";
+				case FOREST: return "Tuile-Forêt.png";
+				case PLAINS: return "Tuile-Plaines.png";
+				case SWAMP: return "Tuile-Marais.png";
+				case MOUNTAIN: return "Tuile-Montagne.png";
+				case DESERT: return "Tuile-Desert.png";
+			 }
+		 }
+	    	
+	    return "Tuile_Back.png";
 	}
 	
 	public void EndBattle(){

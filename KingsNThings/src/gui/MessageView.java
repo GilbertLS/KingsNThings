@@ -6,6 +6,11 @@ import javafx.scene.layout.VBox;
 public class MessageView extends VBox {
 	private Label title = new Label("INFO:");
 	private Label message = new Label("");
+	private String currMessage = "";
+	
+	public String GetCurrentMessage(){
+		return currMessage;
+	}
 	
 	public MessageView(){
 		getChildren().add(title);
@@ -15,6 +20,7 @@ public class MessageView extends VBox {
 
 	public void displayMessage(String message) {
 		this.message.setText("\t"+message);
+		currMessage = message;
 		
 	}
 

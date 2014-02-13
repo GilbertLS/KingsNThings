@@ -20,6 +20,14 @@ public final class GameConstants {
 	//The Different Factions which may control game pieces
 	public static enum ControlledBy {NEUTRAL, PLAYER1, PLAYER2, PLAYER3, PLAYER4}
 	
+	public static int GetPlayerNumber(ControlledBy c){
+		if ( c == ControlledBy.PLAYER1 ){ return 0; }
+		else if ( c == ControlledBy.PLAYER2 ){ return 1; }
+		else if ( c == ControlledBy.PLAYER3 ){ return 2; }
+		else if ( c == ControlledBy.PLAYER4 ){ return 3; }
+		return -1; 
+	}
+	
 	//The different types of "Things" in the game
 	public static enum ThingType {SPECIAL_INCOME, 
 									MAGIC,
@@ -78,7 +86,7 @@ public final class GameConstants {
 	public static final String VampireBatImageFront = "T_Swamp_084.png";
 	public static final String TigersImageFront = "T_Jungle_011.png";
 	public static final String VillainsImageFront = "T_Plains_015.png";
-	public static final String GiantLizardImageFront = "T_Swamp_065.png";
+	public static final String GiantLizardImageFront = "T_Swamp_076.png";
 	public static final String MountainMenImageFront = "T_Mountains_A.png";
 	public static final String CyclopsImageFront = "T_Mountains_Q.png";
 	
@@ -137,9 +145,6 @@ public final class GameConstants {
 			return ControlledBy.PLAYER4;
 		}
 	}
-
-
-
 
 	//--------------/end INTEGERS
 }
