@@ -197,7 +197,7 @@ public class HexTile implements IIncomable{
 	public void handlePostBattle() {
 		if(fort != null)
 		{
-			int roll = Dice.rollDice(1)[0];
+			int roll = 2; //Dice.rollDice(1)[0];
 			
 			if(roll != 1 && roll != 6)
 			{
@@ -217,7 +217,7 @@ public class HexTile implements IIncomable{
 		else if(player4Things.size() > 0)
 			controlledBy = ControlledBy.PLAYER4;
 		else
-			controlledBy = controlledBy.NEUTRAL;
+			controlledBy = ControlledBy.NEUTRAL;
 		
 	}
 }

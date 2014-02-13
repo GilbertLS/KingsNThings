@@ -23,17 +23,17 @@ public class TilePreview extends VBox {
 		view2.getStyleClass().add("preview-list");
 		view3.getStyleClass().add("preview-list");
 		view4.getStyleClass().add("preview-list");
-		viewNeutral.getStyleClass().add("preview-list");
+		//viewNeutral.getStyleClass().add("preview-list");
 		
 		this.getChildren().add(view1);
 		this.getChildren().add(view2);
 		this.getChildren().add(view3);
 		this.getChildren().add(view4);
-		this.getChildren().add(viewNeutral);
+		//this.getChildren().add(viewNeutral);
 		
 		this.playerNum = num;
 		
-		this.setPrefSize(300,280);
+		this.setMinSize(300,280);
 	}
 	
 	public void show() {
@@ -47,8 +47,8 @@ public class TilePreview extends VBox {
 			list.add(view3);
 		if (view4.getChildren().size() > 0)
 			list.add(view4);
-		if (viewNeutral.getChildren().size() > 0)
-			list.add(viewNeutral);
+		/*if (viewNeutral.getChildren().size() > 0)
+			list.add(viewNeutral);*/
 
 		this.getChildren().setAll(list);
 	}
@@ -74,7 +74,7 @@ public class TilePreview extends VBox {
 		view2 = new ThingViewList(FXCollections.observableList(t.p2Things));
 		view3 = new ThingViewList(FXCollections.observableList(t.p3Things));
 		view4 = new ThingViewList(FXCollections.observableList(t.p4Things));
-		viewNeutral = new ThingViewList(FXCollections.observableList(t.neutralThings));
+		//viewNeutral = new ThingViewList(FXCollections.observableList(t.neutralThings));
 		
 		show();
 	}
