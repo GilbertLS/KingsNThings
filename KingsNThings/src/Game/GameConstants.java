@@ -20,6 +20,14 @@ public final class GameConstants {
 	//The Different Factions which may control game pieces
 	public static enum ControlledBy {NEUTRAL, PLAYER1, PLAYER2, PLAYER3, PLAYER4}
 	
+	public static int GetPlayerNumber(ControlledBy c){
+		if ( c == ControlledBy.PLAYER1 ){ return 0; }
+		else if ( c == ControlledBy.PLAYER2 ){ return 1; }
+		else if ( c == ControlledBy.PLAYER3 ){ return 2; }
+		else if ( c == ControlledBy.PLAYER4 ){ return 3; }
+		return -1; 
+	}
+	
 	//The different types of "Things" in the game
 	public static enum ThingType {SPECIAL_INCOME, 
 									MAGIC,

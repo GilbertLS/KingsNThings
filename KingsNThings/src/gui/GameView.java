@@ -46,10 +46,12 @@ public class GameView extends Scene {
 	protected boolean inputTextUpdated = false;
 	String returnString = "";
 	private int currPlayerNum;
+	public Stage primaryStage;
 	
-    public GameView(BorderPane r) {
+    public GameView(BorderPane r, Stage ps) {
     	super(r, 1000, 600);
     	root = r; 
+    	primaryStage = ps;
         
         rightPanel = new VBox();
         root.setRight(rightPanel);
@@ -168,6 +170,7 @@ public class GameView extends Scene {
 	public void setCurrentPlayer(int p) {
 		this.currPlayerNum = p;
 		this.tilePreview.setPlayerNum(p);
+		this.primaryStage.setTitle(primaryStage.getTitle() + " - Player " + (p + 1) );
 	}
 	
 	public Integer getCurrentPlayer() {
@@ -187,9 +190,14 @@ public class GameView extends Scene {
 		Platform.runLater(new Runnable() {
 			public void run(){
 				BorderPane p = new BorderPane();
+
 				BattleView battleView = new BattleView(p, tileX, tileY);
 				
 				GameView.battleView = battleView;
+				String style = "-fx-background-image: url(/res/images/ " + getBackgroundFromType(tileX, tileY) + ");";
+				
+				p.setStyle(style);
+
 				
 				/*Stage battleStage = new Stage();
 				battleStage.setTitle("Combat Time!");
@@ -203,6 +211,26 @@ public class GameView extends Scene {
 		});
 	}
 	
+	 private String getBackgroundFromType(int tileX, int tileY) {
+		 HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
+		 if(tile.controlledBy == ControlledBy.NEUTRAL) {
+			return "Tuile_Back.png";
+		 } else {
+			 switch (tile.getTerrain()) {
+			 	case SEA: return "Tuile-Mer.png";
+				case JUNGLE: return "Tuile-Jungle.png";
+				case FROZEN_WASTE: return "Tuile-Entendue-Glacée.png";
+				case FOREST: return "Tuile-Forêt.png";
+				case PLAINS: return "Tuile-Plaines.png";
+				case SWAMP: return "Tuile-Marais.png";
+				case MOUNTAIN: return "Tuile-Montagne.png";
+				case DESERT: return "Tuile-Desert.png";
+			 }
+		 }
+	    	
+	    return "Tuile_Back.png";
+	}
+	
 	public void EndBattle(){
 		if (GameView.BattleOccuring()){
 			
@@ -211,7 +239,10 @@ public class GameView extends Scene {
 				GameView.battleView.tileY
 			);
 			
-			GameClient.game.gameView.board.getTileByHex(hexTile).updateThings();
+			Tile tileView = GameClient.game.gameView.board.getTileByHex(hexTile);
+			
+			tileView.updateThings();
+			tileView.update();
 			
 			Platform.runLater(new Runnable(){
 				public void run(){
