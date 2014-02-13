@@ -78,7 +78,14 @@ public class HexTile implements IIncomable{
 	}
 	
 	public ArrayList<Thing> GetThings(Player player){
-		return GetThings(player.GetPlayerNum());
+		ArrayList<Thing> returnList = GetThings(player.GetPlayerNum());
+		
+		if(fort != null && player.faction == controlledBy)
+		{
+			returnList.add(fort);
+		}
+		
+		return returnList;
 	}
 	
 	public ArrayList<Thing> GetThings(int player){
@@ -197,7 +204,7 @@ public class HexTile implements IIncomable{
 	public void handlePostBattle() {
 		if(fort != null)
 		{
-			int roll = 2; //Dice.rollDice(1)[0];
+			int roll = Dice.rollDice(1)[0];
 			
 			if(roll != 1 && roll != 6)
 			{

@@ -229,18 +229,30 @@ public class GameView extends Scene {
 	public void EndBattle(){
 		if (GameView.BattleOccuring()){
 			
+			Platform.runLater(new Runnable(){
+				public void run(){
+					displayMessage("Battle is over");
+				}
+			});
+			
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			HexTile hexTile = GameClient.game.gameModel.boardController.GetTile(
 				GameView.battleView.tileX, 
 				GameView.battleView.tileY
 			);
 			
-			Tile tileView = GameClient.game.gameView.board.getTileByHex(hexTile);
-			
-			tileView.updateThings();
-			tileView.update();
+			final Tile tileView = GameClient.game.gameView.board.getTileByHex(hexTile);
 			
 			Platform.runLater(new Runnable(){
 				public void run(){
+					tileView.updateThings();
+					tileView.update();
 					GameView.battleView.battleStage.close();
 					GameView.battleView = null;
 				}

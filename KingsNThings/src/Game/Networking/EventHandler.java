@@ -88,7 +88,20 @@ public class EventHandler {
 				Thread.sleep(1000);
 			}
 		} else if (e.eventId == EventList.BATTLE_OVER){
-			GameClient.game.gameView.EndBattle();
+			int x = Integer.parseInt(e.eventParams[0]);
+			int y = Integer.parseInt(e.eventParams[1]);
+			
+			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
+			
+			h.handlePostBattle();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.updateHexTile(h);
+					GameClient.game.gameView.EndBattle();
+		        }
+		    });
 			
 			while(GameView.BattleOccuring()){
 				Thread.sleep(1000);
@@ -319,22 +332,7 @@ public class EventHandler {
 			int tileX = Integer.parseInt(e.eventParams[3]);
 			int tileY = Integer.parseInt(e.eventParams[4]);
 			GameClient.game.gameModel.boardController.AddThingToTile(creature, player, tileX, tileY);
-		} else if (e.eventId == EventList.BATTLE_OVER) {
-			int x = Integer.parseInt(e.eventParams[0]);
-			int y = Integer.parseInt(e.eventParams[1]);
-			
-			System.out.println("Ending battle");
-			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
-					
-			h.handlePostBattle();
-			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-		        	GameClient.game.gameView.updateHexTile(h);
-		        }
-		    });
-		} else if (e.eventId == EventList.SET_HEX_TILES) {
+		} 	else if (e.eventId == EventList.SET_HEX_TILES) {
 			String boardHexTilesString = e.eventParams[0];
 			String unusedHexTileString = e.eventParams[1];
 			
