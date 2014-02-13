@@ -176,8 +176,6 @@ public class BattleView extends Scene {
 			s += thingId + " ";
 			RemoveThingFromBattle(thingId, playerNum);
 		}
-		
-		GameView.battleView.UpdateMessage("Removed things: " + s);
 	}
 	
 	public int[] inflictHits(int numHitsTaken) {

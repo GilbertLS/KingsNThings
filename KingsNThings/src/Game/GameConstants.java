@@ -49,8 +49,8 @@ public final class GameConstants {
 	public static final String PlaceHolderImageFront = "Bowl.png";
 	public static final String PlaceHolderImageBack = "Bowl.png";
 	public static final String ThingImageBack = "T_Back.png";
-	public static final String TowerImageBack = "C_Fort_375.png";
-	public static final String TowerImageFront = "C_Fort_376.png";
+	public static final String TowerImageBack = "C_Fort_376.png";
+	public static final String TowerImageFront = "C_Fort_375.png";
 	public static final String WitchDoctorImageFront = "T_Jungle_006.png";
 	public static final String OgreImageFront = "T_Mountains_I.png";
 	public static final String GoblinsImageFront = "T_Mountains_E.png";

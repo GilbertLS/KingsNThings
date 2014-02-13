@@ -80,11 +80,6 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> GetThings(Player player){
 		ArrayList<Thing> returnList = GetThings(player.GetPlayerNum());
 		
-		if(fort != null && player.faction == controlledBy)
-		{
-			returnList.add(fort);
-		}
-		
 		return returnList;
 	}
 	
@@ -215,16 +210,37 @@ public class HexTile implements IIncomable{
 			}			
 		}
 	
+
 		if(player1Things.size() > 0)
+		{
 			controlledBy = ControlledBy.PLAYER1;
+			if(fort != null)
+				fort.controlledBy = ControlledBy.PLAYER1;
+		}
 		else if(player2Things.size() > 0)
+		{
 			controlledBy = ControlledBy.PLAYER2;
+			if(fort != null)
+				fort.controlledBy = ControlledBy.PLAYER2;
+		}
 		else if(player3Things.size() > 0)
+		{
 			controlledBy = ControlledBy.PLAYER3;
+			if(fort != null)
+				fort.controlledBy = ControlledBy.PLAYER3;
+		}
 		else if(player4Things.size() > 0)
+		{
 			controlledBy = ControlledBy.PLAYER4;
+			if(fort != null)
+				fort.controlledBy = ControlledBy.PLAYER4;
+		}		
 		else
+		{
 			controlledBy = ControlledBy.NEUTRAL;
+			if(fort != null)
+				fort.controlledBy = ControlledBy.NEUTRAL;
+		}
 		
 	}
 }
