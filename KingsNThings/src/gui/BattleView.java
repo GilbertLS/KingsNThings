@@ -123,21 +123,25 @@ public class BattleView extends Scene {
 		battleStage.show();
 	}
 	
-	public void RollDice(Thing thing, int diceNum, int roll){
+	public void RollDice(Thing thing, int diceNum, int roll, int numPreviousRolls){
 		if (!thing.IsCombatant()){
 			return;
 		}
 		
 		Combatant combatant = (Combatant)thing;
 		
-		String s;
+		String s = "";
+		
+		if (numPreviousRolls > 0){
+			s = "Number of hits you will apply this round: " + numPreviousRolls + "\n";
+		}
 		
 		if (combatant.IsMagic()){
-			s = "Rolling for magic";
+			s += "Rolling for magic";
 		} else if (combatant.IsRange()){
-			s = "Rolling for range";
+			s += "Rolling for range";
 		} else {
-			s = "Rolling for regular";
+			s += "Rolling for regular";
 		}
 		
 		if (combatant.IsCharge()){
@@ -172,8 +176,6 @@ public class BattleView extends Scene {
 			s += thingId + " ";
 			RemoveThingFromBattle(thingId, playerNum);
 		}
-		
-		GameView.battleView.UpdateMessage("Removed things: " + s);
 	}
 	
 	public int[] inflictHits(int numHitsTaken) {

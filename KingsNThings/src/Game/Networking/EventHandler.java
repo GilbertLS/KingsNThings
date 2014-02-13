@@ -88,7 +88,20 @@ public class EventHandler {
 				Thread.sleep(1000);
 			}
 		} else if (e.eventId == EventList.BATTLE_OVER){
-			GameClient.game.gameView.EndBattle();
+			int x = Integer.parseInt(e.eventParams[0]);
+			int y = Integer.parseInt(e.eventParams[1]);
+			
+			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
+			
+			h.handlePostBattle();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.updateHexTile(h);
+					GameClient.game.gameView.EndBattle();
+		        }
+		    });
 			
 			while(GameView.BattleOccuring()){
 				Thread.sleep(1000);
@@ -126,17 +139,16 @@ public class EventHandler {
 			
 			if (type.equals("Magic")) { 
 				isMagicTurn = true; 
-				message = "Roll for magic";
+				message = "magic";
 			}
 			else if (type.equals("Ranged")) { 
 				isRangedTurn = true;
-				message = "Roll for ranged";
+				message = "ranged";
 			}
 			else {
-				message = "Roll for others";
+				message = "other";
 			}
 			
-			GameView.battleView.UpdateMessage(message);
 			
 			if (GameClient.game.gameModel.boardController.HasThingsOnTile(
 					GameClient.game.gameModel.GetCurrentPlayer(), 
@@ -151,7 +163,17 @@ public class EventHandler {
 				
 				int rolls = 0;
 				
-				for (Thing thing : battleTile.GetThings( currPlayer )){
+				ArrayList<Thing> thingsBattling = new ArrayList<Thing>();
+				for(Thing t :battleTile.GetThings( currPlayer ))
+				{
+					thingsBattling.add(t);
+				}
+				if(battleTile.fort != null && currPlayer.faction == battleTile.controlledBy)
+				{
+					thingsBattling.add(battleTile.fort);
+				}
+				
+				for (Thing thing : thingsBattling){
 					if ( !thing.IsCombatant() ){
 						continue;
 					}
@@ -163,8 +185,10 @@ public class EventHandler {
 					
 					Combatant combatant = (Combatant)thing;
 					
-					rolls += combatant.GetCombatRoll(turn, true);
+					rolls += combatant.GetCombatRoll(turn, true, rolls);
 				}
+				
+				GameView.battleView.UpdateMessage("Applying " + rolls + " hits for this " + message + " rolls turn");
 				
 				EventHandler.SendEvent(
 					new Event()
@@ -177,7 +201,7 @@ public class EventHandler {
 			}
 			
 
-			GameView.battleView.ClearMessage();
+			//GameView.battleView.ClearMessage();
 				
 		}
 		else if (e.eventId == EventList.SET_CURRENT_PLAYER){
@@ -251,11 +275,17 @@ public class EventHandler {
 					//System.out.print(thing.GetThingId() + " ");
 				//}
 				
+
+				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
+				
+				boolean hasFort = currTile.fort != null && currentPlayer.faction == currTile.controlledBy;
+				
+				if(hasFort)
+					numHitsToApply++;
 				
 				String[] thingsToRemove = new String[numHitsToApply];
 				
-				BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 				if (things.size() > numHitsTaken){
 						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
 						for (int i = 0; i < tilesToRemove.length; i++){
@@ -265,6 +295,9 @@ public class EventHandler {
 					int i = 0;
 					for (Thing t : things){
 						thingsToRemove[i++] = "" + t.thingID;
+					}
+					if(hasFort){
+						thingsToRemove[i++] = "" + currTile.fort.thingID;
 					}
 				}
 				EventHandler.SendEvent(
@@ -319,22 +352,7 @@ public class EventHandler {
 			int tileX = Integer.parseInt(e.eventParams[3]);
 			int tileY = Integer.parseInt(e.eventParams[4]);
 			GameClient.game.gameModel.boardController.AddThingToTile(creature, player, tileX, tileY);
-		} else if (e.eventId == EventList.BATTLE_OVER) {
-			int x = Integer.parseInt(e.eventParams[0]);
-			int y = Integer.parseInt(e.eventParams[1]);
-			
-			System.out.println("Ending battle");
-			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
-					
-			h.handlePostBattle();
-			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-		        	GameClient.game.gameView.updateHexTile(h);
-		        }
-		    });
-		} else if (e.eventId == EventList.SET_HEX_TILES) {
+		} 	else if (e.eventId == EventList.SET_HEX_TILES) {
 			String boardHexTilesString = e.eventParams[0];
 			String unusedHexTileString = e.eventParams[1];
 			
