@@ -58,29 +58,28 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 					return;
 				}
 				
-				GameView gv = (GameView)getScene();
+				GameView gv = GameClient.game.gameView;
 
 				if(gv.currentPhase == CurrentPhase.MOVEMENT || gv.currentPhase == CurrentPhase.PLAY_THINGS)
 				{
 					ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
 					
-					Dragboard db = startDragAndDrop(TransferMode.MOVE);
-					ClipboardContent content = new ClipboardContent();
-					content.put(thingRackIds, selectedIds);
-			
-					content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + " ");
+					//Check if thing is owned by player
+					if (getListView().getItems().get(selectedIds.get(0)).thingRef.getControlledByPlayerNum() == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()) {
+						Dragboard db = startDragAndDrop(TransferMode.MOVE);
+						ClipboardContent content = new ClipboardContent();
+						content.put(thingRackIds, selectedIds);
 				
-					db.setContent(content);
+						content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + " ");
+					
+						db.setContent(content);
+					}
 				}
 
 				//db.setDragView(arg0);
 				e.consume();;
 			}
 		});
-
-		/* IMPLEMENT RACK REORDERING? */
-		
-
 	}
 	
 	@Override
