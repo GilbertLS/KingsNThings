@@ -16,7 +16,6 @@ public class Fort extends Building implements IIncomable{
 	{
 		super(ThingType.FORT,  "Fort" + fortIndex++, 1, GameConstants.TowerImageBack, GameConstants.TowerImageFront);
 		level = Level.TOWER;
-		isRange = true;
 	}
 	
 	public int getIncome()
