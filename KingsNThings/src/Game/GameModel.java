@@ -634,8 +634,7 @@ public class GameModel {
 			initializeThingsString += "Sandworm" + "SPLIT"
 					+ "DESERT" + "SPLIT" 
 					+ 3 + "SPLIT" 
-					+ GameConstants.SandwormImageFront +"SPLIT"
-					+ "RANGE";
+					+ GameConstants.SandwormImageFront +"SPLIT";
 			initializeThingsString += "/";
 			initializeThingsString += "Pterodactyl Warriors" + "SPLIT"
 					+ "JUNGLE" + "SPLIT" 

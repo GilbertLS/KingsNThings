@@ -336,15 +336,15 @@ public class GameController implements Runnable {
 	private void playPhases(){
 		do
 		{
-		distributeIncome();
-		
-		//recruitThings();
-		
-		//playThings();
-		
-		moveThings();
-		
-		PlayBattlePhase();
+			distributeIncome();
+			
+			//recruitThings();
+			
+			//playThings();
+			
+			moveThings();
+			
+			PlayBattlePhase();
 		
 		//ChangePlayerOrder();
 		
