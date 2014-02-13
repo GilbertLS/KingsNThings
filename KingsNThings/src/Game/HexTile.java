@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.Level;
 import Game.GameConstants.Terrain;
 
 /*
@@ -191,5 +192,22 @@ public class HexTile implements IIncomable{
 		default:
 			return player4Things;
 		}
+	}
+
+	public void handlePostBattle() {
+		if(fort != null)
+		{
+			int roll = Dice.rollDice(1)[0];
+			
+			if(roll != 1 && roll != 6)
+			{
+				if(fort.getLevel() == Level.TOWER)
+					fort = null;
+				else
+					fort.decrementLevel();
+			}
+			
+		}
+		
 	}
 }
