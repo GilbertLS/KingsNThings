@@ -1,4 +1,8 @@
 .root {
+	-fx-background-image: url('../res/images/background.jpg');
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
 	-fx-background-color: #336699;
 	-fx-font: 12px "Arial";
 	padding: 0px;
@@ -50,7 +54,7 @@
 }
 
 .board {
-	-fx-background-color: #FFFF00;
+	/*-fx-background-color: #FFFF00;*/
 }
 
 .tile {

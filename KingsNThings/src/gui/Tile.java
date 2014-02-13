@@ -170,6 +170,10 @@ public class Tile extends Region implements Draggable {
 	    	if(fort == null)
 	    		fort = new ThingView(tileRef.fort);
     	}
+    	else
+    	{
+    		fort = null;
+    	}
     	
     	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
     		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");

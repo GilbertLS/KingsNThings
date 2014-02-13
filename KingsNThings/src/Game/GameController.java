@@ -615,11 +615,7 @@ public class GameController implements Runnable {
 					totalHitsInRound += numActualHits;
 					
 					if (battleOver){
-						GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.BATTLE_OVER )
-								.EventParameters(coordinates)
-						);
+
 						break;
 					}
 				}
@@ -649,9 +645,10 @@ public class GameController implements Runnable {
 			} while (!battleOver);
 
 			GameControllerEventHandler.sendEvent(
-				new Event()
-					.EventId( EventList.BATTLE_OVER )
-			);
+					new Event()
+						.EventId( EventList.BATTLE_OVER)
+						.EventParameters(coordinates)
+				);
 		}
 	}
 	private void AddTestThingsToTile(){

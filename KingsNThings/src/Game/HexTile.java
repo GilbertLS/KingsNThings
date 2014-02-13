@@ -78,7 +78,14 @@ public class HexTile implements IIncomable{
 	}
 	
 	public ArrayList<Thing> GetThings(Player player){
-		return GetThings(player.GetPlayerNum());
+		ArrayList<Thing> returnList = GetThings(player.GetPlayerNum());
+		
+		if(fort != null && player.faction == controlledBy)
+		{
+			returnList.add(fort);
+		}
+		
+		return returnList;
 	}
 	
 	public ArrayList<Thing> GetThings(int player){
@@ -217,7 +224,7 @@ public class HexTile implements IIncomable{
 		else if(player4Things.size() > 0)
 			controlledBy = ControlledBy.PLAYER4;
 		else
-			controlledBy = controlledBy.NEUTRAL;
+			controlledBy = ControlledBy.NEUTRAL;
 		
 	}
 }
