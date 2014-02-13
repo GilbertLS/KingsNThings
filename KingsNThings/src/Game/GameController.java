@@ -94,7 +94,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 4;
+		return servers.size() == 2;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -116,7 +116,7 @@ public class GameController implements Runnable {
 		
 		placeThingsOnTile(3, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -338,9 +338,9 @@ public class GameController implements Runnable {
 		{
 			distributeIncome();
 			
-			recruitThings();
+			//recruitThings();
 			
-			playThings();
+			//playThings();
 			
 			moveThings();
 			
@@ -551,6 +551,7 @@ public class GameController implements Runnable {
 				}
 				
 				String[] combatTypes = new String[]{ "Magic", "Ranged", "Other" };
+				int totalHitsInRound = 0;
 				// 1 magic, ranged, other roll sequence
 				for (String combatType : combatTypes) {
 					String[] getRollParams = new String[3];
@@ -610,27 +611,8 @@ public class GameController implements Runnable {
 							battleOver = false;
 						}
 					}
-					if (!battleOver && numActualHits != 0){
-						Response[] retreats = GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.GET_RETREAT )
-								.EventParameters( coordinates )
-								.ExpectsResponse()
-						);
-						
-						int numLeft = 0;
-						for (Response retreat : retreats) {
-							if (retreat.eventId == EventList.NULL_EVENT){
-								continue;
-							}
-							if (retreat.message.equals("n")){
-								numLeft++;
-							} 
-						}
-						if (numLeft < 2){
-							battleOver = true;
-						}
-					}
+					
+					totalHitsInRound += numActualHits;
 					
 					if (battleOver){
 						GameControllerEventHandler.sendEvent(
@@ -640,7 +622,29 @@ public class GameController implements Runnable {
 						);
 						break;
 					}
-				} 
+				}
+				
+				if (!battleOver && totalHitsInRound != 0){
+					Response[] retreats = GameControllerEventHandler.sendEvent(
+						new Event()
+							.EventId( EventList.GET_RETREAT )
+							.EventParameters( coordinates )
+							.ExpectsResponse()
+					);
+					
+					int numLeft = 0;
+					for (Response retreat : retreats) {
+						if (retreat.eventId == EventList.NULL_EVENT){
+							continue;
+						}
+						if (retreat.message.equals("n")){
+							numLeft++;
+						} 
+					}
+					if (numLeft < 2){
+						battleOver = true;
+					}
+				}
 				
 			} while (!battleOver);
 

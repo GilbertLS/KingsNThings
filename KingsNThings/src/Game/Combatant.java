@@ -47,7 +47,8 @@ public abstract class Combatant extends Thing{
 	// remove promptView
 	public int GetCombatRoll(
 			BattleTurn turn,
-			boolean promptView
+			boolean promptView,
+			int numPreviousRolls
 	){
 		int rolls = 0;
 		if (!(
@@ -62,7 +63,7 @@ public abstract class Combatant extends Thing{
 				int roll = GameClient.game.gameModel.rollDice();
 				
 				if (promptView){
-					GameView.battleView.RollDice(this, 0, roll);
+					GameView.battleView.RollDice(this, 0, roll, numPreviousRolls);
 				}
 				
 				if (roll <= this.GetCombatValue() ){

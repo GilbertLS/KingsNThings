@@ -126,17 +126,16 @@ public class EventHandler {
 			
 			if (type.equals("Magic")) { 
 				isMagicTurn = true; 
-				message = "Roll for magic";
+				message = "magic";
 			}
 			else if (type.equals("Ranged")) { 
 				isRangedTurn = true;
-				message = "Roll for ranged";
+				message = "ranged";
 			}
 			else {
-				message = "Roll for others";
+				message = "other";
 			}
 			
-			GameView.battleView.UpdateMessage(message);
 			
 			if (GameClient.game.gameModel.boardController.HasThingsOnTile(
 					GameClient.game.gameModel.GetCurrentPlayer(), 
@@ -163,8 +162,10 @@ public class EventHandler {
 					
 					Combatant combatant = (Combatant)thing;
 					
-					rolls += combatant.GetCombatRoll(turn, true);
+					rolls += combatant.GetCombatRoll(turn, true, rolls);
 				}
+				
+				GameView.battleView.UpdateMessage("Applying " + rolls + " hits for this " + message + " rolls turn");
 				
 				EventHandler.SendEvent(
 					new Event()
@@ -177,7 +178,7 @@ public class EventHandler {
 			}
 			
 
-			GameView.battleView.ClearMessage();
+			//GameView.battleView.ClearMessage();
 				
 		}
 		else if (e.eventId == EventList.SET_CURRENT_PLAYER){
