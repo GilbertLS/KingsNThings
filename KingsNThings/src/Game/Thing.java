@@ -46,12 +46,12 @@ public abstract class Thing {
 			   thingType == ThingType.TERRAIN_LORD;
 	}
 	
-	public int getControlledByNum() {
+	public int getControlledByPlayerNum() {
 		switch(controlledBy) {
-			case PLAYER1: return 1;
-			case PLAYER2: return 2;
-			case PLAYER3: return 3;
-			case PLAYER4: return 4;
+			case PLAYER1: return 0;
+			case PLAYER2: return 1;
+			case PLAYER3: return 2;
+			case PLAYER4: return 3;
 			default: return 0;
 		}
 	}
