@@ -115,7 +115,6 @@ public class TilePreview extends VBox {
 		}
 		view4 = new ThingViewList(FXCollections.observableList((arr)));
 		
-
 		if(tile.fort != null)
 		{
 			ThingViewList thingViewForFort;

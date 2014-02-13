@@ -983,7 +983,7 @@ public class GameModel {
 			fromTile.removeThing(id, playerIndex); 
 			toTile.AddThingToTile(playerIndex, thingPlayed);
 			
-			if(!player.ownedHexTiles.contains(toTile))
+			if(!player.ownedHexTiles.contains(toTile) && toTile.controlledBy == ControlledBy.NEUTRAL)
 			{
 				updateTileFaction(playerIndex, toTile.x, toTile.y);
 			}
