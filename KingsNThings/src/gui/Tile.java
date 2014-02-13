@@ -6,6 +6,7 @@ import java.util.List;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
+import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
 import Game.HexTile;
 import Game.Thing;
@@ -102,6 +103,7 @@ public class Tile extends Region implements Draggable {
     	
     	for(Thing t : listOfThings) {
     		ThingView tv = new ThingView(t);
+    		if(t.getThingType() != ThingType.FORT)
     		listOfTvs.add(tv);
     	}
     }

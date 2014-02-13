@@ -228,18 +228,12 @@ public class GameView extends Scene {
 	
 	public void EndBattle(){
 		if (GameView.BattleOccuring()){
+			GameView.battleView.UpdateMessage("Battle is over");
 			
-			Platform.runLater(new Runnable(){
-				public void run(){
-					displayMessage("Battle is over");
-				}
-			});
-			
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			for(int i = 0; i < 3; i++) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {}
 			}
 			
 			HexTile hexTile = GameClient.game.gameModel.boardController.GetTile(

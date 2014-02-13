@@ -60,7 +60,9 @@ public class BoardController {
 	}
 	
 	public void RemoveThings(int[] thingsToRemove, Player player, int tileX, int tileY){
-		ArrayList<Thing> things = gameBoard.getTile(tileX, tileY).GetThings(player);
+		
+		HexTile h = gameBoard.getTile(tileX, tileY);
+		ArrayList<Thing> things = h.GetThings(player);
 		
 		/* removing this for visibility reasons
 		if (thingsToRemove.length > things.size()){
@@ -68,12 +70,19 @@ public class BoardController {
 			return;
 		}*/
 		
+		
 		for (int i = 0; i < thingsToRemove.length; i++){
 			List<Thing> removeThings = new ArrayList<Thing>(things.size());
 			for (Thing thing : things){
 				if (thing.GetThingId() == thingsToRemove[i]){
 					removeThings.add(thing);
 				}
+			}
+			
+			if(h.fort != null)
+			{
+				if(h.fort.thingID == thingsToRemove[i])
+					h.fort = null;
 			}
 			
 			for (Thing thing : removeThings){

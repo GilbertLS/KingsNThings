@@ -163,7 +163,17 @@ public class EventHandler {
 				
 				int rolls = 0;
 				
-				for (Thing thing : battleTile.GetThings( currPlayer )){
+				ArrayList<Thing> thingsBattling = new ArrayList<Thing>();
+				for(Thing t :battleTile.GetThings( currPlayer ))
+				{
+					thingsBattling.add(t);
+				}
+				if(battleTile.fort != null && currPlayer.faction == battleTile.controlledBy)
+				{
+					thingsBattling.add(battleTile.fort);
+				}
+				
+				for (Thing thing : thingsBattling){
 					if ( !thing.IsCombatant() ){
 						continue;
 					}
@@ -265,11 +275,17 @@ public class EventHandler {
 					//System.out.print(thing.GetThingId() + " ");
 				//}
 				
+
+				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
+				
+				boolean hasFort = currTile.fort != null && currentPlayer.faction == currTile.controlledBy;
+				
+				if(hasFort)
+					numHitsToApply++;
 				
 				String[] thingsToRemove = new String[numHitsToApply];
 				
-				BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 				if (things.size() > numHitsTaken){
 						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
 						for (int i = 0; i < tilesToRemove.length; i++){
@@ -279,6 +295,9 @@ public class EventHandler {
 					int i = 0;
 					for (Thing t : things){
 						thingsToRemove[i++] = "" + t.thingID;
+					}
+					if(hasFort){
+						thingsToRemove[i++] = "" + currTile.fort.thingID;
 					}
 				}
 				EventHandler.SendEvent(

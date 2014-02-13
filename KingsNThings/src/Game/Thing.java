@@ -30,6 +30,11 @@ public abstract class Thing {
 		
 		this.currentTile = null;
 	}
+	
+	public ThingType getThingType()
+	{
+		return thingType;
+	}
 
 	public int GetThingId(){
 		return thingID;
@@ -47,7 +52,10 @@ public abstract class Thing {
 	public boolean IsCombatant(){
 		return thingType == ThingType.CREATURE ||
 			   thingType == ThingType.SPECIAL_CHARACTER ||
-			   thingType == ThingType.TERRAIN_LORD;
+			   thingType == ThingType.TERRAIN_LORD ||
+			   thingType == ThingType.FORT ||
+			   thingType == ThingType.SETTLEMENT;
+		
 	}
 	
 	public int getControlledByPlayerNum() {
