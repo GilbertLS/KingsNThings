@@ -32,7 +32,6 @@ public class TilePreview extends VBox {
 		this.getChildren().add(viewNeutral);
 		
 		this.playerNum = num;
-		this.setSelectable();
 		
 		this.setPrefSize(300,280);
 	}
@@ -77,25 +76,11 @@ public class TilePreview extends VBox {
 		view4 = new ThingViewList(FXCollections.observableList(t.p4Things));
 		viewNeutral = new ThingViewList(FXCollections.observableList(t.neutralThings));
 		
-		setSelectable();
 		show();
-	}
-	
-	private void setSelectable() {
-		if (this.playerNum != 0)
-			view1.disable();
-		else if (this.playerNum != 1)
-			view2.disable();
-		else if (this.playerNum != 2)
-			view3.disable();
-		else if (this.playerNum != 3)
-			view4.disable();
-		viewNeutral.disable();
 	}
 	
 	public void setPlayerNum(int i) {
 		this.playerNum = i;
-		this.setSelectable();
 	}
 	
 	public void changeTile(HexTile tile){
@@ -129,6 +114,29 @@ public class TilePreview extends VBox {
 			arr.add(thingView);
 		}
 		view4 = new ThingViewList(FXCollections.observableList((arr)));
+		
+		if(tile.fort != null)
+		{
+			ThingViewList thingViewForFort;
+			switch(tile.controlledBy)
+			{
+			case PLAYER1:
+				thingViewForFort = view1;
+				break;
+			case PLAYER2:
+				thingViewForFort = view2;
+				break;
+			case PLAYER3:
+				thingViewForFort = view3;
+				break;
+			default:
+				thingViewForFort = view4;
+				break;
+			}
+			
+			thingViewForFort.add(new ThingView(tile.fort));
+		}
+		
 		show();
 	}
 }

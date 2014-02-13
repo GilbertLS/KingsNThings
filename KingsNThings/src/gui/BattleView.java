@@ -194,6 +194,7 @@ public class BattleView extends Scene {
 		int[] thingsToRemove = new int[numHitsTaken];
 		int i = 0;
 		for (Integer thingId : GameView.selectedThings){
+			System.out.println("--------------");
 			thingsToRemove[i++] = thingId;
 			RemoveThingFromBattle(thingId, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
 		}

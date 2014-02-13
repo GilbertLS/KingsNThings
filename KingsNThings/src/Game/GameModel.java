@@ -634,8 +634,7 @@ public class GameModel {
 			initializeThingsString += "Sandworm" + "SPLIT"
 					+ "DESERT" + "SPLIT" 
 					+ 3 + "SPLIT" 
-					+ GameConstants.SandwormImageFront +"SPLIT"
-					+ "RANGE";
+					+ GameConstants.SandwormImageFront +"SPLIT";
 			initializeThingsString += "/";
 			initializeThingsString += "Pterodactyl Warriors" + "SPLIT"
 					+ "JUNGLE" + "SPLIT" 
@@ -903,8 +902,7 @@ public class GameModel {
 
 	public HexTile addTower(int x, int y, int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
-		
-
+	
 		Fort f = new Fort();
 		f.controlledBy = player.faction;
 		
@@ -984,7 +982,7 @@ public class GameModel {
 			fromTile.removeThing(id, playerIndex); 
 			toTile.AddThingToTile(playerIndex, thingPlayed);
 			
-			if(!player.ownedHexTiles.contains(toTile))
+			if(!player.ownedHexTiles.contains(toTile) && toTile.controlledBy == ControlledBy.NEUTRAL)
 			{
 				updateTileFaction(playerIndex, toTile.x, toTile.y);
 			}
