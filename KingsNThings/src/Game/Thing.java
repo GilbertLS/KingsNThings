@@ -35,6 +35,10 @@ public abstract class Thing {
 		return thingID;
 	}
 	
+	public String GetName(){
+		return this.name;
+	}
+	
 	// REMOVE THIS, ONYL FOR TESTING PURPOSES
 	public void SetThingId(int thingId){
 		this.thingID = thingId;

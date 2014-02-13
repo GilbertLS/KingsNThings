@@ -62,7 +62,7 @@ public abstract class Combatant extends Thing{
 				int roll = GameClient.game.gameModel.rollDice();
 				
 				if (promptView){
-					GameView.battleView.RollDice(0, roll);
+					GameView.battleView.RollDice(this, 0, roll);
 				}
 				
 				if (roll <= this.GetCombatValue() ){

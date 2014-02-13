@@ -2,10 +2,13 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import Game.Combatant;
 import Game.Creature;
 import Game.GameConstants;
 import Game.HexTile;
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.Thing;
 import Game.Networking.GameClient;
@@ -21,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -62,7 +66,6 @@ public class BattleView extends Scene {
         
         leftPanel = new VBox();
         root.setLeft(leftPanel);
-        
         
         submit.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -120,8 +123,34 @@ public class BattleView extends Scene {
 		battleStage.show();
 	}
 	
-	public void RollDice(int diceNum, int roll){
+	public void RollDice(Thing thing, int diceNum, int roll){
+		if (!thing.IsCombatant()){
+			return;
+		}
+		
+		Combatant combatant = (Combatant)thing;
+		
+		String s;
+		
+		if (combatant.IsMagic()){
+			s = "Rolling for magic";
+		} else if (combatant.IsRange()){
+			s = "Rolling for range";
+		} else {
+			s = "Rolling for regular";
+		}
+		
+		if (combatant.IsCharge()){
+			s += " charge";
+		}
+		
+		s += " creature: " + thing.GetName();
+		
+		UpdateMessage(s);
+	
 		diceListView.RollDice(diceNum, roll);
+		
+		ClearMessage();
 	}
 	
 	public void SetupPlayerThings(){
@@ -165,8 +194,6 @@ public class BattleView extends Scene {
 		int[] thingsToRemove = new int[numHitsTaken];
 		int i = 0;
 		for (Integer thingId : GameView.selectedThings){
-			System.out.println("--------------");
-			System.out.println(thingId);
 			thingsToRemove[i++] = thingId;
 			RemoveThingFromBattle(thingId, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
 		}
