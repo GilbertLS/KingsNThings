@@ -106,6 +106,12 @@ public class Tile extends Region implements Draggable {
     	}
     }
     
+    public void updateThings(){
+    	for(int i = 0; i < 4; i++){
+    		updateThings(i);
+    	}
+    }
+    
     private String getBackgroundFromType()
     {
     	if (tileRef != null) {

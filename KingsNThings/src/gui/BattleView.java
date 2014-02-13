@@ -45,8 +45,8 @@ public class BattleView extends Scene {
     public MessageView messageView;
     public Stage battleStage;
     
-    private int tileX;
-    private int tileY;
+    public int tileX;
+    public int tileY;
 	
 	public BattleView(BorderPane root, int tileX, int tileY){
 		super(root, 700, 500);
@@ -137,6 +137,16 @@ public class BattleView extends Scene {
 		
 	}
 	
+	public void RemoveThings(int[] thingIds, int playerNum){
+		String s = "";
+		for (int thingId : thingIds){
+			s += thingId + " ";
+			RemoveThingFromBattle(thingId, playerNum);
+		}
+		
+		GameView.battleView.UpdateMessage("Removed things: " + s);
+	}
+	
 	public int[] inflictHits(int numHitsTaken) {
 		UpdateMessage("Select " + numHitsTaken + " things to discard.");
 		
@@ -159,7 +169,7 @@ public class BattleView extends Scene {
 			System.out.println("--------------");
 			System.out.println(thingId);
 			thingsToRemove[i++] = thingId;
-			RemoveThingFromBattle(thingId);
+			RemoveThingFromBattle(thingId, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
 		}
 		ClearMessage();
 		
@@ -212,9 +222,8 @@ public class BattleView extends Scene {
 		});
 	}
 	
-	public void RemoveThingFromBattle(final int thingId){
-		final int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
-		final ThingViewList list = tilePreview.GetThingList(currPlayer);
+	public void RemoveThingFromBattle(final int thingId, int playerNum){
+		final ThingViewList list = tilePreview.GetThingList(playerNum);
 		
 		Platform.runLater(new Runnable() {
 	        @Override
