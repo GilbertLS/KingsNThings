@@ -1,0 +1,127 @@
+.root {
+	-fx-background-image: url('../res/images/background.jpg');
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+	-fx-background-color: #336699;
+	-fx-font: 12px "Arial";
+	padding: 0px;
+	margin: 0px;
+}
+
+.player-panel {
+	-fx-background-color: #232323;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
+	-fx-padding: 10;
+	-fx-text-fill: white;
+}
+
+.player-panel .label {
+	-fx-text-fill: white;
+	-fx-padding: 10;
+}
+
+.player-list {
+	-fx-border-width: 1 0 0 0;
+	-fx-border-color: #353535;
+}
+
+.list-view {
+	-fx-focus-color: transparent;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#328BDB 0%, #207BCF 25%, #1973C9 75%, #0A65BF 100%);
+    -fx-text-fill: white;
+    -fx-opacity: 0.3;
+}
+
+.list-cell:even {
+    -fx-background-color: red;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #FFFF00;
+    -fx-text-fill: white;
+}
+
+.thingview-list .scroll-bar:vertical .increment-arrow,
+.thingview-list .scroll-bar:vertical .decrement-arrow,
+.thingview-list .scroll-bar:vertical .increment-button,
+.thingview-list .scroll-bar:vertical .decrement-button {
+    -fx-padding:0;
+}
+
+.board {
+	/*-fx-background-color: #FFFF00;*/
+}
+
+.tile {
+	-fx-background-color: #564456;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+}
+
+.tile:hover {
+	-fx-border: 10px;
+	-fx-border-color: red;
+}
+
+.tile:selected {
+	-fx-border: 10px;
+	-fx-border-color: red;
+}
+
+.thing {
+	-fx-background: #FFFF00;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+}
+
+.dice {
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+}
+
+.button-box {
+	-fx-padding: 10px;
+	-fx-background-color: #000000;
+}
+
+.button-box .button {
+	-fx-margin: 10px;
+}
+
+.preview-list {
+	-fx-width: 100%;
+}
+
+.message
+{
+	-fx-background-color: #232323;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
+	-fx-text-fill: white;
+	-fx-padding: 10px;
+}
+
+.message .label {
+	-fx-text-fill: white;
+}
+
+.input
+{
+	-fx-background-color: #232323;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
+	-fx-text-fill: white;
+	-fx-padding: 10px;
+}
+
+.input .label {
+	-fx-text-fill: white;
+}
