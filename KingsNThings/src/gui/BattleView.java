@@ -114,7 +114,7 @@ public class BattleView extends Scene {
         SetupPlayerThings();
         
         battleStage = new Stage();
-		battleStage.setTitle("Combat Time!");
+		battleStage.setTitle("Combat Time - Player " + (GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() + 1) );
 		battleStage.setScene(this);
          
 		//battleStage.setX(battleStage.getX() + 150);
