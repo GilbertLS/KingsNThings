@@ -130,7 +130,7 @@ public class PrimaryClient extends Application {
 		
 		// TODO Auto-generated method stub
 		BorderPane root = new BorderPane();
-		gameView = new GameView(root);
+		gameView = new GameView(root, primaryStage);
 		
 		primaryStage.setTitle("Kings N Things");
         primaryStage.setScene(gameView);

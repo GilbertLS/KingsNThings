@@ -45,10 +45,12 @@ public class GameView extends Scene {
 	protected boolean inputTextUpdated = false;
 	String returnString = "";
 	private int currPlayerNum;
+	public Stage primaryStage;
 	
-    public GameView(BorderPane r) {
+    public GameView(BorderPane r, Stage ps) {
     	super(r, 1000, 600);
     	root = r; 
+    	primaryStage = ps;
         
         rightPanel = new VBox();
         root.setRight(rightPanel);
@@ -163,6 +165,7 @@ public class GameView extends Scene {
 	public void setCurrentPlayer(int p) {
 		this.currPlayerNum = p;
 		this.tilePreview.setPlayerNum(p);
+		this.primaryStage.setTitle(primaryStage.getTitle() + " - Player " + (p + 1) );
 	}
 	
 	public Integer getCurrentPlayer() {
@@ -231,7 +234,10 @@ public class GameView extends Scene {
 				GameView.battleView.tileY
 			);
 			
-			GameClient.game.gameView.board.getTileByHex(hexTile).updateThings();
+			Tile tileView = GameClient.game.gameView.board.getTileByHex(hexTile);
+			
+			tileView.updateThings();
+			tileView.update();
 			
 			Platform.runLater(new Runnable(){
 				public void run(){

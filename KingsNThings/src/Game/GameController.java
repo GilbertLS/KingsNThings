@@ -94,7 +94,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 2;
+		return servers.size() == 4;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -338,9 +338,9 @@ public class GameController implements Runnable {
 		{
 			distributeIncome();
 			
-			//recruitThings();
+			recruitThings();
 			
-			//playThings();
+			playThings();
 			
 			moveThings();
 			
@@ -493,183 +493,6 @@ public class GameController implements Runnable {
 	private void PlayBattlePhase(){
 		DoBattle();
 		//DoTestBattle();
-	}
-	
-	private void DoTestBattle(){
-		AddTestThingsToTile();
-		
-		boolean[] playerOne = new boolean[]{ true, false, false, false };
-		
-		Response[] r = GameControllerEventHandler.sendEvent(
-			new Event().EventId(EventList.GET_CONTESTED_ZONES)
-				.ExpectsResponse(true)
-				.IntendedPlayers(playerOne)
-		);
-		
-		String[] contestedZones = r[0].castToStringArray();
-		for(String s : contestedZones){
-			
-			// TODO: Remove things that do not have terrain controlled
-			
-			String[] coordinates = s.split("SPLIT");
-			
-			GameControllerEventHandler.sendEvent(
-				new Event()
-					.EventId( EventList.BEGIN_BATTLE)
-					.EventParameters(coordinates)
-			);
-			
-			boolean battleOver = false;
-			do {
-				Response[] targetedPlayers = GameControllerEventHandler.sendEvent(
-						new Event()
-							.EventId( EventList.CHOOSE_PLAYER )
-							.EventParameters( coordinates )
-							.ExpectsResponse(true)
-							.IntendedPlayers(playerOne)
-				);
-				
-				int[] attackedPlayers = new int[4];
-				Arrays.fill(attackedPlayers, -1);
-				
-				for (Response target : targetedPlayers ){
-					if (target.IsNullEvent()){
-						continue;
-					}
-					attackedPlayers[target.fromPlayer] = target.castToInt();
-				}
-				
-				for (int i = 0; i < attackedPlayers.length; i++){
-					System.out.println("Player " + i + " is attacking player " + attackedPlayers[i]);
-				}
-				
-				String[] combatTypes = new String[]{ "Magic", "Ranged", "Other" };
-				// 1 magic, ranged, other roll sequence
-				for (String combatType : combatTypes) {
-					String[] getRollParams = new String[3];
-					
-					getRollParams[0] = coordinates[0];
-					getRollParams[1] = coordinates[1];
-					getRollParams[2] = combatType;
-					
-					Response[] playerRolls = GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.GET_CREATURE_ROLLS)
-								.EventParameters( getRollParams )
-								.ExpectsResponse(true)
-					);
-					
-					String[] hits = new String[numClients+2];
-					int numActualHits = 0;
-					for (Response rolls : playerRolls){
-						if (!rolls.message.trim().equals("") && Integer.parseInt(rolls.message.trim()) > 0){
-							numActualHits++;
-						}
-						if (rolls.IsNullEvent()){
-							hits[rolls.fromPlayer] = "0";
-						} else {
-							hits[attackedPlayers[rolls.fromPlayer]] = rolls.message;
-						}
-					}
-					
-					/* bot roll */
-					int tileX = Integer.parseInt(coordinates[0]);
-					int tileY = Integer.parseInt(coordinates[1]);
-					
-					List<Integer> players = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY);
-					
-					int botNum = -1;
-					
-					for (Integer i : players){
-						if (i != 0){
-							botNum = i;
-						}
-					}
-					
-					Player bot = GameClient.game.gameModel.GetPlayer(botNum);
-					int botRolls = 0;
-					
-					
-					for (Thing t : GameClient.game.gameModel.boardController.GetTile(tileX, tileY).GetThings(bot)){
-						if ( !t.IsCombatant() ){
-							continue;
-						}
-						
-						BattleTurn turn;
-						
-						if(combatType.equals("Magic")){ turn = BattleTurn.MAGIC; }
-						else if(combatType.equals("Ranged")){ turn = BattleTurn.RANGED; }
-						else { turn = BattleTurn.OTHER; }
-						
-						botRolls += ((Combatant)t).GetCombatRoll(turn, false);
-						if (botRolls > 0){ numActualHits++; }
-					}
-					
-					hits[0] = "" + botRolls;
-					
-					hits[numClients] = coordinates[0];
-					hits[numClients+1] = coordinates[1];
-		 			
-					if (numActualHits > 0){
-						Response[] removedThingsResponse = GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.INFLICT_HITS )
-								.EventParameters( hits )
-								.ExpectsResponse(true)
-						);
-						
-						String[] removedThings = new String[numClients+2];
-						
-						for( Response response : removedThingsResponse ){
-							removedThings[response.fromPlayer] = response.message;
-						}
-						
-						/* REMOVE BOT THINGS */
-						String botHitsTakenString = hits[botNum];
-						int botHitsTaken = Integer.parseInt(botHitsTakenString.trim());
-						String thingsToRemoveEvent = "";
-						
-						if (botHitsTaken > 0){
-							HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
-							ArrayList<Thing> things =  currTile.GetThings(bot);
-							
-							for (int i = 0; i < botHitsTaken; i++){
-								if (i < things.size()) {
-									thingsToRemoveEvent += things.get(i).thingID + " ";
-								} 
-							}
-							System.out.println(thingsToRemoveEvent);
-							
-						}
-						
-						removedThings[botNum] = thingsToRemoveEvent; 
-						removedThings[numClients] = coordinates[0];
-						removedThings[numClients+1] = coordinates[1];
-						
-						if (GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.REMOVE_THINGS )
-								.EventParameters(removedThings)
-								.ExpectsResponse()
-						)[0].eventId == EventList.BATTLE_OVER){
-							battleOver = true;
-						} else {
-							battleOver = false;
-						}
-					}
-					
-					if (battleOver){
-						break;
-					}
-				} 
-				
-			} while (!battleOver);
-
-			GameControllerEventHandler.sendEvent(
-				new Event()
-					.EventId( EventList.BATTLE_OVER )
-			);
-		}
 	}
 	
 	private void DoBattle(){
