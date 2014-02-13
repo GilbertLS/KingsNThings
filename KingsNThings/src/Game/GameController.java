@@ -813,6 +813,7 @@ public class GameController implements Runnable {
 						GameControllerEventHandler.sendEvent(
 							new Event()
 								.EventId( EventList.BATTLE_OVER )
+								.EventParameters(coordinates)
 						);
 						break;
 					}

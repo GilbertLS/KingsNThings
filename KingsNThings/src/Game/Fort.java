@@ -26,4 +26,19 @@ public class Fort extends Building implements IIncomable{
 	public Level getLevel() {
 		return level;
 	}
+
+	public void decrementLevel() {
+		switch(level)
+		{
+		case KEEP:
+			level = Level.TOWER;
+			break;
+		case CASTLE:
+			level = Level.KEEP;
+			break;
+		case CITADEL:
+			level = Level.CASTLE;
+			break;
+		}
+	}
 }
