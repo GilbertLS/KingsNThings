@@ -80,13 +80,13 @@ public class GameController {
 		
 		initializeGold();
 		
-		placeThingsOnTile(2, "Control_Marker");
+		placeThingsOnTile(3, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
-		//playThings();
+		playThings();
 		
 	}
 	
@@ -302,7 +302,7 @@ public class GameController {
 		{
 			distributeIncome();
 			
-			//recruitThings();
+			recruitThings();
 			
 			playThings();
 			
