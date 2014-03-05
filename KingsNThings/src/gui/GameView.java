@@ -215,8 +215,6 @@ public class GameView extends Scene {
 	
 	public void EndBattle(){
 		if (GameView.BattleOccuring()){
-			GameView.battleView.UpdateMessage("Battle is over");
-			
 			for(int i = 0; i < 3; i++) {
 				try {
 					Thread.sleep(1000);
