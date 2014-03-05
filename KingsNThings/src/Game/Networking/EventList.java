@@ -38,4 +38,5 @@ public class EventList {
 	public static final int MOVE_THINGS = 115;
 	public static final int HANDLE_MOVE_THINGS = 116;
 	public static final int GET_RETREAT = 20;
+	public static final int SET_PHASE_NOT_DONE = 117;
 }

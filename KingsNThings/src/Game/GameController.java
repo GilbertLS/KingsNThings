@@ -94,7 +94,7 @@ public class GameController implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 4;
+		return servers.size() == 2;
 	}
 
 	public static void AddClient( GameRouter c ){
@@ -114,9 +114,9 @@ public class GameController implements Runnable {
 		
 		initializeGold();
 		
-		placeThingsOnTile(3, "Control_Marker");
+		placeThingsOnTile(2, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -127,7 +127,7 @@ public class GameController implements Runnable {
 	}
 	
 	private void playThings() {
-    		
+			
 		for(GameRouter gr: servers)
 		{
 			String[] args  = {""+gr.myID, ""};
@@ -338,9 +338,9 @@ public class GameController implements Runnable {
 		{
 			distributeIncome();
 			
-			recruitThings();
+			//recruitThings();
 			
-			playThings();
+			//playThings();
 			
 			moveThings();
 			
@@ -355,36 +355,48 @@ public class GameController implements Runnable {
 	private void moveThings() {
 		for(GameRouter gr: servers)
 		{
-			String[] args  = {""+gr.myID, ""};
-    		Event e = new Event()
-    					.EventId(EventList.MOVE_THINGS)
-    					.ExpectsResponse(true)
-    					.EventParameters(args);
-    		
-    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+			boolean moveDone = false;
+			
+			boolean[] intendedPlayers = new boolean[numClients];
+			intendedPlayers[gr.myID] = true;
+			
+			Event e = new Event()
+						.EventId(EventList.SET_PHASE_NOT_DONE)
+						.IntendedPlayers(intendedPlayers);
+			
+			do
+			{
+				String[] args  = {""+gr.myID, "",""+moveDone};
+	    		e = new Event()
+	    				.EventId(EventList.MOVE_THINGS)
+	    				.ExpectsResponse(true)
+	    				.EventParameters(args);
+	    		
+	    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+	
+				for (int j=0; j<responses.length; j++){
+					if(responses[j].fromPlayer == gr.myID)
+					{
+						String[] responseStrings = responses[j].message.split(" ");
+						
+						args[2] = responseStrings[0];
+						
+						if(responseStrings.length == 2)
+							args[1] = responseStrings[1];
 
-			for (int j=0; j<responses.length; j++){
-				if(responses[j].fromPlayer == gr.myID)
-				{
-					args[1] = responses[j].message;
+						moveDone = Boolean.parseBoolean(responseStrings[0]);
+					}
 				}
-			}
-    		
-			boolean[] intendedPlayers = new boolean[4];
-    		for(int j=0; j<numClients; j++)
-    		{
-    			if(j == gr.myID)
-    				intendedPlayers[j] = false;
-    			else
-    				intendedPlayers[j] = true;
-    		}
-    		
-    		e = new Event()
-				.EventId(EventList.HANDLE_MOVE_THINGS)
-				.IntendedPlayers(intendedPlayers)
-    		    .EventParameters(args);
-    		
-    		GameControllerEventHandler.sendEvent(e);
+	    		
+				if(!args[1].equals(""))
+				{
+		    		e = new Event()
+						.EventId(EventList.HANDLE_MOVE_THINGS)
+		    		    .EventParameters(args);
+		    		
+		    		GameControllerEventHandler.sendEvent(e);
+				}
+			}while(!moveDone);
 		}
 		
 	}

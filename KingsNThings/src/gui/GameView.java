@@ -46,6 +46,7 @@ public class GameView extends Scene {
 	String returnString = "";
 	private int currPlayerNum;
 	public Stage primaryStage;
+	public boolean moveMade = false;
 	
     public GameView(BorderPane r, Stage ps) {
     	super(r, 1000, 600);
@@ -136,10 +137,45 @@ public class GameView extends Scene {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		userInputDone = false;
 		
 		this.currentPhase = CurrentPhase.NULL;
 		
 		return returnString;
+	}
+	
+	public String moveIteration()
+	{
+		//perform a single iteration of movement
+		//movement is done when userInputDone is set to true
+		//after the beginning of the movement phase
+
+		
+		returnString = "";
+		moveMade = false;		
+		currentPhase = CurrentPhase.MOVEMENT;
+		
+		try {
+			do{
+				Thread.sleep(500);
+			}while(!moveMade && !userInputDone);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		boolean s = userInputDone;
+		
+		moveMade = false;
+		userInputDone = false;
+		
+		currentPhase = CurrentPhase.NULL;
+		
+		return s +" "+returnString;		
+	}
+	
+	public void setPhaseNotDone()
+	{
+		userInputDone = false;
 	}
 
 	public void updatePlayerRack() {

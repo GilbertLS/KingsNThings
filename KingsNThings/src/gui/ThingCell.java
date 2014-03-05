@@ -62,17 +62,27 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 
 				if(gv.currentPhase == CurrentPhase.MOVEMENT || gv.currentPhase == CurrentPhase.PLAY_THINGS)
 				{
-					ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
-					
-					//Check if thing is owned by player
-					if (getListView().getItems().get(selectedIds.get(0)).thingRef.getControlledByPlayerNum() == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()) {
-						Dragboard db = startDragAndDrop(TransferMode.MOVE);
-						ClipboardContent content = new ClipboardContent();
-						content.put(thingRackIds, selectedIds);
-				
-						content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + " ");
-					
-						db.setContent(content);
+					//prevent movement from tile preview during playthings phase
+					if(!(!getListView().getParent().equals(gv.rack) && gv.currentPhase == CurrentPhase.PLAY_THINGS))
+					{
+						ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
+						
+						//Check if thing is owned by player
+						if (getListView().getItems().get(selectedIds.get(0)).thingRef.getControlledByPlayerNum() == GameClient.game.gameView.getCurrentPlayer()) {
+								
+							//check not pinned
+							if( getListView().getParent().equals(gv.rack)
+									|| GameClient.game.gameView.tilePreview.tileRef.getTileRef().isOnlyPlayerOnTile(gv.getCurrentPlayer()))
+							{		
+								Dragboard db = startDragAndDrop(TransferMode.MOVE);
+								ClipboardContent content = new ClipboardContent();
+								content.put(thingRackIds, selectedIds);
+						
+								content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + "~");
+							
+								db.setContent(content);
+							}
+						}
 					}
 				}
 

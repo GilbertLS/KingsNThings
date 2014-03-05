@@ -6,7 +6,9 @@ import java.util.List;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
+import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
+import Game.GameController;
 import Game.Networking.GameClient;
 import Game.HexTile;
 import Game.Thing;
@@ -255,80 +257,76 @@ public class Tile extends Region implements Draggable {
 						ThingCell 					source 		= (ThingCell)e.getGestureSource();
 						ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
 						ObservableList<ThingView> 	items		= source.getListView().getItems();
-						ArrayList<ThingView> 		things		= new ArrayList<ThingView>();
+						ArrayList<ThingView> 		thingViews		= new ArrayList<ThingView>();
 						
 						GameView gv = (GameView)getScene();
 						
+						for (Integer i : listOfIds) {
+							thingViews.add(items.get(i));
+						}
+						
+						String originalTileString = (String)e.getDragboard().getContent(originalTile);
+						
 						if(gv.currentPhase != CurrentPhase.NULL)
-						{
-							
+						{							
 							if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 							{
 								if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
-								{
-									for (Integer i : listOfIds) {
-										things.add(items.get(i));
-									}
+								{									
+									gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(thingViews.size());
 									
-									thisTile.addAll(things, gv.getCurrentPlayer());
-									source.getListView().getItems().removeAll(things);
+									for(ThingView t: thingViews)
+										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
 									
-									String originalTileString = (String)e.getDragboard().getContent(originalTile);
+									thisTile.addAll(thingViews, gv.getCurrentPlayer());
+									source.getListView().getItems().removeAll(thingViews);
 									
 									success = true;
-									
-									gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(things.size());
-									
-									for(ThingView t: things)
-										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 								}
 							}
 							else if(gv.currentPhase == CurrentPhase.MOVEMENT)
 							{
-
-								if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+								String[] paramsStrings = originalTileString.split("~");
+								String[] originalHexParams = paramsStrings[0].split("SPLIT");
+								int x = Integer.parseInt(originalHexParams[0].trim());
+								int y = Integer.parseInt(originalHexParams[1].trim());
+								
+								HexTile originalTile = GameClient.game.gameModel.gameBoard.getTile(x, y);
+								
+								ArrayList<Thing> things = new ArrayList();
+								
+								for(ThingView tv: thingViews)
+									things.add(tv.thingRef);
+								
+								if(GameClient.game.isValidMove(originalTile, tileRef, things))
 								{
-									for (Integer i : listOfIds) {
-										things.add(items.get(i));
+									if(tileRef.controlledBy == ControlledBy.NEUTRAL) //exploration
+									{
+										//check roll in model
+										boolean spawnCreatures = GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y);
+										
+										if(spawnCreatures)
+										{
+											//handle creatures
+										}
+										else
+										{
+											//update faction
+											update();
+										}
 									}
 									
-									thisTile.addAll(things, gv.getCurrentPlayer());
-									source.getListView().getItems().removeAll(things);
-									
-									String originalTileString = (String)e.getDragboard().getContent(originalTile);
+									thisTile.addAll(thingViews, gv.getCurrentPlayer());
+									source.getListView().getItems().removeAll(thingViews);
 									
 									success = true;
 									
-									//check roll in model
-									boolean spawnCreatures = GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y);
+									gv.moveMade = true;
 									
-									if(spawnCreatures)
-									{
-										//handle creatures
-									}
-									else
-									{
-										update();
-									}
+									//string to update 
+									for(ThingView t: thingViews)
+										gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
 									
-									for(ThingView t: things)
-										gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
-								}
-								else
-								{
-									for (Integer i : listOfIds) {
-										things.add(items.get(i));
-									}
-									
-									thisTile.addAll(things, gv.getCurrentPlayer());
-									source.getListView().getItems().removeAll(things);
-									
-									String originalTileString = (String)e.getDragboard().getContent(originalTile);
-									
-									success = true;
-									
-									for(ThingView t: things)
-										gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+" "+t.thingRef.thingID+"/";
 								}
 							}
 						}
