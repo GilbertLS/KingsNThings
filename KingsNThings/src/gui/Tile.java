@@ -9,6 +9,7 @@ import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.GameController;
+import Game.Utility;
 import Game.Networking.GameClient;
 import Game.HexTile;
 import Game.Thing;

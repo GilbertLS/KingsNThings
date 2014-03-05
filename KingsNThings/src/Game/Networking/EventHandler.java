@@ -94,6 +94,7 @@ public class EventHandler {
 			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
 			
 			h.handlePostBattle();
+			GameView.battleView.UpdateMessage("Battle is over");
 			
 			Platform.runLater(new Runnable() {
 		        @Override
@@ -451,6 +452,11 @@ public class EventHandler {
 				boolean validSelectionMade = false;
 				
 				GameClient.game.sendMessageToView("Please select a tile to place a " + pieceBeingPlacedString + " into.");
+				EventHandler.SendEvent( 
+					new Event()
+					.EventId(EventList.SET_MESSAGE)
+					.EventParameter("Player " + playerIndex + " selecting a tile to place")
+				);
 				
 				do
 				{										
@@ -800,14 +806,22 @@ public class EventHandler {
 				);
 			} else {
 				SendNullEvent();
-			}
+			} 
+		} else if (e.eventId == EventList.SET_MESSAGE) {
+			final String message = e.eventParams[0];
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.displayMessage(message);
+		        }
+			});
 		}
 		else if(e.eventId == EventList.SET_PHASE_NOT_DONE)
 		{
 			GameClient.game.setPhaseNotDone();
 		}
 		
-		if (e.expectsResponseEvent && numberOfSends != 1){
+		if (e.expectsResponseEvent && numberOfSends == 0){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
 		} else if (!e.expectsResponseEvent && numberOfSends != 0){
 				throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
@@ -818,7 +832,6 @@ public class EventHandler {
 	
 	private static void waitForOtherPlayer(final int playerIndex, final String actionBeingTaken) {
 		String s = "Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".";
-		
 		//needs GameControllerEventHandler to be multi-threaded
 		/*
 			GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");

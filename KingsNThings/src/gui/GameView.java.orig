@@ -47,10 +47,12 @@ public class GameView extends Scene {
 	String returnString = "";
 	private int currPlayerNum;
 	public Stage primaryStage;
-	public Semaphore inputLock = new Semaphore(0);
+<<<<<<< HEAD
+	public boolean moveMade = false;
+=======
 	public Semaphore submitLock = new Semaphore(0);
-	public Semaphore moveLock = new Semaphore(0);
-	boolean moveMade = false;
+	public Semaphore inputLock = new Semaphore(0);
+>>>>>>> origin/develop
 	
     public GameView(BorderPane r, Stage ps) {
     	super(r, 1000, 600);
@@ -122,22 +124,26 @@ public class GameView extends Scene {
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
 		
+		returnString = "";
+		
+<<<<<<< HEAD
 		userInputDone = false;
 		try {
 			do{
-				Thread.sleep(250);
+				Thread.sleep(500);
 			}while(!userInputDone);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String s = returnString;
 		userInputDone = false;
-		returnString = "";
+=======
+		Utility.PromptForInput(inputLock);
+>>>>>>> origin/develop
 		
 		this.currentPhase = CurrentPhase.NULL;
 		
-		return s;
+		return returnString;
 	}
 	
 	public String moveIteration()
@@ -146,25 +152,27 @@ public class GameView extends Scene {
 		//movement is done when userInputDone is set to true
 		//after the beginning of the movement phase
 
+		
+		returnString = "";
+		moveMade = false;		
 		currentPhase = CurrentPhase.MOVEMENT;
 		
 		try {
 			do{
-				Thread.sleep(250);
+				Thread.sleep(500);
 			}while(!moveMade && !userInputDone);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String s = userInputDone + " " + returnString;
+		boolean s = userInputDone;
 		
 		moveMade = false;
 		userInputDone = false;
-		returnString = "";
 		
 		currentPhase = CurrentPhase.NULL;
 		
-		return s;	
+		return s +" "+returnString;		
 	}
 	
 	public void setPhaseNotDone()

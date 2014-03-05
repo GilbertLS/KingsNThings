@@ -1,5 +1,6 @@
 package gui;
 
+import Game.Utility;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -23,11 +24,11 @@ public class ButtonBox extends HBox {
 			@Override
 		    public void handle(ActionEvent e) {
 				GameView gv = ((GameView)getScene());
+				Utility.GotInput(gv.inputLock);
 				gv.userInputDone = true;
 			}
 		});
 		
-		//Setting an action for the Submit button
 		showHideTiles.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
