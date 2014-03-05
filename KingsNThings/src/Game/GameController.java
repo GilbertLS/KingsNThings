@@ -26,12 +26,12 @@ public class GameController {
 	public static boolean gameStarted = false;
 	public static boolean gameEnded = false; 
 	//public String address;
-	private int numClients;
+	public static int numClients;
 	
 	public GameController(
-			int numClients
+			int numberOfClients
 	) {
-		this.numClients = numClients;
+		numClients = numberOfClients;
 	}
 	
 	public void StartGame(){

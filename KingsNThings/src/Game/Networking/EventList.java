@@ -20,6 +20,8 @@ public class EventList {
 	public static final int GET_THINGS_FROM_CUP = 16;
 	public static final int DISTRIBUTE_INITIAL_GOLD = 18;
 	public static final int AWARD_INCOME = 19;
+	public static final int GET_RETREAT = 20;
+	public static final int SET_MESSAGE = 21;
 	public static final int TEST_EVENT = 999;
 	public static final int NULL_EVENT = -1;
 	public static final int PLACE_PIECE_ON_TILE = 100;
@@ -37,5 +39,5 @@ public class EventList {
 	public static final int DETERMINE_TOTAL_NUM_RECRUITS = 114;
 	public static final int MOVE_THINGS = 115;
 	public static final int HANDLE_MOVE_THINGS = 116;
-	public static final int GET_RETREAT = 20;
+	
 }
