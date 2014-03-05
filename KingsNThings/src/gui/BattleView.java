@@ -3,6 +3,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import Game.Combatant;
 import Game.Creature;
@@ -11,6 +12,7 @@ import Game.HexTile;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.Thing;
+import Game.Utility;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -26,7 +28,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 public class BattleView extends Scene {
@@ -48,6 +52,7 @@ public class BattleView extends Scene {
     protected InputState noPressed = InputState.NOT_WAITING_FOR_INPUT;
     public MessageView messageView;
     public Stage battleStage;
+    private Semaphore inputLock = new Semaphore(0);
     
     public int tileX;
     public int tileY;
@@ -73,6 +78,7 @@ public class BattleView extends Scene {
 		    public void handle(ActionEvent e) {
 				if (submitPressed == InputState.WAITING_FOR_INPUT){
 					submitPressed = InputState.GOT_INPUT;
+					Utility.GotInput(inputLock);
 				}
 			}
 		});
@@ -83,6 +89,7 @@ public class BattleView extends Scene {
 		    public void handle(ActionEvent e) {
 				if (yesPressed == InputState.WAITING_FOR_INPUT){
 					yesPressed = InputState.GOT_INPUT;
+					Utility.GotInput(inputLock);
 				}
 			}
 		});
@@ -91,6 +98,7 @@ public class BattleView extends Scene {
 			@Override
 		    public void handle(ActionEvent e) {
 				if (noPressed == InputState.WAITING_FOR_INPUT){
+					Utility.GotInput(inputLock);
 					noPressed = InputState.GOT_INPUT;
 				}
 			}
@@ -116,7 +124,10 @@ public class BattleView extends Scene {
         battleStage = new Stage();
 		battleStage.setTitle("Combat Time - Player " + (GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() + 1) );
 		battleStage.setScene(this);
-         
+        battleStage.initStyle(StageStyle.UNDECORATED);
+        battleStage.initModality(Modality.WINDOW_MODAL);
+        battleStage.initOwner(GameClient.game.gameView.getWindow());
+		
 		//battleStage.setX(battleStage.getX() + 150);
 		//battleStage.setY(battleStage.getY() + 150);
 
@@ -184,11 +195,7 @@ public class BattleView extends Scene {
 		do {
 			submitPressed = InputState.WAITING_FOR_INPUT;
 			
-			while(submitPressed != InputState.GOT_INPUT){
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {}
-			}
+			Utility.PromptForInput(inputLock);
 		} while (GameView.selectedThings.size() != numHitsTaken);
 		
 		submitPressed = InputState.NOT_WAITING_FOR_INPUT;
@@ -221,9 +228,7 @@ public class BattleView extends Scene {
 		noPressed = InputState.WAITING_FOR_INPUT;
 		
 		while(yesPressed != InputState.GOT_INPUT && noPressed != InputState.GOT_INPUT){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {}
+			Utility.PromptForInput(inputLock);
 		}
 		
 		boolean surrender;
