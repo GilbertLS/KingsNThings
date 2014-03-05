@@ -19,7 +19,7 @@ public class PrimaryClient extends Application {
     	launch(args);
     }
     
-    public static void begin(String[] args) {
+    public void begin(String[] args) {
         if (args.length != 2) {
             System.err.println(
                 "Usage: java EchoClient <host name> <port number>");

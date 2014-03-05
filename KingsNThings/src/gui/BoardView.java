@@ -1,8 +1,10 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import Game.HexTile;
+import Game.Utility;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -12,6 +14,7 @@ public class BoardView extends Region {
 	private BoardView 	thisBoard = this;
 	private TilePreview tilePreview;
 	public 	Tile 		lastSelectedTile;
+	private Semaphore	selectedTileLock = new Semaphore(0);
 	
 	BoardView(TilePreview tp)
 	{
@@ -47,6 +50,8 @@ public class BoardView extends Region {
 	    	            	
 	    	            	//tileSelection
 	    	            	thisBoard.lastSelectedTile = t;
+	    	            
+	    	            	Utility.GotInput(selectedTileLock);
 	    	            }
 	    	        });
 	    	        
@@ -65,14 +70,7 @@ public class BoardView extends Region {
 	public Tile getNextSelectedTile() {
 		this.clearLastSelectedTile();
 		
-		while(this.lastSelectedTile == null) {
-			try {
-				Thread.sleep(1000);
-			}
-			catch(Exception e){}
-			System.out.println("last: " + this.lastSelectedTile);
-			System.out.println("Waiting for tile selection");
-		}
+		Utility.PromptForInput(selectedTileLock);
 		
 		return lastSelectedTile;
 	}
