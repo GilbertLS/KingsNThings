@@ -8,7 +8,7 @@ public class GameControllerEventHandler {
 		
 		int numResponses = 0;
 		
-		for(GameRouter i : GameController.servers){
+		for(GameRouter i : GameServer.servers){
 			if(e.intendedPlayers[i.myID] == true && e.expectsResponseEvent){
 				numResponses++;
 			}
@@ -18,7 +18,7 @@ public class GameControllerEventHandler {
 		
 		int i = 0;
 		
-		for(GameRouter gr : GameController.servers)
+		for(GameRouter gr : GameServer.servers)
 		{
 			if(e.intendedPlayers[gr.myID] == true)
 			{

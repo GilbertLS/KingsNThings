@@ -117,12 +117,12 @@ public class PrimaryClient extends Application {
     }
     
     private static void HostGame() throws Exception {
-    	Runnable server = new GameController();
+    	GameServer server = new GameServer();
     	Thread thread = new Thread(server);
     	thread.start();
     	Thread.sleep(2000);
     	GameClient client = new GameClient(gameView);
-    	client.ConnectToHost(((GameController)server).address);
+    	client.ConnectToHost(server.address.getHostName());
     }
 
 	@Override
