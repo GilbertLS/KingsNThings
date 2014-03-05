@@ -42,7 +42,7 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
   	        System.out.println(e.getMessage());
   	    } 
 		
-		GameController.AddClient( this );
+		GameServer.AddClient( this );
 	}
 	
 	public void run(){
