@@ -182,9 +182,7 @@ public class BattleView extends Scene {
 	}
 	
 	public void RemoveThings(int[] thingIds, int playerNum){
-		String s = "";
 		for (int thingId : thingIds){
-			s += thingId + " ";
 			RemoveThingFromBattle(thingId, playerNum);
 		}
 	}
