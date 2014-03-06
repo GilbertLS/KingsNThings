@@ -34,7 +34,13 @@ public class GameController {
 		numClients = numberOfClients;
 	}
 	
+<<<<<<< HEAD
+	private boolean checkStartGame() {
+		return servers.size() == 2;
+	}
+=======
 	public void StartGame(){
+>>>>>>> origin/develop
 
     	for(GameRouter gr : GameServer.servers){
     		boolean[] intendedPlayers = new boolean[numClients];
@@ -67,7 +73,9 @@ public class GameController {
     	 
     	//play game turns while game is not won
     	playPhases();
-	}	
+	}
+
+	
 	
 	private void initialSetup() {
 		determineInitialPlayerOrder();
@@ -78,7 +86,7 @@ public class GameController {
 		
 		initializeGold();
 		
-		placeThingsOnTile(3, "Control_Marker");
+		placeThingsOnTile(2, "Control_Marker");
 		
 		//placeThingsOnTile(1, "Tower");
 		
@@ -89,8 +97,13 @@ public class GameController {
 	}
 	
 	private void playThings() {
+<<<<<<< HEAD
 			
+		for(GameRouter gr: servers)
+=======
+    		
 		for(GameRouter gr: GameServer.servers)
+>>>>>>> origin/develop
 		{
 			String[] args  = {""+gr.myID, ""};
     		Event e = new Event()
@@ -300,9 +313,9 @@ public class GameController {
 		{
 			distributeIncome();
 			
-			recruitThings();
+			//recruitThings();
 			
-			playThings();
+			//playThings();
 			
 			moveThings();
 			
@@ -319,10 +332,17 @@ public class GameController {
 		{
 			boolean moveDone = false;
 			
+			boolean[] intendedPlayers = new boolean[numClients];
+			intendedPlayers[gr.myID] = true;
+			
+			Event e = new Event()
+						.EventId(EventList.SET_PHASE_NOT_DONE)
+						.IntendedPlayers(intendedPlayers);
+			
 			do
 			{
 				String[] args  = {""+gr.myID, "",""+moveDone};
-	    		Event e = new Event()
+	    		e = new Event()
 	    				.EventId(EventList.MOVE_THINGS)
 	    				.ExpectsResponse(true)
 	    				.EventParameters(args);
@@ -352,15 +372,6 @@ public class GameController {
 		    		GameControllerEventHandler.sendEvent(e);
 				}
 			}while(!moveDone);
-			
-			boolean[] intendedPlayers = new boolean[numClients];
-			intendedPlayers[gr.myID] = true;
-			
-			Event e = new Event()
-						.EventId(EventList.CLEAR_THING_MOVES)
-						.IntendedPlayers(intendedPlayers);
-			
-			GameControllerEventHandler.sendEvent(e);
 		}
 		
 	}

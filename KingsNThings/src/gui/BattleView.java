@@ -204,6 +204,8 @@ public class BattleView extends Scene {
 			System.out.println("--------------");
 			thingsToRemove[i++] = thingId;
 			RemoveThingFromBattle(thingId, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
+			
+			//also update model
 		}
 		ClearMessage();
 		

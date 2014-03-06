@@ -268,6 +268,7 @@ public class EventHandler {
 			
 			if (numHitsTaken > 0){
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
+				
 				ArrayList<Thing> things = currTile.GetThings(currentPlayer);
 				
 				//System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
@@ -282,6 +283,7 @@ public class EventHandler {
 				
 				boolean hasFort = currTile.fort != null && currentPlayer.faction == currTile.controlledBy;
 				
+				//also need to handle settlements and any other combatants
 				if(hasFort)
 					numHitsToApply++;
 				
@@ -680,34 +682,40 @@ public class EventHandler {
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			
-			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
-			{
-				GameClient.game.sendMessageToView("Please move your Things");		        	
-				
-				String thingsMovedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.MOVEMENT);
-				
-				GameClient.game.clearMessageOnView();
-				
-				if(!thingsMovedParamsString.equals(""))
+			boolean moveDone = Boolean.parseBoolean(e.eventParams[1]);
+
+				if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
 				{
-					final String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
 					
-					ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
-					ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
-					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
-					GameClient.game.parseMovedThingsStrings(thingsMovedParamsStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+					GameClient.game.sendMessageToView("Please move your Things");		        	
+						
+					String thingsMovedParamsString = GameClient.game.gameView.moveIteration();
 					
-					GameClient.game.gameModel.updateMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+					//done in handle move things now, this is left in case I want to review my change
+					/*if(!thingsMovedParamsString.equals(""))
+					{
+						final String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
+						
+						ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
+						ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+						ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+						GameClient.game.parseMovedThingsStrings(thingsMovedParamsStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+							
+						GameClient.game.gameModel.updateMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+					}*/
+					
+					String[] args = thingsMovedParamsString.split(" ");
+						
+					//send changes
+					EventHandler.SendEvent(
+							new Event()
+								.EventId(EventList.MOVE_THINGS)
+								.EventParameters(args)
+					);
+					
+					GameClient.game.clearMessageOnView();
 				}
-				
-				//send changes
-				EventHandler.SendEvent(
-						new Event()
-							.EventId(EventList.MOVE_THINGS)
-							.EventParameter(thingsMovedParamsString)
-				);
-			}
+
 			else
 			{
 				waitForOtherPlayer(playerIndex, "move their things");
@@ -717,7 +725,7 @@ public class EventHandler {
 		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			if(e.eventParams.length == 2)
+			if(e.eventParams.length == 3)
 			{
 				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
 				ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
@@ -808,6 +816,10 @@ public class EventHandler {
 		        }
 			});
 		}
+		else if(e.eventId == EventList.CLEAR_THING_MOVES)
+		{
+			GameClient.game.clearThingMoves();
+		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
@@ -820,10 +832,8 @@ public class EventHandler {
 	
 	private static void waitForOtherPlayer(final int playerIndex, final String actionBeingTaken) {
 		String s = "Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".";
-		//needs GameControllerEventHandler to be multi-threaded
-		/*
-			GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
-		 */
+
+		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
 
 		
 		SendNullEvent();		
