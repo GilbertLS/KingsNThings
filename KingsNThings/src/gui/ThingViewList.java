@@ -11,46 +11,52 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
-public class ThingViewList extends HBox {
-	protected ListView<ThingView> view;
+public class ThingViewList extends ListView<ThingView> {
+	protected ThingViewList self = this;
 	
 	 ThingViewList(ObservableList<ThingView> l) {
-		view = new ListView<ThingView>(l);
-		view.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		view.setOrientation(Orientation.HORIZONTAL);
-		view.getStyleClass().add("thingview-list");
-		view.setPrefHeight(70);
-		view.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
-            @Override
-            public ListCell<ThingView> call(ListView<ThingView> param) {
-                return new ThingCell();
-            }
-        });
-				
-		this.getChildren().add(view);
-		this.getStyleClass().add("thingview-list");
+		super(l);
+		setup();
+	 }
+	 
+	 ThingViewList() {
+		 super();
+		 setup();
+	 }
+	 
+	 private void setup() {
+		 this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			this.setOrientation(Orientation.HORIZONTAL);
+			this.getStyleClass().add("thingview-list");
+			this.setPrefHeight(70);
+			this.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
+	            @Override
+	            public ListCell<ThingView> call(ListView<ThingView> param) {
+	                return new ThingCell();
+	            }
+	        });
 	 }
 	 
 	 public void add(ThingView t) {
-		 view.getItems().add(t);
+		 this.getItems().add(t);
 	 }
 	 
 	 public void addAll(List<ThingView> l) {
-		 view.getItems().addAll(l);
+		 this.getItems().addAll(l);
 	 }
 	 
 	 public void remove(ThingView t) {
-		 view.getItems().remove(t);
+		 this.getItems().remove(t);
 	 }
 	 
 	 public void remove(int i) {
-		 view.getItems().remove(i);
+		 this.getItems().remove(i);
 	 }
 	 
 	 public void removeByThingId(int id) {
 		 ThingView remove = null;
 		 
-		 for (ThingView tv : view.getItems()) {
+		 for (ThingView tv : this.getItems()) {
 			 if (tv.thingRef.thingID == id) {
 				 System.out.println("REMOVED ITEM: " + id);
 				 remove = tv;
@@ -58,15 +64,15 @@ public class ThingViewList extends HBox {
 			 }
 		 }
 		 
-		 view.getItems().remove(remove);
+		 this.getItems().remove(remove);
 	 }
 	 
 	 public void removeAll(List<ThingView> l) {
-		 view.getItems().removeAll(l);
+		 this.getItems().removeAll(l);
 	 }
 	 
 	 public void setAll(List<ThingView> l) {
-		 view.getItems().setAll(l);
+		 this.getItems().setAll(l);
 	 }
 	 
 	 public void setAllThings(List<Thing> t) {
