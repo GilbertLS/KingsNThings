@@ -122,15 +122,12 @@ public class GameView extends Scene {
 	public String performPhase(CurrentPhase currentPhase){
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
-		
+		inputLock = new Semaphore(0);
 		Utility.PromptForInput(inputLock);
 		
 		String s = returnString;
 		userInputDone = false;
 		returnString = "";
-		
-		inputLock = new Semaphore(0);
-		Utility.PromptForInput(inputLock);
 		
 		this.currentPhase = CurrentPhase.NULL;
 		
