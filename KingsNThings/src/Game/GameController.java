@@ -78,7 +78,7 @@ public class GameController {
 		
 		initializeGold();
 		
-		placeThingsOnTile(2, "Control_Marker");
+		placeThingsOnTile(3, "Control_Marker");
 		
 		//placeThingsOnTile(1, "Tower");
 		

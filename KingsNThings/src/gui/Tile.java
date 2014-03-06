@@ -357,6 +357,16 @@ public class Tile extends Region implements Draggable {
     	this.setStyle("-fx-background-image: url(/res/images/ " + s + "); ");
 	}
 	
+	public List<ThingView> getThings(int i) {
+		switch(i) {
+			case 1: return p1Things;
+			case 2: return p2Things;
+			case 3: return p3Things;
+			case 4: return p4Things;
+			default: return neutralThings;
+		}
+	}
+	
 	public void hideTile() {
 		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
 			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");

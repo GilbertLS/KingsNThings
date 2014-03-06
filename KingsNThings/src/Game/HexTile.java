@@ -205,8 +205,10 @@ public class HexTile implements IIncomable{
 			return player2Things;
 		case 2:
 			return player3Things;
-		default:
+		case 3:
 			return player4Things;
+		default:
+			return player1Things;
 		}
 	}
 
