@@ -1,5 +1,6 @@
 package gui;
 
+import Game.Utility;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -25,7 +26,7 @@ public class InputView extends HBox {
 				if(input.getText() != null)
 				{
 					GameView gv = ((GameView)getScene());
-					gv.inputTextUpdated = true;
+					Utility.GotInput(gv.submitLock);
 				}
 			}
 		});

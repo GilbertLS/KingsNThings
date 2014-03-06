@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 import Game.Creature;
 import Game.GameClientController;
@@ -16,6 +17,7 @@ import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
+import Game.Utility;
 import Game.Networking.GameClient;
 import Game.Thing;
 import javafx.application.Platform;
@@ -42,10 +44,11 @@ public class GameView extends Scene {
     public InputView inputView;
     public CurrentPhase currentPhase = CurrentPhase.NULL;
     public boolean userInputDone = false;
-	protected boolean inputTextUpdated = false;
 	String returnString = "";
 	private int currPlayerNum;
 	public Stage primaryStage;
+	public Semaphore submitLock = new Semaphore(0);
+	public Semaphore inputLock = new Semaphore(0);
 	
     public GameView(BorderPane r, Stage ps) {
     	super(r, 1000, 600);
@@ -108,15 +111,7 @@ public class GameView extends Scene {
     }
 
 	public int getNumPaidRecruits() {
-		inputTextUpdated = false;
-		try {
-			do{
-				Thread.sleep(500);
-			}while(!inputTextUpdated);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Utility.PromptForInput(submitLock);
 		
 		return Integer.parseInt(inputView.getInput());
 	}
@@ -127,15 +122,7 @@ public class GameView extends Scene {
 		
 		returnString = "";
 		
-		userInputDone = false;
-		try {
-			do{
-				Thread.sleep(500);
-			}while(!userInputDone);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Utility.PromptForInput(inputLock);
 		
 		this.currentPhase = CurrentPhase.NULL;
 		
@@ -228,8 +215,6 @@ public class GameView extends Scene {
 	
 	public void EndBattle(){
 		if (GameView.BattleOccuring()){
-			GameView.battleView.UpdateMessage("Battle is over");
-			
 			for(int i = 0; i < 3; i++) {
 				try {
 					Thread.sleep(1000);

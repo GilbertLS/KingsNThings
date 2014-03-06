@@ -1,5 +1,8 @@
 package gui;
 
+import java.util.concurrent.Semaphore;
+
+import Game.Utility;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -7,9 +10,9 @@ import javafx.scene.layout.Region;
 
 public class DiceView extends Region {
 	private int roll = 1;
-	private boolean isPrompted = false;
-	private boolean isEnabled = false;
+	private Boolean isEnabled = false;
 	private DiceView thisDice = this;
+	private Semaphore inputLock = new Semaphore(0);
 	
 	public DiceView(){
 		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
@@ -24,24 +27,17 @@ public class DiceView extends Region {
 	
 	public void RollDice(int roll){	
 		this.roll = roll;
-		
 		this.isEnabled = true;
-		this.isPrompted = true;
 		
 		PromptForRoll();
-
-		while(thisDice.isEnabled){
-			try {
-			Thread.sleep(1000); } catch (Exception e ){}
-		}
 		System.out.println("GOT OUT");
 	}
 	
 	
 	private void UpdateDice(){
 		setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
-		isPrompted = false;
 		isEnabled = false;
+		Utility.GotInput(inputLock);
 	};
 	
 	public void PromptForRoll(){
@@ -53,6 +49,8 @@ public class DiceView extends Region {
 				setStyle( getStyle() + "-fx-border-style: solid;");
 			}
 		});
+		
+		Utility.PromptForInput(inputLock);
 	}
 	
 	private void initListeners(){

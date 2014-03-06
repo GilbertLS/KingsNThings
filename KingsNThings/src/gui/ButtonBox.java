@@ -1,5 +1,6 @@
 package gui;
 
+import Game.Utility;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -23,7 +24,7 @@ public class ButtonBox extends HBox {
 			@Override
 		    public void handle(ActionEvent e) {
 				GameView gv = ((GameView)getScene());
-				gv.userInputDone = true;
+				Utility.GotInput(gv.inputLock);
 			}
 		});
 		

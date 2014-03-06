@@ -17,93 +17,59 @@ import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import Game.Networking.GameControllerEventHandler;
 import Game.Networking.GameRouter;
+import Game.Networking.GameServer;
 import Game.Networking.Protocol;
 import Game.Networking.Response;
 
-public class GameController implements Runnable {
+public class GameController {
 	
 	public static boolean gameStarted = false;
 	public static boolean gameEnded = false; 
-	public String address;
-	private int numClients;
+	//public String address;
+	public static int numClients;
 	
-	public static Queue<GameRouter> servers = new ConcurrentLinkedQueue<GameRouter>();
-	
-	public GameController() throws UnknownHostException {
-		this.address = InetAddress.getLocalHost().getHostAddress();
+	public GameController(
+			int numberOfClients
+	) {
+		numClients = numberOfClients;
 	}
 	
-	public String GetAddress(){
-		return address;
-	}
-	
-	public void StartServer(){
-	    try {
-	    	ServerSocket serverSocket = new ServerSocket(Protocol.GAMEPORT);
-	    	while (!checkStartGame()) {
-		       Socket clientSocket = serverSocket.accept();
-		       System.out.println("A client has joined the game");
-		        
-		       GameRouter gameRouter = new GameRouter(clientSocket);
-		       Thread thread = new Thread(gameRouter);
-		       thread.start();
-		       
-		       while(!gameRouter.ready()){}      
-	    	}
-	    	
-	    	//Collections.sort(servers);
-	    	serverSocket.close();
-	    	 
-	    	numClients = servers.size();
-	    	
-	    	for(GameRouter gr : servers){
-	    		boolean[] intendedPlayers = new boolean[numClients];
-	    		
-	    		intendedPlayers[gr.myID] = true;
-	    		
-	    		String[] eventParams = new String[]{ "" + (gr.myID) };
-	    		
-	    		Event e = new Event()
-	    					.EventId(EventList.SET_CURRENT_PLAYER)
-	    					.EventParameters(eventParams)
-	    					.IntendedPlayers(intendedPlayers);
-	    		
-	    		GameControllerEventHandler.sendEvent(e);
-	    	}
-	    	 
-	 		String[] args = new String[1];
-			args[0] = Integer.toString(numClients);	
-			GameControllerEventHandler.sendEvent(
-				new Event()
-					.EventId(EventList.SET_NUM_PLAYERS)
-					.EventParameters(args)
-				
-			);
-	    	 
-	    	//GAME START
-	    	System.out.println("GAME HAS BEGUN!");
-	    	 
-	    	initialSetup();
-	    	 
-	    	//player setup logic
-	    	 
-	    	//play game turns while game is not won
-	    } catch (IOException e) {
-	    	System.out.println("IO Error");
-	    }
-	}
-	
-	private boolean checkStartGame() {
-		return servers.size() == 4;
+	public void StartGame(){
+
+    	for(GameRouter gr : GameServer.servers){
+    		boolean[] intendedPlayers = new boolean[numClients];
+    		
+    		intendedPlayers[gr.myID] = true;
+    		
+    		String[] eventParams = new String[]{ "" + (gr.myID) };
+    		
+    		Event e = new Event()
+    					.EventId(EventList.SET_CURRENT_PLAYER)
+    					.EventParameters(eventParams)
+    					.IntendedPlayers(intendedPlayers);
+    		
+    		GameControllerEventHandler.sendEvent(e);
+    	}
+    	 
+ 		String[] args = new String[1];
+		args[0] = Integer.toString(numClients);	
+		GameControllerEventHandler.sendEvent(
+			new Event()
+				.EventId(EventList.SET_NUM_PLAYERS)
+				.EventParameters(args)
+			
+		);
+    	 
+    	//GAME START
+    	System.out.println("GAME HAS BEGUN!");
+    	 
+    	initialSetup();
+    	 
+    	//play game turns while game is not won
+    	playPhases();
 	}
 
-	public static void AddClient( GameRouter c ){
-		servers.add(c);
-	}
 	
-	public void run(){
-		this.StartServer();
-	}
 	
 	private void initialSetup() {
 		determineInitialPlayerOrder();
@@ -122,13 +88,11 @@ public class GameController implements Runnable {
 		
 		playThings();
 		
-		playPhases();
-		
 	}
 	
 	private void playThings() {
     		
-		for(GameRouter gr: servers)
+		for(GameRouter gr: GameServer.servers)
 		{
 			String[] args  = {""+gr.myID, ""};
     		Event e = new Event()
@@ -166,7 +130,7 @@ public class GameController implements Runnable {
 	private void placeThingsOnTile(int numIter, String pieceToPlace) {
 		for(int i=0; i<numIter; i++)
 		{
-			for(GameRouter gr : servers){
+			for(GameRouter gr : GameServer.servers){
 	    		String[] args = {""+gr.myID,pieceToPlace};
 	    		
 	    		Event e = new Event()
@@ -214,7 +178,7 @@ public class GameController implements Runnable {
 	}
 
 	private void assignInitialThings() {
-    	for(GameRouter gr : servers){
+    	for(GameRouter gr : GameServer.servers){
     		
     		String[] eventParams = new String[]{ "" + gr.myID, "10"};
     		
@@ -353,7 +317,7 @@ public class GameController implements Runnable {
 	}
 	
 	private void moveThings() {
-		for(GameRouter gr: servers)
+		for(GameRouter gr: GameServer.servers)
 		{
 			String[] args  = {""+gr.myID, ""};
     		Event e = new Event()
@@ -390,7 +354,7 @@ public class GameController implements Runnable {
 	}
 
 	private void recruitThings() {
-		for(GameRouter gr: servers)
+		for(GameRouter gr: GameServer.servers)
 		{
 			int numPaidRecruits = 0;
 			
@@ -650,34 +614,5 @@ public class GameController implements Runnable {
 						.EventParameters(coordinates)
 				);
 		}
-	}
-	private void AddTestThingsToTile(){
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "1", "0", "-1", "-1" })
-		);
-		/*GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "8", "0", "-1", "-1" })
-		);*/
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "2", "1",  "-1", "-1" })
-		);
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Ranged", "3", "0", "-1", "-1" })
-		);
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Other", "4", "0", "-1", "-1" })
-		);
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "5", "1", "-1", "-1" })
-		);
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "6", "0", "0", "0" })
-		);
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "7", "2", "0", "0" })
-		);
-		GameControllerEventHandler.sendEvent(
-				new Event().EventId(EventList.ADD_THING_TO_TILE).EventParameters( new String[]{ "Magic", "9", "2", "0", "0" })
-		);
 	}
 }
