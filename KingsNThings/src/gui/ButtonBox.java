@@ -1,5 +1,6 @@
 package gui;
 
+import Game.GameConstants.CurrentPhase;
 import Game.Utility;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,8 +25,12 @@ public class ButtonBox extends HBox {
 			@Override
 		    public void handle(ActionEvent e) {
 				GameView gv = ((GameView)getScene());
-				Utility.GotInput(gv.inputLock);
-				gv.userInputDone = true;
+				
+				if(gv.currentPhase != CurrentPhase.NULL)
+				{
+					Utility.GotInput(gv.inputLock);
+					gv.userInputDone = true;
+				}
 			}
 		});
 		

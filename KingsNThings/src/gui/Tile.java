@@ -294,7 +294,7 @@ public class Tile extends Region implements Draggable {
 								
 								HexTile originalTile = GameClient.game.gameModel.gameBoard.getTile(x, y);
 								
-								ArrayList<Thing> things = new ArrayList();
+								ArrayList<Thing> things = new ArrayList<Thing>();
 								
 								for(ThingView tv: thingViews)
 									things.add(tv.thingRef);
@@ -322,6 +322,7 @@ public class Tile extends Region implements Draggable {
 									
 									success = true;
 									
+									//Utility.GotInput(moveLock);
 									gv.moveMade = true;
 									
 									//string to update 

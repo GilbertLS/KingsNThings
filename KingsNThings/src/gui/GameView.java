@@ -50,7 +50,7 @@ public class GameView extends Scene {
 	public Semaphore inputLock = new Semaphore(0);
 	public Semaphore submitLock = new Semaphore(0);
 	public Semaphore moveLock = new Semaphore(0);
-	boolean moveMade = false;
+	public boolean moveMade = false;
 	
     public GameView(BorderPane r, Stage ps) {
     	super(r, 1000, 600);
@@ -122,7 +122,8 @@ public class GameView extends Scene {
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
 		
-		userInputDone = false;
+		//Utility.PromptForInput(inputLock);
+		
 		try {
 			do{
 				Thread.sleep(250);
@@ -147,6 +148,8 @@ public class GameView extends Scene {
 		//after the beginning of the movement phase
 
 		currentPhase = CurrentPhase.MOVEMENT;
+		
+		//Utility.PromptForInput(movementLock);
 		
 		try {
 			do{
