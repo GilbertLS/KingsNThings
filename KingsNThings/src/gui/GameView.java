@@ -111,6 +111,7 @@ public class GameView extends Scene {
     }
 
 	public int getNumPaidRecruits() {
+		submitLock = new Semaphore(0);
 		Utility.PromptForInput(submitLock);
 		
 		return Integer.parseInt(inputView.getInput());
@@ -122,6 +123,7 @@ public class GameView extends Scene {
 		
 		returnString = "";
 		
+		inputLock = new Semaphore(0);
 		Utility.PromptForInput(inputLock);
 		
 		this.currentPhase = CurrentPhase.NULL;
