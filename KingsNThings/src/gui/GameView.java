@@ -50,7 +50,7 @@ public class GameView extends Scene {
 	public Semaphore inputLock = new Semaphore(0);
 	public Semaphore submitLock = new Semaphore(0);
 	public Semaphore moveLock = new Semaphore(0);
-	public boolean moveMade = false;
+	//public boolean moveMade = false;
 	
     public GameView(BorderPane r, Stage ps) {
     	super(r, 1000, 600);
@@ -122,16 +122,8 @@ public class GameView extends Scene {
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
 		
-		//Utility.PromptForInput(inputLock);
+		Utility.PromptForInput(inputLock);
 		
-		try {
-			do{
-				Thread.sleep(250);
-			}while(!userInputDone);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		String s = returnString;
 		userInputDone = false;
 		returnString = "";
@@ -149,19 +141,19 @@ public class GameView extends Scene {
 
 		currentPhase = CurrentPhase.MOVEMENT;
 		
-		//Utility.PromptForInput(movementLock);
+		Utility.PromptForInput(moveLock);
 		
-		try {
+		/*try {
 			do{
 				Thread.sleep(250);
 			}while(!moveMade && !userInputDone);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		String s = userInputDone + " " + returnString;
 		
-		moveMade = false;
+		//moveMade = false;
 		userInputDone = false;
 		returnString = "";
 		

@@ -322,8 +322,8 @@ public class Tile extends Region implements Draggable {
 									
 									success = true;
 									
-									//Utility.GotInput(moveLock);
-									gv.moveMade = true;
+									Utility.GotInput(gv.moveLock);
+									//gv.moveMade = true;
 									
 									//string to update 
 									for(ThingView t: thingViews)

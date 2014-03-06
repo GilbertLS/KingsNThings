@@ -29,6 +29,10 @@ public class ButtonBox extends HBox {
 				if(gv.currentPhase != CurrentPhase.NULL)
 				{
 					Utility.GotInput(gv.inputLock);
+					
+					if(gv.currentPhase == CurrentPhase.MOVEMENT)
+						Utility.GotInput(gv.moveLock);
+					
 					gv.userInputDone = true;
 				}
 			}
