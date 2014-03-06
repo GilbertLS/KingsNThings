@@ -34,7 +34,13 @@ public class GameController {
 		numClients = numberOfClients;
 	}
 	
+<<<<<<< HEAD
+	private boolean checkStartGame() {
+		return servers.size() == 2;
+	}
+=======
 	public void StartGame(){
+>>>>>>> origin/develop
 
     	for(GameRouter gr : GameServer.servers){
     		boolean[] intendedPlayers = new boolean[numClients];
@@ -67,7 +73,9 @@ public class GameController {
     	 
     	//play game turns while game is not won
     	playPhases();
-	}	
+	}
+
+	
 	
 	private void initialSetup() {
 		determineInitialPlayerOrder();
@@ -89,8 +97,13 @@ public class GameController {
 	}
 	
 	private void playThings() {
+<<<<<<< HEAD
 			
+		for(GameRouter gr: servers)
+=======
+    		
 		for(GameRouter gr: GameServer.servers)
+>>>>>>> origin/develop
 		{
 			String[] args  = {""+gr.myID, ""};
     		Event e = new Event()
@@ -300,9 +313,9 @@ public class GameController {
 		{
 			distributeIncome();
 			
-			recruitThings();
+			//recruitThings();
 			
-			playThings();
+			//playThings();
 			
 			moveThings();
 			

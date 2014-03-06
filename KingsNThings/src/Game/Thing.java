@@ -15,6 +15,7 @@ public abstract class Thing {
 	HexTile currentTile;
 	public String backFileName, frontFileName;
 	public ControlledBy controlledBy;		//Faction currently controlling this Tile
+	public int numMoves = 0;
 	
 	public Thing(ThingType thingType, String name, String frontFileName)
 	{
@@ -66,5 +67,9 @@ public abstract class Thing {
 			case PLAYER4: return 3;
 			default: return 0;
 		}
+	}
+
+	public void clearMoves() {
+		numMoves = 0;
 	}
 }

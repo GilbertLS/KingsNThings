@@ -27,6 +27,7 @@ public class GameModel {
 	private Dice dice;									//Object to emulate up to 4 dice
 	private int playerCount;
 	public GameBoard gameBoard;
+	private ArrayList<Thing> movedThings = new ArrayList<Thing>();
 	
 	public BoardController boardController;
 	
@@ -844,6 +845,7 @@ public class GameModel {
 				int x = selectedTile.x;
 				int y = selectedTile.y;
 				
+				//need to modify for 2/3 players
 				if((x == 3 && y == 1)
 						||(x == 1 && y == 3)
 						||(x == -3 && y == -1)
@@ -981,11 +983,21 @@ public class GameModel {
 			
 			fromTile.removeThing(id, playerIndex); 
 			toTile.AddThingToTile(playerIndex, thingPlayed);
+			thingPlayed.numMoves += toTile.moveValue;
+			
+			movedThings.add(thingPlayed);
 			
 			if(!player.ownedHexTiles.contains(toTile) && toTile.controlledBy == ControlledBy.NEUTRAL)
 			{
 				updateTileFaction(playerIndex, toTile.x, toTile.y);
 			}
 		}
+	}
+
+	public void clearThingMoves() {
+		for(Thing t: movedThings)
+			t.clearMoves();
+		
+		movedThings = new ArrayList<Thing>();
 	}
 }

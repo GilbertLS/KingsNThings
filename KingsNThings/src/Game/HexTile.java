@@ -24,6 +24,12 @@ public class HexTile implements IIncomable{
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public int x;
 	public int y;
+	public int moveValue;
+	
+	public boolean isLand()
+	{
+		return terrain != Terrain.SEA;
+	}
 	
 	public HexTile(Terrain terrain)
 	{
@@ -38,6 +44,14 @@ public class HexTile implements IIncomable{
 		this.fort = null;
 		
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
+		
+		if(terrain == Terrain.SWAMP
+				|| terrain == Terrain.MOUNTAIN
+				|| terrain == Terrain.FOREST
+				|| terrain == Terrain.JUNGLE)
+			moveValue = 2;
+		else
+			moveValue = 1;
 	}
 	
 	public void AddThingToTile(Player player, Thing thing){
@@ -242,5 +256,27 @@ public class HexTile implements IIncomable{
 				fort.controlledBy = ControlledBy.NEUTRAL;
 		}
 		
+	}
+
+	public boolean isOnlyPlayerOnTile(int playerIndex) {
+		boolean ret = false;
+		
+		switch(playerIndex)
+		{
+		case 0:
+			ret = (player2Things.isEmpty() && player3Things.isEmpty() && player4Things.isEmpty());
+			break;
+		case 1:
+			ret = (player1Things.isEmpty() && player3Things.isEmpty() && player4Things.isEmpty());
+			break;
+		case 2:
+			ret = (player1Things.isEmpty() && player2Things.isEmpty() && player4Things.isEmpty());
+			break;
+		default:
+			ret = (player1Things.isEmpty() && player2Things.isEmpty() && player3Things.isEmpty());
+			break;
+		}
+		
+		return ret;
 	}
 }

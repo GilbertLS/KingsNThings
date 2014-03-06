@@ -3,6 +3,7 @@ package Game;
 import java.util.ArrayList;
 
 import javafx.application.Platform;
+import Game.GameConstants.Terrain;
 import Game.Networking.GameClient;
 import gui.GameView;
 
@@ -34,7 +35,7 @@ public class GameClientController {
 		
 		for(String s: thingsPlayedStrings)
 		{
-			String[] paramsString = s.split(" ");
+			String[] paramsString = s.split("~");
 			String[] hexParamsString = paramsString[0].split("SPLIT");
 				
 			int x = Integer.parseInt(hexParamsString[0]);
@@ -76,7 +77,7 @@ public class GameClientController {
 		
 		for(String s: thingsPlayedStrings)
 		{
-			String[] paramsString = s.split(" ");
+			String[] paramsString = s.split("~");
 			String[] fromTileParamsString = paramsString[0].split("SPLIT");
 			String[] toTileParamsString = paramsString[1].split("SPLIT");
 				
@@ -158,5 +159,57 @@ public class GameClientController {
 
 		
 		return defendingCreatures;
+	}
+	
+	public void setPhaseNotDone()
+	{
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	gameView.setPhaseNotDone();		        	
+	        }
+		});
+	}
+
+	public boolean isValidMove(HexTile originalTile, HexTile tileRef,
+			ArrayList<Thing> things) {
+		
+		boolean valid = true;
+		
+		if(!originalTile.isAdjacent(tileRef)
+				|| (!tileRef.isLand() && !areAllFlying(things))
+				|| (!allThingsAbleToMove(tileRef, things)))
+			valid = false;
+			
+		return valid;
+	}
+
+	private boolean areAllFlying(ArrayList<Thing> things) {
+		boolean allFlying = true;
+		
+		for(Thing t: things)
+		{
+			if(!((Combatant)t).isFlying)
+				allFlying = false;
+		}
+		
+		return allFlying;
+	}
+
+	private boolean allThingsAbleToMove(HexTile tileRef, ArrayList<Thing> things) {
+		boolean allAbleToMove = true;		
+		
+		for(Thing t: things)
+		{
+			if(t.numMoves + tileRef.moveValue > 4)
+				allAbleToMove = false;
+		}
+	
+		return allAbleToMove;
+	}
+	
+	public void clearThingMoves()
+	{
+		gameModel.clearThingMoves();
 	}
 }

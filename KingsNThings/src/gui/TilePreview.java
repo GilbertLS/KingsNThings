@@ -68,6 +68,7 @@ public class TilePreview extends VBox {
 	}
 		
 	public void changeTile(Tile t) {
+		
 		tileRef = t;
 		
 		view1 = new ThingViewList(FXCollections.observableList(t.p1Things));
@@ -84,6 +85,8 @@ public class TilePreview extends VBox {
 	}
 	
 	public void changeTile(HexTile tile){
+		//change so gets combatants? or, add functionality to load in settlements
+		
 		ThingView thingView;
 		
 		ArrayList<ThingView> arr = new ArrayList<ThingView>();
