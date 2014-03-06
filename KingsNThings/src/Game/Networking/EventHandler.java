@@ -816,9 +816,9 @@ public class EventHandler {
 		        }
 			});
 		}
-		else if(e.eventId == EventList.SET_PHASE_NOT_DONE)
+		else if(e.eventId == EventList.CLEAR_THING_MOVES)
 		{
-			GameClient.game.setPhaseNotDone();
+			GameClient.game.clearThingMoves();
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
@@ -832,10 +832,8 @@ public class EventHandler {
 	
 	private static void waitForOtherPlayer(final int playerIndex, final String actionBeingTaken) {
 		String s = "Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".";
-		//needs GameControllerEventHandler to be multi-threaded
-		/*
-			GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
-		 */
+
+		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
 
 		
 		SendNullEvent();		

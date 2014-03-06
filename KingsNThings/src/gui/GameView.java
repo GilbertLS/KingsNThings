@@ -169,11 +169,6 @@ public class GameView extends Scene {
 		
 		return s;	
 	}
-	
-	public void setPhaseNotDone()
-	{
-		userInputDone = false;
-	}
 
 	public void updatePlayerRack() {
 		//re-draw the player rack for current player (because it has changed)

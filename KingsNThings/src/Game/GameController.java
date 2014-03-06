@@ -319,17 +319,10 @@ public class GameController {
 		{
 			boolean moveDone = false;
 			
-			boolean[] intendedPlayers = new boolean[numClients];
-			intendedPlayers[gr.myID] = true;
-			
-			Event e = new Event()
-						.EventId(EventList.SET_PHASE_NOT_DONE)
-						.IntendedPlayers(intendedPlayers);
-			
 			do
 			{
 				String[] args  = {""+gr.myID, "",""+moveDone};
-	    		e = new Event()
+	    		Event e = new Event()
 	    				.EventId(EventList.MOVE_THINGS)
 	    				.ExpectsResponse(true)
 	    				.EventParameters(args);
@@ -359,6 +352,15 @@ public class GameController {
 		    		GameControllerEventHandler.sendEvent(e);
 				}
 			}while(!moveDone);
+			
+			boolean[] intendedPlayers = new boolean[numClients];
+			intendedPlayers[gr.myID] = true;
+			
+			Event e = new Event()
+						.EventId(EventList.CLEAR_THING_MOVES)
+						.IntendedPlayers(intendedPlayers);
+			
+			GameControllerEventHandler.sendEvent(e);
 		}
 		
 	}

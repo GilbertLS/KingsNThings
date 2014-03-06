@@ -160,16 +160,6 @@ public class GameClientController {
 		
 		return defendingCreatures;
 	}
-	
-	public void setPhaseNotDone()
-	{
-		Platform.runLater(new Runnable() {
-	        @Override
-	        public void run() {
-	        	gameView.setPhaseNotDone();		        	
-	        }
-		});
-	}
 
 	public boolean isValidMove(HexTile originalTile, HexTile tileRef,
 			ArrayList<Thing> things) {
