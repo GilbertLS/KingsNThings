@@ -13,7 +13,6 @@ import javafx.util.Callback;
 
 public class ThingViewList extends HBox {
 	protected ListView<ThingView> view;
-	protected ArrayList<ThingView> items;
 	
 	 ThingViewList(ObservableList<ThingView> l) {
 		view = new ListView<ThingView>(l);
@@ -27,33 +26,25 @@ public class ThingViewList extends HBox {
                 return new ThingCell();
             }
         });
-		
-		items = new ArrayList<ThingView>();
-		
+				
 		this.getChildren().add(view);
 		this.getStyleClass().add("thingview-list");
 	 }
 	 
 	 public void add(ThingView t) {
-		 items.add(t);
 		 view.getItems().add(t);
 	 }
 	 
 	 public void addAll(List<ThingView> l) {
-		 items.addAll(l);
 		 view.getItems().addAll(l);
 	 }
 	 
 	 public void remove(ThingView t) {
-		 items.remove(t);
 		 view.getItems().remove(t);
 	 }
 	 
 	 public void remove(int i) {
-		 if (items.get(i) == view.getItems().get(i)){
-			 items.remove(i);
-			 view.getItems().remove(i);
-		 }
+		 view.getItems().remove(i);
 	 }
 	 
 	 public void removeByThingId(int id) {
@@ -67,18 +58,14 @@ public class ThingViewList extends HBox {
 			 }
 		 }
 		 
-		 items.remove(remove);
 		 view.getItems().remove(remove);
 	 }
 	 
 	 public void removeAll(List<ThingView> l) {
-		 items.removeAll(l);
 		 view.getItems().removeAll(l);
 	 }
 	 
 	 public void setAll(List<ThingView> l) {
-		 items.clear();
-		 items.addAll(l);
 		 view.getItems().setAll(l);
 	 }
 	 
