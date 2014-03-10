@@ -50,7 +50,6 @@ public class BoardView extends Region {
 	    	            	
 	    	            	//tileSelection
 	    	            	thisBoard.lastSelectedTile = t;
-	    	            
 	    	            	Utility.GotInput(selectedTileLock);
 	    	            }
 	    	        });
@@ -70,6 +69,7 @@ public class BoardView extends Region {
 	public Tile getNextSelectedTile() {
 		this.clearLastSelectedTile();
 		
+		selectedTileLock = new Semaphore(0);
 		Utility.PromptForInput(selectedTileLock);
 		
 		return lastSelectedTile;

@@ -74,7 +74,7 @@ public class GameController {
 		
 		initializeHexTiles();
 		
-		initializeCreaturesCup();
+		randomizePlayingCup();
 		
 		initializeGold();
 		
@@ -89,39 +89,43 @@ public class GameController {
 	}
 	
 	private void playThings() {
-			
 		for(GameRouter gr: GameServer.servers)
 		{
-			String[] args  = {""+gr.myID, ""};
-    		Event e = new Event()
-    					.EventId(EventList.PLAY_THINGS)
-    					.ExpectsResponse(true)
-    					.EventParameters(args);
-    		
-    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+			boolean playDone = false;
+			
+			do
+			{
+				String[] args  = {""+gr.myID, "",""+playDone};
+	    		Event e = new Event()
+	    				.EventId(EventList.PLAY_THINGS)
+	    				.ExpectsResponse(true)
+	    				.EventParameters(args);
+	    		
+	    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+	
+				for (int j=0; j<responses.length; j++){
+					if(responses[j].fromPlayer == gr.myID)
+					{
+						String[] responseStrings = responses[j].message.split(" ");
+						
+						args[2] = responseStrings[0];
+						
+						if(responseStrings.length == 2)
+							args[1] = responseStrings[1];
 
-			for (int j=0; j<responses.length; j++){
-				if(responses[j].fromPlayer == gr.myID)
-				{
-					args[1] = responses[j].message;
+						playDone = Boolean.parseBoolean(responseStrings[0]);
+					}
 				}
-			}
-    		
-			boolean[] intendedPlayers = new boolean[4];
-    		for(int j=0; j<numClients; j++)
-    		{
-    			if(j == gr.myID)
-    				intendedPlayers[j] = false;
-    			else
-    				intendedPlayers[j] = true;
-    		}
-    		
-    		e = new Event()
-				.EventId(EventList.HANDLE_PLAY_THINGS)
-				.IntendedPlayers(intendedPlayers)
-    		    .EventParameters(args);
-    		
-    		GameControllerEventHandler.sendEvent(e);
+	    		
+				if(!args[1].equals(""))
+				{
+		    		e = new Event()
+						.EventId(EventList.HANDLE_PLAY_THINGS)
+		    		    .EventParameters(args);
+		    		
+		    		GameControllerEventHandler.sendEvent(e);
+				}
+			}while(!playDone);
 		}
 	}
 
@@ -203,18 +207,43 @@ public class GameController {
 		
 	}
 	
-	private void initializeCreaturesCup() {
-		String initializeCreaturesString = GameModel.initializeCreatures();
+	private void randomizePlayingCup() {
 		
-		String[] args = new String[1];
-		args[0] = initializeCreaturesString;
+		//ask first player to randomize playing cup
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+		
+
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.RANDOMIZE_THINGS)
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(true)
+			);
+		
+		//get new cup order response
+		String thingIDs = "";
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				thingIDs = r.message;	
+		}
+		
+		
+		//update remaining clients with new cup order
+		for(int i=1; i<numClients; i++)
+		{
+			intendedPlayers[i] = true;
+		}
+		intendedPlayers[0] = false;
+		
 		
 		GameControllerEventHandler.sendEvent(
 				new Event()
-					.EventId( EventList.SET_CREATURES )
-					.EventParameters( args )
+					.EventId(EventList.UPDATE_CUP_ORDER)
+					.EventParameter(thingIDs)
+					.IntendedPlayers(intendedPlayers)
 			);
-		
 	}
 
 	private void determineInitialPlayerOrder() {

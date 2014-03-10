@@ -64,7 +64,7 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 							GameControllerEventHandler.waitingEvents.notify();
 						}
 					} else {
-						boolean[] intendedPlayers = new boolean[4];
+						/*boolean[] intendedPlayers = new boolean[4];
 						
 						for (int i = 0; i < 4; i++){
 							if (i == myID) {
@@ -72,12 +72,12 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 							} else {
 								intendedPlayers[i] = true;
 							}
-						}
+						}*/
 						
 						Event d = new Event()
 									.EventId(e.eventId)
 									.EventParameters(e.eventParams)
-									.IntendedPlayers(intendedPlayers)
+									//.IntendedPlayers(intendedPlayers)
 									.ExpectsResponse(false);
 						
 						GameControllerEventHandler.sendEvent(e);

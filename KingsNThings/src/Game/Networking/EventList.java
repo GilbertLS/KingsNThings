@@ -16,7 +16,7 @@ public class EventList {
 	public static final int ADD_THING_TO_TILE = 12;
 	public static final int BATTLE_OVER = 13;
 	public static final int SET_HEX_TILES = 14;
-	public static final int SET_CREATURES = 15;
+	public static final int INITIALIZE_THINGS = 15;
 	public static final int GET_THINGS_FROM_CUP = 16;
 	public static final int DISTRIBUTE_INITIAL_GOLD = 18;
 	public static final int AWARD_INCOME = 19;
@@ -40,4 +40,6 @@ public class EventList {
 	public static final int MOVE_THINGS = 115;
 	public static final int HANDLE_MOVE_THINGS = 116;
 	public static final int CLEAR_THING_MOVES = 118;
+	public static final int RANDOMIZE_THINGS = 119;
+	public static final int UPDATE_CUP_ORDER = 120;
 }

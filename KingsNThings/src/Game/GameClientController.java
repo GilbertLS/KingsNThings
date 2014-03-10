@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.application.Platform;
 import Game.GameConstants.Terrain;
+import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
 import gui.GameView;
 
@@ -164,42 +165,62 @@ public class GameClientController {
 	public boolean isValidMove(HexTile originalTile, HexTile tileRef,
 			ArrayList<Thing> things) {
 		
-		boolean valid = true;
-		
 		if(!originalTile.isAdjacent(tileRef)
 				|| (!tileRef.isLand() && !areAllFlying(things))
 				|| (!allThingsAbleToMove(tileRef, things)))
-			valid = false;
+			return false;
 			
-		return valid;
+		return true;
 	}
 
 	private boolean areAllFlying(ArrayList<Thing> things) {
-		boolean allFlying = true;
-		
 		for(Thing t: things)
 		{
 			if(!((Combatant)t).isFlying)
-				allFlying = false;
+				return false;
 		}
 		
-		return allFlying;
+		return true;
 	}
 
-	private boolean allThingsAbleToMove(HexTile tileRef, ArrayList<Thing> things) {
-		boolean allAbleToMove = true;		
-		
+	private boolean allThingsAbleToMove(HexTile tileRef, ArrayList<Thing> things) {		
 		for(Thing t: things)
 		{
 			if(t.numMoves + tileRef.moveValue > 4)
-				allAbleToMove = false;
+				return false;
 		}
 	
-		return allAbleToMove;
+		return true;
 	}
 	
 	public void clearThingMoves()
 	{
 		gameModel.clearThingMoves();
+	}
+
+	public void cashTreasure() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isValidPlacement(HexTile tileRef, ArrayList<Thing> things) {
+		if(tileRef.controlledBy != things.get(0).controlledBy)
+			return false;
+		
+		for(Thing t: things)
+		{
+			if(t.thingType == ThingType.SPECIAL_INCOME)
+			{
+				if(tileRef.hasSpecialIncome() || tileRef.terrain != ((SpecialIncome)t).getTerrain())
+					return false;
+			}
+			else if (t.thingType == ThingType.SETTLEMENT)
+			{
+				if(tileRef.hasSpecialIncome())
+					return false;
+			}
+		}
+			
+		return true;
 	}
 }

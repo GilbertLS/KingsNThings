@@ -125,16 +125,16 @@ public class Tile extends Region implements Draggable {
     			return "Tuile_Back.png";
     		}
     		else
-    		switch (tileRef.getTerrain()) {
-    			case SEA: return "Tuile-Mer.png";
-    			case JUNGLE: return "Tuile-Jungle.png";
-    			case FROZEN_WASTE: return "Tuile-Entendue-Glacée.png";
-    			case FOREST: return "Tuile-Forêt.png";
-    			case PLAINS: return "Tuile-Plaines.png";
-    			case SWAMP: return "Tuile-Marais.png";
-    			case MOUNTAIN: return "Tuile-Montagne.png";
-    			case DESERT: return "Tuile-Desert.png";
-    		}
+   			 switch (tileRef.getTerrain()) {
+			 	case SEA: return GameConstants.SeaTileFront;
+				case JUNGLE: return GameConstants.JungleTileFront;
+				case FROZEN_WASTE: return GameConstants.FrozenWasteTileFront;
+				case FOREST: return GameConstants.ForestTileFront;
+				case PLAINS: return GameConstants.PlainsTileFront;
+				case SWAMP: return GameConstants.SwampTileFront;
+				case MOUNTAIN: return GameConstants.MountainTileFront;
+				case DESERT: return GameConstants.DesertTileFront;
+			 }
     	}
     	
     	return "Tuile_Back.png";
@@ -259,6 +259,8 @@ public class Tile extends Region implements Draggable {
 						ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
 						ObservableList<ThingView> 	items		= source.getListView().getItems();
 						ArrayList<ThingView> 		thingViews		= new ArrayList<ThingView>();
+						ArrayList<Thing> things = new ArrayList<Thing>();
+					
 						
 						GameView gv = (GameView)getScene();
 						
@@ -266,21 +268,41 @@ public class Tile extends Region implements Draggable {
 							thingViews.add(items.get(i));
 						}
 						
+						for(ThingView tv: thingViews)
+							things.add(tv.thingRef);
+						
 						String originalTileString = (String)e.getDragboard().getContent(originalTile);
 						
 						if(gv.currentPhase != CurrentPhase.NULL)
 						{							
 							if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 							{
-								if(items.get(0).thingRef.controlledBy == tileRef.controlledBy)
-								{									
+								if(GameClient.game.isValidPlacement(tileRef, things))
+								{
 									gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(thingViews.size());
 									
 									for(ThingView t: thingViews)
 										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
 									
+									//remove special incomes and treasures
+									ArrayList<ThingView> thingsToRemove = new ArrayList<ThingView>();
+									for(ThingView tv: thingViews)
+									{
+										if(tv.thingRef.getThingType() == ThingType.SETTLEMENT
+											|| tv.thingRef.getThingType() == ThingType.SPECIAL_INCOME)
+											thingsToRemove.add(tv);
+									}
+									
+									for(ThingView tv: thingsToRemove)
+									{
+										thingViews.remove(tv);
+									}
+											
 									thisTile.addAll(thingViews, gv.getCurrentPlayer());
 									source.getListView().getItems().removeAll(thingViews);
+									source.getListView().getItems().removeAll(thingsToRemove);
+									
+									Utility.GotInput(gv.playLock);
 									
 									success = true;
 								}
@@ -293,11 +315,6 @@ public class Tile extends Region implements Draggable {
 								int y = Integer.parseInt(originalHexParams[1].trim());
 								
 								HexTile originalTile = GameClient.game.gameModel.gameBoard.getTile(x, y);
-								
-								ArrayList<Thing> things = new ArrayList<Thing>();
-								
-								for(ThingView tv: thingViews)
-									things.add(tv.thingRef);
 								
 								if(GameClient.game.isValidMove(originalTile, tileRef, things))
 								{
@@ -340,21 +357,27 @@ public class Tile extends Region implements Draggable {
 		});
 	}
 
-	public void showTile() {
-		String s ="";
+	protected void addSpecialIncome(ThingView tv) {
+		// TODO Auto-generated method stub
 		
-		switch (tileRef.getTerrain()) {
-			case SEA: s = "Tuile-Mer.png"; break;
-			case JUNGLE: s ="Tuile-Jungle.png"; break;
-			case FROZEN_WASTE: s = "Tuile-Entendue-Glacée.png"; break;
-			case FOREST: s = "Tuile-Forêt.png"; break;
-			case PLAINS: s ="Tuile-Plaines.png"; break;
-			case SWAMP: s ="Tuile-Marais.png"; break;
-			case MOUNTAIN: s ="Tuile-Montagne.png"; break;
-			case DESERT: s ="Tuile-Desert.png"; break;
+	}
+
+	public void showTile() {  
+		String s = "";
+				
+		switch(tileRef.getTerrain())
+		{
+		 	case SEA: s = GameConstants.SeaTileFront; break;
+			case JUNGLE: s = GameConstants.JungleTileFront; break;
+			case FROZEN_WASTE: s = GameConstants.FrozenWasteTileFront; break;
+			case FOREST: s = GameConstants.ForestTileFront; break;
+			case PLAINS: s = GameConstants.PlainsTileFront; break;
+			case SWAMP: s = GameConstants.SwampTileFront; break;
+			case MOUNTAIN: s = GameConstants.MountainTileFront; break;
+			case DESERT: s = GameConstants.DesertTileFront; break;
 		}
-    	
-    	this.setStyle("-fx-background-image: url(/res/images/ " + s + "); ");
+		
+		this.setStyle("-fx-background-image: url(/res/images/ " + s + "); ");
 	}
 	
 	public List<ThingView> getThings(int i) {

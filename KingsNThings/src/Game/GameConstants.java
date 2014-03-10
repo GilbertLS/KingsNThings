@@ -4,8 +4,6 @@ package Game;
  * This class holds all relevant constants for the Game (for example, enums, screen width/height)
  */
 public final class GameConstants {
-	//-----------ENUMS-------------------
-
 	public static enum CurrentPhase {
 		MOVEMENT,
 		BATTLE,
@@ -49,50 +47,179 @@ public final class GameConstants {
 	public static final String PlaceHolderImageFront = "Bowl.png";
 	public static final String PlaceHolderImageBack = "Bowl.png";
 	public static final String ThingImageBack = "T_Back.png";
-	public static final String TowerImageBack = "C_Fort_376.png";
-	public static final String TowerImageFront = "C_Fort_375.png";
-	public static final String WitchDoctorImageFront = "T_Jungle_006.png";
-	public static final String OgreImageFront = "T_Mountains_I.png";
-	public static final String GoblinsImageFront = "T_Mountains_E.png";
-	public static final String WatusiImageFront = "T_Jungle_012.png";
-	public static final String SkeletonsImageFront = "T_Desert_331.png";
-	public static final String DwarvesImageFront = "T_Mountains_N.png";
-	public static final String GiantImageFront = "T_Mountains_J.png";
-	public static final String BrownKnightImageFront = "T_Mountains_D.png";
-	public static final String ElephantImageFront = "T_Jungle_001.png";
-	public static final String GiantSpiderImageFront = "T_Desert_221.png";
-	public static final String OldDragonImageFront = "T_Desert_211.png";
-	public static final String BanditsImageFront = "T_Forest_086.png";
-	public static final String CrawlingVinesImageFront = "T_Jungle_003.png";
-	public static final String WalkingTreeImageFront = "T_Forest_098.png";
-	public static final String DruidImageFront = "T_Forest_088.png";
-	public static final String NomadsImageFront = "T_Desert_220.png";
-	public static final String CrocodilesImageFront = "T_Jungle_005.png";
-	public static final String DervishImageFront = "T_Desert_214.png";
-	public static final String GreenKnightImageFront = "T_Forest_097.png";
-	public static final String SandwormImageFront = "T_Desert_224.png";
-	public static final String PterodactylWarriorsImageFront = "T_Jungle_002.png";
-	public static final String GreatHunterImageFront = "T_Plains_021.png";
-	public static final String PygmiesImageFront = "T_Jungle_008.png";
-	public static final String GenieImageFront = "T_Desert_215.png";
-	public static final String FarmersImageFront = "T_Plains_014.png";
-	public static final String CamelCorpsImageFront = "T_Desert_219.png";
-	public static final String CentaurImageFront = "T_Plains_031.png";
-	public static final String BuffaloHerdImageFront = "T_Plains_016.png";
-	public static final String GiantApeImageFront = "T_Jungle_009.png";
-	public static final String BlackKnightImageFront = "T_Swamp_080.png";
-	public static final String DarkWizardImageFront = "T_Swamp_081.png";
-	public static final String TribesmanImageFront = "T_Plains_027.png";
-	public static final String VampireBatImageFront = "T_Swamp_084.png";
-	public static final String TigersImageFront = "T_Jungle_011.png";
-	public static final String VillainsImageFront = "T_Plains_015.png";
-	public static final String GiantLizardImageFront = "T_Swamp_076.png";
-	public static final String MountainMenImageFront = "T_Mountains_A.png";
-	public static final String CyclopsImageFront = "T_Mountains_Q.png";
 	
-	//-------------/end ENUMS---------------
+	//DESERT
+	public static final String BabyDragonImageFront = "BabyDragon.jpg";
+	public static final String CamelCorpsImageFront = "CamelCorps.jpg";
+	public static final String GenieImageFront = "Genie.jpg";
+	public static final String DustDevilImageFront = "DustDevil.jpg";
+	public static final String DesertBatImageFront = "DesertBat.jpg";
+	public static final String GiantSpiderImageFront = "GiantSpider.jpg";
+	public static final String GiantWaspImageFront = "GiantWasp.jpg";
+	public static final String GiantWasp1ImageFront = "GiantWasp1.jpg";
+	public static final String GriffonImageFront = "Griffon.jpg";
+	public static final String OldDragonImageFront = "OldDragon.jpg";
+	public static final String SandwormImageFront = "Sandworm.jpg";
+	public static final String SphinxImageFront = "Sphinx.jpg";
+	public static final String YellowKnightImageFront = "YellowKnight.jpg";
+	public static final String DervishImageFront = "Dervish.jpg";
+	public static final String NomadsImageFront = "Nomads.jpg";
+	public static final String SkeletonsImageFront = "Skeletons.jpg";
+	public static final String VulturesImageFront = "Vultures.jpg";
 	
-	//-------------INTEGERS-----------------
+	//FOREST
+	public static final String BanditsImageFront = "Bandits.jpg";
+	public static final String ElvesImageFront = "Elves.jpg";
+	public static final String Elves1ImageFront = "Elves1.jpg";
+	public static final String PixiesImageFront = "Pixies.jpg";
+	public static final String WyvernImageFront = "Wyvern.jpg";
+	public static final String WildCatImageFront = "WildCat.jpg";
+	public static final String WalkingTreeImageFront = "WalkingTree.jpg";
+	public static final String UnicornImageFront = "Unicorn.jpg";
+	public static final String KillerRaccoonImageFront = "KillerRacoon.jpg";
+	public static final String GreenKnightImageFront = "GreenKnight.jpg";
+	public static final String GreatOwlImageFront = "GreatOwl.jpg";
+	public static final String ForesterImageFront = "Forester.jpg";
+	public static final String FlyingSquirrelImageFront = "FlyingSquirrel.jpg";
+	public static final String FlyingSquirrel1ImageFront = "FlyingSquirrel1.jpg";
+	public static final String ElfMageImageFront = "ElfMage.jpg";
+	public static final String BearsImageFront = "Bears.jpg";
+	public static final String BigFootImageFront = "BigFoot.jpg";
+	public static final String DruidImageFront = "Druid.jpg";
+	public static final String DryadImageFront = "Dryad.jpg";
+	
+	//FROZEN WASTE
+	public static final String DragonRiderImageFront = "DragonRider.jpg";
+	public static final String ElkHerdImageFront = "ElkHerd.jpg";
+	public static final String IceBatsImageFront = "IceBats.jpg";
+	public static final String IceGiantImageFront = "IceGiant.jpg";
+	public static final String IcewormImageFront = "Iceworm.jpg";
+	public static final String KillerPenguinsImageFront = "KillerPenguins.jpg";
+	public static final String KillerPuffinsImageFront = "KillerPuffins.jpg";
+	public static final String MammothImageFront = "Mammoth.jpg";
+	public static final String NorthWindImageFront = "NorthWind.jpg";
+	public static final String WalrusImageFront = "Walrus.jpg";
+	public static final String WhiteBearImageFront = "WhiteBear.jpg";
+	public static final String WhiteDragonImageFront = "WhiteDragon.jpg";
+	public static final String WolvesImageFront = "Wolves.jpg";
+	public static final String EskimosImageFront = "Eskimos.jpg";
+	
+	//JUNGLE
+	public static final String BirdOfParadiseImageFront = "BirdOfParadise.jpg";
+	public static final String CrawlingVinesImageFront = "CrawlingVines.jpg";
+	public static final String CrocodilesJungleImageFront = "CrocodilesJungle.jpg";
+	public static final String DinosaurImageFront = "Dinosaur.jpg";
+	public static final String ElephantImageFront = "Elephant.jpg";
+	public static final String GiantSnakeJungleImageFront = "GiantSnakeJungle.jpg";
+	public static final String HeadHunterImageFront = "HeadHunter.jpg";
+	public static final String PterodactylWarriorsImageFront = "PterodactylWarriors.jpg";
+	public static final String PygmiesImageFront = "Pygmies.jpg";
+	public static final String WatusiImageFront = "Watusi.jpg";
+	public static final String GiantApeImageFront = "GiantApe.jpg";
+	public static final String WitchDoctorImageFront = "WitchDoctor.jpg";
+	public static final String TigersImageFront = "Tigers.jpg";
+	
+	//MOUNTAIN
+	public static final String BrownDragonImageFront = "BrownDragon.jpg";
+	public static final String BrownKnightImageFront = "BrownKnight.jpg";
+	public static final String CyclopsImageFront = "Cyclops.jpg";
+	public static final String DwarvesImageFront = "Dwarves.jpg";
+	public static final String Dwarves1ImageFront = "Dwarves1.jpg";
+	public static final String Dwarves2ImageFront = "Dwarves2.jpg";
+	public static final String GiantRocImageFront = "GaintRoc.jpg";
+	public static final String GiantImageFront = "Giant.jpg";
+	public static final String GiantCondorImageFront = "GiantCondor.jpg";
+	public static final String GreatEagleImageFront = "GreatEagle.jpg";
+	public static final String GreatHawkMountainImageFront = "GreatHawkMountain.jpg";
+	public static final String LittleRocImageFront = "LittleRoc.jpg";
+	public static final String MountainLionImageFront = "MountainLion.jpg";
+	public static final String OgreImageFront = "Ogre.jpg";
+	public static final String TrollImageFront = "Troll.jpg";
+	public static final String MountainMenImageFront = "MountainMen.jpg";
+	public static final String GoblinsImageFront = "Goblins.jpg";
+	
+	//PLAINS
+	public static final String BuffaloHerdImageFront = "BuffaloHerd.jpg";
+	public static final String BuffaloHerd1ImageFront = "BuffaloHerd1.jpg";
+	public static final String CentaurImageFront = "Centaur.jpg";
+	public static final String DragonflyImageFront = "Dragonfly.jpg";
+	public static final String EaglesImageFront = "Eagles.jpg";
+	public static final String FlyingBuffaloImageFront = "FlyingBuffalo.jpg";
+	public static final String GiantBeetleImageFront = "GiantBeetle.jpg";
+	public static final String GreatHawkPlainsImageFront = "GreatHawkPlains.jpg";
+	public static final String GreathunterImageFront = "Greathunter.jpg";
+	public static final String GypsiesImageFront = "Gypsies.jpg";
+	public static final String Gypsies1ImageFront = "Gypsies1.jpg";
+	public static final String HunterImageFront = "Hunter.jpg";
+	public static final String LionPrideImageFront = "LionPride.jpg";
+	public static final String PegasusImageFront = "Pegasus.jpg";
+	public static final String PterodactylImageFront = "Pterodactyl.jpg";
+	public static final String VillainsImageFront = "Villains.jpg";
+	public static final String WhiteKnightImageFront = "WhiteKnight.jpg";
+	public static final String WolfPackImageFront = "WolfPack.jpg";
+	public static final String Tribesmen1ImageFront = "Tribesmen1.jpg";
+	public static final String TribesmenImageFront = "Tribesmen.jpg";
+	public static final String FarmersImageFront = "Farmers.jpg";
+
+	//SWAMP
+	public static final String BasiliskImageFront = "Basilisk.jpg";
+	public static final String BlackKnightImageFront = "BlackKnight.jpg";
+	public static final String CrocodilesSwampImageFront = "CrocodilesSwamp.jpg";
+	public static final String DarkWizardImageFront = "DarkWizard.jpg";
+	public static final String GiantMosquitoImageFront = "GiantMosquito.jpg";
+	public static final String GiantSnakeSwampImageFront = "GiantSnakeSwamp.jpg";
+	public static final String HugeLeechImageFront = "HugeLeech.jpg";
+	public static final String PiratesImageFront = "Pirates.jpg";
+	public static final String PoisonFrogImageFront = "PoisonFrog.jpg";
+	public static final String SpiritImageFront = "Spirit.jpg";
+	public static final String SpriteImageFront = "Sprite.jpg";
+	public static final String SlimeBeastImageFront = "SlimeBeast.jpg";
+	public static final String SwampGasImageFront = "SwampGas.jpg";
+	public static final String ThingImageFront = "Thing.jpg";
+	public static final String SwampRatImageFront = "SwampRat.jpg";
+	public static final String VampireBatImageFront = "VampireBat.jpg";
+	public static final String WatersnakeImageFront = "Watersnake.jpg";
+	public static final String WillOWispImageFront = "Will-O-Wisp.jpg";
+	public static final String WingedPirhanaImageFront = "WingedPirhana.jpg";
+	public static final String GiantLizardImageFront = "GiantLizard.jpg";
+	public static final String GhostImageFront = "Ghost.jpg";
+	
+	//FORTS
+	public static final String TowerImageFront = "TowerFront.jpg";
+	public static final String TowerImageBack = "TowerBack.jpg";
+	public static final String KeepImageFront = "KeepFront.jpg";
+	public static final String KeepImageBack = "KeepBack.jpeg";
+	public static final String CastleImageFront = "CastleFront.jpg";
+	public static final String CastleImageBack = "CastleBack.jpg";
+	public static final String CitadelImageFront = "CitadelFront.jpg";
+	public static final String CitadelImageBack = "CitadelBack.jpg";
+	
+	//SPECIAL INCOMES
+	public static final String CityImageFront = "CityFront.jpg";
+	public static final String CityImageBack = "CityBack.jpg";
+	public static final String VillageImageFront = "VillageFront.jpg";
+	public static final String VillageImageBack = "VillageBack.jpg";
+	public static final String CopperMineImageFront = "CopperMine.jpg";
+	public static final String SilverMineImageFront = "SilverMine.jpg";
+	public static final String GoldMineImageFront = "GoldMine.jpg";
+	public static final String DiamondFieldImageFront = "DiamondField.jpg";
+	public static final String ElephantsGraveyardImageFront = "ElephantsGraveyard.jpg";
+	public static final String FarmlandsImageFront = "Farmlands.jpg";
+	public static final String OilFieldImageFront = "OilField.jpg";
+	public static final String PeatBogImageFront = "PeatBog.jpg";
+	public static final String TimberlandImageFront = "Timberland.jpg";
+	
+	//HEXTILES
+	public static final String SeaTileFront = "Sea.png";
+	public static final String JungleTileFront = "Jungle.png";
+	public static final String FrozenWasteTileFront = "FrozenWaste.png";
+	public static final String ForestTileFront = "Forest.png";
+	public static final String PlainsTileFront = "Plains.png";
+	public static final String SwampTileFront = "Swamp.png";
+	public static final String MountainTileFront = "Mountain.png";
+	public static final String DesertTileFront = "Desert.png";
+	
+	
 	//Piece count constants
 	public static final int MAX_NUM_THINGS = 150;
 	public static final int MAX_NUM_THINGS_IN_RACK = 10;
@@ -124,6 +251,10 @@ public final class GameConstants {
 	public static final int NUM_DESERT_TILES = 6;
 
 	public static final int GOLD_PER_RECRUIT = 5;
+	
+	public static final int NUM_CITIES = 5;
+	public static final int NUM_VILLAGES = 5;
+
 
 	//battle turns
 	public static enum BattleTurn {
@@ -145,6 +276,4 @@ public final class GameConstants {
 			return ControlledBy.PLAYER4;
 		}
 	}
-
-	//--------------/end INTEGERS
 }

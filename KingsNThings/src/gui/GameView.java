@@ -50,6 +50,7 @@ public class GameView extends Scene {
 	public Semaphore inputLock = new Semaphore(0);
 	public Semaphore submitLock = new Semaphore(0);
 	public Semaphore moveLock = new Semaphore(0);
+	public Semaphore playLock = new Semaphore(0);
 	//public boolean moveMade = false;
 	
     public GameView(BorderPane r, Stage ps) {
@@ -113,6 +114,7 @@ public class GameView extends Scene {
     }
 
 	public int getNumPaidRecruits() {
+		submitLock = new Semaphore(0);
 		Utility.PromptForInput(submitLock);
 		
 		return Integer.parseInt(inputView.getInput());
@@ -121,7 +123,7 @@ public class GameView extends Scene {
 	public String performPhase(CurrentPhase currentPhase){
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
-		
+		inputLock = new Semaphore(0);
 		Utility.PromptForInput(inputLock);
 		
 		String s = returnString;
@@ -154,6 +156,26 @@ public class GameView extends Scene {
 		String s = userInputDone + " " + returnString;
 		
 		//moveMade = false;
+		userInputDone = false;
+		returnString = "";
+		
+		currentPhase = CurrentPhase.NULL;
+		
+		return s;	
+	}
+	
+	public String playIteration()
+	{
+		//perform a single iteration of playing things
+		//movement is done when userInputDone is set to true
+		//after the beginning of the movement phase
+
+		currentPhase = CurrentPhase.PLAY_THINGS;
+		
+		Utility.PromptForInput(playLock);
+		
+		String s = userInputDone + " " + returnString;
+		
 		userInputDone = false;
 		returnString = "";
 		
@@ -232,14 +254,14 @@ public class GameView extends Scene {
 			return "Tuile_Back.png";
 		 } else {
 			 switch (tile.getTerrain()) {
-			 	case SEA: return "Tuile-Mer.png";
-				case JUNGLE: return "Tuile-Jungle.png";
-				case FROZEN_WASTE: return "Tuile-Entendue-Glacée.png";
-				case FOREST: return "Tuile-Forêt.png";
-				case PLAINS: return "Tuile-Plaines.png";
-				case SWAMP: return "Tuile-Marais.png";
-				case MOUNTAIN: return "Tuile-Montagne.png";
-				case DESERT: return "Tuile-Desert.png";
+			 	case SEA: return GameConstants.SeaTileFront;
+				case JUNGLE: return GameConstants.JungleTileFront;
+				case FROZEN_WASTE: return GameConstants.FrozenWasteTileFront;
+				case FOREST: return GameConstants.ForestTileFront;
+				case PLAINS: return GameConstants.PlainsTileFront;
+				case SWAMP: return GameConstants.SwampTileFront;
+				case MOUNTAIN: return GameConstants.MountainTileFront;
+				case DESERT: return GameConstants.DesertTileFront;
 			 }
 		 }
 	    	
@@ -270,6 +292,10 @@ public class GameView extends Scene {
 				}
 			});
 		}
+	}
+
+	public void updateGold(int playerIndex) {
+		//playerList.getPlayerPanel(playerIndex).updateGold()
 	}
 	
 }
