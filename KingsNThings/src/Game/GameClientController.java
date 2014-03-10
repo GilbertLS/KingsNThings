@@ -72,58 +72,29 @@ public class GameClientController {
 		return seenTiles;
 	}
 
-	public void parseMovedThingsStrings(String[] thingsPlayedStrings,
-			ArrayList<HexTile> tilesFrom, ArrayList<HexTile> tilesTo,
-			ArrayList<Integer> thingIDs, int playerIndex) {
+	public void parseMovedThingsStrings(String thingsPlayedStrings,
+			ArrayList<HexTile> hexTiles,
+			ArrayList<Integer> thingIDs) {
 		
-		for(String s: thingsPlayedStrings)
-		{
-			String[] paramsString = s.split("~");
-			String[] fromTileParamsString = paramsString[0].split("SPLIT");
-			String[] toTileParamsString = paramsString[1].split("SPLIT");
+		String[] paramsString = thingsPlayedStrings.split("~");
+		String[] fromTileParamsString = paramsString[0].split("SPLIT");
+		String[] toTileParamsString = paramsString[1].split("SPLIT");
 				
-			int tileFromX = Integer.parseInt(fromTileParamsString[0]);
-			int tileFromY = Integer.parseInt(fromTileParamsString[1]);
+		int tileFromX = Integer.parseInt(fromTileParamsString[0]);
+		int tileFromY = Integer.parseInt(fromTileParamsString[1]);
+		hexTiles.add(gameModel.gameBoard.getTile(tileFromX, tileFromY));
 			
-			int tileToX = Integer.parseInt(toTileParamsString[0]);
-			int tileToY = Integer.parseInt(toTileParamsString[1]);
+		int tileToX = Integer.parseInt(toTileParamsString[0]);
+		int tileToY = Integer.parseInt(toTileParamsString[1]);
+		hexTiles.add(gameModel.gameBoard.getTile(tileToX, tileToY));
 			
-			HexTile fromTile = gameModel.gameBoard.getTile(tileFromX, tileFromY);
-			HexTile toTile = gameModel.gameBoard.getTile(tileToX, tileToY);
+		String[] IDStrings = paramsString[2].split("/");
 			
-			int id = Integer.parseInt(paramsString[2]);
-			
-			/*
-			if(thingIDs.contains(id))
-			{
-				int idIndex = thingIDs.indexOf(id);
-				tilesTo.set(idIndex, toTile);
-			}
-			else
-			{*/
-				thingIDs.add(id);
-				tilesFrom.add(fromTile);
-				tilesTo.add(toTile);
-			//}
+		for(String s: IDStrings)
+		{
+			thingIDs.add(Integer.parseInt(s));
 		}
 	}
-
-	public ArrayList<HexTile> amalgamateHexTiles(ArrayList<HexTile> tilesFrom,
-			ArrayList<HexTile> tilesTo) {
-		ArrayList<HexTile> returnTiles = new ArrayList<HexTile>();
-		
-		for(HexTile h: tilesFrom)
-		{
-			returnTiles.add(h);
-		}
-		
-		for(HexTile h: tilesTo)
-		{
-			returnTiles.add(h);
-		}
-		
-		return returnTiles;
-	}	
 	
 	public void sendMessageToView(final String message)
 	{

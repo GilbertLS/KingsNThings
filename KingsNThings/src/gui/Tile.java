@@ -261,26 +261,23 @@ public class Tile extends Region implements Draggable {
 						ArrayList<ThingView> 		thingViews		= new ArrayList<ThingView>();
 						ArrayList<Thing> things = new ArrayList<Thing>();
 					
-						
 						GameView gv = (GameView)getScene();
-						
-						for (Integer i : listOfIds) {
-							thingViews.add(items.get(i));
-						}
-						
-						for(ThingView tv: thingViews)
-							things.add(tv.thingRef);
-						
-						String originalTileString = (String)e.getDragboard().getContent(originalTile);
-						
-						if(gv.currentPhase != CurrentPhase.NULL)
-						{							
+						if(gv.currentPhase != CurrentPhase.NULL && gv.returnString.equals(""))
+						{											
+							for (Integer i : listOfIds) {
+								thingViews.add(items.get(i));
+							}
+							
+							for(ThingView tv: thingViews)
+								things.add(tv.thingRef);
+							
+							String originalTileString = (String)e.getDragboard().getContent(originalTile);
+							
+							
 							if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 							{
 								if(GameClient.game.isValidPlacement(tileRef, things))
-								{
-									gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(thingViews.size());
-									
+								{									
 									for(ThingView t: thingViews)
 										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
 									
@@ -343,8 +340,11 @@ public class Tile extends Region implements Draggable {
 									//gv.moveMade = true;
 									
 									//string to update 
+									
+									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~";
+										
 									for(ThingView t: thingViews)
-										gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
+										gv.returnString += t.thingRef.thingID + "/";
 									
 								}
 							}

@@ -895,28 +895,29 @@ public class GameModel {
 		}
 	}
 
-	public void updateMovedThings(ArrayList<HexTile> tilesFrom,
-			ArrayList<HexTile> tilesTo, ArrayList<Integer> thingIDs,
+	public void updateMovedThings(ArrayList<HexTile> hexTiles,
+			ArrayList<Integer> thingIDs,
 			int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
 		
-		int i=0;
+		HexTile tileTo = hexTiles.get(1);
+		HexTile tileFrom = hexTiles.get(0);
+		
 		for(Integer id: thingIDs)
-		{
-			HexTile fromTile = tilesFrom.get(i);
-			HexTile toTile = tilesTo.get(i);
+		{			
+			Thing thingPlayed = tileFrom.getThingFromTileByID(id, playerIndex);
 			
-			Thing thingPlayed = fromTile.getThingFromTileByID(id, playerIndex);
+			tileFrom.removeThing(id, playerIndex); 
+			tileTo.AddThingToTile(playerIndex, thingPlayed);
 			
-			fromTile.removeThing(id, playerIndex); 
-			toTile.AddThingToTile(playerIndex, thingPlayed);
-			thingPlayed.numMoves += toTile.moveValue;
+			//handle movement speed
+			thingPlayed.numMoves += tileTo.moveValue;
 			
 			movedThings.add(thingPlayed);
 			
-			if(!player.ownedHexTiles.contains(toTile) && toTile.controlledBy == ControlledBy.NEUTRAL)
+			if(!player.ownedHexTiles.contains(tileTo) && tileTo.controlledBy == ControlledBy.NEUTRAL)
 			{
-				updateTileFaction(playerIndex, toTile.x, toTile.y);
+				updateTileFaction(playerIndex, tileTo.x, tileTo.y);
 			}
 		}
 	}

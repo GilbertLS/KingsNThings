@@ -78,7 +78,7 @@ public class GameController {
 		
 		initializeGold();
 		
-		placeThingsOnTile(3, "Control_Marker");
+		placeThingsOnTile(2, "Control_Marker");
 		
 		//placeThingsOnTile(1, "Tower");
 		
@@ -329,9 +329,9 @@ public class GameController {
 		{
 			distributeIncome();
 			
-			recruitThings();
+			//recruitThings();
 			
-			playThings();
+			//playThings();
 			
 			moveThings();
 			

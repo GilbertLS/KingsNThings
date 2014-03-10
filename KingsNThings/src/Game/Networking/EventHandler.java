@@ -719,15 +719,15 @@ public class EventHandler {
 			
 			if(e.eventParams.length == 3)
 			{
-				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
-				ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
-				ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+				String thingsPlayedStrings = e.eventParams[1].trim();
+				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
 				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
-				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs);
 				
-				GameClient.game.gameModel.updateMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				GameClient.game.gameModel.updateMovedThings(hexTiles, thingIDs, playerIndex);
 				
-				final ArrayList<HexTile> hexTilesCopy = GameClient.game.amalgamateHexTiles(tilesFrom, tilesTo);
+				final ArrayList<HexTile> hexTilesCopy = hexTiles;
+				
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
