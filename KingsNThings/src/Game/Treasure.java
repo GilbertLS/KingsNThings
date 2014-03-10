@@ -7,10 +7,13 @@ import Game.GameConstants.ThingType;
  * providing specialized Treasure functionality
  */
 public class Treasure extends Thing{
-	//temp
-	private static int treasureID = 0;
-	public Treasure(String frontFileName)
+	int value;
+	
+	public Treasure(String name, int value, String frontFileName)
 	{
-		super(ThingType.TREASURE, "Treasure" + treasureID++, frontFileName);
+		super(ThingType.TREASURE, name, frontFileName);
+	}
+	public int getValue() {
+		return value;
 	}
 }

@@ -372,14 +372,30 @@ public class EventHandler {
 		        }
 		    });
 		}
-		else if (e.eventId == EventList.SET_CREATURES) {
-			String creaturesString = e.eventParams[0];
+		else if (e.eventId == EventList.RANDOMIZE_THINGS)
+		{
+			GameClient.game.gameModel.randomizePlayingCup();
 			
-			String[] creaturesStrings = creaturesString.split("/");
+			String thingIDs = GameClient.game.gameModel.getCupIDsString();
 			
-			GameClient.game.gameModel.setPlayingCup(creaturesStrings);
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.RANDOMIZE_THINGS)
+						.EventParameter(thingIDs)
+				);
+		}
+		else if (e.eventId == EventList.UPDATE_CUP_ORDER)
+		{
+			String[] thingIDStrings = e.eventParams[0].split(" ");
 			
-			//GameClient.game.gameModel.printCurrentBoardTiles();
+			ArrayList<Integer> thingIDs = new ArrayList<Integer>();
+			
+			for(String s: thingIDStrings)
+			{
+				thingIDs.add(Integer.parseInt(s));
+			}
+			
+			GameClient.game.gameModel.setPlayingCupOrder(thingIDs);
 		}
 		else if (e.eventId == EventList.GET_THINGS_FROM_CUP) {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
@@ -624,28 +640,17 @@ public class EventHandler {
 				GameClient.game.sendMessageToView("Please play your Things");		        	
 				
 				//drag and drop things to tiles
-				String thingPlayedParamsString = GameClient.game.gameView.performPhase(CurrentPhase.PLAY_THINGS);
+				String thingsPlayedParamsString = GameClient.game.gameView.playIteration();
 				
 				GameClient.game.clearMessageOnView();
 				
-				if(!thingPlayedParamsString.equals(""))
-				{
-					final String[] thingsPlayedStrings = thingPlayedParamsString.split("/");
-					
-					ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
-					ArrayList<Integer> thingIDs = new ArrayList<Integer>();
-					GameClient.game.parsePlayedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs, playerIndex);
-					
-					GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
-					
-					GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
-				}
+				String[] args = thingsPlayedParamsString.split(" ");
 				
 				//send changes
 				EventHandler.SendEvent(
 						new Event()
 							.EventId(EventList.PLAY_THINGS)
-							.EventParameter(thingPlayedParamsString)
+							.EventParameters(args)
 				);
 			}
 			else
@@ -657,7 +662,7 @@ public class EventHandler {
 		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			if(e.eventParams.length == 2)
+			if(e.eventParams.length == 3)
 			{
 				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
 				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
@@ -690,19 +695,6 @@ public class EventHandler {
 					GameClient.game.sendMessageToView("Please move your Things");		        	
 						
 					String thingsMovedParamsString = GameClient.game.gameView.moveIteration();
-					
-					//done in handle move things now, this is left in case I want to review my change
-					/*if(!thingsMovedParamsString.equals(""))
-					{
-						final String[] thingsMovedParamsStrings = thingsMovedParamsString.split("/");
-						
-						ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
-						ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
-						ArrayList<Integer> thingIDs = new ArrayList<Integer>();
-						GameClient.game.parseMovedThingsStrings(thingsMovedParamsStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
-							
-						GameClient.game.gameModel.updateMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
-					}*/
 					
 					String[] args = thingsMovedParamsString.split(" ");
 						

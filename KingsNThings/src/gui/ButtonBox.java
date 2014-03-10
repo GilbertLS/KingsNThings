@@ -1,5 +1,7 @@
 package gui;
 
+import Game.Networking.Event;
+import Game.Networking.GameClient;
 import Game.GameConstants.CurrentPhase;
 import Game.Utility;
 import javafx.event.ActionEvent;
@@ -33,8 +35,15 @@ public class ButtonBox extends HBox {
 					if(gv.currentPhase == CurrentPhase.MOVEMENT)
 						Utility.GotInput(gv.moveLock);
 					
+					if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
+						Utility.GotInput(gv.playLock);
+					
 					gv.userInputDone = true;
 				}
+				
+				//GameClient.game.cashTreasure();
+				
+				//Game.Networking.EventHandler.SendEvent(new Event());
 			}
 		});
 		

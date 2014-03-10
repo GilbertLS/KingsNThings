@@ -5,6 +5,8 @@ import java.util.Vector;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Level;
 import Game.GameConstants.Terrain;
+import Game.GameConstants.ThingType;
+import Game.Networking.GameClient;
 
 /*
  * This class represents a single Hex Tile in a Kings N' Things Game
@@ -22,6 +24,7 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
 	public Fort fort;						//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
+	public ArrayList<Settlement> settlements;
 	public int x;
 	public int y;
 	public int moveValue;
@@ -44,6 +47,7 @@ public class HexTile implements IIncomable{
 		this.fort = null;
 		
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
+		this.settlements = new ArrayList<Settlement>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		
 		if(terrain == Terrain.SWAMP
 				|| terrain == Terrain.MOUNTAIN
@@ -55,6 +59,12 @@ public class HexTile implements IIncomable{
 	}
 	
 	public void AddThingToTile(Player player, Thing thing){
+		if(handlePlaceSpecialIncome(player, thing))
+			return;
+		
+		if(handleTreasure(player, thing))
+			return;
+		
 		if ( player.GetPlayerNum() == 0 ){
 			player1Things.add(thing);
 		} else if ( player.GetPlayerNum() == 1 ){
@@ -66,11 +76,51 @@ public class HexTile implements IIncomable{
 		}
 	}
 	
+	private boolean handleTreasure(Player player, Thing thing) {
+		if(thing.thingType == ThingType.TREASURE) 
+		{
+			player.addGold(((Treasure)thing).getValue());
+			
+			return true;
+		}
+		
+		return false;
+	}
+
+	private boolean handlePlaceSpecialIncome(Player p, Thing t) {
+		if(t.thingType == ThingType.SPECIAL_INCOME) 
+		{
+			SpecialIncome si = (SpecialIncome)t;
+			
+			specialIncomes.add(si);
+			p.addSpecialIncome(si);
+			
+			return true;
+		}
+		else if(t.thingType == ThingType.SETTLEMENT)
+		{
+			Settlement s = (Settlement)t;
+			
+			settlements.add(s);
+			p.addSettlement(s);
+			
+			return true;
+		}
+
+		return false;
+	}
+
 	public void AddThingToTile(int playerIndex, Thing thing){
+		if(handlePlaceSpecialIncome(GameClient.game.gameModel.playerFromIndex(playerIndex), thing))
+			return;
+		
+		if(handleTreasure(GameClient.game.gameModel.playerFromIndex(playerIndex), thing))
+			return;
+		
 		if ( playerIndex == 0 ){
 			player1Things.add(thing);
 		} else if ( playerIndex == 1 ){
-			player2Things.add(thing);
+			player2Things.add(	thing);
 		} else if ( playerIndex == 2 ){
 			player3Things.add(thing);
 		} else if ( playerIndex == 3 ){
@@ -280,5 +330,9 @@ public class HexTile implements IIncomable{
 		}
 		
 		return ret;
+	}
+
+	public boolean hasSpecialIncome() {
+		return !specialIncomes.isEmpty() || !settlements.isEmpty();
 	}
 }

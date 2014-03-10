@@ -16,6 +16,7 @@ public class Player {
 	public ArrayList<Fort> forts;
 	public ArrayList<SpecialCharacter> specialCharacters;
 	public ArrayList<SpecialIncome> specialIncomes;
+	public ArrayList<Settlement> settlements;
 	public ArrayList<HexTile> ownedHexTiles;
 	
 	
@@ -51,6 +52,7 @@ public class Player {
 		specialCharacters = new ArrayList<SpecialCharacter>();
 		specialIncomes = new ArrayList<SpecialIncome>();
 		ownedHexTiles = new ArrayList<HexTile>();
+		settlements = new ArrayList<Settlement>();
 		
 		this.gold = 0;
 	}
@@ -127,5 +129,13 @@ public class Player {
 
 	public Thing getThingByID(int thingID) {
 		return playerRack.getThing(thingID);
+	}
+
+	public void addSpecialIncome(SpecialIncome si) {
+		specialIncomes.add(si);
+	}
+	
+	public void addSettlement(Settlement s) {
+		settlements.add(s);
 	}
 }

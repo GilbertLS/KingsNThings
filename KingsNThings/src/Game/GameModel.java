@@ -6,6 +6,7 @@ import gui.Tile;
 import java.util.ArrayList;
 
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.SettlementType;
 import Game.GameConstants.Terrain;
 import Game.Networking.GameClient;
 
@@ -62,17 +63,17 @@ public class GameModel {
 		this.player3 = new Player(2);
 		this.player4 = new Player(3);
 		
-		//initialize playing cup
-		createNewThings();
-		
 		//initialize Special Characters (and store in unownedCharacters)
 		createNewSpecialCharacters();
 		
 		ownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
+		playingCup = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS);
 		
 		dice = new Dice(4);
 		
 		boardController = new BoardController(gameBoard);
+		
+		initializePlayingCup();
 	}
 	private void createNewSpecialCharacters() {
 		this.unownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
@@ -94,39 +95,6 @@ public class GameModel {
 			unownedCharacters.add(new TerrainLord(Terrain.MOUNTAIN));
 			unownedCharacters.add(new TerrainLord(Terrain.PLAINS));
 			unownedCharacters.add(new TerrainLord(Terrain.SWAMP));
-		}
-		*/
-	}
-	private void createNewThings() {
-		this.playingCup = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS);
-		
-		//REMOVED FOR ITERATION 1
-		/*
-		//placeholder until we get the time to determine proper values for all Things
-		for(int i=0; i<10; i++)
-		{
-			playingCup.add(new Creature(Terrain.DESERT));
-			playingCup.add(new Creature(Terrain.FOREST));
-			playingCup.add(new Creature(Terrain.FROZEN_WASTE));
-			playingCup.add(new Creature(Terrain.JUNGLE));
-			playingCup.add(new Creature(Terrain.PLAINS));
-			playingCup.add(new Creature(Terrain.SWAMP));
-			playingCup.add(new Creature(Terrain.MOUNTAIN));
-			playingCup.add(new Event());
-			playingCup.add(new Settlement());
-			playingCup.add(new Magic());
-			playingCup.add(new Treasure());
-		}
-		
-		for(int i=0; i<3; i++)
-		{
-			playingCup.add(new SpecialIncome(Terrain.DESERT));
-			playingCup.add(new SpecialIncome(Terrain.FOREST));
-			playingCup.add(new SpecialIncome(Terrain.FROZEN_WASTE));
-			playingCup.add(new SpecialIncome(Terrain.JUNGLE));
-			playingCup.add(new SpecialIncome(Terrain.PLAINS));
-			playingCup.add(new SpecialIncome(Terrain.SWAMP));
-			playingCup.add(new SpecialIncome(Terrain.MOUNTAIN));
 		}
 		*/
 	}
@@ -444,327 +412,290 @@ public class GameModel {
 		gameBoard.printCurrentTiles();
 	}
 
-	public static String initializeCreatures() {
-		String initializeThingsString = "";
+	private void initializeCreatures() {
 		
-		//done twice so that we won't run out of creatures in demo 1
-		for(int i=0; i<2; i++) {
-			//THINGS RECRUITED
-			initializeThingsString += "Goblins" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.GoblinsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Mountain Men" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.MountainMenImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Cyclops" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 5 + "SPLIT" 
-					+ GameConstants.CyclopsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			
-			//PLAYER 4 THINGS (reverse order)
-			//Stack 3
-			initializeThingsString += "Buffalo Herd" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 3 + "SPLIT" 
-					+ GameConstants.BuffaloHerdImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Giant Ape" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 5 + "SPLIT" 
-					+ GameConstants.GiantApeImageFront +"SPLIT";
-			initializeThingsString += "/";
-			
-			//Stack 2
-			initializeThingsString += "Black Knight" + "SPLIT"
-					+ "SWAMP" + "SPLIT" 
-					+ 3 + "SPLIT" 
-					+ GameConstants.BlackKnightImageFront +"SPLIT"
-					+ "CHARGE";
-			initializeThingsString += "/";
-			initializeThingsString += "Dark Wizard" + "SPLIT"
-					+ "SWAMP" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.DarkWizardImageFront +"SPLIT"
-					+ "MAGIC" + "SPLIT"
-					+ "FLYING";
-			initializeThingsString += "/";
-			initializeThingsString += "Tribesman" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.TribesmanImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Vampire Bat" + "SPLIT"
-					+ "SWAMP" + "SPLIT" 
-					+ 4 + "SPLIT" 
-					+ GameConstants.VampireBatImageFront +"SPLIT"
-					+ "FLYING";
-			initializeThingsString += "/";
-			
-			//Stack 1
-			initializeThingsString += "Tigers" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 3 + "SPLIT" 
-					+ GameConstants.TigersImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Villains" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.VillainsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Giant Lizard" + "SPLIT"
-					+ "SWAMP" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.GiantLizardImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Tribesman" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.TribesmanImageFront +"SPLIT";
-			initializeThingsString += "/";
-			
-			//PLAYER 3 THINGS (reverse order)
-			//Stack 3
-			initializeThingsString += "Witch Doctor" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 2 + "SPLIT"  
-					+ GameConstants.WitchDoctorImageFront +"SPLIT"
-					+ "MAGIC";
-			initializeThingsString += "/";
-			initializeThingsString += "Nomads" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.NomadsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Great Hunter" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 4 + "SPLIT" 
-					+ GameConstants.GreatHunterImageFront +"SPLIT"
-					+ "RANGE";
-			initializeThingsString += "/";
-			
-			//Stack 2
-			initializeThingsString += "Pygmies" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.PygmiesImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Skeletons" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.SkeletonsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Genie" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 4 + "SPLIT" 
-					+ GameConstants.GenieImageFront +"SPLIT"
-					+ "MAGIC";
-			initializeThingsString += "/";
-			
-			//Stack 1
-			initializeThingsString += "Farmers" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 1 + "SPLIT"  
-					+ GameConstants.FarmersImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Farmers" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.FarmersImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Camel Corps" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 3 + "SPLIT"  
-					+ GameConstants.CamelCorpsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Centaur" + "SPLIT"
-					+ "PLAINS" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.CentaurImageFront +"SPLIT";
-			initializeThingsString += "/";
-			
-			//PLAYER 2 THINGS (reverse order)
-			//Stack 1
-			initializeThingsString += "Bandits" + "SPLIT"
-					+ "FOREST" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.BanditsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Crawling Vines" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 6 + "SPLIT" 
-					+ GameConstants.CrawlingVinesImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Walking Tree" + "SPLIT"
-					+ "FOREST" + "SPLIT" 
-					+ 5 + "SPLIT"  
-					+ GameConstants.WalkingTreeImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Druid" + "SPLIT"
-					+ "FOREST" + "SPLIT" 
-					+ 3 + "SPLIT" 
-					+ GameConstants.DruidImageFront +"SPLIT"
-					+ "MAGIC";
-			initializeThingsString += "/";
-			initializeThingsString += "Nomads" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.NomadsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Crocodiles" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 2 + "SPLIT"  
-					+ GameConstants.CrocodilesImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Dervish" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.DervishImageFront +"SPLIT"
-					+ "MAGIC";
-			initializeThingsString += "/";
-			initializeThingsString += "Green Knight" + "SPLIT"
-					+ "FOREST" + "SPLIT" 
-					+ 4 + "SPLIT"  
-					+ GameConstants.GreenKnightImageFront +"SPLIT"
-					+ "CHARGE";
-			initializeThingsString += "/";
-			initializeThingsString += "Sandworm" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 3 + "SPLIT" 
-					+ GameConstants.SandwormImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Pterodactyl Warriors" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.PterodactylWarriorsImageFront +"SPLIT"
-					+ "RANGE" + "SPLIT"
-					+ "FLYING";
-			initializeThingsString += "/";
-			
-			
-			//PLAYER 1 THINGS (reverse order)
-			//Stack 2
-			initializeThingsString += "Ogre" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.OgreImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Goblins" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 1 + "SPLIT"  
-					+ GameConstants.GoblinsImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Watusi" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.WatusiImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Skeletons" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.SkeletonsImageFront + "SPLIT";
-			initializeThingsString += "/";
-			
-			
-			//Stack 1
-			initializeThingsString += "Dwarves" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 2 + "SPLIT" 
-					+ GameConstants.DwarvesImageFront +"SPLIT"
-					+ "RANGE";
-			initializeThingsString += "/";
-			initializeThingsString += "Giant" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 4 + "SPLIT"  
-					+ GameConstants.GiantImageFront +"SPLIT"
-					+ "RANGE";
-			initializeThingsString += "/";
-			initializeThingsString += "Brown Knight" + "SPLIT"
-					+ "MOUNTAIN" + "SPLIT" 
-					+ 4 + "SPLIT" 
-					+ GameConstants.BrownKnightImageFront +"SPLIT"
-					+ "CHARGE";
-			initializeThingsString += "/";
-			initializeThingsString += "Elephant" + "SPLIT"
-					+ "JUNGLE" + "SPLIT" 
-					+ 4 + "SPLIT" 
-					+ GameConstants.ElephantImageFront +"SPLIT"
-					+ "CHARGE";
-			initializeThingsString += "/";
-			initializeThingsString += "Giant Spider" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 1 + "SPLIT" 
-					+ GameConstants.GiantSpiderImageFront +"SPLIT";
-			initializeThingsString += "/";
-			initializeThingsString += "Old Dragon" + "SPLIT"
-					+ "DESERT" + "SPLIT" 
-					+ 4 + "SPLIT" 
-					+ GameConstants.OldDragonImageFront +"SPLIT"
-					+ "FLYING" + "SPLIT"
-					+ "MAGIC";
-			initializeThingsString += "/";
+		//DESERT
+		playingCup.add(new Creature(Terrain.DESERT, "Baby Dragon", 3, GameConstants.BabyDragonImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Camel Corps", 3, GameConstants.CamelCorpsImageFront));
+		playingCup.add(new Creature(Terrain.DESERT, "Desert Bat", 1, GameConstants.DesertBatImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Dust Devil", 4, GameConstants.DustDevilImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Genie", 4, GameConstants.GenieImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Giant Spider", 1, GameConstants.GiantSpiderImageFront));
+		playingCup.add(new Creature(Terrain.DESERT, "Giant Wasp", 2, GameConstants.GiantWaspImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Giant Wasp", 4, GameConstants.GiantWasp1ImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Griffon", 2, GameConstants.GriffonImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Old Dragon", 4, GameConstants.OldDragonImageFront)
+		.Flying(true)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Sandworm", 3, GameConstants.SandwormImageFront));
+		playingCup.add(new Creature(Terrain.DESERT, "Sphinx", 4, GameConstants.SphinxImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.DESERT, "Yellow Knight", 3, GameConstants.YellowKnightImageFront)
+		.Charge(true));
+		
+		for(int i=0; i<2; i++) { //some desert creatures appear twice
+			playingCup.add(new Creature(Terrain.DESERT, "Dervish", 2, GameConstants.DervishImageFront)
+			.Magic(true));
+			playingCup.add(new Creature(Terrain.DESERT, "Nomads", 1, GameConstants.NomadsImageFront));
+			playingCup.add(new Creature(Terrain.DESERT, "Skeletons", 1, GameConstants.SkeletonsImageFront));
+			playingCup.add(new Creature(Terrain.DESERT, "Vultures", 1, GameConstants.VulturesImageFront)
+			.Flying(true));
 		}
 		
 		
-		return initializeThingsString;
+		//FOREST
+		playingCup.add(new Creature(Terrain.FOREST, "Bandits", 2, GameConstants.BanditsImageFront));
+		playingCup.add(new Creature(Terrain.FOREST, "Bears", 2, GameConstants.BearsImageFront));
+		playingCup.add(new Creature(Terrain.FOREST, "Big Foot", 5, GameConstants.BigFootImageFront));
+		playingCup.add(new Creature(Terrain.FOREST, "Druid", 3, GameConstants.DruidImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Dryad", 1, GameConstants.DryadImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Elf Mage", 2, GameConstants.ElfMageImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Elves", 3, GameConstants.Elves1ImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Flying Squirrel", 1, GameConstants.FlyingSquirrelImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Flying Squirrel", 2, GameConstants.FlyingSquirrel1ImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Forester", 2, GameConstants.ForesterImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Great Owl", 2, GameConstants.GreatOwlImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Green Knight", 4, GameConstants.GreenKnightImageFront)
+		.Charge(true));
+		playingCup.add(new Creature(Terrain.FOREST, "Killer Raccoon", 2, GameConstants.KillerRaccoonImageFront));
+		playingCup.add(new Creature(Terrain.FOREST, "Unicorn", 4, GameConstants.UnicornImageFront));
+		playingCup.add(new Creature(Terrain.FOREST, "Walking Tree", 5, GameConstants.WalkingTreeImageFront));
+		playingCup.add(new Creature(Terrain.FOREST, "Wild Cat", 2, GameConstants.WildCatImageFront));
+		playingCup.add(new Creature(Terrain.FOREST, "Wyvern", 3, GameConstants.WyvernImageFront)
+		.Flying(true));
+		
+		for(int i=0; i<2; i++) { //some forest creatures appear twice
+			playingCup.add(new Creature(Terrain.FOREST, "Elves", 2, GameConstants.ElvesImageFront)
+			.Ranged(true));
+			playingCup.add(new Creature(Terrain.FOREST, "Pixies", 1, GameConstants.PixiesImageFront)
+			.Flying(true));
+		}
+		
+		
+		//FROZEN WASTE
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Dragon Rider", 3, GameConstants.DragonRiderImageFront)
+		.Flying(true)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Elk Herd", 2, GameConstants.ElkHerdImageFront));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Ice Bats", 1, GameConstants.IceBatsImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Ice Giant", 5, GameConstants.IceGiantImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Iceworm", 4, GameConstants.IcewormImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Killer Penguins", 3, GameConstants.KillerPenguinsImageFront));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Killer Puffins", 2, GameConstants.KillerPuffinsImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Mammoth", 5, GameConstants.MammothImageFront)
+		.Charge(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "North Wind", 2, GameConstants.NorthWindImageFront)
+		.Flying(true)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Walrus", 4, GameConstants.WalrusImageFront));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "White Bear", 4, GameConstants.WhiteBearImageFront));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "White Dragon", 5, GameConstants.WhiteDragonImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Wolves", 3, GameConstants.WolvesImageFront));
+		
+		for(int i=0; i<2; i++) { //eskimos appears 4 times
+			playingCup.add(new Creature(Terrain.FROZEN_WASTE, "Eskimos", 2, GameConstants.EskimosImageFront));
+		}
+		
+		
+		//JUNGLE
+		playingCup.add(new Creature(Terrain.JUNGLE, "Bird Of Paradise", 1, GameConstants.BirdOfParadiseImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Crawling Vines", 6, GameConstants.CrawlingVinesImageFront));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Crocodiles", 2, GameConstants.CrocodilesJungleImageFront));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Dinosaur", 4, GameConstants.DinosaurImageFront));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Elephant", 4, GameConstants.ElephantImageFront)
+		.Charge(true));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Giant Snake", 3, GameConstants.GiantSnakeJungleImageFront));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Head Hunter", 2, GameConstants.HeadHunterImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Pterodactyl Warriors", 2, GameConstants.PterodactylWarriorsImageFront)
+		.Ranged(true)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Pygmies", 2, GameConstants.PygmiesImageFront));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Watusi", 2, GameConstants.WatusiImageFront));
+		playingCup.add(new Creature(Terrain.JUNGLE, "Witch Doctor", 2, GameConstants.WitchDoctorImageFront)
+		.Magic(true));
+
+		for(int i=0; i<2; i++) { //some creatures appear twice
+			playingCup.add(new Creature(Terrain.JUNGLE, "Giant Ape", 5, GameConstants.GiantApeImageFront));
+			playingCup.add(new Creature(Terrain.JUNGLE, "Tigers", 3, GameConstants.TigersImageFront));
+		}
+		
+		
+		//MOUNTAIN
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Brown Dragon", 3, GameConstants.BrownDragonImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Brown Knight", 4, GameConstants.BrownKnightImageFront)
+		.Charge(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Cyclops", 5, GameConstants.CyclopsImageFront));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Dwarves", 3, GameConstants.DwarvesImageFront)
+		.Charge(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Dwarves", 2, GameConstants.Dwarves1ImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Dwarves", 3, GameConstants.Dwarves2ImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Giant Roc", 3, GameConstants.GiantRocImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Giant", 4, GameConstants.GiantImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Giant Condor", 3, GameConstants.GiantCondorImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Great Eagle", 2, GameConstants.GreatEagleImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Great Hawk", 1, GameConstants.GreatHawkMountainImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Little Roc", 2, GameConstants.LittleRocImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Mountain Lion", 2, GameConstants.MountainLionImageFront));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Ogre", 2, GameConstants.OgreImageFront));
+		playingCup.add(new Creature(Terrain.MOUNTAIN, "Troll", 4, GameConstants.TrollImageFront));
+
+		for(int i=0; i<2; i++) { //there are 2 mountain men
+			playingCup.add(new Creature(Terrain.MOUNTAIN, "Mountain Men", 1, GameConstants.MountainMenImageFront));
+		}
+		
+		for(int i=0; i<4; i++) { //there are 4 Goblins
+			playingCup.add(new Creature(Terrain.MOUNTAIN, "Goblins", 1, GameConstants.GoblinsImageFront));
+		}
+		
+		
+		//PLAINS
+		playingCup.add(new Creature(Terrain.PLAINS, "Buffalo Herd", 3, GameConstants.BuffaloHerdImageFront));
+		playingCup.add(new Creature(Terrain.PLAINS, "Buffalo Herd", 4, GameConstants.BuffaloHerd1ImageFront));
+		playingCup.add(new Creature(Terrain.PLAINS, "Centaur", 2, GameConstants.CentaurImageFront));
+		playingCup.add(new Creature(Terrain.PLAINS, "Dragonfly", 2, GameConstants.DragonflyImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Eagles", 2, GameConstants.EaglesImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Flying Buffalo", 2, GameConstants.FlyingBuffaloImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Giant Beetle", 2, GameConstants.GiantBeetleImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Great Hawk", 2, GameConstants.GreatHawkPlainsImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Greathunter", 4, GameConstants.GreathunterImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Gypsies", 1, GameConstants.GypsiesImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Gypsies", 2, GameConstants.Gypsies1ImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Hunter", 1, GameConstants.HunterImageFront)
+		.Ranged(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Lion Pride", 3, GameConstants.LionPrideImageFront));
+		playingCup.add(new Creature(Terrain.PLAINS, "Pegasus", 2, GameConstants.PegasusImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Pterodactyl", 3, GameConstants.PterodactylImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Villains", 2, GameConstants.VillainsImageFront));
+		playingCup.add(new Creature(Terrain.PLAINS, "White Knight", 3, GameConstants.WhiteKnightImageFront)
+		.Charge(true));
+		playingCup.add(new Creature(Terrain.PLAINS, "Wolf Pack", 3, GameConstants.WolfPackImageFront));
+		playingCup.add(new Creature(Terrain.PLAINS, "Tribesmen", 1, GameConstants.Tribesmen1ImageFront)
+		.Ranged(true));
+	
+		for(int i=0; i<2; i++) { //there are 2 Tribesmen
+			playingCup.add(new Creature(Terrain.PLAINS, "Tribesmen", 2, GameConstants.TribesmenImageFront));
+		}
+		
+		for(int i=0; i<4; i++) { //there are 4 Farmers
+			playingCup.add(new Creature(Terrain.PLAINS, "Farmers", 1, GameConstants.FarmersImageFront));
+		}
+		
+		
+		//SWAMP
+		playingCup.add(new Creature(Terrain.SWAMP, "Basilisk", 3, GameConstants.BasiliskImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Black Knight", 3, GameConstants.BlackKnightImageFront)
+		.Charge(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Crocodiles", 2, GameConstants.CrocodilesSwampImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Dark Wizard", 1, GameConstants.DarkWizardImageFront)
+		.Flying(true)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Giant Mosquito", 2, GameConstants.GiantMosquitoImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Giant Snake", 3, GameConstants.GiantSnakeSwampImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Huge Leech", 2, GameConstants.HugeLeechImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Pirates", 2, GameConstants.PiratesImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Poison Frog", 1, GameConstants.PoisonFrogImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Spirit", 2, GameConstants.SpiritImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Sprite", 1, GameConstants.SpriteImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Slime Beast", 3, GameConstants.SlimeBeastImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Swamp Gas", 1, GameConstants.SwampGasImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Swamp Rat", 1, GameConstants.SwampRatImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Thing", 2, GameConstants.ThingImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Vampire Bat", 4, GameConstants.VampireBatImageFront)
+		.Flying(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Watersnake", 1, GameConstants.WatersnakeImageFront));
+		playingCup.add(new Creature(Terrain.SWAMP, "Will-O-Wisp", 2, GameConstants.WillOWispImageFront)
+		.Magic(true));
+		playingCup.add(new Creature(Terrain.SWAMP, "Winged Pirhana", 3, GameConstants.WingedPirhanaImageFront)
+		.Flying(true));
+
+		for(int i=0; i<2; i++) { //there are 2 giant lizards
+			playingCup.add(new Creature(Terrain.SWAMP, "Giant Lizard", 2, GameConstants.GiantLizardImageFront));
+		}
+		
+		for(int i=0; i<4; i++) { //there are 4 ghosts
+			playingCup.add(new Creature(Terrain.SWAMP, "Ghost", 3, GameConstants.GhostImageFront)
+			.Flying(true));
+		}
 	}
 
-	public void setPlayingCup(String[] creatureStrings) {
-		for(int i=0; i< creatureStrings.length; i++)
-		{
-			String creatureString = creatureStrings[i];
-			String[] creatureParamsString = creatureString.split("SPLIT");
-			
-			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(creatureParamsString[1]);
-			String name = creatureParamsString[0];
-			int attackValue = Integer.parseInt(creatureParamsString[2]);
-			String frontFileName = creatureParamsString[3];
-			boolean isCharge = false;
-			boolean isFlying = false;
-			boolean isMagic = false;
-			boolean isRange = false;
-			
-			if(creatureParamsString.length > 4)
-			{
-				for(int j=4; j< creatureParamsString.length; j++)
-				{
-					String special = creatureParamsString[j];
-					
-					if (special.equals("CHARGE"))
-						isCharge = true;
-						
-					if (special.equals("FLYING"))
-						isFlying = true;
-						
-					if (special.equals("MAGIC"))
-						isMagic = true;
-						
-					if (special.equals("RANGE"))
-						isRange = true;
-				}
-			}
+	public void initializePlayingCup() {
+		initializeCreatures();
+		initializeSpecialIncomes();
+	}
 
-			
-			playingCup.add(new Creature(terrain, name, attackValue, frontFileName)
-								.Charge(isCharge)
-								.Flying(isFlying)
-								.Magic(isMagic)
-								.Ranged(isRange)
-								);
-			}
-		
-
-		/*
-		System.out.println("PLAYING CUP SIZE:" + playingCup.size());
-		for(int i=0; i<playingCup.size(); i++)
+	private void initializeSpecialIncomes() {
+		for(int i=0; i<GameConstants.NUM_CITIES; i++)
 		{
-			System.out.println(playingCup.get((i)).toString());
+			playingCup.add(new Settlement("City", 2, GameConstants.CityImageFront, GameConstants.CityImageBack, SettlementType.CITY));
 		}
-		*/
+		
+		for(int i=0; i<GameConstants.NUM_VILLAGES; i++)
+		{
+			playingCup.add(new Settlement("Village", 1, GameConstants.VillageImageFront, GameConstants.VillageImageBack, SettlementType.VILLAGE));
+		}
+			
+		playingCup.add(new SpecialIncome(Terrain.MOUNTAIN, "Copper Mine", GameConstants.CopperMineImageFront, 1));
+		playingCup.add(new SpecialIncome(Terrain.MOUNTAIN, "Silver Mine", GameConstants.SilverMineImageFront, 2));
+		playingCup.add(new SpecialIncome(Terrain.MOUNTAIN, "Gold Mine", GameConstants.GoldMineImageFront, 3));
+		
+		playingCup.add(new SpecialIncome(Terrain.DESERT, "Diamond Field", GameConstants.DiamondFieldImageFront, 1));
+		
+		playingCup.add(new SpecialIncome(Terrain.JUNGLE, "Elephants' Graveyard", GameConstants.ElephantsGraveyardImageFront, 3));
+		
+		playingCup.add(new SpecialIncome(Terrain.PLAINS, "Farmlands", GameConstants.FarmlandsImageFront, 1));
+
+		playingCup.add(new SpecialIncome(Terrain.FROZEN_WASTE, "Oil Field", GameConstants.OilFieldImageFront, 3));
+		
+		playingCup.add(new SpecialIncome(Terrain.SWAMP, "Peat Bog", GameConstants.PeatBogImageFront, 1));
+		
+		playingCup.add(new SpecialIncome(Terrain.FOREST, "Timberland", GameConstants.TimberlandImageFront, 1));
+
 	}
 
 	public void getThingsFromCup(int playerIndex, int numThings) {
@@ -819,6 +750,9 @@ public class GameModel {
 		//special income tiles
 		for(SpecialIncome si: player.specialIncomes)
 			gold+= si.getIncome();
+		
+		for(Settlement s: player.settlements)
+			gold+= s.getIncome();
 		
 		//special characters
 		for(SpecialCharacter sc: player.specialCharacters)
@@ -961,13 +895,6 @@ public class GameModel {
 		}
 	}
 
-	public boolean isValidMove(String attemptedMoveString) {
-		// TODO Auto-generated method stub
-		
-		//check validity of passed movement string
-		return true;
-	}
-
 	public void updateMovedThings(ArrayList<HexTile> tilesFrom,
 			ArrayList<HexTile> tilesTo, ArrayList<Integer> thingIDs,
 			int playerIndex) {
@@ -999,5 +926,31 @@ public class GameModel {
 			t.clearMoves();
 		
 		movedThings = new ArrayList<Thing>();
+	}
+
+	public String getCupIDsString() {
+		String ret = "";
+		
+		for(Thing t: playingCup)
+		{
+			ret += t.thingID + " ";
+		}
+		
+		return ret;
+	}
+
+	public void setPlayingCupOrder(ArrayList<Integer> thingIDs) {
+		ArrayList<Thing> newCup = new ArrayList<Thing>();
+		
+		for(Integer i: thingIDs)
+		{
+			for(Thing t: playingCup)
+			{
+				if(t.thingID == i)
+					newCup.add(t);
+			}
+		}
+		
+		playingCup = newCup;
 	}
 }

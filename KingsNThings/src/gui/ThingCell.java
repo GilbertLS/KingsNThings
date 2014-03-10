@@ -3,6 +3,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.GameConstants.ThingType;
 import Game.Player;
 import Game.Thing;
 import Game.GameConstants.CurrentPhase;
@@ -42,6 +43,9 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 					if (thing.thingRef.controlledBy != currPlayer.faction){
 						continue;
 					}
+					
+					//if (thing.thingRef.getThingType() == ThingType.TREASURE)
+					//	continue;
 					
 					int thingId = thing.thingRef.thingID;
 					
