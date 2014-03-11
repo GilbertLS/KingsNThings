@@ -1,5 +1,7 @@
 package Game;
 
+import Game.GameConstants.ThingType;
+
 /*
  * This class holds all relevant constants for the Game (for example, enums, screen width/height)
  */
@@ -35,7 +37,12 @@ public final class GameConstants {
 									FORT, 
 									SETTLEMENT, 
 									SPECIAL_CHARACTER,
-									TERRAIN_LORD}
+									TERRAIN_LORD;
+
+									public static boolean isSpecialIncome(ThingType tt) {
+										return tt == SPECIAL_CHARACTER
+												|| tt == SETTLEMENT;
+									}}
 	
 	//The different levels a Fort can have (Tower < Keep < Castle < Citadel)
 	public static enum Level {TOWER, KEEP, CASTLE, CITADEL}
@@ -219,6 +226,14 @@ public final class GameConstants {
 	public static final String MountainTileFront = "Mountain.png";
 	public static final String DesertTileFront = "Desert.png";
 	
+	//TREASURE
+	public static final String DiamondImageFront = "Diamond.jpg";
+	public static final String EmeraldImageFront = "Emerald.jpg";
+	public static final String PearlImageFront = "Pearl.jpg";
+	public static final String RubyImageFront = "Ruby.jpg";
+	public static final String SapphireImageFront = "Sapphire.jpg";
+	public static final String TreasureChestImageFront = "TreasureChest.jpg";
+	
 	
 	//Piece count constants
 	public static final int MAX_NUM_THINGS = 150;
@@ -252,8 +267,16 @@ public final class GameConstants {
 
 	public static final int GOLD_PER_RECRUIT = 5;
 	
-	public static final int NUM_CITIES = 5;
+	public static final int NUM_CITIES = 3;
 	public static final int NUM_VILLAGES = 5;
+
+	public static final int NUM_DIAMONDS = 2;
+	public static final int NUM_EMERALDS = 2;
+	public static final int NUM_PEARLS = 2;
+	public static final int NUM_RUBYS = 2;
+	public static final int NUM_SAPPHIRES = 2;
+	public static final int NUM_TREASURE_CHESTS = 2;
+
 
 
 	//battle turns

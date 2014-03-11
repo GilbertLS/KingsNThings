@@ -24,7 +24,7 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
 	public Fort fort;						//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
-	public ArrayList<Settlement> settlements;
+	public ArrayList<Settlement> specialIncomeSettlements;
 	public int x;
 	public int y;
 	public int moveValue;
@@ -47,7 +47,7 @@ public class HexTile implements IIncomable{
 		this.fort = null;
 		
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
-		this.settlements = new ArrayList<Settlement>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
+		this.specialIncomeSettlements = new ArrayList<Settlement>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		
 		if(terrain == Terrain.SWAMP
 				|| terrain == Terrain.MOUNTAIN
@@ -101,7 +101,7 @@ public class HexTile implements IIncomable{
 		{
 			Settlement s = (Settlement)t;
 			
-			settlements.add(s);
+			specialIncomeSettlements.add(s);
 			p.addSettlement(s);
 			
 			return true;
@@ -333,6 +333,15 @@ public class HexTile implements IIncomable{
 	}
 
 	public boolean hasSpecialIncome() {
-		return !specialIncomes.isEmpty() || !settlements.isEmpty();
+		return !specialIncomes.isEmpty() || !specialIncomeSettlements.isEmpty();
+	}
+
+	public Thing getSpecialIncome() {
+		if(!specialIncomes.isEmpty())
+			return specialIncomes.get(0);
+		else if(!specialIncomeSettlements.isEmpty())
+			return specialIncomeSettlements.get(0);
+		else
+			return null;
 	}
 }

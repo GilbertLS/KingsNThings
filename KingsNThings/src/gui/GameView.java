@@ -294,8 +294,8 @@ public class GameView extends Scene {
 		}
 	}
 
-	public void updateGold(int playerIndex) {
-		//playerList.getPlayerPanel(playerIndex).updateGold()
+	public void updateGold(int gold, int playerIndex) {
+		playerList.getPlayerPanel(playerIndex).setGold(gold);
 	}
 	
 }

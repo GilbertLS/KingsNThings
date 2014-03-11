@@ -675,10 +675,12 @@ public class EventHandler {
 				
 				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
 				final ArrayList<Integer> thingIDsCopy = thingIDs;
+				final int gold = GameClient.game.gameModel.GetPlayer(playerIndex).getGold();
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
-						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);
+						GameClient.game.gameView.updateGold(gold, playerIndex);
 			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
 			        }
 				});

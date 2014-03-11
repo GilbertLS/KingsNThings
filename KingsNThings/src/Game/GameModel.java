@@ -667,6 +667,27 @@ public class GameModel {
 	public void initializePlayingCup() {
 		initializeCreatures();
 		initializeSpecialIncomes();
+		initializeTreasure();
+	}
+
+	private void initializeTreasure() {
+		for(int i=0; i<GameConstants.NUM_DIAMONDS; i++)
+			playingCup.add(new Treasure("Diamond", 5, GameConstants.DiamondImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_EMERALDS; i++)
+			playingCup.add(new Treasure("Emerald", 10, GameConstants.EmeraldImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_PEARLS; i++)
+			playingCup.add(new Treasure("Pearl", 5, GameConstants.PearlImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_RUBYS; i++)
+			playingCup.add(new Treasure("Ruby", 10, GameConstants.RubyImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_SAPPHIRES; i++)
+			playingCup.add(new Treasure("Sapphire", 5, GameConstants.SapphireImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_TREASURE_CHESTS; i++)
+			playingCup.add(new Treasure("Treasure Chest", 20, GameConstants.TreasureChestImageFront));
 	}
 
 	private void initializeSpecialIncomes() {

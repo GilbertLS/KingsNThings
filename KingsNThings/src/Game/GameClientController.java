@@ -178,18 +178,21 @@ public class GameClientController {
 		if(tileRef.controlledBy != things.get(0).controlledBy)
 			return false;
 		
+		int numIncomes =0;		
 		for(Thing t: things)
 		{
-			if(t.thingType == ThingType.SPECIAL_INCOME)
+			if(t.thingType == ThingType.SPECIAL_INCOME || t.thingType == ThingType.SETTLEMENT)
 			{
-				if(tileRef.hasSpecialIncome() || tileRef.terrain != ((SpecialIncome)t).getTerrain())
+				numIncomes++;
+				
+				if(tileRef.hasSpecialIncome() || numIncomes > 1) 
 					return false;
-			}
-			else if (t.thingType == ThingType.SETTLEMENT)
-			{
-				if(tileRef.hasSpecialIncome())
+				
+				if(t.thingType == ThingType.SPECIAL_INCOME && tileRef.terrain != ((SpecialIncome)t).getTerrain())
 					return false;
+				
 			}
+
 		}
 			
 		return true;

@@ -138,4 +138,8 @@ public class Player {
 	public void addSettlement(Settlement s) {
 		settlements.add(s);
 	}
+
+	public int getGold() {
+		return gold;
+	}
 }
