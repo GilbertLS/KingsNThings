@@ -76,6 +76,8 @@ public class GameController {
 		
 		randomizePlayingCup();
 		
+		intializeSpecialCharacters();
+		
 		initializeGold();
 		
 		placeThingsOnTile(2, "Control_Marker");
@@ -88,6 +90,41 @@ public class GameController {
 		
 	}
 	
+	private void intializeSpecialCharacters() {
+		//ask first player to randomize special characters
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.RANDOMIZE_SPECIAL_CHARACTERS)
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(true)
+			);
+		
+		//get new order response
+		String thingIDs = "";
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				thingIDs = r.message;	
+		}
+		
+		//update all clients with new order
+		for(int i=0; i<numClients; i++)
+		{
+			intendedPlayers[i] = true;
+		}
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.CREATE_SPECIAL_CHARACTERS)
+					.EventParameter(thingIDs)
+					.IntendedPlayers(intendedPlayers)
+			);
+		
+	}
+
 	private void playThings() {
 		for(GameRouter gr: GameServer.servers)
 		{

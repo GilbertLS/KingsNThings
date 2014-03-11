@@ -397,6 +397,22 @@ public class EventHandler {
 			
 			GameClient.game.gameModel.setPlayingCupOrder(thingIDs);
 		}
+		else if (e.eventId == EventList.RANDOMIZE_SPECIAL_CHARACTERS)
+		{
+			String specialCharacterString = GameClient.game.gameModel.randomizeSpecialCharactersString();
+
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.RANDOMIZE_SPECIAL_CHARACTERS)
+						.EventParameter(specialCharacterString)
+				);
+		}
+		else if (e.eventId == EventList.CREATE_SPECIAL_CHARACTERS)
+		{
+			String specialCharacterString = e.eventParams[0].trim();
+			
+			GameClient.game.gameModel.initializeSpecialCharacters(specialCharacterString);
+		}
 		else if (e.eventId == EventList.GET_THINGS_FROM_CUP) {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			final int numThings = Integer.parseInt(e.eventParams[1]);

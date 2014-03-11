@@ -234,6 +234,43 @@ public final class GameConstants {
 	public static final String SapphireImageFront = "Sapphire.jpg";
 	public static final String TreasureChestImageFront = "TreasureChest.jpg";
 	
+	//MAGIC
+	public static final String BalloonImageFront = "Balloon.jpg";
+	public static final String BowMagicImageFront = "BowMagic.jpg";
+	public static final String DispellMagicImageFront = "DispellMagic.jpg";
+	public static final String DustOfDefenseImageFront = "DustOfDefence.jpg";
+	public static final String ElixirImageFront = "Elixir.jpg";
+	public static final String FanImageFront = "Fan.jpg";
+	public static final String FirewallImageFront = "Firewall.jpg";
+	public static final String GolemImageFront = "Golem.jpg";
+	public static final String LuckyCharmImageFront = "LuckyCharm.jpg";
+	public static final String SwordImageFront = "Sword.jpg";
+	public static final String TalismanImageFront = "Talisman.jpg";
+	
+	//SPECIAL CHARACTERS
+	public static final String ArchClericImageFront = "ArchCleric.jpg";
+	public static final String ArchMageImageFront = "ArchMage.jpg";
+	public static final String AssassinPrimusImageFront = "AssassinPrimus.jpg";
+	public static final String BaronMunchausenImageFront = "BaronMunchausen.jpg";
+	public static final String DeerhunterImageFront = "Deerhunter.jpg";
+	public static final String DesertMasterImageFront = "DesertMaster.jpg";
+	public static final String DwarfKingImageFront = "DwarfKing.jpg";
+	public static final String ElfLordMasterImageFront = "ElfLord.jpg";
+	public static final String ForestKingImageFront = "ForestKing.jpg";
+	public static final String GhaogIIImageFront = "GhaogII.jpg";
+	public static final String GrandDukeImageFront = "GrandDuke.jpg";
+	public static final String IceLordImageFront = "IceLord.jpg";
+	public static final String JungleLordImageFront = "JungleLord.jpg";
+	public static final String LordOfEaglesImageFront = "LordOfEagles.jpg";
+	public static final String MarksmanImageFront = "Marksman.jpg";
+	public static final String MasterThiefImageFront = "MasterThief.jpg";
+	public static final String MountainKingImageFront = "MountainKing.jpg";
+	public static final String PlainsLordImageFront = "PlainsLord.jpg";
+	public static final String SirLanceALotImageFront = "SirLance-A-Lot.jpg";
+	public static final String SwampKingImageFront = "SwampKing.jpg";
+	public static final String SwordmasterImageFront = "Swordmaster.jpg";
+	public static final String WarlordImageFront = "Warlord.jpg";
+	
 	
 	//Piece count constants
 	public static final int MAX_NUM_THINGS = 150;
@@ -276,6 +313,7 @@ public final class GameConstants {
 	public static final int NUM_RUBYS = 2;
 	public static final int NUM_SAPPHIRES = 2;
 	public static final int NUM_TREASURE_CHESTS = 2;
+
 
 
 

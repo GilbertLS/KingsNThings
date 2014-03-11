@@ -306,12 +306,13 @@ public class Tile extends Region implements Draggable {
 									for(ThingView t: thingViews)
 										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
 									
-									//remove special incomes and treasure (will be updated in model, not added to tile preview)
+									//remove special incomes, magic, and treasure (will be updated in model, not added to tile preview)
 									ArrayList<ThingView> thingsToRemove = new ArrayList<ThingView>();
 									for(ThingView tv: thingViews)
 									{
 										if(ThingType.isSpecialIncome(tv.thingRef.getThingType())
-											|| tv.thingRef.getThingType() == ThingType.TREASURE)
+											|| tv.thingRef.getThingType() == ThingType.TREASURE
+											|| tv.thingRef.getThingType() == ThingType.MAGIC)
 											thingsToRemove.add(tv);
 									}									
 									

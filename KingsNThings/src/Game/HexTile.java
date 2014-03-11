@@ -65,6 +65,9 @@ public class HexTile implements IIncomable{
 		if(handleTreasure(player, thing))
 			return;
 		
+		if(handleMagic(player, thing))
+			return;
+		
 		if ( player.GetPlayerNum() == 0 ){
 			player1Things.add(thing);
 		} else if ( player.GetPlayerNum() == 1 ){
@@ -111,23 +114,22 @@ public class HexTile implements IIncomable{
 	}
 
 	public void AddThingToTile(int playerIndex, Thing thing){
-		if(handlePlaceSpecialIncome(GameClient.game.gameModel.playerFromIndex(playerIndex), thing))
-			return;
+		Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
 		
-		if(handleTreasure(GameClient.game.gameModel.playerFromIndex(playerIndex), thing))
-			return;
-		
-		if ( playerIndex == 0 ){
-			player1Things.add(thing);
-		} else if ( playerIndex == 1 ){
-			player2Things.add(	thing);
-		} else if ( playerIndex == 2 ){
-			player3Things.add(thing);
-		} else if ( playerIndex == 3 ){
-			player4Things.add(thing);
-		}
+		AddThingToTile(player, thing);
 	}
 	
+	private boolean handleMagic(Player player, Thing thing) {
+		if(thing.thingType == ThingType.MAGIC)
+		{
+			//handle the magic here
+			
+			return true;
+		}
+		
+		return false;
+	}
+
 	public boolean HasThingsOnTile(Player player){
 		if ( player.GetPlayerNum() == 0 ){
 			return !player1Things.isEmpty();

@@ -64,7 +64,6 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				if(gv.currentPhase == CurrentPhase.MOVEMENT || gv.currentPhase == CurrentPhase.PLAY_THINGS)
 				{
 					//prevent movement from tile preview during playthings phase
-
 					if(!(!getListView().equals(gv.rack) && gv.currentPhase == CurrentPhase.PLAY_THINGS))
 					{
 						ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());

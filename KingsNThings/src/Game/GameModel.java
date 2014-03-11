@@ -668,6 +668,100 @@ public class GameModel {
 		initializeCreatures();
 		initializeSpecialIncomes();
 		initializeTreasure();
+		initializeMagic();
+	}
+	
+	public void initializeSpecialCharacters(String s)
+	{
+		String[] initValues = s.trim().split(" ");
+		
+		if(Integer.parseInt(initValues[0]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Arch Cleric", 5, GameConstants.ArchClericImageFront));
+		else
+			unownedCharacters.add(new SpecialCharacter("Arch Mage", 6, GameConstants.ArchMageImageFront));
+		
+		if(Integer.parseInt(initValues[1]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Assassin Primus", 4, GameConstants.AssassinPrimusImageFront));
+		else
+			unownedCharacters.add(new SpecialCharacter("Baron Munchausen", 4, GameConstants.BaronMunchausenImageFront));
+		
+		if(Integer.parseInt(initValues[2]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Deerhunter", 4, GameConstants.DeerhunterImageFront));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.DESERT,"Desert Master", 4, GameConstants.DesertMasterImageFront));
+		
+		if(Integer.parseInt(initValues[3]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Dwarf King", 5, GameConstants.DwarfKingImageFront));
+		else
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Elf Lord", 6, GameConstants.ElfLordMasterImageFront)
+			.Ranged(true));
+		
+		if(Integer.parseInt(initValues[4]) == 0)
+			unownedCharacters.add(new TerrainLord(Terrain.FOREST, "Forest King", 4, GameConstants.ForestKingImageFront));
+		else
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Ghaog II", 6, GameConstants.GhaogIIImageFront)
+			.Flying(true));
+		
+		if(Integer.parseInt(initValues[5]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Grand Duke", 4, GameConstants.GrandDukeImageFront));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.FROZEN_WASTE, "Ice Lord", 4, GameConstants.IceLordImageFront));
+		
+		if(Integer.parseInt(initValues[6]) == 0)
+			unownedCharacters.add(new TerrainLord(Terrain.JUNGLE, "Jungle Lord", 4, GameConstants.JungleLordImageFront));
+		else
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter( "Lord Of Eagles", 5, GameConstants.LordOfEaglesImageFront)
+			.Flying(true));
+		
+		if(Integer.parseInt(initValues[7]) == 0)
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Marksman", 5, GameConstants.MarksmanImageFront)
+			.Ranged(true));
+		else
+			unownedCharacters.add(new SpecialCharacter("Master Thief", 4, GameConstants.MasterThiefImageFront));
+		
+		if(Integer.parseInt(initValues[8]) == 0)
+			unownedCharacters.add(new TerrainLord(Terrain.MOUNTAIN, "Mountain King", 4, GameConstants.MountainKingImageFront));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.PLAINS, "Plains Lord", 4, GameConstants.PlainsLordImageFront));
+		
+		if(Integer.parseInt(initValues[9]) == 0)
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Sir Lance-A-Lot", 5, GameConstants.SirLanceALotImageFront)
+			.Charge(true));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.SWAMP, "Swamp King", 4, GameConstants.SwampKingImageFront));
+		
+		if(Integer.parseInt(initValues[10]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Swordmaster", 4, GameConstants.SwordmasterImageFront));
+		else
+			unownedCharacters.add(new SpecialCharacter("Warlord", 5, GameConstants.WarlordImageFront));
+			
+	}
+
+	public String randomizeSpecialCharactersString() {
+		String s = "";
+		int n;
+		
+		for(int i=0; i<11; i++)
+		{
+			n = (int)Math.floor(Math.random()*2);
+			s += n + " ";
+		}
+		
+		return s;
+	}
+
+	private void initializeMagic() {
+		playingCup.add(new Magic("Balloon", GameConstants.BalloonImageFront));
+		playingCup.add(new Magic("Bow Magic", GameConstants.BowMagicImageFront));
+		playingCup.add(new Magic("Dispell Magic", GameConstants.DispellMagicImageFront));
+		playingCup.add(new Magic("Dust Of Defense", GameConstants.DustOfDefenseImageFront));
+		playingCup.add(new Magic("Elixir", GameConstants.ElixirImageFront));
+		playingCup.add(new Magic("Fan", GameConstants.FanImageFront));
+		playingCup.add(new Magic("Firewall", GameConstants.FirewallImageFront));
+		playingCup.add(new Magic("Golem", GameConstants.GolemImageFront));
+		playingCup.add(new Magic("Lucky Charm", GameConstants.LuckyCharmImageFront));
+		playingCup.add(new Magic("Sword", GameConstants.SwordImageFront));
+		playingCup.add(new Magic("Talisman", GameConstants.TalismanImageFront));
 	}
 
 	private void initializeTreasure() {
