@@ -190,7 +190,12 @@ public class Tile extends Region implements Draggable {
 	    	list.add(imgView);
 	    	
 	    	if(specialIncome == null)
-	    		specialIncome = new ThingView(tileRef.getSpecialIncome());
+	    	{
+	    		if(tileRef.hasSpecialIncome())
+	    			specialIncome = new ThingView(tileRef.getSpecialIncome());
+	    		else if(tileRef.hasSettlement())
+	    			specialIncome = new ThingView(tileRef.getSettlement());
+	    	}
     	}
     	else
     	{
@@ -233,8 +238,12 @@ public class Tile extends Region implements Draggable {
     }
     
     private String getSpecialIncomeString() {
-    	if (tileRef != null && tileRef.hasSpecialIncome()) {
-    		return tileRef.getSpecialIncome().getFrontImage();
+    	if (tileRef != null)
+    	{
+    		if (tileRef.hasSpecialIncome())
+    			return tileRef.getSpecialIncome().getFrontImage();
+    	    else if(tileRef.hasSettlement())
+    	    	return tileRef.getSettlement().getFrontImage();
     	}
     	
     	return null;

@@ -44,4 +44,6 @@ public class EventList {
 	public static final int UPDATE_CUP_ORDER = 120;
 	public static final int RANDOMIZE_SPECIAL_CHARACTERS = 121;
 	public static final int CREATE_SPECIAL_CHARACTERS = 122;
+	public static final int DO_CONSTRUCTION = 123;
+	public static final int HANDLE_CONSTRUCTION = 124;
 }

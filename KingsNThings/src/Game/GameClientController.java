@@ -185,7 +185,7 @@ public class GameClientController {
 			{
 				numIncomes++;
 				
-				if(tileRef.hasSpecialIncome() || numIncomes > 1) 
+				if(tileRef.hasSpecialIncome() || tileRef.hasSettlement() || numIncomes > 1) 
 					return false;
 				
 				if(t.thingType == ThingType.SPECIAL_INCOME && tileRef.terrain != ((SpecialIncome)t).getTerrain())
@@ -196,5 +196,13 @@ public class GameClientController {
 		}
 			
 		return true;
+	}
+
+	public HexTile parseConstructionString(String constructionString) {
+		String[] params = constructionString.split("SPLIT");
+		int x = Integer.parseInt(params[0]);
+		int y = Integer.parseInt(params[1]);
+		
+		return gameModel.gameBoard.getTile(x, y);
 	}
 }

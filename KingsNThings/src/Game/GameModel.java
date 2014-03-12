@@ -6,6 +6,7 @@ import gui.Tile;
 import java.util.ArrayList;
 
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.Level;
 import Game.GameConstants.SettlementType;
 import Game.GameConstants.Terrain;
 import Game.Networking.GameClient;
@@ -841,49 +842,10 @@ public class GameModel {
 		{
 			player = playerFromIndex(i);
 		
-			playerGoldUpdates[i] = getIncomeForPlayer(player);
+			playerGoldUpdates[i] = player.getIncome();
 		}
 		
 		return playerGoldUpdates;
-	}
-
-	private int getIncomeForPlayer(Player player) {
-		int gold =0;
-		
-		//gold pieces for land hexes
-		for(HexTile h: player.ownedHexTiles)
-				if(h.terrain != Terrain.SEA)
-				{
-						gold += h.getIncome();
-						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
-				}
-		
-		//combat values for forts
-		for(Fort f: player.forts)
-			gold+= f.getIncome();
-		
-		//special income tiles
-		for(SpecialIncome si: player.specialIncomes)
-			gold+= si.getIncome();
-		
-		for(Settlement s: player.settlements)
-			gold+= s.getIncome();
-		
-		//special characters
-		for(SpecialCharacter sc: player.specialCharacters)
-			gold += sc.getIncome();
-		
-		if(gold > 0)
-		{
-			System.out.println("GOLD HAS BEEN AWARDED TO PLAYER - " + player.GetPlayerNum() + "in the amount of " + gold);
-			System.out.println("# Hexes: " + player.ownedHexTiles.size());
-			System.out.println("# Forts: " + player.forts.size());
-			System.out.println("# Special Incomes: " + player.specialIncomes.size());
-			System.out.println("# Special Characters: " + player.specialCharacters.size());
-		}
-		
-		player.addGold(gold);
-		return gold;
 	}
 
 	public boolean isValidControlMarkerPlacement(HexTile selectedTile) {
@@ -953,11 +915,18 @@ public class GameModel {
 
 	public HexTile addTower(int x, int y, int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
+		HexTile h = gameBoard.getTile(x, y);
+		
+		addTower(h,playerIndex);
+		
+		return h;
+	}
+	
+	public HexTile addTower(HexTile h, int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
 	
 		Fort f = new Fort();
 		f.controlledBy = player.faction;
-		
-		HexTile h = gameBoard.getTile(x, y);
 		
 		h.addTower(f);
 		player.addTower(f);
@@ -1068,5 +1037,43 @@ public class GameModel {
 		}
 		
 		playingCup = newCup;
+	}
+
+	public void updateConstruction(HexTile hexTile, int playerIndex) {
+		if(hexTile.hasFort())
+			hexTile.getFort().upgrade();
+		else
+			addTower(hexTile, playerIndex);
+		
+		playerFromIndex(playerIndex).decrementGold(GameConstants.CONSTRUCTION_COST);
+	}
+
+	public boolean isValidConstruction(HexTile h, int playerIndex) {
+		boolean valid = true;
+		Player player = playerFromIndex(playerIndex);
+		
+		//invalid if not controlled
+		if(h.controlledBy != player.faction)
+			valid = false;
+		
+		//or if cant afford
+		if(player.getGold() < 5)
+			valid = false;
+		
+		//or has fort and...
+		if(h.hasFort())
+		{
+			//is trying to upgrade to citadel but doesn't have the income
+			if(h.getFort().getLevel() == Level.CASTLE)
+			{
+				if(player.getIncome() < 20)
+					valid = false;
+			}
+			//cannot upgrade fort further
+			else if(h.getFort().getLevel() == Level.CITADEL)
+				valid = false;
+		}
+		
+		return valid;
 	}
 }

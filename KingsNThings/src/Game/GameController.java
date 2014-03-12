@@ -132,7 +132,7 @@ public class GameController {
 			
 			do
 			{
-				String[] args  = {""+gr.myID, "",""+playDone};
+				String[] args  = {""+gr.myID, ""};
 	    		Event e = new Event()
 	    				.EventId(EventList.PLAY_THINGS)
 	    				.ExpectsResponse(true)
@@ -144,8 +144,6 @@ public class GameController {
 					if(responses[j].fromPlayer == gr.myID)
 					{
 						String[] responseStrings = responses[j].message.split(" ");
-						
-						args[2] = responseStrings[0];
 						
 						if(responseStrings.length == 2)
 							args[1] = responseStrings[1];
@@ -373,6 +371,8 @@ public class GameController {
 			moveThings();
 			
 			PlayBattlePhase();
+			
+			playConstructionPhase();
 		
 			//ChangePlayerOrder();
 		
@@ -380,6 +380,14 @@ public class GameController {
 
 	}
 	
+	private void playConstructionPhase() {
+		Event e = new Event()
+			.EventId(EventList.DO_CONSTRUCTION)
+			.ExpectsResponse(true);
+			    		
+		GameControllerEventHandler.sendEvent(e);	
+	}
+
 	private void moveThings() {
 		for(GameRouter gr: GameServer.servers)
 		{
@@ -387,7 +395,7 @@ public class GameController {
 			
 			do
 			{
-				String[] args  = {""+gr.myID, "",""+moveDone};
+				String[] args  = {""+gr.myID, ""};
 	    		Event e = new Event()
 	    				.EventId(EventList.MOVE_THINGS)
 	    				.ExpectsResponse(true)
@@ -399,8 +407,6 @@ public class GameController {
 					if(responses[j].fromPlayer == gr.myID)
 					{
 						String[] responseStrings = responses[j].message.split(" ");
-						
-						args[2] = responseStrings[0];
 						
 						if(responseStrings.length == 2)
 							args[1] = responseStrings[1];

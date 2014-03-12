@@ -35,9 +35,30 @@ public class Fort extends Building implements IIncomable{
 			break;
 		case CASTLE:
 			level = Level.KEEP;
+			Ranged(false);
 			break;
 		case CITADEL:
 			level = Level.CASTLE;
+			Magic(false);
+			Ranged(true);
+			break;
+		}
+	}
+
+	public void upgrade() {
+		switch(level)
+		{
+		case TOWER:
+			level = Level.KEEP;
+			break;
+		case KEEP:
+			level = Level.CASTLE;
+			Ranged(true);
+			break;
+		case CASTLE:
+			level = Level.CITADEL;
+			Ranged(false);
+			Magic(true);
 			break;
 		}
 	}

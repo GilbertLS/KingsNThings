@@ -145,14 +145,6 @@ public class GameView extends Scene {
 		
 		Utility.PromptForInput(moveLock);
 		
-		/*try {
-			do{
-				Thread.sleep(250);
-			}while(!moveMade && !userInputDone);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		String s = userInputDone + " " + returnString;
 		
 		//moveMade = false;
@@ -167,8 +159,6 @@ public class GameView extends Scene {
 	public String playIteration()
 	{
 		//perform a single iteration of playing things
-		//movement is done when userInputDone is set to true
-		//after the beginning of the movement phase
 
 		currentPhase = CurrentPhase.PLAY_THINGS;
 		
@@ -203,6 +193,18 @@ public class GameView extends Scene {
 			this.board.getTileByHex(h).update();
 		}
 	}
+	
+	public void updateTiles(ArrayList<HexTile> hexTiles) {
+		for(HexTile h: hexTiles)
+		{
+			for(int i=0; i<GameClient.game.gameModel.PlayerCount(); i++)
+				this.board.getTileByHex(h).updateThings(i);
+			
+			this.board.getTileByHex(h).update();
+		}
+	}
+	
+	
 		
 	public void setCurrentPlayer(int p) {
 		this.currPlayerNum = p;
@@ -296,6 +298,14 @@ public class GameView extends Scene {
 
 	public void updateGold(int gold, int playerIndex) {
 		playerList.getPlayerPanel(playerIndex).setGold(gold);
+	}
+
+	public void updateTiles(HexTile hexTileCopy, int playerIndex) {
+		ArrayList<HexTile> hexTileList = new ArrayList<HexTile>();
+		
+		hexTileList.add(hexTileCopy);
+		
+		updateTiles(hexTileList, playerIndex);
 	}
 	
 }

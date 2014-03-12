@@ -3,8 +3,12 @@ package gui;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.Utility;
+import Game.Networking.Event;
+import Game.Networking.EventList;
+import Game.Networking.GameClient;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -51,6 +55,38 @@ public class BoardView extends Region {
 	    	            	//tileSelection
 	    	            	thisBoard.lastSelectedTile = t;
 	    	            	Utility.GotInput(selectedTileLock);
+	    	            	
+	    	            	GameView gv = (GameView)getScene();
+	    	            	if(gv.currentPhase == CurrentPhase.CONSTRUCTION)
+	    	            	{
+	    	            		int playerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+	    	            		HexTile h = t.getTileRef();
+	    	            		
+	    	            		if(GameClient.game.gameModel.isValidConstruction(h, playerIndex))
+	    	            		{
+	    	            			GameClient.game.gameModel.updateConstruction(h, playerIndex);
+	    	            			gv.updateHexTile(h);
+	    	            			gv.updateGold(GameClient.game.gameModel.GetCurrentPlayer().getGold(), playerIndex);
+	    	            			
+		    	            		String[] args = new String[2];
+		    	            		args[0] = Integer.toString(playerIndex);
+		    	            		args[1] = h.x + "SPLIT" + h.y;
+		    	            		
+		    	            		boolean[] intendedPlayers = new boolean[GameClient.game.gameModel.PlayerCount()];
+		    	            		
+		    	            		for(int i=0; i<GameClient.game.gameModel.PlayerCount(); i++)
+		    	            			if(i != playerIndex)
+		    	            				intendedPlayers[i] = true;
+		    	            			
+		    	            		Event gameEvent = new Event()
+		    	            			.EventId(EventList.HANDLE_CONSTRUCTION)
+		    	            			.IntendedPlayers(intendedPlayers)
+		    	            			.EventParameters(args);
+		    	            		
+		    	            		Game.Networking.EventHandler.SendEvent(gameEvent);
+	    	            		}
+	    	            	}
+	    	            		
 	    	            }
 	    	        });
 	    	        

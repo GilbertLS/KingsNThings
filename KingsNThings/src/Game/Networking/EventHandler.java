@@ -678,7 +678,7 @@ public class EventHandler {
 		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			if(e.eventParams.length == 3)
+			if(e.eventParams.length == 2)
 			{
 				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
 				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
@@ -702,30 +702,65 @@ public class EventHandler {
 				});
 			}
 		}
+		else if(e.eventId == EventList.DO_CONSTRUCTION)
+		{
+			GameClient.game.sendMessageToView("Please construct or upgrade Forts");		        	
+						
+			GameClient.game.gameView.performPhase(CurrentPhase.CONSTRUCTION);
+						
+			//send changes
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.DO_CONSTRUCTION)
+			);	
+					
+			GameClient.game.clearMessageOnView();
+		}
+		else if(e.eventId == EventList.HANDLE_CONSTRUCTION)
+		{		
+			if(e.eventParams.length >= 2)
+			{
+				final int playerIndex = Integer.parseInt(e.eventParams[0].trim());
+				String constructionString = e.eventParams[1].trim();
+				
+				HexTile hexTile = GameClient.game.parseConstructionString(constructionString);
+					
+				GameClient.game.gameModel.updateConstruction(hexTile, playerIndex);
+					
+				final HexTile hexTileCopy = hexTile;
+				final int gold = GameClient.game.gameModel.playerFromIndex(playerIndex).getGold();
+					
+				Platform.runLater(new Runnable() {
+					@Override
+			    	public void run() {
+						GameClient.game.gameView.updateTiles(hexTileCopy, playerIndex);	
+						GameClient.game.gameView.updateGold(gold, playerIndex);
+						}
+					});
+			}
+		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			boolean moveDone = Boolean.parseBoolean(e.eventParams[1]);
 
-				if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
-				{
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
 					
-					GameClient.game.sendMessageToView("Please move your Things");		        	
+				GameClient.game.sendMessageToView("Please move your Things");		        	
 						
-					String thingsMovedParamsString = GameClient.game.gameView.moveIteration();
+				String thingsMovedParamsString = GameClient.game.gameView.moveIteration();
 					
-					String[] args = thingsMovedParamsString.split(" ");
+				String[] args = thingsMovedParamsString.split(" ");
 						
-					//send changes
-					EventHandler.SendEvent(
-							new Event()
-								.EventId(EventList.MOVE_THINGS)
-								.EventParameters(args)
-					);
-					
-					GameClient.game.clearMessageOnView();
-				}
-
+				//send changes
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.MOVE_THINGS)
+							.EventParameters(args)
+				);
+				
+				GameClient.game.clearMessageOnView();
+			}
 			else
 			{
 				waitForOtherPlayer(playerIndex, "move their things");
@@ -735,7 +770,7 @@ public class EventHandler {
 		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			if(e.eventParams.length == 3)
+			if(e.eventParams.length == 2)
 			{
 				String thingsPlayedStrings = e.eventParams[1].trim();
 				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
@@ -841,10 +876,13 @@ public class EventHandler {
 
 	
 	private static void waitForOtherPlayer(final int playerIndex, final String actionBeingTaken) {
-		String s = "Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".";
+		waitForOtherPlayer(Integer.toString(playerIndex), actionBeingTaken);
+	}
+	
+	private static void waitForOtherPlayer(final String playerIndexString, final String actionBeingTaken) {
+		String s = "Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".";
 
-		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
-
+		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".");
 		
 		SendNullEvent();		
 	}

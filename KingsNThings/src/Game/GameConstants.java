@@ -10,7 +10,7 @@ public final class GameConstants {
 		MOVEMENT,
 		BATTLE,
 		NULL, 
-		PLAY_THINGS
+		PLAY_THINGS, CONSTRUCTION
 	}
 
 	//The different types of possible terrain in the game
@@ -304,8 +304,8 @@ public final class GameConstants {
 
 	public static final int GOLD_PER_RECRUIT = 5;
 	
-	public static final int NUM_CITIES = 3;
-	public static final int NUM_VILLAGES = 5;
+	public static final int NUM_CITIES = 10;
+	public static final int NUM_VILLAGES = 10;
 
 	public static final int NUM_DIAMONDS = 2;
 	public static final int NUM_EMERALDS = 2;
@@ -313,6 +313,8 @@ public final class GameConstants {
 	public static final int NUM_RUBYS = 2;
 	public static final int NUM_SAPPHIRES = 2;
 	public static final int NUM_TREASURE_CHESTS = 2;
+	
+	public static final int CONSTRUCTION_COST = 5;
 
 
 
