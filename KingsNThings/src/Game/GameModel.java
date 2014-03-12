@@ -1,8 +1,6 @@
 package Game;
 
-import gui.ThingView;
-import gui.Tile;
-
+import Game.SpecialCharacter;
 import java.util.ArrayList;
 
 import Game.GameConstants.ControlledBy;
@@ -1075,5 +1073,32 @@ public class GameModel {
 		}
 		
 		return valid;
+	}
+
+	public ArrayList<SpecialCharacter> getUnownedSpecialCharacters() {
+		return unownedCharacters;
+	}
+
+	public boolean canAfford(int amount,
+			int playerIndex) {
+		return playerFromIndex(playerIndex).canAfford(amount);
+	}
+
+	public void augmentRoll(int cost,
+			int playerIndex) {
+		playerFromIndex(playerIndex).decrementGold(cost);
+	}
+
+	public void recruitSpecialCharacter(int thingID, int playerIndex) {
+		Thing t = null;
+		
+		for(SpecialCharacter sc: unownedCharacters)
+		{
+			if(sc.thingID == thingID)
+				t = sc;
+		}
+		
+		if(t != null)
+			playerFromIndex(playerIndex).addThingToRack(t);
 	}
 }

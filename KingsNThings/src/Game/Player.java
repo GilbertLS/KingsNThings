@@ -118,7 +118,7 @@ public class Player {
 	}
 
 	public boolean canAffordRecruits(int numRecruits) {
-		return gold >= numRecruits*GameConstants.GOLD_PER_RECRUIT;
+		return canAfford(numRecruits*GameConstants.GOLD_PER_RECRUIT);
 	}
 
 	public void payGold(int gold) {
@@ -195,5 +195,9 @@ public class Player {
 
 	public void decrementGold(int amount) {
 		gold -= amount;
+	}
+
+	public boolean canAfford(int amount) {
+		return gold >= amount;
 	}
 }

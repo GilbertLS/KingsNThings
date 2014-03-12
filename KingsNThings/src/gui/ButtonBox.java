@@ -7,6 +7,7 @@ import Game.Utility;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 public class ButtonBox extends HBox {
@@ -62,6 +63,21 @@ public class ButtonBox extends HBox {
 					showHideTiles.setText("Show Tiles");
 					GameView gv = (GameView)getScene();
 					gv.showHideAllTiles(false);	
+				}
+			}
+		});
+		
+		recruitSpecial.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+		    public void handle(ActionEvent e) {
+				if(GameClient.game.gameView.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+				{
+					int numSpecialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters().size();
+					int playerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+					
+					SpecialCharacterView SCView = new SpecialCharacterView(new BorderPane(), numSpecialCharacters, playerIndex);
+					GameView.specialCharacterView = SCView;
 				}
 			}
 		});

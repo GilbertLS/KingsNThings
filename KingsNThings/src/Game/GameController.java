@@ -364,13 +364,15 @@ public class GameController {
 		{
 			distributeIncome();
 			
+			//recruitSpecialCharacter();
+			
 			//recruitThings();
 			
 			//playThings();
 			
-			moveThings();
+			//moveThings();
 			
-			PlayBattlePhase();
+			//PlayBattlePhase();
 			
 			playConstructionPhase();
 		
@@ -386,6 +388,19 @@ public class GameController {
 			.ExpectsResponse(true);
 			    		
 		GameControllerEventHandler.sendEvent(e);	
+	}
+	
+	private void recruitSpecialCharacter() {
+		for(GameRouter gr: GameServer.servers)
+		{
+			String arg = ""+ gr.myID;
+			Event e = new Event()
+				.EventId(EventList.RECRUIT_CHARACTER)
+				.ExpectsResponse(true)
+				.EventParameter(arg);
+				    		
+			GameControllerEventHandler.sendEvent(e);	
+		}
 	}
 
 	private void moveThings() {

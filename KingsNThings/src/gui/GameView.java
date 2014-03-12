@@ -18,6 +18,8 @@ import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
 import Game.Utility;
+import Game.Networking.Event;
+import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import Game.Thing;
 import javafx.application.Platform;
@@ -31,6 +33,7 @@ import javafx.stage.Stage;
 public class GameView extends Scene {
 	public static BattleView battleView = null;
     public static List<Integer> selectedThings = new ArrayList<Integer>();
+	protected static SpecialCharacterView specialCharacterView = null;
 	
     public BorderPane root;
     public VBox rightPanel;
@@ -224,6 +227,13 @@ public class GameView extends Scene {
 		}
 	}
 	
+	public static boolean recruitingSpecial(){
+		if(GameView.specialCharacterView != null){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public void StartBattle(final int tileX, final int tileY){	
 		Platform.runLater(new Runnable() {
@@ -296,8 +306,12 @@ public class GameView extends Scene {
 		}
 	}
 
-	public void updateGold(int gold, int playerIndex) {
-		playerList.getPlayerPanel(playerIndex).setGold(gold);
+	public void updateGold(final int gold, final int playerIndex) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				playerList.getPlayerPanel(playerIndex).setGold(gold);
+			}
+		});
 	}
 
 	public void updateTiles(HexTile hexTileCopy, int playerIndex) {
@@ -306,6 +320,37 @@ public class GameView extends Scene {
 		hexTileList.add(hexTileCopy);
 		
 		updateTiles(hexTileList, playerIndex);
+	}
+	
+	public void endRecruitSpecialCharacter()
+	{
+		if (GameView.recruitingSpecial()){
+			Platform.runLater(new Runnable(){
+				public void run(){
+					specialCharacterView.specialCharacterStage.close();
+					specialCharacterView = null;
+					
+					if(currentPhase != CurrentPhase.NULL)
+					{
+						Utility.GotInput(inputLock);
+						
+						userInputDone = true;
+					}
+				}
+			});
+		}
+	}
+
+	public void updateRackCount(final int numThingsInRack, final int playerIndex) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				playerList.getPlayerPanel(playerIndex).setThings(numThingsInRack);
+			}
+		});
+	}
+
+	public void addToRack(Thing thingRef) {
+		rack.add(new ThingView(thingRef));
 	}
 	
 }

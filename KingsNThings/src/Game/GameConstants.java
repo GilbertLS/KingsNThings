@@ -10,7 +10,7 @@ public final class GameConstants {
 		MOVEMENT,
 		BATTLE,
 		NULL, 
-		PLAY_THINGS, CONSTRUCTION
+		PLAY_THINGS, CONSTRUCTION, RECRUIT_CHARACTER
 	}
 
 	//The different types of possible terrain in the game
@@ -315,6 +315,10 @@ public final class GameConstants {
 	public static final int NUM_TREASURE_CHESTS = 2;
 	
 	public static final int CONSTRUCTION_COST = 5;
+	public static final int DEFAULT_THING_VIEW_WIDTH = 50;
+	
+	public static final int SPECIAL_CHARACTER_AUG_ROLL_BEFORE_COST = 5;
+	public static final int SPECIAL_CHARACTER_AUG_ROLL_AFTER_COST = 10;
 
 
 

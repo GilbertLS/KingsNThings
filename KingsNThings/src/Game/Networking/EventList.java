@@ -46,4 +46,7 @@ public class EventList {
 	public static final int CREATE_SPECIAL_CHARACTERS = 122;
 	public static final int DO_CONSTRUCTION = 123;
 	public static final int HANDLE_CONSTRUCTION = 124;
+	public static final int RECRUIT_CHARACTER = 125;
+	public static final int HANDLE_SPEND_GOLD = 126;
+	public static final int HANDLE_RECRUIT_CHARACTER = 127;
 }
