@@ -12,6 +12,8 @@ public class Treasure extends Thing{
 	public Treasure(String name, int value, String frontFileName)
 	{
 		super(ThingType.TREASURE, name, frontFileName);
+		
+		this.value = value;
 	}
 	public int getValue() {
 		return value;

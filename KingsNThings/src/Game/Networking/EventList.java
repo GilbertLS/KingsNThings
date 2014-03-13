@@ -42,4 +42,11 @@ public class EventList {
 	public static final int CLEAR_THING_MOVES = 118;
 	public static final int RANDOMIZE_THINGS = 119;
 	public static final int UPDATE_CUP_ORDER = 120;
+	public static final int RANDOMIZE_SPECIAL_CHARACTERS = 121;
+	public static final int CREATE_SPECIAL_CHARACTERS = 122;
+	public static final int DO_CONSTRUCTION = 123;
+	public static final int HANDLE_CONSTRUCTION = 124;
+	public static final int RECRUIT_CHARACTER = 125;
+	public static final int HANDLE_SPEND_GOLD = 126;
+	public static final int HANDLE_RECRUIT_CHARACTER = 127;
 }

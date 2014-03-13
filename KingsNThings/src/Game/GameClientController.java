@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import javafx.application.Platform;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
+import Game.Networking.Event;
+import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import gui.GameView;
 
@@ -72,58 +74,29 @@ public class GameClientController {
 		return seenTiles;
 	}
 
-	public void parseMovedThingsStrings(String[] thingsPlayedStrings,
-			ArrayList<HexTile> tilesFrom, ArrayList<HexTile> tilesTo,
-			ArrayList<Integer> thingIDs, int playerIndex) {
+	public void parseMovedThingsStrings(String thingsPlayedStrings,
+			ArrayList<HexTile> hexTiles,
+			ArrayList<Integer> thingIDs) {
 		
-		for(String s: thingsPlayedStrings)
-		{
-			String[] paramsString = s.split("~");
-			String[] fromTileParamsString = paramsString[0].split("SPLIT");
-			String[] toTileParamsString = paramsString[1].split("SPLIT");
+		String[] paramsString = thingsPlayedStrings.split("~");
+		String[] fromTileParamsString = paramsString[0].split("SPLIT");
+		String[] toTileParamsString = paramsString[1].split("SPLIT");
 				
-			int tileFromX = Integer.parseInt(fromTileParamsString[0]);
-			int tileFromY = Integer.parseInt(fromTileParamsString[1]);
+		int tileFromX = Integer.parseInt(fromTileParamsString[0]);
+		int tileFromY = Integer.parseInt(fromTileParamsString[1]);
+		hexTiles.add(gameModel.gameBoard.getTile(tileFromX, tileFromY));
 			
-			int tileToX = Integer.parseInt(toTileParamsString[0]);
-			int tileToY = Integer.parseInt(toTileParamsString[1]);
+		int tileToX = Integer.parseInt(toTileParamsString[0]);
+		int tileToY = Integer.parseInt(toTileParamsString[1]);
+		hexTiles.add(gameModel.gameBoard.getTile(tileToX, tileToY));
 			
-			HexTile fromTile = gameModel.gameBoard.getTile(tileFromX, tileFromY);
-			HexTile toTile = gameModel.gameBoard.getTile(tileToX, tileToY);
+		String[] IDStrings = paramsString[2].split("/");
 			
-			int id = Integer.parseInt(paramsString[2]);
-			
-			/*
-			if(thingIDs.contains(id))
-			{
-				int idIndex = thingIDs.indexOf(id);
-				tilesTo.set(idIndex, toTile);
-			}
-			else
-			{*/
-				thingIDs.add(id);
-				tilesFrom.add(fromTile);
-				tilesTo.add(toTile);
-			//}
+		for(String s: IDStrings)
+		{
+			thingIDs.add(Integer.parseInt(s));
 		}
 	}
-
-	public ArrayList<HexTile> amalgamateHexTiles(ArrayList<HexTile> tilesFrom,
-			ArrayList<HexTile> tilesTo) {
-		ArrayList<HexTile> returnTiles = new ArrayList<HexTile>();
-		
-		for(HexTile h: tilesFrom)
-		{
-			returnTiles.add(h);
-		}
-		
-		for(HexTile h: tilesTo)
-		{
-			returnTiles.add(h);
-		}
-		
-		return returnTiles;
-	}	
 	
 	public void sendMessageToView(final String message)
 	{
@@ -207,20 +180,67 @@ public class GameClientController {
 		if(tileRef.controlledBy != things.get(0).controlledBy)
 			return false;
 		
+		int numIncomes =0;		
 		for(Thing t: things)
 		{
-			if(t.thingType == ThingType.SPECIAL_INCOME)
+			if(t.thingType == ThingType.SPECIAL_INCOME || t.thingType == ThingType.SETTLEMENT)
 			{
-				if(tileRef.hasSpecialIncome() || tileRef.terrain != ((SpecialIncome)t).getTerrain())
+				numIncomes++;
+				
+				if(tileRef.hasSpecialIncome() || tileRef.hasSettlement() || numIncomes > 1) 
 					return false;
-			}
-			else if (t.thingType == ThingType.SETTLEMENT)
-			{
-				if(tileRef.hasSpecialIncome())
+				
+				if(t.thingType == ThingType.SPECIAL_INCOME && tileRef.terrain != ((SpecialIncome)t).getTerrain())
 					return false;
+				
 			}
+
 		}
 			
 		return true;
+	}
+
+	public HexTile parseConstructionString(String constructionString) {
+		String[] params = constructionString.split("SPLIT");
+		int x = Integer.parseInt(params[0]);
+		int y = Integer.parseInt(params[1]);
+		
+		return gameModel.gameBoard.getTile(x, y);
+	}
+
+	public void augmentRoll(int amount,
+			int playerIndex) {
+		GameClient.game.gameModel.augmentRoll(amount, playerIndex);
+		GameClient.game.gameView.updateGold(gameModel.playerFromIndex(playerIndex).getGold(), playerIndex);			
+	}
+
+	public void sendSpendGoldEvent(int amount, int playerIndex) {
+		
+		boolean[] intendedPlayers = new boolean[GameClient.game.gameModel.PlayerCount()];
+		
+		for(int i=0; i<GameClient.game.gameModel.PlayerCount(); i++)
+			if(i != playerIndex)
+				intendedPlayers[i] = true;
+		
+		String[] args = {""+amount,""+playerIndex};
+		
+		Event gameEvent = new Event()
+			.EventId(EventList.HANDLE_SPEND_GOLD)
+			.IntendedPlayers(intendedPlayers)
+			.EventParameters(args);
+	
+		Game.Networking.EventHandler.SendEvent(gameEvent);	
+	}
+
+	public void sendRecruitSpecialCharacterEvent(
+			int thingID, int playerIndex) {
+		
+		String[] args = {""+thingID,""+playerIndex};
+		
+		Event gameEvent = new Event()
+			.EventId(EventList.HANDLE_RECRUIT_CHARACTER)
+			.EventParameters(args);
+	
+		Game.Networking.EventHandler.SendEvent(gameEvent);	
 	}
 }

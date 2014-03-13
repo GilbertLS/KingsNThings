@@ -32,4 +32,12 @@ public class Dice {
 		
 		return diceRolls;
 	}
+	
+	public static int getRoll(int i)
+	{
+		if(dieValues.length < i+1)
+			return -1;
+		else
+			return dieValues[i];
+	}
 }

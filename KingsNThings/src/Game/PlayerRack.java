@@ -70,4 +70,8 @@ public class PlayerRack {
 		}
 		return null;
 	}
+
+	public int size() {
+		return things.size();
+	}
 }

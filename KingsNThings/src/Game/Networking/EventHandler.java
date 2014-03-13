@@ -397,6 +397,22 @@ public class EventHandler {
 			
 			GameClient.game.gameModel.setPlayingCupOrder(thingIDs);
 		}
+		else if (e.eventId == EventList.RANDOMIZE_SPECIAL_CHARACTERS)
+		{
+			String specialCharacterString = GameClient.game.gameModel.randomizeSpecialCharactersString();
+
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.RANDOMIZE_SPECIAL_CHARACTERS)
+						.EventParameter(specialCharacterString)
+				);
+		}
+		else if (e.eventId == EventList.CREATE_SPECIAL_CHARACTERS)
+		{
+			String specialCharacterString = e.eventParams[0].trim();
+			
+			GameClient.game.gameModel.initializeSpecialCharacters(specialCharacterString);
+		}
 		else if (e.eventId == EventList.GET_THINGS_FROM_CUP) {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			final int numThings = Integer.parseInt(e.eventParams[1]);
@@ -425,7 +441,7 @@ public class EventHandler {
 		        public void run() {
 		        	for(int i=0; i<numClients; i++)
 		        	{
-		        		GameClient.game.gameView.playerList.getPlayerPanel(i).setGold(10);
+		        		GameClient.game.gameView.updateGold(GameClient.game.gameModel.playerFromIndex(i).getGold(), i);	
 		        	}
 		        }
 			});
@@ -445,7 +461,7 @@ public class EventHandler {
 		        public void run() {
 		        	for(int i=0; i<numClients; i++)
 		        	{
-		        		GameClient.game.gameView.playerList.getPlayerPanel(i).addGold(goldUpdates[i]);
+		        		GameClient.game.gameView.updateGold(GameClient.game.gameModel.playerFromIndex(i).getGold(), i);	
 		        	}	
 		        }
 			});
@@ -532,7 +548,7 @@ public class EventHandler {
 			}
 			else
 			{
-				waitForOtherPlayer(playerIndex, "place a " + pieceBeingPlacedString);
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "place a " + pieceBeingPlacedString);
 			}
 		}
 		else if(e.eventId == EventList.HANDLE_PLACE_PIECE_ON_TILE)
@@ -609,7 +625,7 @@ public class EventHandler {
 			}
 			else
 			{
-				waitForOtherPlayer(playerIndex, "select a number of "+ purposeForNumber+" to take.");
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "select a number of "+ purposeForNumber+" to take.");
 			}
 		}
 		else if(e.eventId == EventList.DETERMINE_TOTAL_NUM_RECRUITS)
@@ -655,14 +671,14 @@ public class EventHandler {
 			}
 			else
 			{
-				waitForOtherPlayer(playerIndex, "play their things");
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "play their things");
 			}
 		}
 		else if(e.eventId == EventList.HANDLE_PLAY_THINGS)
 		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			if(e.eventParams.length == 3)
+			if(e.eventParams.length == 2)
 			{
 				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
 				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
@@ -675,59 +691,147 @@ public class EventHandler {
 				
 				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
 				final ArrayList<Integer> thingIDsCopy = thingIDs;
+				final int gold = GameClient.game.gameModel.GetPlayer(playerIndex).getGold();
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
-						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);	
+						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);
+						GameClient.game.gameView.updateGold(gold, playerIndex);
 			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
 			        }
 				});
 			}
 		}
+		else if(e.eventId == EventList.HANDLE_SPEND_GOLD)
+		{
+			int amount = Integer.parseInt(e.eventParams[0].trim());
+			int playerIndex = Integer.parseInt(e.eventParams[1].trim());
+			
+			GameClient.game.gameModel.augmentRoll(amount, playerIndex);
+			GameClient.game.gameView.updateGold(GameClient.game.gameModel.playerFromIndex(playerIndex).getGold(), playerIndex);		
+			
+		}
+		else if(e.eventId == EventList.RECRUIT_CHARACTER)
+		{
+			int playerIndex = Integer.parseInt(e.eventParams[0].trim());
+			
+			if(GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() == playerIndex)
+			{
+				GameClient.game.sendMessageToView("Please Recruit a Special Character");		        	
+				
+				GameClient.game.gameView.performPhase(CurrentPhase.RECRUIT_CHARACTER);	
+						
+				GameClient.game.clearMessageOnView();
+				
+				//send finished
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.RECRUIT_CHARACTER)
+				);
+			}
+			else
+			{
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "Recruit a Special Character");
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_RECRUIT_CHARACTER)
+		{
+			if(e.eventParams.length >= 2)
+			{
+				int thingID = Integer.parseInt(e.eventParams[0].trim());
+				final int playerIndex = Integer.parseInt(e.eventParams[1].trim());
+					
+				GameClient.game.gameModel.recruitSpecialCharacter(thingID, playerIndex);
+					
+				final int numThingsInRack = GameClient.game.gameModel.playerFromIndex(playerIndex).playerRack.size();
+				
+				Platform.runLater(new Runnable() {
+					@Override
+			    	public void run() {
+						GameClient.game.gameView.updateRackCount(numThingsInRack, playerIndex);
+						}
+					});
+			}
+		}
+		else if(e.eventId == EventList.DO_CONSTRUCTION)
+		{
+			GameClient.game.sendMessageToView("Please construct or upgrade Forts");		        	
+						
+			GameClient.game.gameView.performPhase(CurrentPhase.CONSTRUCTION);	
+					
+			GameClient.game.clearMessageOnView();
+			
+			//send finished
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.DO_CONSTRUCTION)
+			);
+		}
+		else if(e.eventId == EventList.HANDLE_CONSTRUCTION)
+		{		
+			if(e.eventParams.length >= 2)
+			{
+				final int playerIndex = Integer.parseInt(e.eventParams[0].trim());
+				String constructionString = e.eventParams[1].trim();
+				
+				HexTile hexTile = GameClient.game.parseConstructionString(constructionString);
+					
+				GameClient.game.gameModel.updateConstruction(hexTile, playerIndex);
+					
+				final HexTile hexTileCopy = hexTile;
+				final int gold = GameClient.game.gameModel.playerFromIndex(playerIndex).getGold();
+					
+				Platform.runLater(new Runnable() {
+					@Override
+			    	public void run() {
+						GameClient.game.gameView.updateTiles(hexTileCopy, playerIndex);	
+						GameClient.game.gameView.updateGold(gold, playerIndex);
+						}
+					});
+			}
+		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			boolean moveDone = Boolean.parseBoolean(e.eventParams[1]);
 
-				if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
-				{
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
 					
-					GameClient.game.sendMessageToView("Please move your Things");		        	
+				GameClient.game.sendMessageToView("Please move your Things");		        	
 						
-					String thingsMovedParamsString = GameClient.game.gameView.moveIteration();
+				String thingsMovedParamsString = GameClient.game.gameView.moveIteration();
 					
-					String[] args = thingsMovedParamsString.split(" ");
+				String[] args = thingsMovedParamsString.split(" ");
 						
-					//send changes
-					EventHandler.SendEvent(
-							new Event()
-								.EventId(EventList.MOVE_THINGS)
-								.EventParameters(args)
-					);
-					
-					GameClient.game.clearMessageOnView();
-				}
-
+				//send changes
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.MOVE_THINGS)
+							.EventParameters(args)
+				);
+				
+				GameClient.game.clearMessageOnView();
+			}
 			else
 			{
-				waitForOtherPlayer(playerIndex, "move their things");
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "move their things");
 			}
 		}
 		else if(e.eventId == EventList.HANDLE_MOVE_THINGS)
 		{
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			if(e.eventParams.length == 3)
+			if(e.eventParams.length == 2)
 			{
-				final String[] thingsPlayedStrings = e.eventParams[1].trim().split("/");
-				ArrayList<HexTile> tilesFrom = new ArrayList<HexTile>();
-				ArrayList<HexTile> tilesTo = new ArrayList<HexTile>();
+				String thingsPlayedStrings = e.eventParams[1].trim();
+				ArrayList<HexTile> hexTiles = new ArrayList<HexTile>();
 				ArrayList<Integer> thingIDs = new ArrayList<Integer>();
-				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, tilesFrom, tilesTo, thingIDs, playerIndex);
+				GameClient.game.parseMovedThingsStrings(thingsPlayedStrings, hexTiles, thingIDs);
 				
-				GameClient.game.gameModel.updateMovedThings(tilesFrom, tilesTo, thingIDs, playerIndex);
+				GameClient.game.gameModel.updateMovedThings(hexTiles, thingIDs, playerIndex);
 				
-				final ArrayList<HexTile> hexTilesCopy = GameClient.game.amalgamateHexTiles(tilesFrom, tilesTo);
+				final ArrayList<HexTile> hexTilesCopy = hexTiles;
+				
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
@@ -822,13 +926,17 @@ public class EventHandler {
 	}
 
 	
-	private static void waitForOtherPlayer(final int playerIndex, final String actionBeingTaken) {
-		String s = "Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".";
+	private static void waitForOtherPlayer(boolean expectsResponse, final int playerIndex, final String actionBeingTaken) {
+		waitForOtherPlayer(expectsResponse, Integer.toString(playerIndex), actionBeingTaken);
+	}
+	
+	private static void waitForOtherPlayer(boolean expectsResponse, final String playerIndexString, final String actionBeingTaken) {
+		String s = "Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".";
 
-		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndex + " to " + actionBeingTaken + ".");
-
+		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".");
 		
-		SendNullEvent();		
+		if(expectsResponse)
+			SendNullEvent();		
 	}
 
 	private static void SendNullEvent(){

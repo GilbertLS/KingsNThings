@@ -18,6 +18,8 @@ import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
 import Game.GameConstants.Terrain;
 import Game.Utility;
+import Game.Networking.Event;
+import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import Game.Thing;
 import javafx.application.Platform;
@@ -31,6 +33,7 @@ import javafx.stage.Stage;
 public class GameView extends Scene {
 	public static BattleView battleView = null;
     public static List<Integer> selectedThings = new ArrayList<Integer>();
+	protected static SpecialCharacterView specialCharacterView = null;
 	
     public BorderPane root;
     public VBox rightPanel;
@@ -145,14 +148,6 @@ public class GameView extends Scene {
 		
 		Utility.PromptForInput(moveLock);
 		
-		/*try {
-			do{
-				Thread.sleep(250);
-			}while(!moveMade && !userInputDone);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		String s = userInputDone + " " + returnString;
 		
 		//moveMade = false;
@@ -167,8 +162,6 @@ public class GameView extends Scene {
 	public String playIteration()
 	{
 		//perform a single iteration of playing things
-		//movement is done when userInputDone is set to true
-		//after the beginning of the movement phase
 
 		currentPhase = CurrentPhase.PLAY_THINGS;
 		
@@ -203,6 +196,18 @@ public class GameView extends Scene {
 			this.board.getTileByHex(h).update();
 		}
 	}
+	
+	public void updateTiles(ArrayList<HexTile> hexTiles) {
+		for(HexTile h: hexTiles)
+		{
+			for(int i=0; i<GameClient.game.gameModel.PlayerCount(); i++)
+				this.board.getTileByHex(h).updateThings(i);
+			
+			this.board.getTileByHex(h).update();
+		}
+	}
+	
+	
 		
 	public void setCurrentPlayer(int p) {
 		this.currPlayerNum = p;
@@ -222,6 +227,13 @@ public class GameView extends Scene {
 		}
 	}
 	
+	public static boolean recruitingSpecial(){
+		if(GameView.specialCharacterView != null){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public void StartBattle(final int tileX, final int tileY){	
 		Platform.runLater(new Runnable() {
@@ -294,8 +306,51 @@ public class GameView extends Scene {
 		}
 	}
 
-	public void updateGold(int playerIndex) {
-		//playerList.getPlayerPanel(playerIndex).updateGold()
+	public void updateGold(final int gold, final int playerIndex) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				playerList.getPlayerPanel(playerIndex).setGold(gold);
+			}
+		});
+	}
+
+	public void updateTiles(HexTile hexTileCopy, int playerIndex) {
+		ArrayList<HexTile> hexTileList = new ArrayList<HexTile>();
+		
+		hexTileList.add(hexTileCopy);
+		
+		updateTiles(hexTileList, playerIndex);
+	}
+	
+	public void endRecruitSpecialCharacter()
+	{
+		if (GameView.recruitingSpecial()){
+			Platform.runLater(new Runnable(){
+				public void run(){
+					specialCharacterView.specialCharacterStage.close();
+					specialCharacterView = null;
+					
+					if(currentPhase != CurrentPhase.NULL)
+					{
+						Utility.GotInput(inputLock);
+						
+						userInputDone = true;
+					}
+				}
+			});
+		}
+	}
+
+	public void updateRackCount(final int numThingsInRack, final int playerIndex) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				playerList.getPlayerPanel(playerIndex).setThings(numThingsInRack);
+			}
+		});
+	}
+
+	public void addToRack(Thing thingRef) {
+		rack.add(new ThingView(thingRef));
 	}
 	
 }

@@ -34,7 +34,7 @@ public class Tile extends Region implements Draggable {
 	public ArrayList<ThingView> p4Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
 	public ThingView fort = null;
-	public ThingView economy = null;
+	public ThingView specialIncome = null;
 	private int controllingPlayer = 0;
 	private CurrentPhase currentPhase;
 	
@@ -180,6 +180,28 @@ public class Tile extends Region implements Draggable {
     		fort = null;
     	}
     	
+    	String specialIncomePath = getSpecialIncomeString();
+    	if (specialIncomePath != null) {
+	    	Image img = new Image("res/images/" + specialIncomePath);
+	    	ImageView imgView = new ImageView(img);
+	    	imgView.setFitHeight(25);
+	    	imgView.setFitWidth(25);
+	    	imgView.setX(this.getWidth()/4 + getWidth()/4);
+	    	list.add(imgView);
+	    	
+	    	if(specialIncome == null)
+	    	{
+	    		if(tileRef.hasSpecialIncome())
+	    			specialIncome = new ThingView(tileRef.getSpecialIncome());
+	    		else if(tileRef.hasSettlement())
+	    			specialIncome = new ThingView(tileRef.getSettlement());
+	    	}
+    	}
+    	else
+    	{
+    		specialIncome = null;
+    	}
+    	
     	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
     		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
     	
@@ -210,6 +232,18 @@ public class Tile extends Region implements Draggable {
     			case CITADEL: return "C_Fort_381.png";
     			default: return null;
     		}
+    	}
+    	
+    	return null;
+    }
+    
+    private String getSpecialIncomeString() {
+    	if (tileRef != null)
+    	{
+    		if (tileRef.hasSpecialIncome())
+    			return tileRef.getSpecialIncome().getFrontImage();
+    	    else if(tileRef.hasSettlement())
+    	    	return tileRef.getSettlement().getFrontImage();
     	}
     	
     	return null;
@@ -261,37 +295,35 @@ public class Tile extends Region implements Draggable {
 						ArrayList<ThingView> 		thingViews		= new ArrayList<ThingView>();
 						ArrayList<Thing> things = new ArrayList<Thing>();
 					
-						
 						GameView gv = (GameView)getScene();
-						
-						for (Integer i : listOfIds) {
-							thingViews.add(items.get(i));
-						}
-						
-						for(ThingView tv: thingViews)
-							things.add(tv.thingRef);
-						
-						String originalTileString = (String)e.getDragboard().getContent(originalTile);
-						
-						if(gv.currentPhase != CurrentPhase.NULL)
-						{							
+						if(gv.currentPhase != CurrentPhase.NULL && gv.returnString.equals(""))
+						{											
+							for (Integer i : listOfIds) {
+								thingViews.add(items.get(i));
+							}
+							
+							for(ThingView tv: thingViews)
+								things.add(tv.thingRef);
+							
+							String originalTileString = (String)e.getDragboard().getContent(originalTile);
+							
+							
 							if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 							{
 								if(GameClient.game.isValidPlacement(tileRef, things))
-								{
-									gv.playerList.getPlayerPanel(gv.getCurrentPlayer()).removeThings(thingViews.size());
-									
+								{									
 									for(ThingView t: thingViews)
 										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
 									
-									//remove special incomes and treasures
+									//remove special incomes, magic, and treasure (will be updated in model, not added to tile preview)
 									ArrayList<ThingView> thingsToRemove = new ArrayList<ThingView>();
 									for(ThingView tv: thingViews)
 									{
-										if(tv.thingRef.getThingType() == ThingType.SETTLEMENT
-											|| tv.thingRef.getThingType() == ThingType.SPECIAL_INCOME)
+										if(ThingType.isSpecialIncome(tv.thingRef.getThingType())
+											|| tv.thingRef.getThingType() == ThingType.TREASURE
+											|| tv.thingRef.getThingType() == ThingType.MAGIC)
 											thingsToRemove.add(tv);
-									}
+									}									
 									
 									for(ThingView tv: thingsToRemove)
 									{
@@ -307,7 +339,7 @@ public class Tile extends Region implements Draggable {
 									success = true;
 								}
 							}
-							else if(gv.currentPhase == CurrentPhase.MOVEMENT)
+							else if(gv.currentPhase == CurrentPhase.MOVEMENT  && !source.getListView().equals(gv.rack))
 							{
 								String[] paramsStrings = originalTileString.split("~");
 								String[] originalHexParams = paramsStrings[0].split("SPLIT");
@@ -343,8 +375,11 @@ public class Tile extends Region implements Draggable {
 									//gv.moveMade = true;
 									
 									//string to update 
+									
+									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~";
+										
 									for(ThingView t: thingViews)
-										gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";
+										gv.returnString += t.thingRef.thingID + "/";
 									
 								}
 							}

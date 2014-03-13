@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.Terrain;
 
 /*
  * Represents one of the player of a Kings N' Things Game.
@@ -13,10 +14,10 @@ public class Player {
 	public int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
 	public ControlledBy faction;
-	public ArrayList<Fort> forts;
+	public ArrayList<Fort> ownedForts;
 	public ArrayList<SpecialCharacter> specialCharacters;
-	public ArrayList<SpecialIncome> specialIncomes;
-	public ArrayList<Settlement> settlements;
+	public ArrayList<SpecialIncome> ownedSpecialIncomes;
+	public ArrayList<Settlement> ownedSettlements;
 	public ArrayList<HexTile> ownedHexTiles;
 	
 	
@@ -48,11 +49,11 @@ public class Player {
 			
 		}
 		
-		forts = new ArrayList<Fort>();
+		ownedForts = new ArrayList<Fort>();
 		specialCharacters = new ArrayList<SpecialCharacter>();
-		specialIncomes = new ArrayList<SpecialIncome>();
+		ownedSpecialIncomes = new ArrayList<SpecialIncome>();
 		ownedHexTiles = new ArrayList<HexTile>();
-		settlements = new ArrayList<Settlement>();
+		ownedSettlements = new ArrayList<Settlement>();
 		
 		this.gold = 0;
 	}
@@ -84,11 +85,20 @@ public class Player {
 	}
 
 	public void addTower(Fort f) {
-		forts.add(f);
+		ownedForts.add(f);
 	}
 
 	public void addHexTile(HexTile h) {
 		ownedHexTiles.add(h);
+		
+		if(h.hasFort())
+			ownedForts.add(h.getFort());	
+		
+		if(h.hasSpecialIncome())
+			ownedSpecialIncomes.add(h.getSpecialIncome());
+		
+		if(h.hasSettlement())
+			ownedSettlements.add(h.getSettlement());
 	}
 	
 	public void removeHexTile(HexTile h){
@@ -108,7 +118,7 @@ public class Player {
 	}
 
 	public boolean canAffordRecruits(int numRecruits) {
-		return gold >= numRecruits*GameConstants.GOLD_PER_RECRUIT;
+		return canAfford(numRecruits*GameConstants.GOLD_PER_RECRUIT);
 	}
 
 	public void payGold(int gold) {
@@ -130,12 +140,64 @@ public class Player {
 	public Thing getThingByID(int thingID) {
 		return playerRack.getThing(thingID);
 	}
-
+	
 	public void addSpecialIncome(SpecialIncome si) {
-		specialIncomes.add(si);
+		ownedSpecialIncomes.add(si);
 	}
 	
 	public void addSettlement(Settlement s) {
-		settlements.add(s);
+		ownedSettlements.add(s);
+	}
+
+	public int getGold() {
+		return gold;
+	}
+
+	public int getIncome() {
+		int gold =0;
+		
+		//gold pieces for land hexes
+		for(HexTile h: ownedHexTiles)
+				if(h.terrain != Terrain.SEA)
+				{
+						gold += h.getIncome();
+						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
+				}
+		
+		//combat values for forts
+		for(Fort f: ownedForts)
+			gold+= f.getIncome();
+		
+		//special income tiles
+		for(SpecialIncome si: ownedSpecialIncomes)
+			gold+= si.getIncome();
+		
+		for(Settlement s: ownedSettlements)
+			gold+= s.getIncome();
+		
+		//special characters
+		for(SpecialCharacter sc: specialCharacters)
+			gold += sc.getIncome();
+		
+		if(gold > 0)
+		{
+			System.out.println("GOLD HAS BEEN AWARDED TO PLAYER - " + GetPlayerNum() + "in the amount of " + gold);
+			System.out.println("# Hexes: " + ownedHexTiles.size());
+			System.out.println("# Forts: " + ownedForts.size());
+			System.out.println("# Special Incomes: " + ownedSpecialIncomes.size());
+			System.out.println("# Settlements: " + ownedSettlements.size());
+			System.out.println("# Special Characters: " + specialCharacters.size());
+		}
+		
+		addGold(gold);
+		return gold;
+	}
+
+	public void decrementGold(int amount) {
+		gold -= amount;
+	}
+
+	public boolean canAfford(int amount) {
+		return gold >= amount;
 	}
 }

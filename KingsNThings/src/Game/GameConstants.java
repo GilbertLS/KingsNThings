@@ -1,5 +1,7 @@
 package Game;
 
+import Game.GameConstants.ThingType;
+
 /*
  * This class holds all relevant constants for the Game (for example, enums, screen width/height)
  */
@@ -8,7 +10,7 @@ public final class GameConstants {
 		MOVEMENT,
 		BATTLE,
 		NULL, 
-		PLAY_THINGS
+		PLAY_THINGS, CONSTRUCTION, RECRUIT_CHARACTER
 	}
 
 	//The different types of possible terrain in the game
@@ -35,7 +37,12 @@ public final class GameConstants {
 									FORT, 
 									SETTLEMENT, 
 									SPECIAL_CHARACTER,
-									TERRAIN_LORD}
+									TERRAIN_LORD;
+
+									public static boolean isSpecialIncome(ThingType tt) {
+										return tt == SPECIAL_CHARACTER
+												|| tt == SETTLEMENT;
+									}}
 	
 	//The different levels a Fort can have (Tower < Keep < Castle < Citadel)
 	public static enum Level {TOWER, KEEP, CASTLE, CITADEL}
@@ -219,6 +226,51 @@ public final class GameConstants {
 	public static final String MountainTileFront = "Mountain.png";
 	public static final String DesertTileFront = "Desert.png";
 	
+	//TREASURE
+	public static final String DiamondImageFront = "Diamond.jpg";
+	public static final String EmeraldImageFront = "Emerald.jpg";
+	public static final String PearlImageFront = "Pearl.jpg";
+	public static final String RubyImageFront = "Ruby.jpg";
+	public static final String SapphireImageFront = "Sapphire.jpg";
+	public static final String TreasureChestImageFront = "TreasureChest.jpg";
+	
+	//MAGIC
+	public static final String BalloonImageFront = "Balloon.jpg";
+	public static final String BowMagicImageFront = "BowMagic.jpg";
+	public static final String DispellMagicImageFront = "DispellMagic.jpg";
+	public static final String DustOfDefenseImageFront = "DustOfDefence.jpg";
+	public static final String ElixirImageFront = "Elixir.jpg";
+	public static final String FanImageFront = "Fan.jpg";
+	public static final String FirewallImageFront = "Firewall.jpg";
+	public static final String GolemImageFront = "Golem.jpg";
+	public static final String LuckyCharmImageFront = "LuckyCharm.jpg";
+	public static final String SwordImageFront = "Sword.jpg";
+	public static final String TalismanImageFront = "Talisman.jpg";
+	
+	//SPECIAL CHARACTERS
+	public static final String ArchClericImageFront = "ArchCleric.jpg";
+	public static final String ArchMageImageFront = "ArchMage.jpg";
+	public static final String AssassinPrimusImageFront = "AssassinPrimus.jpg";
+	public static final String BaronMunchausenImageFront = "BaronMunchausen.jpg";
+	public static final String DeerhunterImageFront = "Deerhunter.jpg";
+	public static final String DesertMasterImageFront = "DesertMaster.jpg";
+	public static final String DwarfKingImageFront = "DwarfKing.jpg";
+	public static final String ElfLordMasterImageFront = "ElfLord.jpg";
+	public static final String ForestKingImageFront = "ForestKing.jpg";
+	public static final String GhaogIIImageFront = "GhaogII.jpg";
+	public static final String GrandDukeImageFront = "GrandDuke.jpg";
+	public static final String IceLordImageFront = "IceLord.jpg";
+	public static final String JungleLordImageFront = "JungleLord.jpg";
+	public static final String LordOfEaglesImageFront = "LordOfEagles.jpg";
+	public static final String MarksmanImageFront = "Marksman.jpg";
+	public static final String MasterThiefImageFront = "MasterThief.jpg";
+	public static final String MountainKingImageFront = "MountainKing.jpg";
+	public static final String PlainsLordImageFront = "PlainsLord.jpg";
+	public static final String SirLanceALotImageFront = "SirLance-A-Lot.jpg";
+	public static final String SwampKingImageFront = "SwampKing.jpg";
+	public static final String SwordmasterImageFront = "Swordmaster.jpg";
+	public static final String WarlordImageFront = "Warlord.jpg";
+	
 	
 	//Piece count constants
 	public static final int MAX_NUM_THINGS = 150;
@@ -252,8 +304,23 @@ public final class GameConstants {
 
 	public static final int GOLD_PER_RECRUIT = 5;
 	
-	public static final int NUM_CITIES = 5;
-	public static final int NUM_VILLAGES = 5;
+	public static final int NUM_CITIES = 10;
+	public static final int NUM_VILLAGES = 10;
+
+	public static final int NUM_DIAMONDS = 2;
+	public static final int NUM_EMERALDS = 2;
+	public static final int NUM_PEARLS = 2;
+	public static final int NUM_RUBYS = 2;
+	public static final int NUM_SAPPHIRES = 2;
+	public static final int NUM_TREASURE_CHESTS = 2;
+	
+	public static final int CONSTRUCTION_COST = 5;
+	public static final int DEFAULT_THING_VIEW_WIDTH = 50;
+	
+	public static final int SPECIAL_CHARACTER_AUG_ROLL_BEFORE_COST = 5;
+	public static final int SPECIAL_CHARACTER_AUG_ROLL_AFTER_COST = 10;
+
+
 
 
 	//battle turns

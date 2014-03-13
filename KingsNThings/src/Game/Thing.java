@@ -72,4 +72,9 @@ public abstract class Thing {
 	public void clearMoves() {
 		numMoves = 0;
 	}
+
+	public String getFrontImage() {
+		return frontFileName;
+		
+	}
 }

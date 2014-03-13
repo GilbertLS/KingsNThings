@@ -76,9 +76,11 @@ public class GameController {
 		
 		randomizePlayingCup();
 		
+		intializeSpecialCharacters();
+		
 		initializeGold();
 		
-		placeThingsOnTile(3, "Control_Marker");
+		placeThingsOnTile(2, "Control_Marker");
 		
 		//placeThingsOnTile(1, "Tower");
 		
@@ -88,6 +90,41 @@ public class GameController {
 		
 	}
 	
+	private void intializeSpecialCharacters() {
+		//ask first player to randomize special characters
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.RANDOMIZE_SPECIAL_CHARACTERS)
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(true)
+			);
+		
+		//get new order response
+		String thingIDs = "";
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				thingIDs = r.message;	
+		}
+		
+		//update all clients with new order
+		for(int i=0; i<numClients; i++)
+		{
+			intendedPlayers[i] = true;
+		}
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.CREATE_SPECIAL_CHARACTERS)
+					.EventParameter(thingIDs)
+					.IntendedPlayers(intendedPlayers)
+			);
+		
+	}
+
 	private void playThings() {
 		for(GameRouter gr: GameServer.servers)
 		{
@@ -95,7 +132,7 @@ public class GameController {
 			
 			do
 			{
-				String[] args  = {""+gr.myID, "",""+playDone};
+				String[] args  = {""+gr.myID, ""};
 	    		Event e = new Event()
 	    				.EventId(EventList.PLAY_THINGS)
 	    				.ExpectsResponse(true)
@@ -107,8 +144,6 @@ public class GameController {
 					if(responses[j].fromPlayer == gr.myID)
 					{
 						String[] responseStrings = responses[j].message.split(" ");
-						
-						args[2] = responseStrings[0];
 						
 						if(responseStrings.length == 2)
 							args[1] = responseStrings[1];
@@ -329,13 +364,17 @@ public class GameController {
 		{
 			distributeIncome();
 			
-			recruitThings();
+			//recruitSpecialCharacter();
 			
-			playThings();
+			//recruitThings();
 			
-			moveThings();
+			//playThings();
 			
-			PlayBattlePhase();
+			//moveThings();
+			
+			//PlayBattlePhase();
+			
+			playConstructionPhase();
 		
 			//ChangePlayerOrder();
 		
@@ -343,6 +382,27 @@ public class GameController {
 
 	}
 	
+	private void playConstructionPhase() {
+		Event e = new Event()
+			.EventId(EventList.DO_CONSTRUCTION)
+			.ExpectsResponse(true);
+			    		
+		GameControllerEventHandler.sendEvent(e);	
+	}
+	
+	private void recruitSpecialCharacter() {
+		for(GameRouter gr: GameServer.servers)
+		{
+			String arg = ""+ gr.myID;
+			Event e = new Event()
+				.EventId(EventList.RECRUIT_CHARACTER)
+				.ExpectsResponse(true)
+				.EventParameter(arg);
+				    		
+			GameControllerEventHandler.sendEvent(e);	
+		}
+	}
+
 	private void moveThings() {
 		for(GameRouter gr: GameServer.servers)
 		{
@@ -350,7 +410,7 @@ public class GameController {
 			
 			do
 			{
-				String[] args  = {""+gr.myID, "",""+moveDone};
+				String[] args  = {""+gr.myID, ""};
 	    		Event e = new Event()
 	    				.EventId(EventList.MOVE_THINGS)
 	    				.ExpectsResponse(true)
@@ -362,8 +422,6 @@ public class GameController {
 					if(responses[j].fromPlayer == gr.myID)
 					{
 						String[] responseStrings = responses[j].message.split(" ");
-						
-						args[2] = responseStrings[0];
 						
 						if(responseStrings.length == 2)
 							args[1] = responseStrings[1];

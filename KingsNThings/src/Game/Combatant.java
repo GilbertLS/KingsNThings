@@ -24,6 +24,26 @@ public abstract class Combatant extends Thing{
 		this.combatValue = combatValue;
 	}
 	
+	public Combatant Flying(boolean isFlying){
+		this.isFlying = isFlying;
+		return this;
+	}
+	
+	public Combatant Magic(boolean isMagic){
+		this.isMagic = isMagic;
+		return this;
+	}
+	
+	public Combatant Ranged(boolean isRange){
+		this.isRange = isRange;
+		return this;
+	}
+	
+	public Combatant Charge(boolean isCharge){
+		this.isCharge = isCharge;
+		return this;
+	}
+	
 	public int GetCombatValue(){
 		return combatValue;
 	}

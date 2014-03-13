@@ -1,11 +1,10 @@
 package Game;
 
-import gui.ThingView;
-import gui.Tile;
-
+import Game.SpecialCharacter;
 import java.util.ArrayList;
 
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.Level;
 import Game.GameConstants.SettlementType;
 import Game.GameConstants.Terrain;
 import Game.Networking.GameClient;
@@ -667,6 +666,121 @@ public class GameModel {
 	public void initializePlayingCup() {
 		initializeCreatures();
 		initializeSpecialIncomes();
+		initializeTreasure();
+		initializeMagic();
+	}
+	
+	public void initializeSpecialCharacters(String s)
+	{
+		String[] initValues = s.trim().split(" ");
+		
+		if(Integer.parseInt(initValues[0]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Arch Cleric", 5, GameConstants.ArchClericImageFront));
+		else
+			unownedCharacters.add(new SpecialCharacter("Arch Mage", 6, GameConstants.ArchMageImageFront));
+		
+		if(Integer.parseInt(initValues[1]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Assassin Primus", 4, GameConstants.AssassinPrimusImageFront));
+		else
+			unownedCharacters.add(new SpecialCharacter("Baron Munchausen", 4, GameConstants.BaronMunchausenImageFront));
+		
+		if(Integer.parseInt(initValues[2]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Deerhunter", 4, GameConstants.DeerhunterImageFront));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.DESERT,"Desert Master", 4, GameConstants.DesertMasterImageFront));
+		
+		if(Integer.parseInt(initValues[3]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Dwarf King", 5, GameConstants.DwarfKingImageFront));
+		else
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Elf Lord", 6, GameConstants.ElfLordMasterImageFront)
+			.Ranged(true));
+		
+		if(Integer.parseInt(initValues[4]) == 0)
+			unownedCharacters.add(new TerrainLord(Terrain.FOREST, "Forest King", 4, GameConstants.ForestKingImageFront));
+		else
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Ghaog II", 6, GameConstants.GhaogIIImageFront)
+			.Flying(true));
+		
+		if(Integer.parseInt(initValues[5]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Grand Duke", 4, GameConstants.GrandDukeImageFront));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.FROZEN_WASTE, "Ice Lord", 4, GameConstants.IceLordImageFront));
+		
+		if(Integer.parseInt(initValues[6]) == 0)
+			unownedCharacters.add(new TerrainLord(Terrain.JUNGLE, "Jungle Lord", 4, GameConstants.JungleLordImageFront));
+		else
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter( "Lord Of Eagles", 5, GameConstants.LordOfEaglesImageFront)
+			.Flying(true));
+		
+		if(Integer.parseInt(initValues[7]) == 0)
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Marksman", 5, GameConstants.MarksmanImageFront)
+			.Ranged(true));
+		else
+			unownedCharacters.add(new SpecialCharacter("Master Thief", 4, GameConstants.MasterThiefImageFront));
+		
+		if(Integer.parseInt(initValues[8]) == 0)
+			unownedCharacters.add(new TerrainLord(Terrain.MOUNTAIN, "Mountain King", 4, GameConstants.MountainKingImageFront));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.PLAINS, "Plains Lord", 4, GameConstants.PlainsLordImageFront));
+		
+		if(Integer.parseInt(initValues[9]) == 0)
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Sir Lance-A-Lot", 5, GameConstants.SirLanceALotImageFront)
+			.Charge(true));
+		else
+			unownedCharacters.add(new TerrainLord(Terrain.SWAMP, "Swamp King", 4, GameConstants.SwampKingImageFront));
+		
+		if(Integer.parseInt(initValues[10]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Swordmaster", 4, GameConstants.SwordmasterImageFront));
+		else
+			unownedCharacters.add(new SpecialCharacter("Warlord", 5, GameConstants.WarlordImageFront));
+			
+	}
+
+	public String randomizeSpecialCharactersString() {
+		String s = "";
+		int n;
+		
+		for(int i=0; i<11; i++)
+		{
+			n = (int)Math.floor(Math.random()*2);
+			s += n + " ";
+		}
+		
+		return s;
+	}
+
+	private void initializeMagic() {
+		playingCup.add(new Magic("Balloon", GameConstants.BalloonImageFront));
+		playingCup.add(new Magic("Bow Magic", GameConstants.BowMagicImageFront));
+		playingCup.add(new Magic("Dispell Magic", GameConstants.DispellMagicImageFront));
+		playingCup.add(new Magic("Dust Of Defense", GameConstants.DustOfDefenseImageFront));
+		playingCup.add(new Magic("Elixir", GameConstants.ElixirImageFront));
+		playingCup.add(new Magic("Fan", GameConstants.FanImageFront));
+		playingCup.add(new Magic("Firewall", GameConstants.FirewallImageFront));
+		playingCup.add(new Magic("Golem", GameConstants.GolemImageFront));
+		playingCup.add(new Magic("Lucky Charm", GameConstants.LuckyCharmImageFront));
+		playingCup.add(new Magic("Sword", GameConstants.SwordImageFront));
+		playingCup.add(new Magic("Talisman", GameConstants.TalismanImageFront));
+	}
+
+	private void initializeTreasure() {
+		for(int i=0; i<GameConstants.NUM_DIAMONDS; i++)
+			playingCup.add(new Treasure("Diamond", 5, GameConstants.DiamondImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_EMERALDS; i++)
+			playingCup.add(new Treasure("Emerald", 10, GameConstants.EmeraldImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_PEARLS; i++)
+			playingCup.add(new Treasure("Pearl", 5, GameConstants.PearlImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_RUBYS; i++)
+			playingCup.add(new Treasure("Ruby", 10, GameConstants.RubyImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_SAPPHIRES; i++)
+			playingCup.add(new Treasure("Sapphire", 5, GameConstants.SapphireImageFront));
+		
+		for(int i=0; i<GameConstants.NUM_TREASURE_CHESTS; i++)
+			playingCup.add(new Treasure("Treasure Chest", 20, GameConstants.TreasureChestImageFront));
 	}
 
 	private void initializeSpecialIncomes() {
@@ -726,49 +840,10 @@ public class GameModel {
 		{
 			player = playerFromIndex(i);
 		
-			playerGoldUpdates[i] = getIncomeForPlayer(player);
+			playerGoldUpdates[i] = player.getIncome();
 		}
 		
 		return playerGoldUpdates;
-	}
-
-	private int getIncomeForPlayer(Player player) {
-		int gold =0;
-		
-		//gold pieces for land hexes
-		for(HexTile h: player.ownedHexTiles)
-				if(h.terrain != Terrain.SEA)
-				{
-						gold += h.getIncome();
-						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
-				}
-		
-		//combat values for forts
-		for(Fort f: player.forts)
-			gold+= f.getIncome();
-		
-		//special income tiles
-		for(SpecialIncome si: player.specialIncomes)
-			gold+= si.getIncome();
-		
-		for(Settlement s: player.settlements)
-			gold+= s.getIncome();
-		
-		//special characters
-		for(SpecialCharacter sc: player.specialCharacters)
-			gold += sc.getIncome();
-		
-		if(gold > 0)
-		{
-			System.out.println("GOLD HAS BEEN AWARDED TO PLAYER - " + player.GetPlayerNum() + "in the amount of " + gold);
-			System.out.println("# Hexes: " + player.ownedHexTiles.size());
-			System.out.println("# Forts: " + player.forts.size());
-			System.out.println("# Special Incomes: " + player.specialIncomes.size());
-			System.out.println("# Special Characters: " + player.specialCharacters.size());
-		}
-		
-		player.addGold(gold);
-		return gold;
 	}
 
 	public boolean isValidControlMarkerPlacement(HexTile selectedTile) {
@@ -838,11 +913,18 @@ public class GameModel {
 
 	public HexTile addTower(int x, int y, int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
+		HexTile h = gameBoard.getTile(x, y);
+		
+		addTower(h,playerIndex);
+		
+		return h;
+	}
+	
+	public HexTile addTower(HexTile h, int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
 	
 		Fort f = new Fort();
 		f.controlledBy = player.faction;
-		
-		HexTile h = gameBoard.getTile(x, y);
 		
 		h.addTower(f);
 		player.addTower(f);
@@ -895,28 +977,29 @@ public class GameModel {
 		}
 	}
 
-	public void updateMovedThings(ArrayList<HexTile> tilesFrom,
-			ArrayList<HexTile> tilesTo, ArrayList<Integer> thingIDs,
+	public void updateMovedThings(ArrayList<HexTile> hexTiles,
+			ArrayList<Integer> thingIDs,
 			int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
 		
-		int i=0;
+		HexTile tileTo = hexTiles.get(1);
+		HexTile tileFrom = hexTiles.get(0);
+		
 		for(Integer id: thingIDs)
-		{
-			HexTile fromTile = tilesFrom.get(i);
-			HexTile toTile = tilesTo.get(i);
+		{			
+			Thing thingPlayed = tileFrom.getThingFromTileByID(id, playerIndex);
 			
-			Thing thingPlayed = fromTile.getThingFromTileByID(id, playerIndex);
+			tileFrom.removeThing(id, playerIndex); 
+			tileTo.AddThingToTile(playerIndex, thingPlayed);
 			
-			fromTile.removeThing(id, playerIndex); 
-			toTile.AddThingToTile(playerIndex, thingPlayed);
-			thingPlayed.numMoves += toTile.moveValue;
+			//handle movement speed
+			thingPlayed.numMoves += tileTo.moveValue;
 			
 			movedThings.add(thingPlayed);
 			
-			if(!player.ownedHexTiles.contains(toTile) && toTile.controlledBy == ControlledBy.NEUTRAL)
+			if(!player.ownedHexTiles.contains(tileTo) && tileTo.controlledBy == ControlledBy.NEUTRAL)
 			{
-				updateTileFaction(playerIndex, toTile.x, toTile.y);
+				updateTileFaction(playerIndex, tileTo.x, tileTo.y);
 			}
 		}
 	}
@@ -952,5 +1035,70 @@ public class GameModel {
 		}
 		
 		playingCup = newCup;
+	}
+
+	public void updateConstruction(HexTile hexTile, int playerIndex) {
+		if(hexTile.hasFort())
+			hexTile.getFort().upgrade();
+		else
+			addTower(hexTile, playerIndex);
+		
+		playerFromIndex(playerIndex).decrementGold(GameConstants.CONSTRUCTION_COST);
+	}
+
+	public boolean isValidConstruction(HexTile h, int playerIndex) {
+		boolean valid = true;
+		Player player = playerFromIndex(playerIndex);
+		
+		//invalid if not controlled
+		if(h.controlledBy != player.faction)
+			valid = false;
+		
+		//or if cant afford
+		if(player.getGold() < 5)
+			valid = false;
+		
+		//or has fort and...
+		if(h.hasFort())
+		{
+			//is trying to upgrade to citadel but doesn't have the income
+			if(h.getFort().getLevel() == Level.CASTLE)
+			{
+				if(player.getIncome() < 20)
+					valid = false;
+			}
+			//cannot upgrade fort further
+			else if(h.getFort().getLevel() == Level.CITADEL)
+				valid = false;
+		}
+		
+		return valid;
+	}
+
+	public ArrayList<SpecialCharacter> getUnownedSpecialCharacters() {
+		return unownedCharacters;
+	}
+
+	public boolean canAfford(int amount,
+			int playerIndex) {
+		return playerFromIndex(playerIndex).canAfford(amount);
+	}
+
+	public void augmentRoll(int cost,
+			int playerIndex) {
+		playerFromIndex(playerIndex).decrementGold(cost);
+	}
+
+	public void recruitSpecialCharacter(int thingID, int playerIndex) {
+		Thing t = null;
+		
+		for(SpecialCharacter sc: unownedCharacters)
+		{
+			if(sc.thingID == thingID)
+				t = sc;
+		}
+		
+		if(t != null)
+			playerFromIndex(playerIndex).addThingToRack(t);
 	}
 }
