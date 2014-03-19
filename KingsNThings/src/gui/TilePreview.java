@@ -79,43 +79,60 @@ public class TilePreview extends VBox {
 	}
 	
 	public void changeTile(HexTile tile){
-		//change so gets combatants? or, add functionality to load in settlements
-		
-		//Change this for neutral things in the future?
-		for (int i = 0; i < GameController.numClients; i++) {
-			ThingViewList view = getThingViewList(i);
-			System.out.println("hello");
-			if (view.getChildrenUnmodifiable().size() > 1) {				
-				view = new ThingViewList(FXCollections.observableList((tileRef.getThings(i))));
-			}
-			else
-				view = null;
-		
+ 		//change so gets combatants? or, add functionality to load in settlements
+		ThingView thingView;
+		ArrayList<ThingView> arr = new ArrayList<ThingView>();
+
+		for (Thing thing : tile.player1Things){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
 		}
+		view1 = new ThingViewList(FXCollections.observableList((arr)));
 		
-		if(tile.fort != null)
-		{
-			ThingViewList thingViewForFort;
-			switch(tile.controlledBy)
-			{
-			case PLAYER1:
-				thingViewForFort = view1;
-				break;
-			case PLAYER2:
-				thingViewForFort = view2;
-				break;
-			case PLAYER3:
-				thingViewForFort = view3;
-				break;
-			default:
-				thingViewForFort = view4;
-				break;
-			}
-			
-			thingViewForFort.add(new ThingView(tile.fort));
+		arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.player2Things){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
 		}
+		view2 = new ThingViewList(FXCollections.observableList((arr)));
 		
-		show();
+		arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.player3Things){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
+		}
+		view3 = new ThingViewList(FXCollections.observableList((arr)));
+		
+		arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.player4Things){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
+ 		}
+		view4 = new ThingViewList(FXCollections.observableList((arr)));
+		
+ 		if(tile.fort != null)
+ 		{
+ 			ThingViewList thingViewForFort;
+ 			switch(tile.controlledBy)
+ 			{
+ 			case PLAYER1:
+ 				thingViewForFort = view1;
+ 				break;
+ 			case PLAYER2:
+ 				thingViewForFort = view2;
+ 				break;
+ 			case PLAYER3:
+ 				thingViewForFort = view3;
+ 				break;
+ 			default:
+ 				thingViewForFort = view4;
+ 				break;
+ 			}
+
+ 			thingViewForFort.add(new ThingView(tile.fort));
+ 		}
+
+ 		show();
 	}
 	
 	public ThingViewList getThingViewList(int i) {
