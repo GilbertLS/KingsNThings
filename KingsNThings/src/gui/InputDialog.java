@@ -29,8 +29,7 @@ public class InputDialog extends Dialog {
 	    this.setIconifiable(false);
 	    this.getActions().addAll(Dialog.Actions.OK);
 	    this.setContent(content);
-	    
-		this.setContent(content);
+	    this.setClosable(false);
 	}
 	
 	public String showInput() {

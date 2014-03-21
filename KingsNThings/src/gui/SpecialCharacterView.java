@@ -2,6 +2,8 @@ package gui;
 
 import java.util.ArrayList;
 
+import org.controlsfx.dialog.Dialog;
+
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,8 +23,8 @@ import Game.GameConstants;
 import Game.SpecialCharacter;
 import Game.Networking.GameClient;
 
-public class SpecialCharacterView extends Scene{
-	public Stage specialCharacterStage;
+public class SpecialCharacterView extends Dialog{
+	SpecialCharacterView self = this;
 	ArrayList<SpecialCharacter> specialCharacters;
 	int numSCs;
 	int playerIndex;
@@ -44,10 +46,12 @@ public class SpecialCharacterView extends Scene{
 	ThingView selection;
 	boolean diceRolled = false;
 	
-	public SpecialCharacterView(BorderPane root, int numSCs, int playerIndex){
-		super(root, 500, 150 );
+	public SpecialCharacterView(Stage stage, int numSCs, int playerIndex){
+		super(stage, "Special Character Recruitment", true, false);
 		
 		specialCharacterListBox = new HBox();
+		BorderPane root = new BorderPane();
+		
 		root.setTop(specialCharacterListBox);
 		
 		infoBox = new VBox();
@@ -61,19 +65,19 @@ public class SpecialCharacterView extends Scene{
 		buttonBox.getChildren().add(selectCharacter);
 		
 		rollLabel.setPadding(new Insets(5,20,5,20));
-		rollLabel.setTextFill(Color.WHITE);
+		rollLabel.setTextFill(Color.BLACK);
 		labelBox.getChildren().add(rollLabel);
 		
 		rollAugmentationLabel.setPadding(new Insets(5,20,5,20));
-		rollAugmentationLabel.setTextFill(Color.WHITE);
+		rollAugmentationLabel.setTextFill(Color.BLACK);
 		labelBox.getChildren().add(rollAugmentationLabel);
 		
 		requiredRollLabel.setPadding(new Insets(5,20,5,20));
-		requiredRollLabel.setTextFill(Color.WHITE);
+		requiredRollLabel.setTextFill(Color.BLACK);
 		labelBox.getChildren().add(requiredRollLabel);
 		
 		rollTotalLabel.setPadding(new Insets(5,20,5,20));
-		rollTotalLabel.setTextFill(Color.WHITE);
+		rollTotalLabel.setTextFill(Color.BLACK);
 		labelBox.getChildren().add(rollTotalLabel);
 		
 		specialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters();
@@ -88,13 +92,10 @@ public class SpecialCharacterView extends Scene{
         setupThingViews();
         initListeners();
         
-        specialCharacterStage = new Stage();
-        specialCharacterStage.setTitle("Recruit Special Characters");
-        specialCharacterStage.setScene(this);
-        specialCharacterStage.initModality(Modality.WINDOW_MODAL);
-        specialCharacterStage.initOwner(GameClient.game.gameView.getWindow());
-
-        specialCharacterStage.show();
+        this.setResizable(false);
+        this.setContent(root);
+        this.setClosable(false);
+        this.show();
 	}
 
 	private void setupThingViews() {
@@ -195,6 +196,7 @@ public class SpecialCharacterView extends Scene{
 					GameClient.game.gameView.addToRack(selection.thingRef);
 				}
 					
+				self.hide();
 				GameClient.game.gameView.endRecruitSpecialCharacter();
 			}
 		});
