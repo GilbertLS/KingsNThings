@@ -364,19 +364,19 @@ public class GameController {
 		{
 			distributeIncome();
 			
-			//recruitSpecialCharacter();
+			recruitSpecialCharacter();
 			
-			//recruitThings();
+			recruitThings();
 			
-			//playThings();
+			playThings();
 			
-			//moveThings();
+			moveThings();
 			
-			//PlayBattlePhase();
+			PlayBattlePhase();
 			
-			playConstructionPhase();
+			//playConstructionPhase();
 		
-			//ChangePlayerOrder();
+			ChangePlayerOrder();
 		
 		}while(true);
 
