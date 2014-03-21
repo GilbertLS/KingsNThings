@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialogs;
-
 import Game.Creature;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
@@ -50,7 +47,7 @@ public class GameView extends Scene {
 	//public boolean moveMade = false;
 	
     public GameView(BorderPane r, Stage ps) {
-    	super(r, 1000, 600);
+    	super(r, 1000, 660);
     	root = r; 
     	primaryStage = ps;
         
@@ -63,7 +60,8 @@ public class GameView extends Scene {
         tilePreview = new TilePreview(0);
         
         board = new BoardView(tilePreview);
-        root.setCenter(board);        
+        root.setCenter(board);
+        root.centerProperty();
         
         playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
@@ -111,11 +109,8 @@ public class GameView extends Scene {
 		
 		while(num == -1) {		
 			String response = new InputDialog(this.primaryStage, "Recruiting", "How many paid recruits would you like?").showInput();
-			System.out.println(response);
-			
-			try {
-				num = Integer.parseInt(response);
-			}
+		
+			try { num = Integer.parseInt(response); }
 			catch(Exception e){}
 		}
 		

@@ -2,23 +2,17 @@ package Game.Networking;
 
 import gui.GameView;
 import gui.Tile;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.concurrent.Task;
 import Game.Combatant;
 import Game.Creature;
 import Game.GameConstants;
-import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.BattleTurn;
 import Game.GameConstants.Terrain;

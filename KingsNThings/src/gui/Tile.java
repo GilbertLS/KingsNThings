@@ -6,9 +6,7 @@ import java.util.List;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
-import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
-import Game.GameController;
 import Game.Utility;
 import Game.Networking.GameClient;
 import Game.HexTile;
@@ -385,6 +383,9 @@ public class Tile extends Region implements Draggable {
 							}
 						}
 					}
+					
+					if(success)
+						GameClient.game.gameView.tilePreview.changeTile(thisTile);
 					
 					e.setDropCompleted(success);
 					e.consume();

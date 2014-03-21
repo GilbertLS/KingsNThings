@@ -1,6 +1,5 @@
 package gui;
 
-import Game.Networking.Event;
 import Game.Networking.GameClient;
 import Game.GameConstants.CurrentPhase;
 import Game.Utility;

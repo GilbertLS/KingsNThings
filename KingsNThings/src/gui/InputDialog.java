@@ -1,20 +1,15 @@
 package gui;
 
-import javafx.event.ActionEvent;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
-
-import org.controlsfx.control.ButtonBar;
-import org.controlsfx.control.ButtonBar.ButtonType;
-import org.controlsfx.control.action.AbstractAction;
-import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 
 public class InputDialog extends Dialog {
-	TextField inputField = new TextField();
+	TextField inputField = new TextField("0");
 	
 	InputDialog(Stage s, String title, String message) {
 		super(s, title, true, false);
@@ -39,6 +34,11 @@ public class InputDialog extends Dialog {
 	}
 	
 	public String showInput() {
+	     Platform.runLater(new Runnable() {
+	         public void run() {
+	        	 inputField.requestFocus();
+	         }
+	     });
 		return this.show() == Dialog.Actions.OK ? inputField.getText() : null;
 	}
 }
