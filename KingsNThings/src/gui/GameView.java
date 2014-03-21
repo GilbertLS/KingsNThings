@@ -1,25 +1,19 @@
 package gui;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
 
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialogs;
+
 import Game.Creature;
-import Game.GameClientController;
 import Game.GameConstants;
-import Game.Player;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
-import Game.GameConstants.Terrain;
 import Game.Utility;
-import Game.Networking.Event;
-import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import Game.Thing;
 import javafx.application.Platform;
@@ -44,7 +38,6 @@ public class GameView extends Scene {
     public RackView rack;
     public TilePreview tilePreview;
     public MessageView messageView;
-    public InputView inputView;
     public CurrentPhase currentPhase = CurrentPhase.NULL;
     public boolean userInputDone = false;
 	String returnString = "";
@@ -77,10 +70,7 @@ public class GameView extends Scene {
         
         messageView = new MessageView();
         rightPanel.getChildren().add(messageView);
-        
-        inputView = new InputView();
-        rightPanel.getChildren().add(inputView);
-        
+                
         buttonBox = new ButtonBox();
         rightPanel.getChildren().add(buttonBox);
         
@@ -117,10 +107,19 @@ public class GameView extends Scene {
     }
 
 	public int getNumPaidRecruits() {
-		submitLock = new Semaphore(0);
-		Utility.PromptForInput(submitLock);
+		int num = -1;
 		
-		return Integer.parseInt(inputView.getInput());
+		while(num == -1) {		
+			String response = new InputDialog(this.primaryStage, "Recruiting", "How many paid recruits would you like?").showInput();
+			System.out.println(response);
+			
+			try {
+				num = Integer.parseInt(response);
+			}
+			catch(Exception e){}
+		}
+		
+		return num;
 	}
 	
 	public String performPhase(CurrentPhase currentPhase){

@@ -7,8 +7,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.concurrent.Task;
 import Game.Combatant;
 import Game.Creature;
 import Game.GameConstants;
@@ -595,7 +601,17 @@ public class EventHandler {
 				{
 					if(purposeForNumber.equals("Paid Recruits"))
 					{
-						number = GameClient.game.gameView.getNumPaidRecruits();
+						final CountDownLatch latch = new CountDownLatch(1);
+						final IntegerProperty output = new SimpleIntegerProperty();
+						Platform.runLater(new Runnable() {
+						    @Override public void run() {
+						    	output.set(GameClient.game.gameView.getNumPaidRecruits());
+						        latch.countDown();
+						    }
+						});
+						latch.await();      
+						
+						number = output.get();
 						
 						isValidSelection = GameClient.game.gameModel.GetCurrentPlayer().canAffordRecruits(number);
 					}
