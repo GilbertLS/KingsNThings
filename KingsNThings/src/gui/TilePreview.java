@@ -1,11 +1,6 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import Game.Creature;
-import Game.GameConstants;
-import Game.GameController;
 import Game.HexTile;
 import Game.Thing;
 import javafx.collections.FXCollections;

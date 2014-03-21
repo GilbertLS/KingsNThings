@@ -1,32 +1,18 @@
 package gui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Semaphore;
-
 import Game.Combatant;
-import Game.Creature;
-import Game.GameConstants;
 import Game.HexTile;
-import Game.GameConstants.ControlledBy;
-import Game.GameConstants.Terrain;
 import Game.Thing;
 import Game.Utility;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;

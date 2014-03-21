@@ -2,13 +2,9 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import Game.GameConstants.ThingType;
 import Game.Player;
-import Game.Thing;
 import Game.GameConstants.CurrentPhase;
 import Game.Networking.GameClient;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;

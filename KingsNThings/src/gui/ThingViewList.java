@@ -8,7 +8,6 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 public class ThingViewList extends ListView<ThingView> {

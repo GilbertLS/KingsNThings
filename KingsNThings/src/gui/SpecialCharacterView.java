@@ -15,14 +15,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import Game.Combatant;
 import Game.Dice;
 import Game.GameConstants;
 import Game.SpecialCharacter;
-import Game.Utility;
-import Game.Networking.Event;
-import Game.Networking.EventList;
 import Game.Networking.GameClient;
 
 public class SpecialCharacterView extends Scene{
