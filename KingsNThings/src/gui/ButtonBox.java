@@ -75,7 +75,7 @@ public class ButtonBox extends HBox {
 					int numSpecialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters().size();
 					int playerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
 					
-					SpecialCharacterView SCView = new SpecialCharacterView(new BorderPane(), numSpecialCharacters, playerIndex);
+					SpecialCharacterView SCView = new SpecialCharacterView(GameClient.game.gameView.primaryStage, numSpecialCharacters, playerIndex);
 					GameView.specialCharacterView = SCView;
 				}
 			}

@@ -8,6 +8,7 @@ import java.net.*;
 import javafx.application.Application;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import Game.GameController;
  
 public class PrimaryClient extends Application {
@@ -135,6 +136,15 @@ public class PrimaryClient extends Application {
 		primaryStage.setTitle("Kings N Things");
         primaryStage.setScene(gameView);
         primaryStage.show();
+        
+        primaryStage.setOnCloseRequest(new javafx.event.EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+            	//Add more stuff to end in a cleaner way?
+            	System.out.println("CLOSING APPLICATION!!!");
+                System.exit(0);
+            }
+        });
         
         begin(a);
 	}

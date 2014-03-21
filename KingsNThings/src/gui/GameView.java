@@ -321,7 +321,6 @@ public class GameView extends Scene {
 		if (GameView.recruitingSpecial()){
 			Platform.runLater(new Runnable(){
 				public void run(){
-					specialCharacterView.specialCharacterStage.close();
 					specialCharacterView = null;
 					
 					if(currentPhase != CurrentPhase.NULL)
