@@ -105,14 +105,6 @@ public class Player {
 		ownedHexTiles.remove(h);
 	}
 
-	public boolean rackTooFull() {
-		return playerRack.tooFull();
-	}
-
-	public int removeExcessFromRack() {
-		return playerRack.removeExcessFromRack();
-	}
-
 	public boolean canTradeForRecruits(int numRecruits) {
 		return playerRack.hasThings(numRecruits * 2);
 	}
@@ -199,5 +191,9 @@ public class Player {
 
 	public boolean canAfford(int amount) {
 		return gold >= amount;
+	}
+
+	public boolean rackTooFull() {
+		return playerRack.tooFull();
 	}
 }

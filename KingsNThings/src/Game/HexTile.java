@@ -39,10 +39,10 @@ public class HexTile implements IIncomable{
 		this.terrain = terrain;
 		this.controlledBy = ControlledBy.NEUTRAL;
 		
-		this.player1Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
-		this.player2Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
-		this.player3Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
-		this.player4Things = new ArrayList<Thing>(GameConstants.NUM_THINGS_PER_HEX);
+		this.player1Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
+		this.player2Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
+		this.player3Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
+		this.player4Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
 		
 		this.fort = null;
 		
@@ -363,5 +363,35 @@ public class HexTile implements IIncomable{
 			return settlements.get(0);
 		else
 			return null;
+	}
+
+	public boolean hasRoomForThings(ArrayList<Thing> things) {		
+		int numCombatants = 0;
+		
+		//list of things may contain non-combatants, parse them to combatants
+		for(Thing t: things){
+			if(t.IsCombatant())
+				numCombatants++;
+		}
+		
+		switch(controlledBy){
+			case PLAYER1:
+				numCombatants += player1Things.size();
+				break;
+			case PLAYER2:
+				numCombatants += player2Things.size();
+				break;
+			case PLAYER3:
+				numCombatants += player3Things.size();
+				break;
+			default:
+				numCombatants += player4Things.size();
+				break;
+		}
+		
+		if(numCombatants > GameConstants.MAX_NUM_THINGS_PER_HEX)
+			return false;
+		
+		return true;
 	}
 }

@@ -63,6 +63,7 @@ public class SpecialCharacterView extends Dialog{
 		root.setBottom(infoBox);
 		
 		buttonBox.getChildren().add(selectCharacter);
+		buttonBox.getChildren().add(endRecruitment);
 		
 		rollLabel.setPadding(new Insets(5,20,5,20));
 		rollLabel.setTextFill(Color.BLACK);
@@ -72,13 +73,13 @@ public class SpecialCharacterView extends Dialog{
 		rollAugmentationLabel.setTextFill(Color.BLACK);
 		labelBox.getChildren().add(rollAugmentationLabel);
 		
-		requiredRollLabel.setPadding(new Insets(5,20,5,20));
-		requiredRollLabel.setTextFill(Color.BLACK);
-		labelBox.getChildren().add(requiredRollLabel);
-		
 		rollTotalLabel.setPadding(new Insets(5,20,5,20));
 		rollTotalLabel.setTextFill(Color.BLACK);
 		labelBox.getChildren().add(rollTotalLabel);
+		
+		requiredRollLabel.setPadding(new Insets(5,20,5,20));
+		requiredRollLabel.setTextFill(Color.BLACK);
+		labelBox.getChildren().add(requiredRollLabel);
 		
 		specialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters();
 		this.numSCs = numSCs;
@@ -134,7 +135,6 @@ public class SpecialCharacterView extends Dialog{
 					specialCharacterListBox.getChildren().add(specialCharacterList);
 					
 					buttonBox.getChildren().remove(selectCharacter);
-					buttonBox.getChildren().add(0, endRecruitment);
 					buttonBox.getChildren().add(0, attemptRoll);
 					buttonBox.getChildren().add(0, augmentRoll);
 					requiredRollLabel.setText("Required Roll:" + 2*((Combatant)selection.thingRef).GetCombatValue());
@@ -186,14 +186,16 @@ public class SpecialCharacterView extends Dialog{
 				int totalRoll =0;
 				
 				if(diceRolled)
+				{
 					totalRoll += Dice.getRoll(0) + Dice.getRoll(1);
 				
-				totalRoll += rollAugmentation;
-				
-				if(totalRoll >= ((Combatant) selection.thingRef).GetCombatValue()*2)
-				{
-					GameClient.game.sendRecruitSpecialCharacterEvent(selection.thingRef.thingID, playerIndex);
-					GameClient.game.gameView.addToRack(selection.thingRef);
+					totalRoll += rollAugmentation;
+					
+					if(totalRoll >= ((Combatant) selection.thingRef).GetCombatValue()*2)
+					{
+						GameClient.game.sendRecruitSpecialCharacterEvent(selection.thingRef.thingID, playerIndex);
+						GameClient.game.gameView.addToRack(selection.thingRef);
+					}
 				}
 					
 				self.hide();

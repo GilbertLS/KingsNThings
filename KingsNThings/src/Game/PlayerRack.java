@@ -21,16 +21,6 @@ public class PlayerRack {
 		return things;
 	}
 
-	public boolean tooFull() {
-		return things.size()>10;
-	}
-
-	public int removeExcessFromRack() {
-		//remove excess and return num removed
-		
-		return 0;
-	}
-
 	public boolean hasThings(int i) {
 		return things.size() >= i;
 	}
@@ -73,5 +63,14 @@ public class PlayerRack {
 
 	public int size() {
 		return things.size();
+	}
+
+	public void handleRackOverload() {
+		for(int i=things.size()-1; i>9; i--)
+			things.remove(i);
+	}
+
+	public boolean tooFull() {
+		return things.size() > GameConstants.MAX_NUM_THINGS_IN_RACK;
 	}
 }

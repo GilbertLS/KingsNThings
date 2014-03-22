@@ -308,7 +308,7 @@ public class Tile extends Region implements Draggable {
 							
 							if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 							{
-								if(GameClient.game.isValidPlacement(tileRef, things))
+								if(GameClient.game.isValidPlacement(tileRef, things, gv.getCurrentPlayer()))
 								{									
 									for(ThingView t: thingViews)
 										gv.returnString += tileRef.x + "SPLIT"+ tileRef.y+"~"+t.thingRef.thingID+"/";

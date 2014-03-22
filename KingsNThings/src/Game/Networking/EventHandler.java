@@ -426,7 +426,7 @@ public class EventHandler {
 		        public void run() {
 		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).addThings(numThings);
 		        	if(isCurrentPlayer)
-		        		GameClient.game.gameView.rack.setAllThings(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
+		        	GameClient.game.gameView.updatePlayerRack(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
 		        }
 			});
 		}
@@ -850,18 +850,24 @@ public class EventHandler {
 				});
 			}
 		}
-		else if(e.eventId == EventList.CHECK_PLAYER_RACK_OVERLOAD)
+		else if(e.eventId == EventList.HANDLE_RACK_OVERLOAD)
 		{
-			if(GameClient.game.gameModel.playerRackTooFull())
-			{
-				final int numThingsRemoved = GameClient.game.gameModel.removeExcessFromRack();
-				
-				GameClient.game.sendMessageToView("You had more than 10 things on your rack. " + numThingsRemoved + " things have been removed.");		        	
-			}
-		}
-		else if(e.eventId == EventList.HANDLE_CHECK_PLAYER_RACK_OVERLOAD)
-		{
-			//update all other players with things placed back in the cup
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			GameClient.game.gameModel.handleRackOverload(playerIndex);
+			
+			Player currentPlayer = GameClient.game.gameModel.GetCurrentPlayer();
+			final boolean isCurrentPlayer = playerIndex == currentPlayer.GetPlayerNum();
+			final ArrayList<Thing> thingsInRack = currentPlayer.getPlayerRack().getThings();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.updateRackCount(thingsInRack.size(), playerIndex);
+		        	if(isCurrentPlayer)
+		        		GameClient.game.gameView.updatePlayerRack(GameClient.game.gameModel.GetCurrentPlayer().playerRack.getThings());
+		        }
+			});
 		}
 		else if(e.eventId == EventList.PAY_GOLD)
 		{

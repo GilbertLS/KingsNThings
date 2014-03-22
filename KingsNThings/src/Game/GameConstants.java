@@ -273,7 +273,7 @@ public final class GameConstants {
 	
 	
 	//Piece count constants
-	public static final int MAX_NUM_THINGS = 150;
+	public static final int MAX_NUM_THINGS = 300;
 	public static final int MAX_NUM_THINGS_IN_RACK = 10;
 	public static final int MAX_NUM_SPECIAL_CHARACTERS = 30;
 	public static final int MAX_NUM_TILES = 48;
@@ -288,8 +288,8 @@ public final class GameConstants {
 	public static final int DIE_4_SIDES = 6;
 	
 	//HexTile Constants
-	public static final int NUM_THINGS_PER_HEX = 10;
-	public static final int MAX_NUM_FORTS_PER_HEX = 2;
+	public static final int MAX_NUM_THINGS_PER_HEX = 10;
+	public static final int MAX_NUM_FORTS_PER_HEX = 1;
 	public static final int MAX_NUM_SPECIAL_INCOME_PER_HEX = 1;
 	
 	//HexTile type counts
@@ -319,6 +319,7 @@ public final class GameConstants {
 	
 	public static final int SPECIAL_CHARACTER_AUG_ROLL_BEFORE_COST = 5;
 	public static final int SPECIAL_CHARACTER_AUG_ROLL_AFTER_COST = 10;
+	
 
 
 
