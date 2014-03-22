@@ -79,7 +79,7 @@ public class GameView extends Scene {
         rack = new RackView(FXCollections.observableList((arr)));
         bottomPanel.getChildren().add(rack);
         
-        this.getStylesheets().add("gui/myStyle.css");
+        this.getStylesheets().add("gui/main.css");
     }
     
     //method to give back a tile

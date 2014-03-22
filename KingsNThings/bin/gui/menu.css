@@ -1,0 +1,18 @@
+.root {
+	-fx-background-image: url('../res/images/title.png');
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+	-fx-background-color: #336699;
+	-fx-font: 12px "Arial";
+	padding: 0px;
+	margin: 0px;
+}
+
+.button {
+	-fx-padding: 20 40 20 40;
+}
+
+.hbox {
+	-fx-padding: 40 40 40 40;
+}

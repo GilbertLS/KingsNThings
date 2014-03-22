@@ -103,7 +103,7 @@ public class BattleView extends Scene {
         rightPanel.getChildren().add(yesNo);
         rightPanel.getChildren().add(messageView);
         
-        this.getStylesheets().add("gui/myStyle.css");
+        this.getStylesheets().add("gui/main.css");
         
         SetupPlayerThings();
         
