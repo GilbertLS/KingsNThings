@@ -47,7 +47,7 @@ public class GameServer implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 1;
+		return servers.size() == 2;
 	}
 	
 	public void run(){

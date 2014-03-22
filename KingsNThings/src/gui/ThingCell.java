@@ -36,7 +36,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				Player currPlayer = GameClient.game.gameModel.GetCurrentPlayer();
 				GameView.selectedThings.clear();
 				for (ThingView thing : list){
-					if (thing.thingRef.controlledBy != currPlayer.faction){
+					if (currPlayer != null && thing.thingRef.controlledBy != currPlayer.faction){
 						continue;
 					}
 					
@@ -97,7 +97,8 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			setStyle("");
 		} else {
 			setPrefSize(64, 64);
-			setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "');");
+			setStyle(this.getStyle() + "-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "'); -fx-background-size: 60 60;");
+			
 		}
 	}
 }

@@ -107,7 +107,7 @@ public class GameView extends Scene {
 	public int getNumPaidRecruits() {
 		int num = -1;
 		
-		while(num == -1) {		
+		while(num < 0) {		
 			String response = new InputDialog(this.primaryStage, "Recruiting", "How many paid recruits would you like?").showInput();
 		
 			try { num = Integer.parseInt(response); }

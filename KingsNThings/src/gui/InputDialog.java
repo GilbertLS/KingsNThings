@@ -11,7 +11,7 @@ import org.controlsfx.dialog.Dialog;
 public class InputDialog extends Dialog {
 	TextField inputField = new TextField("0");
 	
-	InputDialog(Stage s, String title, String message) {
+	public InputDialog(Stage s, String title, String message) {
 		super(s, title, true, false);
 		setup(message);
 	}
