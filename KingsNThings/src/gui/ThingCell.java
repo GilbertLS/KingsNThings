@@ -97,7 +97,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			setStyle("");
 		} else {
 			setPrefSize(64, 64);
-			setStyle(this.getStyle() + "-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "'); -fx-background-size: 60 60;");
+			setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "'); -fx-background-size: 60 60;");
 			
 		}
 	}
