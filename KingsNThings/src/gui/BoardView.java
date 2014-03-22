@@ -19,6 +19,8 @@ public class BoardView extends Region {
 	private TilePreview tilePreview;
 	public 	Tile 		lastSelectedTile;
 	private Semaphore	selectedTileLock = new Semaphore(0);
+	private Semaphore 	tempSem;
+	private boolean 	waitingForOtherSelectedTile = false;
 	
 	BoardView(TilePreview tp)
 	{
@@ -54,8 +56,13 @@ public class BoardView extends Region {
 	    	            	
 	    	            	//tileSelection
 	    	            	thisBoard.lastSelectedTile = t;
-	    	            	Utility.GotInput(selectedTileLock);
-	    	            	
+	    	            	if (waitingForOtherSelectedTile) {
+	    	            		waitingForOtherSelectedTile = false;
+	    	            		Utility.GotInput(tempSem);
+	    	            	} else {
+	    	            		Utility.GotInput(selectedTileLock);
+	    	            	}
+	    	            		
 	    	            	GameView gv = (GameView)getScene();
 	    	            	if(gv.currentPhase == CurrentPhase.CONSTRUCTION)
 	    	            	{
@@ -86,7 +93,6 @@ public class BoardView extends Region {
 		    	            		Game.Networking.EventHandler.SendEvent(gameEvent);
 	    	            		}
 	    	            	}
-	    	            		
 	    	            }
 	    	        });
 	    	        
@@ -101,14 +107,24 @@ public class BoardView extends Region {
 	public Tile getLastSelectedTile() {
 		return this.lastSelectedTile;
 	}
-        
-	public Tile getNextSelectedTile() {
+	
+	private Tile getNextSelectedTile(Semaphore waitSem) {
 		this.clearLastSelectedTile();
 		
-		selectedTileLock = new Semaphore(0);
-		Utility.PromptForInput(selectedTileLock);
+		Utility.PromptForInput(waitSem);
 		
 		return lastSelectedTile;
+	}
+	
+	public Tile getNextSelectedTileFromEditState() {
+		waitingForOtherSelectedTile = true;
+		tempSem = new Semaphore(0);
+		return getNextSelectedTile(tempSem);
+	}
+        
+	public Tile getNextSelectedTile() {
+		selectedTileLock = new Semaphore(0);
+		return getNextSelectedTile(selectedTileLock);
 	}
 	
 	public void clearLastSelectedTile() {

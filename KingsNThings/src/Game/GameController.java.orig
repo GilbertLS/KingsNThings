@@ -12,6 +12,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Game.GameConstants.BattleTurn;
+import Game.Phases.Phase;
 import Game.Networking.Event;
 import Game.Networking.EventList;
 import Game.Networking.GameClient;
@@ -27,6 +28,13 @@ public class GameController {
 	public static boolean gameEnded = false; 
 	//public String address;
 	public static int numClients;
+	private static Phase currentPhase;
+	private static boolean changedPhase = false;
+	
+	public static void SetPhase(Phase phase) {
+		currentPhase = phase;
+		changedPhase = true;
+	}
 	
 	public GameController(
 			int numberOfClients
@@ -34,13 +42,7 @@ public class GameController {
 		numClients = numberOfClients;
 	}
 	
-<<<<<<< HEAD
-	private boolean checkStartGame() {
-		return servers.size() == 2;
-	}
-=======
 	public void StartGame(){
->>>>>>> origin/develop
 
     	for(GameRouter gr : GameServer.servers){
     		boolean[] intendedPlayers = new boolean[numClients];
@@ -73,68 +75,186 @@ public class GameController {
     	 
     	//play game turns while game is not won
     	playPhases();
-	}
-
-	
+	}	
 	
 	private void initialSetup() {
+		/*begin need to happen even with DEVMODE:*/
 		determineInitialPlayerOrder();
 		
 		initializeHexTiles();
 		
-		initializeCreaturesCup();
+		randomizeHexTiles();
+		
+		randomizePlayingCup();
+		
+		intializeSpecialCharacters();
+		/*end need to happen even with DEVMODE*/
+		
+		
 		
 		initializeGold();
 		
+		
+		
+		/*begin need to happen even with DEVMODE:*/
+		placeThingsOnTile(1, "Control_Marker");
+		
+		revealHexTiles();
+		/*end need to happen even with DEVMODE*/
+		
+		
+		
+		
 		placeThingsOnTile(2, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
+		
+		tradeInitialThings();
 		
 		playThings();
 		
 	}
 	
-	private void playThings() {
-<<<<<<< HEAD
-			
-		for(GameRouter gr: servers)
-=======
-    		
-		for(GameRouter gr: GameServer.servers)
->>>>>>> origin/develop
-		{
-			String[] args  = {""+gr.myID, ""};
-    		Event e = new Event()
-    					.EventId(EventList.PLAY_THINGS)
-    					.ExpectsResponse(true)
-    					.EventParameters(args);
-    		
-    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+	private void revealHexTiles() {
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.REVEAL_HEX_TILES)
+			);
+	}
 
-			for (int j=0; j<responses.length; j++){
-				if(responses[j].fromPlayer == gr.myID)
-				{
-					args[1] = responses[j].message;
-				}
+	private void randomizeHexTiles() {
+		//ask first player to randomize unused Tiles
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.RANDOMIZE_UNUSED_TILES)
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(true)
+			);
+		
+		//get unused tile order response
+		String thingIDs = "";
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				thingIDs = r.message;	
+		}
+		
+		//update remaining clients with new tile order
+		for(int i=1; i<numClients; i++)
+		{
+			intendedPlayers[i] = true;
+		}
+		intendedPlayers[0] = false;
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.UPDATE_UNUSED_TILES)
+					.EventParameter(thingIDs)
+					.IntendedPlayers(intendedPlayers)
+			);
+	}
+
+	private void tradeInitialThings() {
+		for(GameRouter gr: GameServer.servers)
+		{			
+			String[] args  = {""+gr.myID, "" + true, ""};
+			Response[] responses = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.TRADE_THINGS)
+						.ExpectsResponse(true)
+						.EventParameters(args)
+				);		
+			
+			for(Response r: responses)
+			{
+				if(r.fromPlayer == gr.myID)
+					args[2] = r.message;	
 			}
-    		
-			boolean[] intendedPlayers = new boolean[4];
-    		for(int j=0; j<numClients; j++)
-    		{
-    			if(j == gr.myID)
-    				intendedPlayers[j] = false;
-    			else
-    				intendedPlayers[j] = true;
-    		}
-    		
-    		e = new Event()
-				.EventId(EventList.HANDLE_PLAY_THINGS)
-				.IntendedPlayers(intendedPlayers)
-    		    .EventParameters(args);
-    		
-    		GameControllerEventHandler.sendEvent(e);
+			
+			GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.HANDLE_TRADE_THINGS)
+						.EventParameters(args)
+				);	
+		}
+	}
+
+	private void intializeSpecialCharacters() {
+		//ask first player to randomize special characters
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.RANDOMIZE_SPECIAL_CHARACTERS)
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(true)
+			);
+		
+		//get new order response
+		String thingIDs = "";
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				thingIDs = r.message;	
+		}
+		
+		//update all clients with new order
+		for(int i=0; i<numClients; i++)
+		{
+			intendedPlayers[i] = true;
+		}
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.CREATE_SPECIAL_CHARACTERS)
+					.EventParameter(thingIDs)
+					.IntendedPlayers(intendedPlayers)
+			);
+		
+	}
+
+	private void playThings() {
+		for(GameRouter gr: GameServer.servers)
+		{
+			boolean playDone = false;
+			
+			do
+			{
+				String[] args  = {""+gr.myID, ""};
+	    		Event e = new Event()
+	    				.EventId(EventList.PLAY_THINGS)
+	    				.ExpectsResponse(true)
+	    				.EventParameters(args);
+	    		
+	    		Response[] responses = GameControllerEventHandler.sendEvent(e);
+	
+				for (int j=0; j<responses.length; j++){
+					if(responses[j].fromPlayer == gr.myID)
+					{
+						String[] responseStrings = responses[j].message.split(" ");
+						
+						if(responseStrings.length == 2)
+							args[1] = responseStrings[1];
+
+						playDone = Boolean.parseBoolean(responseStrings[0]);
+					}
+				}
+	    		
+				if(!args[1].equals(""))
+				{
+		    		e = new Event()
+						.EventId(EventList.HANDLE_PLAY_THINGS)
+		    		    .EventParameters(args);
+		    		
+		    		GameControllerEventHandler.sendEvent(e);
+				}
+			}while(!playDone);
 		}
 	}
 
@@ -202,32 +322,53 @@ public class GameController {
 	}
 
 	private void initializeHexTiles() {
-		String[] initializeHexTilesStrings = GameModel.initializeHexTiles().split(" ");
-		
-		String[] args = new String[2];
-		args[0] = initializeHexTilesStrings[0];
-		args[1] = initializeHexTilesStrings[1];
+		String initializeHexTilesStrings = GameModel.initializeHexTiles();
 		
 		GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId( EventList.SET_HEX_TILES )
-					.EventParameters( args )
+					.EventParameter(initializeHexTilesStrings)
 			);
 		
 	}
 	
-	private void initializeCreaturesCup() {
-		String initializeCreaturesString = GameModel.initializeCreatures();
+	private void randomizePlayingCup() {
 		
-		String[] args = new String[1];
-		args[0] = initializeCreaturesString;
+		//ask first player to randomize playing cup
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+		
+
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.RANDOMIZE_THINGS)
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(true)
+			);
+		
+		//get new cup order response
+		String thingIDs = "";
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				thingIDs = r.message;	
+		}
+		
+		
+		//update remaining clients with new cup order
+		for(int i=1; i<numClients; i++)
+		{
+			intendedPlayers[i] = true;
+		}
+		intendedPlayers[0] = false;
+		
 		
 		GameControllerEventHandler.sendEvent(
 				new Event()
-					.EventId( EventList.SET_CREATURES )
-					.EventParameters( args )
+					.EventId(EventList.UPDATE_CUP_ORDER)
+					.EventParameter(thingIDs)
+					.IntendedPlayers(intendedPlayers)
 			);
-		
 	}
 
 	private void determineInitialPlayerOrder() {
@@ -309,40 +450,167 @@ public class GameController {
 	}
 	
 	private void playPhases(){
+<<<<<<< HEAD
+		boolean gameWon = false;
+		
+=======
+		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS;
+>>>>>>> Implemented adding/removing/setting phase at any point in time
 		do
 		{
 			distributeIncome();
 			
-			//recruitThings();
+<<<<<<< HEAD
+			recruitSpecialCharacter();
 			
-			//playThings();
+			recruitThings();
+			
+			tradeThings();
+			
+			playThings();
 			
 			moveThings();
 			
 			PlayBattlePhase();
+			
+			gameWon = checkWin();
+			
+			playConstructionPhase();
+			
+			gameWon = checkWin();
+=======
+			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
+				if (changedPhase) { changedPhase = false; }
+				//recruitSpecialCharacter();
+				if (!changedPhase) { currentPhase = Phase.RECRUIT_THINGS; }
+			}
+			if (currentPhase == Phase.RECRUIT_THINGS) {
+				if (changedPhase) { changedPhase = false; }
+				recruitThings();
+				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
+			}
+			if (currentPhase == Phase.PLAY_THINGS) {
+				if (changedPhase) { changedPhase = false; }
+				playThings();
+				if (!changedPhase) { currentPhase = Phase.MOVE_THINGS; }
+			}
+			if (currentPhase == Phase.MOVE_THINGS) {
+				if (changedPhase) { changedPhase = false; }
+				moveThings();
+				if (!changedPhase) { currentPhase = Phase.BATTLE; }
+			}
+			if (currentPhase == Phase.BATTLE) {
+				if (changedPhase) { changedPhase = false; }
+				PlayBattlePhase();
+				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
+			}
+			if (currentPhase == Phase.CONSTRUCTION) {
+				if (changedPhase) { changedPhase = false; }
+				//playConstructionPhase();
+				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
+			}
+>>>>>>> Implemented adding/removing/setting phase at any point in time
 		
-			//ChangePlayerOrder();
+			ChangePlayerOrder();
 		
-		}while(true);
-
+<<<<<<< HEAD
+		}while(!gameWon);
+=======
+		} while(!gameEnded);
+>>>>>>> Implemented adding/removing/setting phase at any point in time
 	}
 	
+	private boolean checkWin() {
+		String[] args = {"",""};
+		
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+		
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.CHECK_WIN)
+					.ExpectsResponse(true)
+					.IntendedPlayers(intendedPlayers)
+			);	
+		
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				args = r.message.split("SPLIT");
+		}
+		
+		boolean ret = Boolean.parseBoolean(args[0]);
+		
+		if(ret)
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.HANDLE_WIN)
+					.EventParameter(args[1])
+			);
+		
+		return ret;
+	}
+
+	private void tradeThings() {
+		for(GameRouter gr: GameServer.servers)
+		{			
+			String[] args  = {""+gr.myID, "" + false, ""};
+			Response[] responses = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.TRADE_THINGS)
+						.ExpectsResponse(true)
+						.EventParameters(args)
+				);		
+			
+			for(Response r: responses)
+			{
+				if(r.fromPlayer == gr.myID)
+					args[2] = r.message;	
+			}
+			
+			GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.HANDLE_TRADE_THINGS)
+						.EventParameters(args)
+				);	
+		}
+	}
+
+	private void playConstructionPhase() {
+		Event e = new Event()
+			.EventId(EventList.DO_CONSTRUCTION)
+			.ExpectsResponse(true);
+				    		
+		GameControllerEventHandler.sendEvent(e);	
+			
+		e = new Event()
+		.EventId(EventList.CLEAR_CONSTRUCTION);
+	
+		GameControllerEventHandler.sendEvent(e);
+	}
+	
+	private void recruitSpecialCharacter() {
+		for(GameRouter gr: GameServer.servers)
+		{
+			String arg = ""+ gr.myID;
+			Event e = new Event()
+				.EventId(EventList.RECRUIT_CHARACTER)
+				.ExpectsResponse(true)
+				.EventParameter(arg);
+				    		
+			GameControllerEventHandler.sendEvent(e);	
+		}
+	}
+
 	private void moveThings() {
 		for(GameRouter gr: GameServer.servers)
 		{
 			boolean moveDone = false;
 			
-			boolean[] intendedPlayers = new boolean[numClients];
-			intendedPlayers[gr.myID] = true;
-			
-			Event e = new Event()
-						.EventId(EventList.SET_PHASE_NOT_DONE)
-						.IntendedPlayers(intendedPlayers);
-			
 			do
 			{
-				String[] args  = {""+gr.myID, "",""+moveDone};
-	    		e = new Event()
+				String[] args  = {""+gr.myID, ""};
+	    		Event e = new Event()
 	    				.EventId(EventList.MOVE_THINGS)
 	    				.ExpectsResponse(true)
 	    				.EventParameters(args);
@@ -353,8 +621,6 @@ public class GameController {
 					if(responses[j].fromPlayer == gr.myID)
 					{
 						String[] responseStrings = responses[j].message.split(" ");
-						
-						args[2] = responseStrings[0];
 						
 						if(responseStrings.length == 2)
 							args[1] = responseStrings[1];
@@ -372,6 +638,15 @@ public class GameController {
 		    		GameControllerEventHandler.sendEvent(e);
 				}
 			}while(!moveDone);
+			
+			boolean[] intendedPlayers = new boolean[numClients];
+			intendedPlayers[gr.myID] = true;
+			
+			Event e = new Event()
+						.EventId(EventList.CLEAR_THING_MOVES)
+						.IntendedPlayers(intendedPlayers);
+			
+			GameControllerEventHandler.sendEvent(e);
 		}
 		
 	}
@@ -404,27 +679,7 @@ public class GameController {
 					.EventId(EventList.PAY_GOLD)
 					.EventParameters(args)
 					);
-			
-			/*args[1] = "Trade Recruits";
-			//ask for number of recruits to trade for
-			responses = GameControllerEventHandler.sendEvent(
-					new Event()
-					.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
-					.EventParameters(args)
-					.ExpectsResponse(true)
-					);
-			
-			for (int j=0; j<responses.length; j++){
-				if(responses[j].fromPlayer == gr.myID)
-				{
-					args[1] = responses[j].message.trim();
-				}
-			}
-			
-			//select recruits to trade
-			 */
-			
-			//determine total number of recruits
+
 			boolean[] intendedPlayers = new boolean[numClients];
 			intendedPlayers[gr.myID] = true;
 			
@@ -454,10 +709,6 @@ public class GameController {
     					.EventParameters(args);
     		
     		GameControllerEventHandler.sendEvent(e);
-			
-			//deal with excess in player rack
-			
-			//handle dealing with excess in player rack*/
 		}
 		
 
@@ -470,6 +721,7 @@ public class GameController {
 				new Event()
 					.EventId( EventList.AWARD_INCOME)
 					.EventParameters(args)
+					.ExpectsResponse(true)
 			);			
 	}
 

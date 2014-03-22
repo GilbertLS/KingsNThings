@@ -12,6 +12,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Game.GameConstants.BattleTurn;
+import Game.Phases.Phase;
 import Game.Networking.Event;
 import Game.Networking.EventList;
 import Game.Networking.GameClient;
@@ -27,6 +28,13 @@ public class GameController {
 	public static boolean gameEnded = false; 
 	//public String address;
 	public static int numClients;
+	private static Phase currentPhase;
+	private static boolean changedPhase = false;
+	
+	public static void SetPhase(Phase phase) {
+		currentPhase = phase;
+		changedPhase = true;
+	}
 	
 	public GameController(
 			int numberOfClients
@@ -443,32 +451,47 @@ public class GameController {
 	
 	private void playPhases(){
 		boolean gameWon = false;
+		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS;
 		
 		do
 		{
 			distributeIncome();
 			
-			recruitSpecialCharacter();
-			
-			recruitThings();
-			
+			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
+				if (changedPhase) { changedPhase = false; }
+				//recruitSpecialCharacter();
+				if (!changedPhase) { currentPhase = Phase.RECRUIT_THINGS; }
+			}
+			if (currentPhase == Phase.RECRUIT_THINGS) {
+				if (changedPhase) { changedPhase = false; }
+				recruitThings();
+				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
+			}
 			tradeThings();
-			
-			playThings();
-			
-			moveThings();
-			
-			PlayBattlePhase();
-			
-			gameWon = checkWin();
-			
-			playConstructionPhase();
-			
-			gameWon = checkWin();
+			if (currentPhase == Phase.PLAY_THINGS) {
+				if (changedPhase) { changedPhase = false; }
+				playThings();
+				if (!changedPhase) { currentPhase = Phase.MOVE_THINGS; }
+			}
+			if (currentPhase == Phase.MOVE_THINGS) {
+				if (changedPhase) { changedPhase = false; }
+				moveThings();
+				if (!changedPhase) { currentPhase = Phase.BATTLE; }
+			}
+			if (currentPhase == Phase.BATTLE) {
+				if (changedPhase) { changedPhase = false; }
+				PlayBattlePhase();
+				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
+			}
+			if (currentPhase == Phase.CONSTRUCTION) {
+				if (changedPhase) { changedPhase = false; }
+				//playConstructionPhase();
+				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
+			}
 		
-			ChangePlayerOrder();
+			//ChangePlayerOrder();
 		
-		}while(!gameWon);
+		} while(!gameEnded);
 	}
 	
 	private boolean checkWin() {
@@ -795,7 +818,7 @@ public class GameController {
 								.EventId( EventList.REMOVE_THINGS )
 								.EventParameters(removedThings)
 								.ExpectsResponse()
-						)[0].eventId == EventList.BATTLE_OVER){
+						)[0].eventId == EventList.REMOVE_THINGS){
 							battleOver = true;
 						} else {
 							battleOver = false;

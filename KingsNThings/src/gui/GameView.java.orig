@@ -1,28 +1,29 @@
 package gui;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.Semaphore;
 
 import Game.Creature;
-import Game.GameClientController;
 import Game.GameConstants;
-import Game.Player;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
-import Game.GameConstants.Terrain;
 import Game.Utility;
 import Game.Networking.GameClient;
 import Game.Thing;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+<<<<<<< HEAD
+import javafx.scene.control.ListView;
+=======
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+>>>>>>> Implemented adding/removing/setting phase at any point in time
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -30,7 +31,8 @@ import javafx.stage.Stage;
 
 public class GameView extends Scene {
 	public static BattleView battleView = null;
-    public static List<Integer> selectedThings = new ArrayList<Integer>();
+    public static List<Thing> selectedThings = new ArrayList<Thing>();
+	protected static SpecialCharacterView specialCharacterView = null;
 	
     public BorderPane root;
     public VBox rightPanel;
@@ -41,21 +43,25 @@ public class GameView extends Scene {
     public RackView rack;
     public TilePreview tilePreview;
     public MessageView messageView;
-    public InputView inputView;
     public CurrentPhase currentPhase = CurrentPhase.NULL;
     public boolean userInputDone = false;
 	String returnString = "";
 	private int currPlayerNum;
 	public Stage primaryStage;
-<<<<<<< HEAD
-	public boolean moveMade = false;
-=======
-	public Semaphore submitLock = new Semaphore(0);
 	public Semaphore inputLock = new Semaphore(0);
->>>>>>> origin/develop
+	public Semaphore submitLock = new Semaphore(0);
+	public Semaphore moveLock = new Semaphore(0);
+	public Semaphore playLock = new Semaphore(0);
+<<<<<<< HEAD
+	public Semaphore recruitLock = new Semaphore(0);
+	public boolean characterRecruited = false;
+=======
+	public EscapeMenu escapeMenu;
+>>>>>>> Implemented adding/removing/setting phase at any point in time
+	//public boolean moveMade = false;
 	
     public GameView(BorderPane r, Stage ps) {
-    	super(r, 1000, 600);
+    	super(r, 1000, 660);
     	root = r; 
     	primaryStage = ps;
         
@@ -68,17 +74,15 @@ public class GameView extends Scene {
         tilePreview = new TilePreview(0);
         
         board = new BoardView(tilePreview);
-        root.setCenter(board);        
+        root.setCenter(board);
+        root.centerProperty();
         
         playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
         
         messageView = new MessageView();
         rightPanel.getChildren().add(messageView);
-        
-        inputView = new InputView();
-        rightPanel.getChildren().add(inputView);
-        
+                
         buttonBox = new ButtonBox();
         rightPanel.getChildren().add(buttonBox);
         
@@ -90,13 +94,35 @@ public class GameView extends Scene {
         rack = new RackView(FXCollections.observableList((arr)));
         bottomPanel.getChildren().add(rack);
         
+<<<<<<< HEAD
+        this.getStylesheets().add("gui/main.css");
+=======
         this.getStylesheets().add("gui/myStyle.css");
+        
+        BorderPane b = new BorderPane();
+        escapeMenu = new EscapeMenu(this);
+        
+        EventHandler<KeyEvent> keyPressed = new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.M) {
+					escapeMenu.show();
+				}
+			}
+        };
+        
+        this.setOnKeyPressed(keyPressed);
+>>>>>>> Implemented adding/removing/setting phase at any point in time
     }
     
     //method to give back a tile
     public Tile chooseTile()
     {  	
     	return this.board.getNextSelectedTile();
+    }
+    
+    public Tile chooseTileFromEditState() {
+    	return this.board.getNextSelectedTileFromEditState();
     }
     
     public void updateHexTile(HexTile h)
@@ -115,35 +141,46 @@ public class GameView extends Scene {
     }
 
 	public int getNumPaidRecruits() {
-		Utility.PromptForInput(submitLock);
+		int num = -1;
 		
-		return Integer.parseInt(inputView.getInput());
+		while(num < 0) {		
+			String response = new InputDialog(this.primaryStage, "Recruiting", "How many paid recruits would you like?").showInput();
+		
+			try { num = Integer.parseInt(response); }
+			catch(Exception e){}
+		}
+		
+		return num;
 	}
 	
 	public String performPhase(CurrentPhase currentPhase){
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
+		inputLock = new Semaphore(0);
 		
-		returnString = "";
+		//update button controls for specific phase
+		buttonBox.updateButtons(currentPhase);
 		
-<<<<<<< HEAD
-		userInputDone = false;
-		try {
-			do{
-				Thread.sleep(500);
-			}while(!userInputDone);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		//if recruiting character, do not allow end of phase until
+		//character played
+		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+		{
+			Utility.PromptForInput(recruitLock);
+			characterRecruited = false;
 		}
-		userInputDone = false;
-=======
+		
 		Utility.PromptForInput(inputLock);
->>>>>>> origin/develop
+		
+		String s = returnString;
+		userInputDone = false;
+		returnString = "";
 		
 		this.currentPhase = CurrentPhase.NULL;
 		
-		return returnString;
+		//reset button controlls
+		buttonBox.updateButtons(CurrentPhase.NULL);
+		
+		return s;
 	}
 	
 	public String moveIteration()
@@ -152,45 +189,54 @@ public class GameView extends Scene {
 		//movement is done when userInputDone is set to true
 		//after the beginning of the movement phase
 
-		
-		returnString = "";
-		moveMade = false;		
 		currentPhase = CurrentPhase.MOVEMENT;
 		
-		try {
-			do{
-				Thread.sleep(500);
-			}while(!moveMade && !userInputDone);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		boolean s = userInputDone;
+		Utility.PromptForInput(moveLock);
 		
-		moveMade = false;
+		String s = userInputDone + " " + returnString;
+		
 		userInputDone = false;
+		returnString = "";
 		
 		currentPhase = CurrentPhase.NULL;
 		
-		return s +" "+returnString;		
+		return s;	
 	}
 	
-	public void setPhaseNotDone()
+	public String playIteration()
 	{
+		//perform a single iteration of playing things
+
+		currentPhase = CurrentPhase.PLAY_THINGS;
+		
+		Utility.PromptForInput(playLock);
+		
+		String s = userInputDone + " " + returnString;
+		
 		userInputDone = false;
+		returnString = "";
+		
+		currentPhase = CurrentPhase.NULL;
+		
+		GameClient.game.handleRackOverload(getCurrentPlayer());
+		
+		return s;	
 	}
 
-	public void updatePlayerRack() {
-		//re-draw the player rack for current player (because it has changed)
-		//if necessary, I can pass the appropriate rack
+	public void updatePlayerRack(ArrayList<Thing> things) {
+		rack.setAllThings(things);
 	}
 
 	public int getNumTradeRecruits() {
 		return 0;
 	}
 
-	public void showHideAllTiles(boolean show) {
-		board.showHideAllTiles(show);
+	public void showHideAllTiles(final boolean show) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				board.showHideAllTiles(show);
+			}
+		});
 	}
 	public void updateTiles(ArrayList<HexTile> hexTiles, int playerIndex) {
 		for(HexTile h: hexTiles)
@@ -199,6 +245,18 @@ public class GameView extends Scene {
 			this.board.getTileByHex(h).update();
 		}
 	}
+	
+	public void updateTiles(ArrayList<HexTile> hexTiles) {
+		for(HexTile h: hexTiles)
+		{
+			for(int i=0; i<GameClient.game.gameModel.PlayerCount(); i++)
+				this.board.getTileByHex(h).updateThings(i);
+			
+			this.board.getTileByHex(h).update();
+		}
+	}
+	
+	
 		
 	public void setCurrentPlayer(int p) {
 		this.currPlayerNum = p;
@@ -218,6 +276,13 @@ public class GameView extends Scene {
 		}
 	}
 	
+	public static boolean recruitingSpecial(){
+		if(GameView.specialCharacterView != null){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public void StartBattle(final int tileX, final int tileY){	
 		Platform.runLater(new Runnable() {
@@ -250,14 +315,14 @@ public class GameView extends Scene {
 			return "Tuile_Back.png";
 		 } else {
 			 switch (tile.getTerrain()) {
-			 	case SEA: return "Tuile-Mer.png";
-				case JUNGLE: return "Tuile-Jungle.png";
-				case FROZEN_WASTE: return "Tuile-Entendue-Glacée.png";
-				case FOREST: return "Tuile-Forêt.png";
-				case PLAINS: return "Tuile-Plaines.png";
-				case SWAMP: return "Tuile-Marais.png";
-				case MOUNTAIN: return "Tuile-Montagne.png";
-				case DESERT: return "Tuile-Desert.png";
+			 	case SEA: return GameConstants.SeaTileFront;
+				case JUNGLE: return GameConstants.JungleTileFront;
+				case FROZEN_WASTE: return GameConstants.FrozenWasteTileFront;
+				case FOREST: return GameConstants.ForestTileFront;
+				case PLAINS: return GameConstants.PlainsTileFront;
+				case SWAMP: return GameConstants.SwampTileFront;
+				case MOUNTAIN: return GameConstants.MountainTileFront;
+				case DESERT: return GameConstants.DesertTileFront;
 			 }
 		 }
 	    	
@@ -288,6 +353,61 @@ public class GameView extends Scene {
 				}
 			});
 		}
+	}
+
+	public void updateGold(final int gold, final int playerIndex) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				playerList.getPlayerPanel(playerIndex).setGold(gold);
+			}
+		});
+	}
+
+	public void updateTiles(HexTile hexTileCopy, int playerIndex) {
+		ArrayList<HexTile> hexTileList = new ArrayList<HexTile>();
+		
+		hexTileList.add(hexTileCopy);
+		
+		updateTiles(hexTileList, playerIndex);
+	}
+	
+	public void endRecruitSpecialCharacter()
+	{
+		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+		{
+			Platform.runLater(new Runnable(){
+				public void run(){
+					specialCharacterView = null;
+						
+					if(currentPhase != CurrentPhase.NULL)
+					{
+						Utility.GotInput(inputLock);
+							
+						userInputDone = true;
+					}
+				}
+			});
+		}
+	}
+
+	public void updateRackCount(final int numThingsInRack, final int playerIndex) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				playerList.getPlayerPanel(playerIndex).setThings(numThingsInRack);
+			}
+		});
+	}
+
+	public void addToRack(Thing thingRef) {
+		rack.add(new ThingView(thingRef));
+	}
+
+	public void handleWin(final ArrayList<Integer> winingPlayers) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				//output the winning players here
+			}
+		});
 	}
 	
 }

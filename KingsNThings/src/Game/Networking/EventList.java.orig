@@ -13,10 +13,9 @@ public class EventList {
 	public static final int CHOOSE_PLAYER = 9;
 	public static final int INFLICT_HITS = 10;
 	public static final int REMOVE_THINGS = 11;
-	public static final int ADD_THING_TO_TILE = 12;
 	public static final int BATTLE_OVER = 13;
 	public static final int SET_HEX_TILES = 14;
-	public static final int SET_CREATURES = 15;
+	public static final int INITIALIZE_THINGS = 15;
 	public static final int GET_THINGS_FROM_CUP = 16;
 	public static final int DISTRIBUTE_INITIAL_GOLD = 18;
 	public static final int AWARD_INCOME = 19;
@@ -39,10 +38,30 @@ public class EventList {
 	public static final int DETERMINE_TOTAL_NUM_RECRUITS = 114;
 	public static final int MOVE_THINGS = 115;
 	public static final int HANDLE_MOVE_THINGS = 116;
+	public static final int CLEAR_THING_MOVES = 118;
+	public static final int RANDOMIZE_THINGS = 119;
+	public static final int UPDATE_CUP_ORDER = 120;
+	public static final int RANDOMIZE_SPECIAL_CHARACTERS = 121;
+	public static final int CREATE_SPECIAL_CHARACTERS = 122;
+	public static final int DO_CONSTRUCTION = 123;
+	public static final int HANDLE_CONSTRUCTION = 124;
+	public static final int RECRUIT_CHARACTER = 125;
+	public static final int HANDLE_SPEND_GOLD = 126;
+	public static final int HANDLE_RECRUIT_CHARACTER = 127;
 <<<<<<< HEAD
-	public static final int GET_RETREAT = 20;
-	public static final int SET_PHASE_NOT_DONE = 117;
+	public static final int HANDLE_RACK_OVERLOAD = 128;
+	public static final int TRADE_THINGS = 129;
+	public static final int HANDLE_TRADE_THINGS = 130;
+	public static final int RANDOMIZE_UNUSED_TILES = 131;
+	public static final int UPDATE_UNUSED_TILES = 132;
+	public static final int REVEAL_HEX_TILES = 133;
+	public static final int CHECK_WIN = 134;
+	public static final int HANDLE_WIN = 135;
+	public static final int CLEAR_CONSTRUCTION = 136;
+	public static final int CREATE_DEFENSE_CREATURES = 137;
 =======
-	
->>>>>>> origin/develop
+	public static final int SET_PHASE = 200;
+	public static final int REMOVE_THING = 201;
+	public static final int ADD_THING = 202;
+>>>>>>> Implemented adding/removing/setting phase at any point in time
 }

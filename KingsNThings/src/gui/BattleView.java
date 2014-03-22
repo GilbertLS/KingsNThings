@@ -1,7 +1,9 @@
 package gui;
 
 import java.util.concurrent.Semaphore;
+
 import Game.Combatant;
+import Game.GameConstants;
 import Game.HexTile;
 import Game.Thing;
 import Game.Utility;
@@ -176,20 +178,30 @@ public class BattleView extends Scene {
 	public int[] inflictHits(int numHitsTaken) {
 		UpdateMessage("Select " + numHitsTaken + " things to discard.");
 		
+		int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+		
+		int numValid;
 		do {
 			submitPressed = InputState.WAITING_FOR_INPUT;
 			
 			Utility.PromptForInput(inputLock);
-		} while (GameView.selectedThings.size() != numHitsTaken);
+			
+			numValid = 0;
+			for(Thing t : GameView.selectedThings) {
+				if (GameConstants.GetPlayerNumber(t.controlledBy) == currPlayer ) {
+					numValid++;
+				}
+			}
+		} while (numValid != numHitsTaken);
 		
 		submitPressed = InputState.NOT_WAITING_FOR_INPUT;
 		
 		int[] thingsToRemove = new int[numHitsTaken];
 		int i = 0;
-		for (Integer thingId : GameView.selectedThings){
+		for (Thing thing : GameView.selectedThings){
 			System.out.println("--------------");
-			thingsToRemove[i++] = thingId;
-			RemoveThingFromBattle(thingId, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
+			thingsToRemove[i++] = thing.thingID;
+			//RemoveThingFromBattle(thing.thingID, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
 			
 			//also update model
 		}
