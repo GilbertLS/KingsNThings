@@ -3,6 +3,7 @@ package Game;
 import java.util.ArrayList;
 
 import javafx.application.Platform;
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Networking.Event;
@@ -138,6 +139,9 @@ public class GameClientController {
 	public boolean isValidMove(HexTile originalTile, HexTile tileRef,
 			ArrayList<Thing> things) {
 		
+		if(!tileRef.hasRoomForThings(things))
+			return false;
+		
 		if(!originalTile.isAdjacent(tileRef)
 				|| (!tileRef.isLand() && !areAllFlying(things))
 				|| (!allThingsAbleToMove(tileRef, things)))
@@ -176,8 +180,13 @@ public class GameClientController {
 		
 	}
 
-	public boolean isValidPlacement(HexTile tileRef, ArrayList<Thing> things) {
-		if(tileRef.controlledBy != things.get(0).controlledBy)
+	public boolean isValidPlacement(HexTile tileRef, ArrayList<Thing> things, int playerIndex) {
+		ControlledBy tileControl = tileRef.controlledBy;
+		
+		if(tileControl != things.get(0).controlledBy)
+			return false;
+		
+		if(!tileRef.hasRoomForThings(things))
 			return false;
 		
 		int numIncomes =0;		
@@ -242,5 +251,18 @@ public class GameClientController {
 			.EventParameters(args);
 	
 		Game.Networking.EventHandler.SendEvent(gameEvent);	
+	}
+
+	public void handleRackOverload(Integer playerIndex) {
+		//check if player has too many things in rack
+		if(gameModel.playerRackTooFull(playerIndex))
+		{			
+			//if so, send event out to update other players
+			Event gameEvent = new Event()
+				.EventId(EventList.HANDLE_RACK_OVERLOAD)
+				.EventParameter(""+playerIndex);
+	
+			Game.Networking.EventHandler.SendEvent(gameEvent);	
+		}
 	}
 }

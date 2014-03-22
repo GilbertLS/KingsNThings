@@ -1,6 +1,7 @@
 package Game;
 
 import Game.SpecialCharacter;
+
 import java.util.ArrayList;
 
 import Game.GameConstants.ControlledBy;
@@ -931,14 +932,6 @@ public class GameModel {
 		
 		return h;
 	}
-
-	public boolean playerRackTooFull() {
-		return currPlayer.rackTooFull();
-	}
-
-	public int removeExcessFromRack() {
-		return currPlayer.removeExcessFromRack();
-	}
 	
 	public Player playerFromIndex(int index)
 	{
@@ -1100,5 +1093,15 @@ public class GameModel {
 		
 		if(t != null)
 			playerFromIndex(playerIndex).addThingToRack(t);
+	}
+
+	public void handleRackOverload(int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
+		
+		player.playerRack.handleRackOverload();
+	}
+
+	public boolean playerRackTooFull(int playerIndex) {	
+		return playerFromIndex(playerIndex).rackTooFull();
 	}
 }

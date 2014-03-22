@@ -168,12 +168,13 @@ public class GameView extends Scene {
 		
 		currentPhase = CurrentPhase.NULL;
 		
+		GameClient.game.handleRackOverload(getCurrentPlayer());
+		
 		return s;	
 	}
 
-	public void updatePlayerRack() {
-		//re-draw the player rack for current player (because it has changed)
-		//if necessary, I can pass the appropriate rack
+	public void updatePlayerRack(ArrayList<Thing> things) {
+		rack.setAllThings(things);
 	}
 
 	public int getNumTradeRecruits() {
@@ -318,15 +319,16 @@ public class GameView extends Scene {
 	
 	public void endRecruitSpecialCharacter()
 	{
-		if (GameView.recruitingSpecial()){
+		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+		{
 			Platform.runLater(new Runnable(){
 				public void run(){
 					specialCharacterView = null;
-					
+						
 					if(currentPhase != CurrentPhase.NULL)
 					{
 						Utility.GotInput(inputLock);
-						
+							
 						userInputDone = true;
 					}
 				}
