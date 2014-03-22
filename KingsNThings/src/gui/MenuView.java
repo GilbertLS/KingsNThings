@@ -59,7 +59,29 @@ public class MenuView extends Stage {
 		
 		joinGame.setOnMouseClicked(new EventHandler<MouseEvent>() {
     		@Override public void handle(MouseEvent e) {
-    			self.setScene(joinMenu);
+    			//self.setScene(joinMenu);
+    			String ip = Dialogs.create()
+  				      .owner(self)
+  				      .title("Join Game")
+  				      .masthead(null)
+  				      .message("Enter Host's IP")
+  				      .showTextInput("127.0.0.1");
+  			
+	  			if(ip != null) {
+	  				command = Protocol.JOINSERVER + " " + ip;
+	  				if(gameFound(ip)) {
+	  					self.hide();
+	  				}
+	  				else
+	  				{
+	  					Dialogs.create()
+	  						.owner(self)
+	  	    				.title("Error")
+	  	    				.masthead(null)
+	  	    				.message("Could not find a game at: " + ip)
+	  	    				.showWarning();
+	  				}
+	  			}
     		}
     	});
 		
@@ -103,33 +125,6 @@ public class MenuView extends Stage {
 		
 		table.getColumns().add(ip);
 		table.getColumns().add(port);
-		
-		joinIP.setOnMouseClicked(new EventHandler<MouseEvent>() {
-    		@Override public void handle(MouseEvent e) {
-    			String ip = Dialogs.create()
-    				      .owner(self)
-    				      .title("Join Game")
-    				      .masthead(null)
-    				      .message("Enter Host's IP")
-    				      .showTextInput("127.0.0.1");
-    			
-    			if(ip != null) {
-    				command = Protocol.JOINSERVER + " " + ip;
-    				if(gameFound(ip)) {
-    					self.hide();
-    				}
-    				else
-    				{
-    					Dialogs.create()
-    						.owner(self)
-    	    				.title("Error")
-    	    				.masthead(null)
-    	    				.message("Could not find a game at: " + ip)
-    	    				.showWarning();
-    				}
-    			}
-    		}
-    	});
 		
 		back.setOnMouseClicked(new EventHandler<MouseEvent>() {
     		@Override public void handle(MouseEvent e) {
