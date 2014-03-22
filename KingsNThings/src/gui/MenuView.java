@@ -89,8 +89,9 @@ public class MenuView extends Stage {
 		
 		hostGame.setOnMouseClicked(new EventHandler<MouseEvent>() {
     		@Override public void handle(MouseEvent e) {
-    			if(canHost()) {
-    				command = Protocol.HOSTSERVER;
+    			String tempCommand = Protocol.HOSTSERVER;
+    			if(canHost(tempCommand)) {
+    				command = tempCommand;
     				self.hide();
     			}
     			else {
@@ -167,7 +168,7 @@ public class MenuView extends Stage {
 		return false;
 	}
 	
-	private boolean canHost() {
+	private boolean canHost(String c) {
 		try {
 			Socket socket = new Socket(argIp,  Integer.parseInt(argPort));
 	        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -180,7 +181,7 @@ public class MenuView extends Stage {
 	        	System.out.println("Client: " + Protocol.HOSTSERVER);
 	    		out.println(Protocol.HOSTSERVER);
 	    	
-	    	if(command.equals(Protocol.HOSTSERVER)) {
+	    	if(c.equals(Protocol.HOSTSERVER)) {
 	    		try {
 	    			out.println(Protocol.HOSTSERVER);
 	    			socket.close(); 
