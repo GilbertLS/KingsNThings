@@ -121,6 +121,11 @@ public class GameView extends Scene {
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
 		inputLock = new Semaphore(0);
+		
+		//update button controls for specific phase
+		
+		buttonBox.updateButtons(currentPhase);
+		
 		Utility.PromptForInput(inputLock);
 		
 		String s = returnString;
@@ -128,6 +133,9 @@ public class GameView extends Scene {
 		returnString = "";
 		
 		this.currentPhase = CurrentPhase.NULL;
+		
+		//reset button controlls
+		buttonBox.updateButtons(CurrentPhase.NULL);
 		
 		return s;
 	}

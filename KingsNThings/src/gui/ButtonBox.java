@@ -1,8 +1,12 @@
 package gui;
 
+import java.util.ArrayList;
+
 import Game.Networking.GameClient;
 import Game.GameConstants.CurrentPhase;
 import Game.Utility;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -13,11 +17,17 @@ public class ButtonBox extends HBox {
 	Button showHideTiles = new Button("Show Tiles");
 	Button recruitSpecial = new Button("Recruit Special Character");
 	Button userInputComplete = new Button("Done Phase");
+	Button trade = new Button("Trade");
+	ArrayList<Button> buttons;
 	
 	ButtonBox()
 	{
-		this.getChildren().addAll(showHideTiles, recruitSpecial);
-		this.getChildren().add(userInputComplete);
+		buttons = new ArrayList<Button>(5);
+		buttons.add(showHideTiles);
+		buttons.add(recruitSpecial);
+		buttons.add(userInputComplete);
+		
+		this.getChildren().addAll(buttons);
 		
 		this.getStyleClass().add("button-box");
 		
@@ -40,10 +50,6 @@ public class ButtonBox extends HBox {
 					
 					gv.userInputDone = true;
 				}
-				
-				//GameClient.game.cashTreasure();
-				
-				//Game.Networking.EventHandler.SendEvent(new Event());
 			}
 		});
 		
@@ -77,6 +83,50 @@ public class ButtonBox extends HBox {
 					
 					SpecialCharacterView SCView = new SpecialCharacterView(GameClient.game.gameView.primaryStage, numSpecialCharacters, playerIndex);
 					GameView.specialCharacterView = SCView;
+				}
+			}
+		});
+		
+		trade.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+		    public void handle(ActionEvent e) {
+				CurrentPhase currentPhase = GameClient.game.gameView.currentPhase;
+				
+				if(currentPhase == CurrentPhase.INITIAL_TRADE_THINGS
+						|| currentPhase == CurrentPhase.TRADE_THINGS){
+					GameView gv = (GameView)getScene();
+					
+					//ensure divisible by 2 if normal trade
+					if(currentPhase == CurrentPhase.TRADE_THINGS){
+						if(gv.rack.getSelectionModel().getSelectedIndices().size() % 2 != 0)
+							return;
+					}
+					
+					//return IDs of things traded
+					ObservableList<ThingView> items = gv.rack.getItems();
+					for (Integer i : gv.rack.getSelectionModel().getSelectedIndices()) {
+						gv.returnString += ((ThingView)items.get(i)).thingRef.thingID + " ";
+					}
+					
+					Utility.GotInput(gv.inputLock);
+				}
+			}
+		});
+	}
+	
+	public void updateButtons(final CurrentPhase currentPhase)
+	{
+		Platform.runLater(new Runnable(){
+			public void run(){
+				switch(currentPhase){
+				case INITIAL_TRADE_THINGS:
+				case TRADE_THINGS:
+					getChildren().setAll(trade, userInputComplete);
+					break;
+				default:
+					getChildren().setAll(buttons);
+					break;
 				}
 			}
 		});

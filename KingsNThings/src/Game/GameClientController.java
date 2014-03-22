@@ -265,4 +265,20 @@ public class GameClientController {
 			Game.Networking.EventHandler.SendEvent(gameEvent);	
 		}
 	}
+
+	public void updatePlayerRack(final int playerIndex) {
+		final Player playerToUpdate = GameClient.game.gameModel.playerFromIndex(playerIndex);
+		final boolean isCurrentPlayer = playerToUpdate == GameClient.game.gameModel.GetCurrentPlayer();
+		
+		final ArrayList<Thing> thingsInRack = playerToUpdate.getPlayerRack().getThings();
+		
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	GameClient.game.gameView.updateRackCount(thingsInRack.size(), playerIndex);
+	        	if(isCurrentPlayer)
+	        		GameClient.game.gameView.updatePlayerRack(playerToUpdate.playerRack.getThings());
+	        }
+		});		
+	}
 }
