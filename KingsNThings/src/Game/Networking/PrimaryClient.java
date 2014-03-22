@@ -171,18 +171,18 @@ public class PrimaryClient extends Application {
 		
 		//UIJoin/Host
 		//---------------------------------------//
-		/*MenuView menu = new MenuView(a);
+		MenuView menu = new MenuView(a);
 		String command = menu.showInput();
 		
 		if(command == null) {
 			System.exit(0);
 		}
 		
-		beginUI(a, command.split(" "));*/
+		beginUI(a, command.split(" "));
 		//---------------------------------------//
 		
 		//Console Join/Host
-        begin(a);
+        //begin(a);
 		
 		primaryStage.setTitle("Kings N Things");
         primaryStage.setScene(gameView);

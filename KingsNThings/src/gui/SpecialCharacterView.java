@@ -88,7 +88,7 @@ public class SpecialCharacterView extends Dialog{
 		rolls[0] = 0;
 		rolls[1] = 0;
 		
-        getStylesheets().add("gui/myStyle.css");
+        getStylesheets().add("gui/main.css");
         
         setupThingViews();
         initListeners();

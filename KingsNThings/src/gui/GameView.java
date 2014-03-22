@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-
 import Game.Creature;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
@@ -80,7 +79,7 @@ public class GameView extends Scene {
         rack = new RackView(FXCollections.observableList((arr)));
         bottomPanel.getChildren().add(rack);
         
-        this.getStylesheets().add("gui/myStyle.css");
+        this.getStylesheets().add("gui/main.css");
     }
     
     //method to give back a tile
