@@ -86,10 +86,37 @@ public class GameController {
 		
 		assignInitialThings();
 		
+		tradeInitialThings();
+		
 		playThings();
 		
 	}
 	
+	private void tradeInitialThings() {
+		for(GameRouter gr: GameServer.servers)
+		{			
+			String[] args  = {""+gr.myID, "" + true, ""};
+			Response[] responses = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.TRADE_THINGS)
+						.ExpectsResponse(true)
+						.EventParameters(args)
+				);		
+			
+			for(Response r: responses)
+			{
+				if(r.fromPlayer == gr.myID)
+					args[2] = r.message;	
+			}
+			
+			GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.HANDLE_TRADE_THINGS)
+						.EventParameters(args)
+				);	
+		}
+	}
+
 	private void intializeSpecialCharacters() {
 		//ask first player to randomize special characters
 		boolean[] intendedPlayers = new boolean[numClients];
@@ -368,6 +395,8 @@ public class GameController {
 			
 			recruitThings();
 			
+			tradeThings();
+			
 			playThings();
 			
 			moveThings();
@@ -382,6 +411,31 @@ public class GameController {
 
 	}
 	
+	private void tradeThings() {
+		for(GameRouter gr: GameServer.servers)
+		{			
+			String[] args  = {""+gr.myID, "" + false, ""};
+			Response[] responses = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.TRADE_THINGS)
+						.ExpectsResponse(true)
+						.EventParameters(args)
+				);		
+			
+			for(Response r: responses)
+			{
+				if(r.fromPlayer == gr.myID)
+					args[2] = r.message;	
+			}
+			
+			GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.HANDLE_TRADE_THINGS)
+						.EventParameters(args)
+				);	
+		}
+	}
+
 	private void playConstructionPhase() {
 		Event e = new Event()
 			.EventId(EventList.DO_CONSTRUCTION)

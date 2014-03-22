@@ -417,18 +417,52 @@ public class EventHandler {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			final int numThings = Integer.parseInt(e.eventParams[1]);
 			
-			final boolean isCurrentPlayer = playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
-			
 			GameClient.game.gameModel.getThingsFromCup(playerIndex, numThings);
 			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-		        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).addThings(numThings);
-		        	if(isCurrentPlayer)
-		        	GameClient.game.gameView.updatePlayerRack(GameClient.game.gameModel.GetCurrentPlayer().getPlayerRack().getThings());
-		        }
-			});
+			GameClient.game.updatePlayerRack(playerIndex);
+		}
+		else if(e.eventId == EventList.TRADE_THINGS){
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			final boolean isInitialTrade = Boolean.parseBoolean(e.eventParams[1]);
+			
+			if(GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() == playerIndex){
+				
+				GameClient.game.sendMessageToView("Please trade your recruits if you desire");
+				
+				String thingIDsTraded = "";
+				if(isInitialTrade)
+					thingIDsTraded = GameClient.game.gameView.performPhase(CurrentPhase.INITIAL_TRADE_THINGS);
+				else
+					thingIDsTraded = GameClient.game.gameView.performPhase(CurrentPhase.TRADE_THINGS);
+			
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.TRADE_THINGS)
+							.EventParameter(thingIDsTraded)
+					);
+			}
+			else{
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "trade their things");
+			}
+		}
+		else if(e.eventId == EventList.HANDLE_TRADE_THINGS)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			final boolean isInitialTrade = Boolean.parseBoolean(e.eventParams[1]);	
+			
+			if(e.eventParams.length >= 3)
+			{
+				String[] tradedThingIDStrings = e.eventParams[2].trim().split(" ");
+				final ArrayList<Integer> tradedThingIDs = new ArrayList<Integer>();
+				for(String s: tradedThingIDStrings)
+				{
+					tradedThingIDs.add(Integer.parseInt(s));
+				}
+				
+				GameClient.game.gameModel.tradeThings(playerIndex, isInitialTrade, tradedThingIDs);
+				
+				GameClient.game.updatePlayerRack(playerIndex);
+			}
 		}
 		else if (e.eventId == EventList.DISTRIBUTE_INITIAL_GOLD)
 		{
@@ -609,11 +643,6 @@ public class EventHandler {
 						
 						isValidSelection = GameClient.game.gameModel.GetCurrentPlayer().canAffordRecruits(number);
 					}
-					else if(purposeForNumber.equals("Trade Recruits"))
-					{
-						number = GameClient.game.gameView.getNumTradeRecruits();
-						isValidSelection = GameClient.game.gameModel.GetCurrentPlayer().canTradeForRecruits(number);
-					}
 					
 					if(!isValidSelection)
 						GameClient.game.sendMessageToView("Invalid selection, please try again");
@@ -697,7 +726,7 @@ public class EventHandler {
 				
 				GameClient.game.gameModel.updatePlayedThings(hexTiles, thingIDs, playerIndex);
 				
-				GameClient.game.gameModel.updatePlayerRack(thingIDs, playerIndex);
+				GameClient.game.gameModel.removeFromPlayerRack(thingIDs, playerIndex);
 				
 				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
 				final ArrayList<Integer> thingIDsCopy = thingIDs;
@@ -727,7 +756,7 @@ public class EventHandler {
 			
 			if(GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() == playerIndex)
 			{
-				GameClient.game.sendMessageToView("Please Recruit a Special Character");		        	
+				GameClient.game.sendMessageToView("Please Recruit a Special Character if you desire");		        	
 				
 				GameClient.game.gameView.performPhase(CurrentPhase.RECRUIT_CHARACTER);	
 						
@@ -753,14 +782,7 @@ public class EventHandler {
 					
 				GameClient.game.gameModel.recruitSpecialCharacter(thingID, playerIndex);
 					
-				final int numThingsInRack = GameClient.game.gameModel.playerFromIndex(playerIndex).playerRack.size();
-				
-				Platform.runLater(new Runnable() {
-					@Override
-			    	public void run() {
-						GameClient.game.gameView.updateRackCount(numThingsInRack, playerIndex);
-						}
-					});
+				GameClient.game.updatePlayerRack(playerIndex);
 			}
 		}
 		else if(e.eventId == EventList.DO_CONSTRUCTION)
@@ -856,18 +878,7 @@ public class EventHandler {
 			
 			GameClient.game.gameModel.handleRackOverload(playerIndex);
 			
-			Player currentPlayer = GameClient.game.gameModel.GetCurrentPlayer();
-			final boolean isCurrentPlayer = playerIndex == currentPlayer.GetPlayerNum();
-			final ArrayList<Thing> thingsInRack = currentPlayer.getPlayerRack().getThings();
-			
-			Platform.runLater(new Runnable() {
-		        @Override
-		        public void run() {
-		        	GameClient.game.gameView.updateRackCount(thingsInRack.size(), playerIndex);
-		        	if(isCurrentPlayer)
-		        		GameClient.game.gameView.updatePlayerRack(GameClient.game.gameModel.GetCurrentPlayer().playerRack.getThings());
-		        }
-			});
+			GameClient.game.updatePlayerRack(playerIndex);
 		}
 		else if(e.eventId == EventList.PAY_GOLD)
 		{

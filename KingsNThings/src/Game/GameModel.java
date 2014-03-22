@@ -29,6 +29,7 @@ public class GameModel {
 	private int playerCount;
 	public GameBoard gameBoard;
 	private ArrayList<Thing> movedThings = new ArrayList<Thing>();
+	private boolean specialElimination = false;
 	
 	public BoardController boardController;
 	
@@ -825,10 +826,18 @@ public class GameModel {
 				
 		for(int i=0; i<numThings; i++)
 		{
-			Thing currentThing = playingCup.remove(playingCup.size()-1);
-			
-			player.addThingToRack(currentThing);
-			currentThing.controlledBy = player.faction;
+			if(!playingCup.isEmpty())
+			{
+				Thing currentThing = playingCup.remove(playingCup.size()-1);
+				
+				player.addThingToRack(currentThing);
+				currentThing.controlledBy = player.faction;
+			}
+			else
+			{
+				specialElimination = true;
+				return;
+			}
 		}
 	}
 
@@ -955,7 +964,7 @@ public class GameModel {
 		}
 	}
 
-	public void updatePlayerRack(ArrayList<Integer> thingIDs, int playerIndex) {
+	public void removeFromPlayerRack(ArrayList<Integer> thingIDs, int playerIndex) {
 		Player player = playerFromIndex(playerIndex);
 
 		for(Integer i: thingIDs)
@@ -1110,5 +1119,41 @@ public class GameModel {
 
 	public boolean playerRackTooFull(int playerIndex) {	
 		return playerFromIndex(playerIndex).rackTooFull();
+	}
+
+	public void tradeThings(int playerIndex, boolean isInitialTrade,
+			ArrayList<Integer> tradedThingIDs) {
+		Player player = playerFromIndex(playerIndex);
+		
+		ArrayList<Thing> things = new ArrayList<Thing>();
+		
+		//find things and remove from rack
+		for(Integer i: tradedThingIDs)
+		{
+			things.add(player.getPlayerRack().getThing(i));
+			player.removeFromRack(i);
+		}
+		
+		//return them to the cup
+		for(Thing t: things)
+		{
+			returnToCup(t);
+		}
+		
+		int numThings =0;
+		if(isInitialTrade)
+			numThings = things.size();
+		else
+			numThings = things.size()/2;
+		
+		//get new things from the cup
+		this.getThingsFromCup(playerIndex, numThings);
+		
+	}
+
+	public void returnToCup(Thing t) {
+		//enforce special elimination
+		if(!specialElimination)
+			playingCup.add(0, t);
 	}
 }

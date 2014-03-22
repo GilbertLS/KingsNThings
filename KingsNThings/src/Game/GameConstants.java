@@ -10,7 +10,7 @@ public final class GameConstants {
 		MOVEMENT,
 		BATTLE,
 		NULL, 
-		PLAY_THINGS, CONSTRUCTION, RECRUIT_CHARACTER
+		PLAY_THINGS, CONSTRUCTION, RECRUIT_CHARACTER, INITIAL_TRADE_THINGS, TRADE_THINGS
 	}
 
 	//The different types of possible terrain in the game

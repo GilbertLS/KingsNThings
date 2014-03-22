@@ -50,4 +50,6 @@ public class EventList {
 	public static final int HANDLE_SPEND_GOLD = 126;
 	public static final int HANDLE_RECRUIT_CHARACTER = 127;
 	public static final int HANDLE_RACK_OVERLOAD = 128;
+	public static final int TRADE_THINGS = 129;
+	public static final int HANDLE_TRADE_THINGS = 130;
 }

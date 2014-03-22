@@ -2,6 +2,8 @@ package Game;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import Game.Networking.GameClient;
+
 /*
  * This class is a container to hold up to 10 Things not currently played by a Player
  */
@@ -66,8 +68,13 @@ public class PlayerRack {
 	}
 
 	public void handleRackOverload() {
-		for(int i=things.size()-1; i>9; i--)
-			things.remove(i);
+		for(int i=things.size()-1; i>9; i--){
+			eliminateThing(things.remove(i));
+		}
+	}
+
+	private void eliminateThing(Thing t) {
+		GameClient.game.gameModel.returnToCup(t);
 	}
 
 	public boolean tooFull() {
