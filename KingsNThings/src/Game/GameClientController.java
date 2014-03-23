@@ -281,4 +281,15 @@ public class GameClientController {
 	        }
 		});		
 	}
+
+	public ArrayList<HexTile> parseInitialHexTiles(String[] boardHexTileStrings) {
+		ArrayList<HexTile> tiles = new ArrayList<HexTile>();
+		
+		for(String s: boardHexTileStrings)
+		{
+			tiles.add(new HexTile(Terrain.valueOf(s)));
+		}
+		
+		return tiles;
+	}
 }

@@ -188,8 +188,12 @@ public class GameView extends Scene {
 		return 0;
 	}
 
-	public void showHideAllTiles(boolean show) {
-		board.showHideAllTiles(show);
+	public void showHideAllTiles(final boolean show) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				board.showHideAllTiles(show);
+			}
+		});
 	}
 	public void updateTiles(ArrayList<HexTile> hexTiles, int playerIndex) {
 		for(HexTile h: hexTiles)

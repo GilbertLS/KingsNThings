@@ -74,11 +74,17 @@ public class GameController {
 		
 		initializeHexTiles();
 		
+		randomizeHexTiles();
+		
 		randomizePlayingCup();
 		
 		intializeSpecialCharacters();
 		
 		initializeGold();
+		
+		placeThingsOnTile(1, "Control_Marker");
+		
+		revealHexTiles();
 		
 		placeThingsOnTile(2, "Control_Marker");
 		
@@ -92,6 +98,48 @@ public class GameController {
 		
 	}
 	
+	private void revealHexTiles() {
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.REVEAL_HEX_TILES)
+			);
+	}
+
+	private void randomizeHexTiles() {
+		//ask first player to randomize unused Tiles
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.RANDOMIZE_UNUSED_TILES)
+					.IntendedPlayers(intendedPlayers)
+					.ExpectsResponse(true)
+			);
+		
+		//get unused tile order response
+		String thingIDs = "";
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				thingIDs = r.message;	
+		}
+		
+		//update remaining clients with new tile order
+		for(int i=1; i<numClients; i++)
+		{
+			intendedPlayers[i] = true;
+		}
+		intendedPlayers[0] = false;
+		
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.UPDATE_UNUSED_TILES)
+					.EventParameter(thingIDs)
+					.IntendedPlayers(intendedPlayers)
+			);
+	}
+
 	private void tradeInitialThings() {
 		for(GameRouter gr: GameServer.servers)
 		{			
@@ -255,16 +303,12 @@ public class GameController {
 	}
 
 	private void initializeHexTiles() {
-		String[] initializeHexTilesStrings = GameModel.initializeHexTiles().split(" ");
-		
-		String[] args = new String[2];
-		args[0] = initializeHexTilesStrings[0];
-		args[1] = initializeHexTilesStrings[1];
+		String initializeHexTilesStrings = GameModel.initializeHexTiles();
 		
 		GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId( EventList.SET_HEX_TILES )
-					.EventParameters( args )
+					.EventParameter(initializeHexTilesStrings)
 			);
 		
 	}
