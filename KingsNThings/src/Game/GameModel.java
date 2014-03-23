@@ -1010,6 +1010,8 @@ public class GameModel {
 		
 		if(t != null)
 			playerFromIndex(playerIndex).addThingToRack(t);
+		
+		unownedCharacters.remove(t);
 	}
 
 	public void handleRackOverload(int playerIndex) {

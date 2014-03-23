@@ -24,7 +24,6 @@ public class ButtonBox extends HBox {
 	{
 		buttons = new ArrayList<Button>(5);
 		buttons.add(showHideTiles);
-		buttons.add(recruitSpecial);
 		buttons.add(userInputComplete);
 		
 		this.getChildren().addAll(buttons);
@@ -47,6 +46,11 @@ public class ButtonBox extends HBox {
 					
 					if(gv.currentPhase == CurrentPhase.PLAY_THINGS)
 						Utility.GotInput(gv.playLock);
+					
+					//allow end of recruitment phase when no character recruited
+					if(gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+							&& !gv.characterRecruited)
+						Utility.GotInput(gv.recruitLock);
 					
 					gv.userInputDone = true;
 				}
@@ -76,7 +80,8 @@ public class ButtonBox extends HBox {
 			
 			@Override
 		    public void handle(ActionEvent e) {
-				if(GameClient.game.gameView.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+				if(GameClient.game.gameView.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+						&& GameClient.game.gameView.characterRecruited == false)
 				{
 					int numSpecialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters().size();
 					int playerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
@@ -123,6 +128,9 @@ public class ButtonBox extends HBox {
 				case INITIAL_TRADE_THINGS:
 				case TRADE_THINGS:
 					getChildren().setAll(trade, userInputComplete);
+					break;
+				case RECRUIT_CHARACTER:
+					getChildren().setAll(recruitSpecial, userInputComplete);
 					break;
 				default:
 					getChildren().setAll(buttons);

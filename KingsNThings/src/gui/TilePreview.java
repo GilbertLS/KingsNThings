@@ -139,4 +139,8 @@ public class TilePreview extends VBox {
 			default: return viewNeutral;
 		}
 	}
+
+	public Tile getTile() {
+		return tileRef;
+	}
 }

@@ -381,6 +381,20 @@ public class Tile extends Region implements Draggable {
 									
 								}
 							}
+							else if (gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+							{
+								if(GameClient.game.isValidPlacement(tileRef, things, gv.getCurrentPlayer()))
+								{	
+									GameClient.game.sendPlayThingEvent(tileRef.x + "SPLIT"+ tileRef.y+"~"+things.get(0).thingID+"/");
+								
+									thisTile.addAll(thingViews, gv.getCurrentPlayer());
+									source.getListView().getItems().removeAll(thingViews);
+									
+									Utility.GotInput(gv.recruitLock);
+									
+									success = true;
+								}
+							}
 						}
 					}
 					

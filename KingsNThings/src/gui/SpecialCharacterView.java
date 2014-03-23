@@ -67,18 +67,22 @@ public class SpecialCharacterView extends Dialog{
 		
 		rollLabel.setPadding(new Insets(5,20,5,20));
 		rollLabel.setTextFill(Color.BLACK);
+		rollLabel.setText("Roll: 0");
 		labelBox.getChildren().add(rollLabel);
 		
 		rollAugmentationLabel.setPadding(new Insets(5,20,5,20));
 		rollAugmentationLabel.setTextFill(Color.BLACK);
+		rollAugmentationLabel.setText("Augmentation: 0");
 		labelBox.getChildren().add(rollAugmentationLabel);
 		
 		rollTotalLabel.setPadding(new Insets(5,20,5,20));
 		rollTotalLabel.setTextFill(Color.BLACK);
+		rollTotalLabel.setText("Total Roll: 0");
 		labelBox.getChildren().add(rollTotalLabel);
 		
 		requiredRollLabel.setPadding(new Insets(5,20,5,20));
 		requiredRollLabel.setTextFill(Color.BLACK);
+		requiredRollLabel.setText("Reuired Roll: 0");
 		labelBox.getChildren().add(requiredRollLabel);
 		
 		specialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters();
@@ -195,6 +199,10 @@ public class SpecialCharacterView extends Dialog{
 					{
 						GameClient.game.sendRecruitSpecialCharacterEvent(selection.thingRef.thingID, playerIndex);
 						GameClient.game.gameView.addToRack(selection.thingRef);
+						selection.thingRef.controlledBy = GameClient.game.gameModel.GetCurrentPlayer().faction;
+						
+						GameClient.game.gameView.characterRecruited = true;	
+						
 					}
 				}
 					

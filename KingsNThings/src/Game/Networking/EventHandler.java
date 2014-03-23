@@ -535,7 +535,9 @@ public class EventHandler {
 			
 			final int[] goldUpdates = GameClient.game.gameModel.distributeIncome();
 			
-			GameClient.game.sendMessageToView("You have been awarded" + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()]);		   
+			GameClient.game.sendMessageToView("You have been awarded " + goldUpdates[GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()] + " gold pieces.");		   
+			
+			GameClient.game.gameView.performPhase(CurrentPhase.AWARD_INCOME);
 			
 			GameClient.game.clearMessageOnView();
 			
@@ -780,12 +782,13 @@ public class EventHandler {
 				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
 				final ArrayList<Integer> thingIDsCopy = thingIDs;
 				final int gold = GameClient.game.gameModel.GetPlayer(playerIndex).getGold();
+				final int numThings = GameClient.game.gameModel.GetPlayer(playerIndex).getPlayerRack().size();
 				Platform.runLater(new Runnable() {
 			        @Override
 			        public void run() {
 						GameClient.game.gameView.updateTiles(hexTilesCopy, playerIndex);
 						GameClient.game.gameView.updateGold(gold, playerIndex);
-			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).removeThings(thingIDsCopy.size());
+			        	GameClient.game.gameView.playerList.getPlayerPanel(playerIndex).setThings(numThings);
 			        }
 				});
 			}

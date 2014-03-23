@@ -439,21 +439,21 @@ public class GameController {
 			
 			recruitSpecialCharacter();
 			
-			recruitThings();
+			//recruitThings();
 			
-			tradeThings();
+			//tradeThings();
 			
 			playThings();
 			
 			moveThings();
 			
-			PlayBattlePhase();
+			//PlayBattlePhase();
 			
-			gameWon = checkWin();
+			//gameWon = checkWin();
 			
-			playConstructionPhase();
+			//playConstructionPhase();
 			
-			gameWon = checkWin();
+			//gameWon = checkWin();
 		
 			//ChangePlayerOrder();
 		

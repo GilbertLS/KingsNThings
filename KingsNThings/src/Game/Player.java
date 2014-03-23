@@ -76,6 +76,7 @@ public class Player {
 
 	public void addThingToRack(Thing currentThing) {
 		playerRack.addThing(currentThing);
+		currentThing.controlledBy = faction;
 	}
 	
 	public PlayerRack getPlayerRack() {
