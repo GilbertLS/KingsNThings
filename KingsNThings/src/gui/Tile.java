@@ -30,7 +30,7 @@ public class Tile extends Region implements Draggable {
 	public ArrayList<ThingView> p2Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> p3Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> p4Things = 			new ArrayList<ThingView>();
-	public ArrayList<ThingView> neutralThings = 	new ArrayList<ThingView>();
+	public ArrayList<ThingView> defendingThings = 	new ArrayList<ThingView>();
 	public ThingView fort = null;
 	public ThingView specialIncome = null;
 	private int controllingPlayer = 0;
@@ -67,7 +67,7 @@ public class Tile extends Region implements Draggable {
     	else if (i == 3)
     		return p4Things;
     	else
-    		return neutralThings;
+    		return defendingThings;
     }
     
     public void add(ThingView t, int player) {
@@ -110,7 +110,7 @@ public class Tile extends Region implements Draggable {
     }
     
     public void updateThings(){
-    	for(int i = 0; i < 4; i++){
+    	for(int i = 0; i <= 4; i++){
     		updateThings(i);
     	}
     }
@@ -357,11 +357,8 @@ public class Tile extends Region implements Draggable {
 										{
 											//handle creatures
 										}
-										else
-										{
-											//update faction
-											update();
-										}
+
+										gv.updateTiles(tileRef, 4);
 									}
 									
 									thisTile.addAll(thingViews, gv.getCurrentPlayer());
@@ -369,7 +366,6 @@ public class Tile extends Region implements Draggable {
 									
 									success = true;
 									
-									Utility.GotInput(gv.moveLock);
 									//gv.moveMade = true;
 									
 									//string to update 
@@ -378,6 +374,8 @@ public class Tile extends Region implements Draggable {
 										
 									for(ThingView t: thingViews)
 										gv.returnString += t.thingRef.thingID + "/";
+									
+									Utility.GotInput(gv.moveLock);
 									
 								}
 							}
@@ -436,7 +434,7 @@ public class Tile extends Region implements Draggable {
 			case 2: return p2Things;
 			case 3: return p3Things;
 			case 4: return p4Things;
-			default: return neutralThings;
+			default: return defendingThings;
 		}
 	}
 	

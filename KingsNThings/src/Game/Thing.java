@@ -65,6 +65,12 @@ public abstract class Thing {
 		
 	}
 	
+	public boolean isSpecialIncome(){
+		return thingType == ThingType.SPECIAL_INCOME ||
+			   thingType == ThingType.SETTLEMENT;
+		
+	}
+	
 	public int getControlledByPlayerNum() {
 		if(controlledBy == null)
 			return -1;
@@ -89,5 +95,10 @@ public abstract class Thing {
 	
 	public boolean isFlipped() {
 		return this.isFlipped;
+	}
+
+	public void setFlipped(boolean b) {
+		isFlipped = b;
+		
 	}
 }

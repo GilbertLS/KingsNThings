@@ -92,7 +92,7 @@ public class GameController {
 		
 		assignInitialThings();
 		
-		//tradeInitialThings();
+		tradeInitialThings();
 		
 		playThings();
 		
@@ -439,23 +439,23 @@ public class GameController {
 			
 			recruitSpecialCharacter();
 			
-			//recruitThings();
+			recruitThings();
 			
-			//tradeThings();
+			tradeThings();
 			
 			playThings();
 			
 			moveThings();
 			
-			//PlayBattlePhase();
+			PlayBattlePhase();
 			
-			//gameWon = checkWin();
+			gameWon = checkWin();
 			
-			//playConstructionPhase();
+			playConstructionPhase();
 			
-			//gameWon = checkWin();
+			gameWon = checkWin();
 		
-			//ChangePlayerOrder();
+			ChangePlayerOrder();
 		
 		}while(!gameWon);
 	}
@@ -619,27 +619,7 @@ public class GameController {
 					.EventId(EventList.PAY_GOLD)
 					.EventParameters(args)
 					);
-			
-			/*args[1] = "Trade Recruits";
-			//ask for number of recruits to trade for
-			responses = GameControllerEventHandler.sendEvent(
-					new Event()
-					.EventId(EventList.DETERMINE_NUM_TRADE_THINGS)
-					.EventParameters(args)
-					.ExpectsResponse(true)
-					);
-			
-			for (int j=0; j<responses.length; j++){
-				if(responses[j].fromPlayer == gr.myID)
-				{
-					args[1] = responses[j].message.trim();
-				}
-			}
-			
-			//select recruits to trade
-			 */
-			
-			//determine total number of recruits
+
 			boolean[] intendedPlayers = new boolean[numClients];
 			intendedPlayers[gr.myID] = true;
 			
@@ -669,10 +649,6 @@ public class GameController {
     					.EventParameters(args);
     		
     		GameControllerEventHandler.sendEvent(e);
-			
-			//deal with excess in player rack
-			
-			//handle dealing with excess in player rack*/
 		}
 		
 
@@ -685,6 +661,7 @@ public class GameController {
 				new Event()
 					.EventId( EventList.AWARD_INCOME)
 					.EventParameters(args)
+					.ExpectsResponse(true)
 			);			
 	}
 

@@ -702,24 +702,24 @@ public class GameModel {
 
 	}
 
-	public void getThingsFromCup(int playerIndex, int numThings) {
-		Player player = playerFromIndex(playerIndex);
-				
+	public ArrayList<Thing> getThingsFromCup(int numThings) {
+		ArrayList<Thing> things = new ArrayList<Thing>();
+		
 		for(int i=0; i<numThings; i++)
 		{
 			if(!playingCup.isEmpty())
 			{
 				Thing currentThing = playingCup.remove(playingCup.size()-1);
-				
-				player.addThingToRack(currentThing);
-				currentThing.controlledBy = player.faction;
+				things.add(currentThing);
 			}
 			else
 			{
 				specialElimination = true;
-				return;
+				return things;
 			}
 		}
+		
+		return things;
 	}
 
 	public void distributeInitialGold() {
@@ -852,9 +852,11 @@ public class GameModel {
 			return player2;
 		case 2:
 			return player3;
-		default:
+		case 3:
 			return player4;
 		}
+		
+		return null;
 	}
 
 	public void removeFromPlayerRack(ArrayList<Integer> thingIDs, int playerIndex) {
@@ -899,7 +901,8 @@ public class GameModel {
 			
 			movedThings.add(thingPlayed);
 			
-			if(!player.ownedHexTiles.contains(tileTo) && tileTo.controlledBy == ControlledBy.NEUTRAL)
+			if(!player.ownedHexTiles.contains(tileTo) && tileTo.controlledBy == ControlledBy.NEUTRAL
+					&& tileTo.isOnlyPlayerOnTile(playerIndex))
 			{
 				updateTileFaction(playerIndex, tileTo.x, tileTo.y);
 			}
@@ -1049,8 +1052,10 @@ public class GameModel {
 			numThings = things.size()/2;
 		
 		//get new things from the cup
-		this.getThingsFromCup(playerIndex, numThings);
+		ArrayList<Thing> newThings = getThingsFromCup(numThings);
 		
+		for(Thing t: newThings)
+			GameClient.game.gameModel.playerFromIndex(playerIndex).addThingToRack(t);
 	}
 
 	public void returnToCup(Thing t) {

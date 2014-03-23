@@ -124,11 +124,14 @@ public class GameClientController {
 	}
 
 	public boolean rollForCreatures(int playerIndex, int x, int y) {
-		int roll = 1; //hard coded for iteration 1
+		int[] roll = Dice.rollDice(1); //hard coded for iteration 1
 		
 		boolean defendingCreatures = false;
-		if(roll != 1 && roll != 6)
+		if(roll[0] != 1 && roll[0] != 6)
 		{
+			createDefenseCreatures(roll[0], x, y);
+			sendCreateDefenseCreaturesEvent(playerIndex, roll[0], x, y);
+			
 			defendingCreatures = true;
 		}
 		else
@@ -138,6 +141,40 @@ public class GameClientController {
 
 		
 		return defendingCreatures;
+	}
+
+	private void sendCreateDefenseCreaturesEvent(int playerIndex, int roll, int x, int y) {
+		String[] args = {""+ playerIndex, ""+ roll, ""+x, ""+y};
+		
+		boolean[] intendedPlayers = new boolean[GameClient.game.gameModel.PlayerCount()];
+		for(int i=0; i<intendedPlayers.length; i++)
+			if (i != GameClient.game.gameModel.getCurrPlayerNumber())
+				intendedPlayers[i] = true;
+		
+		Event gameEvent = new Event()
+			.IntendedPlayers(intendedPlayers)
+			.EventId(EventList.CREATE_DEFENSE_CREATURES)
+			.EventParameters(args);
+	
+		Game.Networking.EventHandler.SendEvent(gameEvent);	
+	}
+
+	public void createDefenseCreatures(int roll, int x, int y) {
+		HexTile h = gameModel.gameBoard.getTile(x, y);
+		ArrayList<Thing> things = gameModel.getThingsFromCup(roll);
+		
+		//creating defense creatures implies this tile should be neutral
+		h.controlledBy = ControlledBy.NEUTRAL;
+		
+		//eliminate invalid defense creatrues
+		things = h.enforceValidDefense(things);
+		
+		for(Thing t: things)
+			if(t.isFlipped())
+				t.setFlipped(false);
+		
+		for(Thing t: things)
+			h.AddThingToTile(4, t);
 	}
 
 	public boolean isValidMove(HexTile originalTile, HexTile tileRef,

@@ -445,7 +445,10 @@ public class EventHandler {
 			final int playerIndex = Integer.parseInt(e.eventParams[0]);
 			final int numThings = Integer.parseInt(e.eventParams[1]);
 			
-			GameClient.game.gameModel.getThingsFromCup(playerIndex, numThings);
+			ArrayList<Thing> things = GameClient.game.gameModel.getThingsFromCup(numThings);
+			
+			for(Thing t: things)
+				GameClient.game.gameModel.playerFromIndex(playerIndex).addThingToRack(t);
 			
 			GameClient.game.updatePlayerRack(playerIndex);
 		}
@@ -540,6 +543,12 @@ public class EventHandler {
 			GameClient.game.gameView.performPhase(CurrentPhase.AWARD_INCOME);
 			
 			GameClient.game.clearMessageOnView();
+			
+			//send finished
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.AWARD_INCOME)
+			);
 			
 			Platform.runLater(new Runnable() {
 		        @Override
@@ -928,6 +937,23 @@ public class EventHandler {
 			        }
 				});
 			}
+		}
+		else if(e.eventId == EventList.CREATE_DEFENSE_CREATURES)
+		{
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			int roll = Integer.parseInt(e.eventParams[1]);
+			int x = Integer.parseInt(e.eventParams[2]);
+			int y = Integer.parseInt(e.eventParams[3]);
+			final HexTile h = GameClient.game.gameModel.gameBoard.getTile(x, y);
+			
+			GameClient.game.createDefenseCreatures(roll, x, y);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.updateTiles(h, 4);
+		        }
+			});
 		}
 		else if(e.eventId == EventList.HANDLE_RACK_OVERLOAD)
 		{
