@@ -3,13 +3,17 @@ package Game;
 import java.util.ArrayList;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Networking.Event;
 import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import gui.GameView;
+import gui.ThingView;
 
 public class GameClientController {
 	public GameModel gameModel; 	//conceptual model of a Kings N' things Game
@@ -291,5 +295,42 @@ public class GameClientController {
 		}
 		
 		return tiles;
+	}
+	
+	public boolean validDragStart(GameView gv, ListView<ThingView> listView, ArrayList<Integer> selectedIds) {
+		//invalid if play things phase, and source isn't rack
+		if(!listView.equals(gv.rack) && gv.currentPhase == CurrentPhase.PLAY_THINGS)
+			return false;
+		
+		//invalid if a thing isn't owned by current player
+		ObservableList<ThingView> items = listView.getItems();
+		for(Integer i: selectedIds)
+			if(items.get(i).thingRef.getControlledByPlayerNum() != GameClient.game.gameView.getCurrentPlayer())
+				return false;
+		
+		//invalid if movement phase and player isn't alone on the tile
+		if(gv.currentPhase == CurrentPhase.MOVEMENT
+			&& !gv.tilePreview.getTile().getTileRef().isOnlyPlayerOnTile(gv.getCurrentPlayer()))
+				return false;
+		
+		//invalid if recruit character phase and the dragged items
+		//does not consist of exactly 1 special character
+		if(gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+			if(selectedIds.size() != 1
+				|| !items.get(selectedIds.get(0)).thingRef.isSpecialCharacter())
+				return false;
+		
+		return true;
+	}
+
+	public void sendPlayThingEvent(String param) {
+		String[] params = {"" + gameModel.getCurrPlayerNumber(), param};
+		
+		//if so, send event out to update other players
+		Event gameEvent = new Event()
+			.EventId(EventList.HANDLE_PLAY_THINGS)
+			.EventParameters(params);
+
+		Game.Networking.EventHandler.SendEvent(gameEvent);	
 	}
 }

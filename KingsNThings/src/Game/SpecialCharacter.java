@@ -10,6 +10,8 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 	public SpecialCharacter(String name, int combatValue, String frontFileName)
 	{
 		super(ThingType.SPECIAL_CHARACTER, name, combatValue, frontFileName);
+		
+		isFlipped = false;
 	}
 	
 	public SpecialCharacter IsFlying(boolean isFlying){

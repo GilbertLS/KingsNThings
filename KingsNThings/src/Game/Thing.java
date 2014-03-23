@@ -9,7 +9,7 @@ import Game.GameConstants.ThingType;
 public abstract class Thing {
 	public int thingID;		//unique identifier
 	private static int thingIDCount = 0; //current unique identifier
-	private Boolean isFlipped;	//whether the Thing is flipped over currently
+	protected Boolean isFlipped;	//whether the Thing is flipped over currently
 	ThingType thingType;		//type of thing (enum defined in GameConstants class
 	String name;				//display name of this Thing
 	HexTile currentTile;
@@ -56,6 +56,12 @@ public abstract class Thing {
 			   thingType == ThingType.TERRAIN_LORD ||
 			   thingType == ThingType.FORT ||
 			   thingType == ThingType.SETTLEMENT;
+		
+	}
+	
+	public boolean isSpecialCharacter(){
+		return thingType == ThingType.SPECIAL_CHARACTER ||
+			   thingType == ThingType.TERRAIN_LORD;
 		
 	}
 	

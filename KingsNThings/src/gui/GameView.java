@@ -16,6 +16,7 @@ import Game.Thing;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -44,6 +45,8 @@ public class GameView extends Scene {
 	public Semaphore submitLock = new Semaphore(0);
 	public Semaphore moveLock = new Semaphore(0);
 	public Semaphore playLock = new Semaphore(0);
+	public Semaphore recruitLock = new Semaphore(0);
+	public boolean characterRecruited = false;
 	//public boolean moveMade = false;
 	
     public GameView(BorderPane r, Stage ps) {
@@ -123,8 +126,15 @@ public class GameView extends Scene {
 		inputLock = new Semaphore(0);
 		
 		//update button controls for specific phase
-		
 		buttonBox.updateButtons(currentPhase);
+		
+		//if recruiting character, do not allow end of phase until
+		//character played
+		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+		{
+			Utility.PromptForInput(recruitLock);
+			characterRecruited = false;
+		}
 		
 		Utility.PromptForInput(inputLock);
 		

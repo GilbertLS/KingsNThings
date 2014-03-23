@@ -92,7 +92,7 @@ public class GameController {
 		
 		assignInitialThings();
 		
-		tradeInitialThings();
+		//tradeInitialThings();
 		
 		playThings();
 		
@@ -439,23 +439,23 @@ public class GameController {
 			
 			recruitSpecialCharacter();
 			
-			recruitThings();
+			//recruitThings();
 			
-			tradeThings();
+			//tradeThings();
 			
 			playThings();
 			
 			moveThings();
 			
-			PlayBattlePhase();
+			//PlayBattlePhase();
 			
-			gameWon = checkWin();
+			//gameWon = checkWin();
 			
-			playConstructionPhase();
+			//playConstructionPhase();
 			
-			gameWon = checkWin();
+			//gameWon = checkWin();
 		
-			ChangePlayerOrder();
+			//ChangePlayerOrder();
 		
 		}while(!gameWon);
 	}
@@ -520,12 +520,12 @@ public class GameController {
 		Event e = new Event()
 			.EventId(EventList.DO_CONSTRUCTION)
 			.ExpectsResponse(true);
-			    		
+				    		
 		GameControllerEventHandler.sendEvent(e);	
-		
+			
 		e = new Event()
 		.EventId(EventList.CLEAR_CONSTRUCTION);
-
+	
 		GameControllerEventHandler.sendEvent(e);
 	}
 	

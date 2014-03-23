@@ -57,34 +57,27 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				
 				GameView gv = GameClient.game.gameView;
 
-				if(gv.currentPhase == CurrentPhase.MOVEMENT || gv.currentPhase == CurrentPhase.PLAY_THINGS)
+				//drag can be started from any of these phases
+				if(gv.currentPhase == CurrentPhase.MOVEMENT 
+						|| gv.currentPhase == CurrentPhase.PLAY_THINGS
+						|| gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
 				{
-					//prevent movement from tile preview during playthings phase
-					if(!(!getListView().equals(gv.rack) && gv.currentPhase == CurrentPhase.PLAY_THINGS))
-					{
-						ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
+					ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
+					
+					//check valid drag
+					if(GameClient.game.validDragStart(gv, getListView(), selectedIds))
+					{															
+						Dragboard db = startDragAndDrop(TransferMode.MOVE);
+						ClipboardContent content = new ClipboardContent();
+						content.put(thingRackIds, selectedIds);
 						
-						//Check if thing is owned by player
-						if (getListView().getItems().get(selectedIds.get(0)).thingRef.getControlledByPlayerNum() == GameClient.game.gameView.getCurrentPlayer()) {
-								
-							//check not pinned
-							if( getListView().equals(gv.rack)
-									|| GameClient.game.gameView.tilePreview.tileRef.getTileRef().isOnlyPlayerOnTile(gv.getCurrentPlayer()))
-							{		
-								Dragboard db = startDragAndDrop(TransferMode.MOVE);
-								ClipboardContent content = new ClipboardContent();
-								content.put(thingRackIds, selectedIds);
-						
-								content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + "~");
+						content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + "~");
 							
-								db.setContent(content);
-							}
-						}
+						db.setContent(content);
 					}
 				}
-
 				//db.setDragView(arg0);
-				e.consume();;
+				e.consume();
 			}
 		});
 	}
