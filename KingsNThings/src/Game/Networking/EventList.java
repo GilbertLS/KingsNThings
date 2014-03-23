@@ -52,4 +52,7 @@ public class EventList {
 	public static final int HANDLE_RACK_OVERLOAD = 128;
 	public static final int TRADE_THINGS = 129;
 	public static final int HANDLE_TRADE_THINGS = 130;
+	public static final int RANDOMIZE_UNUSED_TILES = 131;
+	public static final int UPDATE_UNUSED_TILES = 132;
+	public static final int REVEAL_HEX_TILES = 133;
 }

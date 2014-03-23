@@ -394,4 +394,10 @@ public class HexTile implements IIncomable{
 		
 		return true;
 	}
+
+	public void setCordinates(int x, int y) {
+		this.x = x;
+		this.y = y;
+		
+	}
 }

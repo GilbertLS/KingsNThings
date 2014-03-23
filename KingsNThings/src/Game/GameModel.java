@@ -19,7 +19,7 @@ import java.util.LinkedList;
 public class GameModel {
 	//--------GAME OBJECTS-----------
 	//private GameBoard gameBoard;						//board holding the Hex Tiles in play
-	private LinkedList<HexTile> unusedTiles;				//all unused HexTiles
+	private ArrayList<HexTile> unusedTiles;				//all unused HexTiles
 	private Player player1, player2, player3, player4;	//Players of the game
 	private Player currPlayer;
 	private ArrayList<Thing> playingCup;					//Container to hold unplayed Things
@@ -57,7 +57,7 @@ public class GameModel {
 	{
 		gameBoard = new GameBoard();
 		
-		unusedTiles = new LinkedList<HexTile>();
+		unusedTiles = new ArrayList<HexTile>();
 		
 		this.player1 = new Player(0);
 		this.player2 = new Player(1);
@@ -104,233 +104,58 @@ public class GameModel {
 	public static String initializeHexTiles() {		
 		String initializeHexTilesString = "";
 		
-		//HARD-CODING FOR FIRST ITERATION
-		initializeHexTilesString += "DESERT" + "SPLIT" + 0 + "SPLIT" + 3;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "SWAMP" + "SPLIT" + 1 + "SPLIT" + 3;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + 2 + "SPLIT" + 3;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "JUNGLE" + "SPLIT" + 3 + "SPLIT" + 3;
-		initializeHexTilesString += "/";
+		ArrayList<HexTile> newTiles = new ArrayList<HexTile>(GameConstants.MAX_NUM_TILES);
 		
-		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + -1 + "SPLIT" + 2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "JUNGLE" + "SPLIT" + 0 + "SPLIT" + 2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "PLAINS" + "SPLIT" + 1 + "SPLIT" + 2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + 2 + "SPLIT" + 2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "SWAMP" + "SPLIT" + 3 + "SPLIT" + 2;
-		initializeHexTilesString += "/";
-		
-		initializeHexTilesString += "FOREST" + "SPLIT" + -2 + "SPLIT" + 1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + -1 + "SPLIT" + 1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "SWAMP" + "SPLIT" + 0 + "SPLIT" + 1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FOREST" + "SPLIT" + 1 + "SPLIT" + 1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + 2 + "SPLIT" + 1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "DESERT" + "SPLIT" + 3 + "SPLIT" + 1;
-		initializeHexTilesString += "/";
-		
-		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + -3 + "SPLIT" + 0;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "PLAINS" + "SPLIT" + -2 + "SPLIT" + 0;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FOREST" + "SPLIT" + -1 + "SPLIT" + 0;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + 0 + "SPLIT" + 0;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "JUNGLE" + "SPLIT" + 1 + "SPLIT" + 0;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + 2 + "SPLIT" + 0;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FOREST" + "SPLIT" + 3 + "SPLIT" + 0;
-		initializeHexTilesString += "/";
-		
-		initializeHexTilesString += "JUNGLE" + "SPLIT" + -3 + "SPLIT" + -1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "DESERT" + "SPLIT" + -2 + "SPLIT" + -1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "SEA" + "SPLIT" + -1 + "SPLIT" + -1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "PLAINS" + "SPLIT" + 0 + "SPLIT" + -1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "SWAMP" + "SPLIT" + 1 + "SPLIT" + -1;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "PLAINS" + "SPLIT" + 2 + "SPLIT" + -1;
-		initializeHexTilesString += "/";
-		
-		initializeHexTilesString += "PLAINS" + "SPLIT" + -3 + "SPLIT" + -2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FOREST" + "SPLIT" + -2 + "SPLIT" + -2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "SWAMP" + "SPLIT" + -1 + "SPLIT" + -2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "DESERT" + "SPLIT" + 0 + "SPLIT" + -2;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FOREST" + "SPLIT" + 1 + "SPLIT" + -2;
-		initializeHexTilesString += "/";
-		
-		initializeHexTilesString += "DESERT" + "SPLIT" + -3 + "SPLIT" + -3;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "MOUNTAIN" + "SPLIT" + -2 + "SPLIT" + -3;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "JUNGLE" + "SPLIT" + -1 + "SPLIT" + -3;
-		initializeHexTilesString += "/";
-		initializeHexTilesString += "FROZEN_WASTE" + "SPLIT" + -0 + "SPLIT" + -3;
-		initializeHexTilesString += "/";
-		
-		initializeHexTilesString += " ";
-		
-		//INITIALIZE UNUSED TILES
-		initializeHexTilesString += "FROZEN_WASTE";
-		initializeHexTilesString += "/";
-
-		
-		return initializeHexTilesString;
-		
-		//COMMENTED OUT FOR FIRST ITERATION
-		/*//add all but 4 SEA HexTiles
+		//add all but 4 SEA HexTiles
 		for(int i=0; i < GameConstants.NUM_SEA_TILES-4; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.SEA));
+			newTiles.add(new HexTile(Terrain.SEA));
 		}
 		
 		for(int i=0; i < GameConstants.NUM_JUNGLE_TILES; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.JUNGLE));
+			newTiles.add(new HexTile(Terrain.JUNGLE));
 		}
 		
 		for(int i=0; i < GameConstants.NUM_FROZEN_WASTE_TILES; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.FROZEN_WASTE));
+			newTiles.add(new HexTile(Terrain.FROZEN_WASTE));
 		}
 		
 		for(int i=0; i < GameConstants.NUM_FOREST_TILES; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.FOREST));
+			newTiles.add(new HexTile(Terrain.FOREST));
 		}
 		
 		for(int i=0; i < GameConstants.NUM_PLAINS_TILES; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.PLAINS));
+			newTiles.add(new HexTile(Terrain.PLAINS));
 		}
 		
 		for(int i=0; i < GameConstants.NUM_SWAMP_TILES; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.SWAMP));
+			newTiles.add(new HexTile(Terrain.SWAMP));
 		}
 		
 		for(int i=0; i < GameConstants.NUM_MOUNTAIN_TILES; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.MOUNTAIN));
+			newTiles.add(new HexTile(Terrain.MOUNTAIN));
 		}
 		
 		for(int i=0; i < GameConstants.NUM_DESERT_TILES; i++)
 		{
-			unusedTiles.add(new HexTile(Terrain.DESERT));
-		}
-		*/
-		
-		//COMMENTED OUT FOR FIRST ITERATION
-		/*
-		int x=0, y=0;	//current tile coordinates
-		
-		//add center tile
-		gameBoard.addHexTile(unusedTiles.pop(), x, y);
-		
-		for(int i=1; 
-				i<=
-					(playerCount == 4?
-							GameConstants.NUM_FOUR_PLAYER_TILE_RINGS:
-							GameConstants.NUM_TWO_OR_THREE_PLAYER_TILE_RINGS);
-				i++)
-		{
-			//move to next ring of tiles ("upwards")
-			x++;
-			y++;
-			
-			//place first tile in ring
-			gameBoard.addHexTile(unusedTiles.pop(), x, y);
-			
-			//place top-right tiles
-			for(int j=0; j<i; j++)
-			{				
-				//move in the negative y direction
-				y--;
-				
-				gameBoard.addHexTile(unusedTiles.pop(), x, y);
-			}
-						
-			//place right tiles
-			for(int j=0; j<i; j++)
-			{
-				//move in the "downward" direction
-				x--;
-				y--;
-				
-				gameBoard.addHexTile(unusedTiles.pop(), x, y);
-			}
-			
-			//place bottom-right tiles
-			for(int j=0; j<i; j++)
-			{				
-				//move in the negative x direction
-				x--;
-				
-				gameBoard.addHexTile(unusedTiles.pop(), x, y);
-			}	
-			
-			//place bottom-left tiles
-			for(int j=0; j<i; j++)
-			{				
-				//move in the positive y direction
-				y++;
-				
-				gameBoard.addHexTile(unusedTiles.pop(), x, y);
-			}
-			
-			//place left tiles
-			for(int j=0; j<i; j++)
-			{				
-				//move in the "upward" direction
-				x++;
-				y++;
-				
-				gameBoard.addHexTile(unusedTiles.pop(), x, y);
-			}
-			
-			//place top-left tiles
-			for(int j=0; j<i; j++)
-			{				
-				//move in the positive x direction
-				x++;
-				
-				gameBoard.addHexTile(unusedTiles.pop(), x, y);
-			}
+			newTiles.add(new HexTile(Terrain.DESERT));
 		}
 		
-		//add in remaining 4 SEA HexTles and shuffle again
-		for(int i=0; i<4; i++)
-		{
-			unusedTiles.add(new HexTile(Terrain.SEA));
+		//shuffle tiles
+		Collections.shuffle(newTiles);
+		
+		for(HexTile h: newTiles){
+			initializeHexTilesString += h.terrain;
+			initializeHexTilesString += "/";
 		}
-		shuffleUnusedTiles();
-		*/
-	}
-
-	public void randomizePlayingCup() {
-		Collections.shuffle(playingCup);
-	}
-
-	public void randomizeSpecialCharacters() {
-		Collections.shuffle(unownedCharacters);
+		
+		return initializeHexTilesString;
 	}
 	
 	public void setPlayerOrder(int firstPlayerIndex) {
@@ -355,9 +180,6 @@ public class GameModel {
 	}
 	//--------------/end INITIAL SETUP METHODS-----------
 	
-	public void shuffleUnusedTiles() {
-		Collections.shuffle(unusedTiles);
-	}
 	public int rollDice() {
 		return dice.rollDice();
 	}
@@ -377,35 +199,93 @@ public class GameModel {
 		player3.updatePlayerOrder(playerCount);	
 		player4.updatePlayerOrder(playerCount);	
 	}
-
-	public HexTile[][] setInitialHexTiles(String[] hexTileStrings) {
-		for(int i=0; i< hexTileStrings.length; i++)
+	
+	public HexTile[][] setInitialHexTiles(ArrayList<HexTile> hexTiles)
+	{
+		int x=0, y=0;	//current tile coordinates
+		
+		//add center tile
+		gameBoard.addHexTile(hexTiles.remove(0), x, y);
+		
+		for(int i=1; 
+				i<=
+					(playerCount == 4?
+							GameConstants.NUM_FOUR_PLAYER_TILE_RINGS:
+							GameConstants.NUM_TWO_OR_THREE_PLAYER_TILE_RINGS);
+				i++)
 		{
-			String hexTileString = hexTileStrings[i];
-			String[] hexTileParamStrings = hexTileString.split("SPLIT");
 			
-			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(hexTileParamStrings[0]);
-			int x = Integer.parseInt(hexTileParamStrings[1]);
-			int y = Integer.parseInt(hexTileParamStrings[2]);
+			//move to next ring of tiles ("upwards")
+			x++;
+			y++;
 			
-			gameBoard.addHexTile(new HexTile(terrain), x, y);
+			//place first tile in ring
+			gameBoard.addHexTile(hexTiles.remove(0), x, y);
+			
+			//place top-right tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the negative y direction
+				y--;
+				
+				gameBoard.addHexTile(hexTiles.remove(0), x, y);
+			}
+						
+			//place right tiles
+			for(int j=0; j<i; j++)
+			{
+				//move in the "downward" direction
+				x--;
+				y--;
+				
+				gameBoard.addHexTile(hexTiles.remove(0), x, y);
+			}
+			
+			//place bottom-right tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the negative x direction
+				x--;
+				
+				gameBoard.addHexTile(hexTiles.remove(0), x, y);
+			}	
+			
+			//place bottom-left tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the positive y direction
+				y++;
+				
+				gameBoard.addHexTile(hexTiles.remove(0), x, y);
+			}
+			
+			//place left tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the "upward" direction
+				x++;
+				y++;
+				
+				gameBoard.addHexTile(hexTiles.remove(0), x, y);
+			}
+			
+			//place top-left tiles
+			for(int j=0; j<i; j++)
+			{				
+				//move in the positive x direction
+				x++;
+		
+				gameBoard.addHexTile(hexTiles.remove(0), x, y);
+			}
+		}
+		
+		unusedTiles.addAll(hexTiles);
+		for(int i=0; i<4; i++)
+		{
+			unusedTiles.add(new HexTile(Terrain.SEA));
 		}
 		
 		return gameBoard.getTiles();
-		
-	}
-
-	public void setInitialUnusedHexTiles(String[] unusedHexTileStrings) {
-		for(int i=0; i< unusedHexTileStrings.length; i++)
-		{
-			String hexTileString = unusedHexTileStrings[i];
-			String[] hexTileParamStrings = hexTileString.split("SPLIT");
-			
-			GameConstants.Terrain terrain = GameConstants.Terrain.valueOf(hexTileParamStrings[0]);
-			
-			unusedTiles.add(new HexTile(terrain));
-		}
-		
 	}
 	
 	public void printCurrentBoardTiles()
@@ -864,12 +744,22 @@ public class GameModel {
 				int x = selectedTile.x;
 				int y = selectedTile.y;
 				
-				//need to modify for 2/3 players
-				if((x == 3 && y == 1)
-						||(x == 1 && y == 3)
-						||(x == -3 && y == -1)
-						||(x == -1 && y == -3))
-					return true;
+				if(playerCount == 4)
+				{
+					if((x == 3 && y == 1)
+							||(x == 1 && y == 3)
+							||(x == -3 && y == -1)
+							||(x == -1 && y == -3))
+						return true;
+				}
+				else
+				{
+					if((x == 2 && y == 1)
+							||(x == 1 && y == 2)
+							||(x == -2 && y == -1)
+							||(x == -1 && y == -2))
+						return true;
+				}
 			}
 			else
 			{
@@ -1128,8 +1018,7 @@ public class GameModel {
 		}
 		
 		//return them to the cup
-		for(Thing t: things)
-		{
+		for(Thing t: things){
 			returnToCup(t);
 		}
 		
@@ -1148,5 +1037,38 @@ public class GameModel {
 		//enforce special elimination
 		if(!specialElimination)
 			playingCup.add(0, t);
+		else
+			t = null;
+	}
+
+	public void randomizePlayingCup() {
+		Collections.shuffle(playingCup);
+		
+	}
+
+	public void randomizeUnusedTiles() {
+		Collections.shuffle(unusedTiles);
+	}
+
+	public String getUnusedTileString() {
+		String ret = "";
+		
+		for(HexTile h: unusedTiles)
+		{
+			ret += h.terrain + " ";
+		}
+		
+		return ret;
+	}
+
+	public void setUnusedTiles(ArrayList<Terrain> tileTerrains) {
+		ArrayList<HexTile> newTiles = new ArrayList<HexTile>();
+		
+		for(Terrain t: tileTerrains)
+		{
+			newTiles.add(new HexTile(t));
+		}
+		
+		unusedTiles = newTiles;
 	}
 }

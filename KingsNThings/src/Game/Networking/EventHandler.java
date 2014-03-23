@@ -355,15 +355,14 @@ public class EventHandler {
 			int tileX = Integer.parseInt(e.eventParams[3]);
 			int tileY = Integer.parseInt(e.eventParams[4]);
 			GameClient.game.gameModel.boardController.AddThingToTile(creature, player, tileX, tileY);
-		} 	else if (e.eventId == EventList.SET_HEX_TILES) {
-			String boardHexTilesString = e.eventParams[0];
-			String unusedHexTileString = e.eventParams[1];
+		} 	
+		else if (e.eventId == EventList.SET_HEX_TILES) 
+		{
+			String[] boardHexTileStrings = e.eventParams[0].trim().split("/");
 			
-			String[] boardHexTileStrings = boardHexTilesString.split("/");
-			String[] unusedHexTileStrings = unusedHexTileString.split("/");
+			ArrayList<HexTile> tiles = GameClient.game.parseInitialHexTiles(boardHexTileStrings);
 			
-			final HexTile[][] h = GameClient.game.gameModel.setInitialHexTiles(boardHexTileStrings);
-			GameClient.game.gameModel.setInitialUnusedHexTiles(unusedHexTileStrings);
+			final HexTile[][] h = GameClient.game.gameModel.setInitialHexTiles(tiles);
 			
 			Platform.runLater(new Runnable() {
 		        @Override
@@ -371,6 +370,35 @@ public class EventHandler {
 		        	GameClient.game.gameView.board.setTiles(h);
 		        }
 		    });
+		}
+		else if (e.eventId == EventList.RANDOMIZE_UNUSED_TILES)
+		{
+			GameClient.game.gameModel.randomizeUnusedTiles();
+			
+			String thingIDs = GameClient.game.gameModel.getUnusedTileString();
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.RANDOMIZE_UNUSED_TILES)
+						.EventParameter(thingIDs)
+				);
+		}
+		else if (e.eventId == EventList.UPDATE_UNUSED_TILES)
+		{
+			String[] thingIDStrings = e.eventParams[0].split(" ");
+			
+			ArrayList<Terrain> tileTerrains = new ArrayList<Terrain>();
+			
+			for(String s: thingIDStrings)
+			{
+				tileTerrains.add(Terrain.valueOf(s));
+			}
+			
+			GameClient.game.gameModel.setUnusedTiles(tileTerrains);
+		}
+		else if (e.eventId == EventList.REVEAL_HEX_TILES)
+		{
+			GameClient.game.gameView.showHideAllTiles(true);
 		}
 		else if (e.eventId == EventList.RANDOMIZE_THINGS)
 		{
