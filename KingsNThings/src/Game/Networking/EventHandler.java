@@ -837,16 +837,17 @@ public class EventHandler {
 		else if(e.eventId == EventList.DO_CONSTRUCTION)
 		{
 			GameClient.game.sendMessageToView("Please construct or upgrade Forts");		        	
-						
+							
 			GameClient.game.gameView.performPhase(CurrentPhase.CONSTRUCTION);	
 					
 			GameClient.game.clearMessageOnView();
-			
+				
 			//send finished
 			EventHandler.SendEvent(
 					new Event()
 						.EventId(EventList.DO_CONSTRUCTION)
 			);
+					
 		}
 		else if(e.eventId == EventList.HANDLE_CONSTRUCTION)
 		{		

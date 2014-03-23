@@ -12,7 +12,7 @@ import Game.GameConstants.Terrain;
 public class Player {
 	public PlayerRack playerRack;		//Rack to hold currently unplayed Things
 	private int playerNum;				//Number identifying player
-	public int gold;					//current gold stash of this player
+	private int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
 	public ControlledBy faction;
 	public ArrayList<Fort> ownedForts;
@@ -174,17 +174,6 @@ public class Player {
 		for(SpecialCharacter sc: specialCharacters)
 			gold += sc.getIncome();
 		
-		if(gold > 0)
-		{
-			System.out.println("GOLD HAS BEEN AWARDED TO PLAYER - " + GetPlayerNum() + "in the amount of " + gold);
-			System.out.println("# Hexes: " + ownedHexTiles.size());
-			System.out.println("# Forts: " + ownedForts.size());
-			System.out.println("# Special Incomes: " + ownedSpecialIncomes.size());
-			System.out.println("# Settlements: " + ownedSettlements.size());
-			System.out.println("# Special Characters: " + specialCharacters.size());
-		}
-		
-		addGold(gold);
 		return gold;
 	}
 

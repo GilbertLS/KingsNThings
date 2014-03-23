@@ -123,7 +123,6 @@ public class GameView extends Scene {
 		inputLock = new Semaphore(0);
 		
 		//update button controls for specific phase
-		
 		buttonBox.updateButtons(currentPhase);
 		
 		Utility.PromptForInput(inputLock);

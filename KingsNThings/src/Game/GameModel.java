@@ -739,6 +739,8 @@ public class GameModel {
 			player = playerFromIndex(i);
 		
 			playerGoldUpdates[i] = player.getIncome();
+			
+			player.addGold(playerGoldUpdates[i]);
 		}
 		
 		return playerGoldUpdates;
@@ -956,15 +958,15 @@ public class GameModel {
 			return false;
 		
 		//invalid if already constructed
-		if(!h.constructionAllowed)
+		else if(!h.constructionAllowed)
 			return false;
 		
 		//or if cant afford
-		if(player.getGold() < 5)
+		else if(player.getGold() < 5)
 			return false;
 		
 		//or has fort and...
-		if(h.hasFort())
+		else if(h.hasFort())
 		{
 			//is trying to upgrade to citadel but doesn't have the income or..
 			if(h.getFort().getLevel() == Level.CASTLE)
