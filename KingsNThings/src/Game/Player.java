@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.Level;
 import Game.GameConstants.Terrain;
 
 /*
@@ -19,6 +20,7 @@ public class Player {
 	public ArrayList<SpecialIncome> ownedSpecialIncomes;
 	public ArrayList<Settlement> ownedSettlements;
 	public ArrayList<HexTile> ownedHexTiles;
+	private boolean citadelConstructed = false;
 	
 	
 	public int GetPlayerNum(){
@@ -84,8 +86,9 @@ public class Player {
 		gold += amount;
 	}
 
-	public void addTower(Fort f) {
+	public void addFort(Fort f) {
 		ownedForts.add(f);
+		f.controlledBy = faction;
 	}
 
 	public void addHexTile(HexTile h) {
@@ -195,5 +198,35 @@ public class Player {
 
 	public boolean rackTooFull() {
 		return playerRack.tooFull();
+	}
+
+	public boolean hasCitadel() {
+		for(Fort f: ownedForts)
+			if (f.getLevel() == Level.CITADEL)
+				return true;
+		
+		return false;
+	}
+
+	public boolean citadelWasConstructed() {
+		return citadelConstructed;
+	}
+
+	public void setCitadelConstructed(boolean constructed) {
+		citadelConstructed = constructed;
+	}
+
+	public int getNumCitadels() {
+		int num =0;
+		
+		for(Fort f: ownedForts)
+			if(f.getLevel() == Level.CITADEL)
+				num++;
+		
+		return num;
+	}
+	
+	public void removeFort(Fort f){
+		ownedForts.remove(f);
 	}
 }

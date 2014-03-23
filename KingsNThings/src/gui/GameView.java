@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+
 import Game.Creature;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
@@ -151,7 +152,6 @@ public class GameView extends Scene {
 		
 		String s = userInputDone + " " + returnString;
 		
-		//moveMade = false;
 		userInputDone = false;
 		returnString = "";
 		
@@ -357,6 +357,14 @@ public class GameView extends Scene {
 
 	public void addToRack(Thing thingRef) {
 		rack.add(new ThingView(thingRef));
+	}
+
+	public void handleWin(final ArrayList<Integer> winingPlayers) {
+		Platform.runLater(new Runnable(){
+			public void run(){
+				//output the winning players here
+			}
+		});
 	}
 	
 }

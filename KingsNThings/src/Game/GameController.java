@@ -88,7 +88,7 @@ public class GameController {
 		
 		placeThingsOnTile(2, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
@@ -431,6 +431,8 @@ public class GameController {
 	}
 	
 	private void playPhases(){
+		boolean gameWon = false;
+		
 		do
 		{
 			distributeIncome();
@@ -447,14 +449,48 @@ public class GameController {
 			
 			PlayBattlePhase();
 			
-			//playConstructionPhase();
+			gameWon = checkWin();
+			
+			playConstructionPhase();
+			
+			gameWon = checkWin();
 		
 			ChangePlayerOrder();
 		
-		}while(true);
-
+		}while(!gameWon);
 	}
 	
+	private boolean checkWin() {
+		String[] args = {"",""};
+		
+		boolean[] intendedPlayers = new boolean[numClients];
+		intendedPlayers[0] = true;
+		
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.CHECK_WIN)
+					.ExpectsResponse(true)
+					.IntendedPlayers(intendedPlayers)
+			);	
+		
+		for(Response r: responses)
+		{
+			if(r.fromPlayer == 0)
+				args = r.message.split("SPLIT");
+		}
+		
+		boolean ret = Boolean.parseBoolean(args[0]);
+		
+		if(ret)
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.HANDLE_WIN)
+					.EventParameter(args[1])
+			);
+		
+		return ret;
+	}
+
 	private void tradeThings() {
 		for(GameRouter gr: GameServer.servers)
 		{			
@@ -486,6 +522,11 @@ public class GameController {
 			.ExpectsResponse(true);
 			    		
 		GameControllerEventHandler.sendEvent(e);	
+		
+		e = new Event()
+		.EventId(EventList.CLEAR_CONSTRUCTION);
+
+		GameControllerEventHandler.sendEvent(e);
 	}
 	
 	private void recruitSpecialCharacter() {

@@ -492,6 +492,27 @@ public class EventHandler {
 				GameClient.game.updatePlayerRack(playerIndex);
 			}
 		}
+		else if (e.eventId == EventList.CHECK_WIN)
+		{
+			String args = GameClient.game.gameModel.checkWin();
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.CHECK_WIN)
+						.EventParameter(args)
+			);
+		}
+		else if (e.eventId == EventList.HANDLE_WIN)
+		{
+			String[] winingIndiciesString = e.eventParams[0].trim().split(" ");
+			
+			ArrayList<Integer> winningIndicies = new ArrayList<Integer>();
+			
+			for(String s: winingIndiciesString)
+				winningIndicies.add(Integer.parseInt(s));
+			
+			GameClient.game.gameView.handleWin(winningIndicies);
+		}
 		else if (e.eventId == EventList.DISTRIBUTE_INITIAL_GOLD)
 		{
 			final int numClients = Integer.parseInt(e.eventParams[0]);
@@ -849,6 +870,10 @@ public class EventHandler {
 						}
 					});
 			}
+		}
+		else if(e.eventId == EventList.CLEAR_CONSTRUCTION)
+		{
+			GameClient.game.gameModel.clearConstructions();
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
