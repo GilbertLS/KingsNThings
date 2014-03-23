@@ -6,11 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialogs;
-
-import Game.Networking.GameClient;
 import Game.Networking.Protocol;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -22,7 +18,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class MenuView extends Stage {
@@ -35,7 +30,7 @@ public class MenuView extends Stage {
 	
 	public MenuView(String[] args) {
 		super();
-		
+				
 		if(args.length > 1) {
 			argIp 	= args[0];
 			argPort = args[1];
@@ -44,29 +39,59 @@ public class MenuView extends Stage {
 		this.setupMainMenu();
 		this.setupJoinMenu();
 		this.setScene(mainMenu);
+		this.setWidth(400);
+		this.setHeight(400);
+		this.setResizable(false);
 	}
 	
 	private void setupMainMenu() {
-		VBox 		root 		= new VBox();
+		BorderPane 	root 		= new BorderPane();
+		HBox 		buttonBox	= new HBox();
 		Button 		hostGame 	= new Button("Host Game");
 		Button 		joinGame 	= new Button("Join Game");
-		ImageView 	titleImage	= new ImageView(new Image("res/images/title.png"));
-		this.mainMenu 			= new Scene(root);
 		
-		root.getChildren().add(titleImage);
-		root.getChildren().add(joinGame);
-		root.getChildren().add(hostGame);
+		mainMenu = new Scene(root);
+		mainMenu.getStylesheets().add("gui/menu.css");
+		
+		root.setBottom(buttonBox);
+		buttonBox.getStyleClass().add("hbox");
+		buttonBox.setSpacing(30);
+		buttonBox.getChildren().add(joinGame);
+		buttonBox.getChildren().add(hostGame);
 		
 		joinGame.setOnMouseClicked(new EventHandler<MouseEvent>() {
     		@Override public void handle(MouseEvent e) {
-    			self.setScene(joinMenu);
+    			//self.setScene(joinMenu);
+    			String ip = Dialogs.create()
+  				      .owner(self)
+  				      .title("Join Game")
+  				      .masthead(null)
+  				      .message("Enter Host's IP")
+  				      .showTextInput("127.0.0.1");
+  			
+	  			if(ip != null) {
+	  				if(gameFound(ip)) {
+	  					command = Protocol.JOINSERVER + " " + ip;
+	  					self.hide();
+	  				}
+	  				else
+	  				{
+	  					Dialogs.create()
+	  						.owner(self)
+	  	    				.title("Error")
+	  	    				.masthead(null)
+	  	    				.message("Could not find a game at: " + ip)
+	  	    				.showWarning();
+	  				}
+	  			}
     		}
     	});
 		
 		hostGame.setOnMouseClicked(new EventHandler<MouseEvent>() {
     		@Override public void handle(MouseEvent e) {
-    			command = Protocol.HOSTSERVER;
-    			if(canHost()) {
+    			String tempCommand = Protocol.HOSTSERVER;
+    			if(canHost(tempCommand)) {
+    				command = tempCommand;
     				self.hide();
     			}
     			else {
@@ -103,33 +128,6 @@ public class MenuView extends Stage {
 		
 		table.getColumns().add(ip);
 		table.getColumns().add(port);
-		
-		joinIP.setOnMouseClicked(new EventHandler<MouseEvent>() {
-    		@Override public void handle(MouseEvent e) {
-    			String ip = Dialogs.create()
-    				      .owner(self)
-    				      .title("Join Game")
-    				      .masthead(null)
-    				      .message("Enter Host's IP")
-    				      .showTextInput("127.0.0.1");
-    			
-    			if(ip != null) {
-    				command = Protocol.JOINSERVER + " " + ip;
-    				if(gameFound(ip)) {
-    					self.hide();
-    				}
-    				else
-    				{
-    					Dialogs.create()
-    						.owner(self)
-    	    				.title("Error")
-    	    				.masthead(null)
-    	    				.message("Could not find a game at: " + ip)
-    	    				.showWarning();
-    				}
-    			}
-    		}
-    	});
 		
 		back.setOnMouseClicked(new EventHandler<MouseEvent>() {
     		@Override public void handle(MouseEvent e) {
@@ -170,7 +168,7 @@ public class MenuView extends Stage {
 		return false;
 	}
 	
-	private boolean canHost() {
+	private boolean canHost(String c) {
 		try {
 			Socket socket = new Socket(argIp,  Integer.parseInt(argPort));
 	        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -183,7 +181,7 @@ public class MenuView extends Stage {
 	        	System.out.println("Client: " + Protocol.HOSTSERVER);
 	    		out.println(Protocol.HOSTSERVER);
 	    	
-	    	if(command.equals(Protocol.HOSTSERVER)) {
+	    	if(c.equals(Protocol.HOSTSERVER)) {
 	    		try {
 	    			out.println(Protocol.HOSTSERVER);
 	    			socket.close(); 

@@ -97,8 +97,14 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			setStyle("");
 		} else {
 			setPrefSize(64, 64);
-			setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "'); -fx-background-size: 60 60;");
 			
+			int controlledBy 	= t.thingRef.getControlledByPlayerNum();
+			int currPlayer 		= GameClient.game.gameModel.getCurrPlayerNumber();
+			
+			if(!t.thingRef.isFlipped() || (controlledBy == currPlayer && currPlayer > -1))
+				setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "'); -fx-background-size: 60 60;");
+			else
+				setStyle("-fx-background-image: url('res/images/" + t.thingRef.backFileName + "'); -fx-background-size: 60 60;");
 		}
 	}
 }

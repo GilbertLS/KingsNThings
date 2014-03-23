@@ -60,6 +60,9 @@ public abstract class Thing {
 	}
 	
 	public int getControlledByPlayerNum() {
+		if(controlledBy == null)
+			return -1;
+		
 		switch(controlledBy) {
 			case PLAYER1: return 0;
 			case PLAYER2: return 1;
@@ -76,5 +79,9 @@ public abstract class Thing {
 	public String getFrontImage() {
 		return frontFileName;
 		
+	}
+	
+	public boolean isFlipped() {
+		return this.isFlipped;
 	}
 }

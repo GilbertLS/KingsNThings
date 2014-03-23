@@ -44,6 +44,13 @@ public class GameModel {
 		if ( playerNum == 3 ) { currPlayer = player4; }
 	}
 	
+	public int getCurrPlayerNumber() {
+		if(currPlayer == null)
+			return -1;
+		
+		return this.currPlayer.GetPlayerNum();
+	}
+	
 	public Player GetCurrentPlayer(){
 		return currPlayer;
 	}

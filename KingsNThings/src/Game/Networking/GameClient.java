@@ -36,7 +36,8 @@ public class GameClient {
 	        thread.start();
 	        
 		} catch (IOException e){
-			System.out.print("Unable to connect to game");
+			System.out.println("Unable to connect to game");
+			
 		}
 	}
 }
