@@ -28,6 +28,7 @@ public class HexTile implements IIncomable{
 	public int x;
 	public int y;
 	public int moveValue;
+	public boolean constructionAllowed = true;
 	
 	public boolean isLand()
 	{
@@ -194,7 +195,7 @@ public class HexTile implements IIncomable{
 			&& !(h2.x == x-1 && h2.y == y+1));
 	}
 
-	public void addTower(Fort f) {
+	public void addFort(Fort f) {
 		fort = f;
 	}
 	
@@ -278,36 +279,45 @@ public class HexTile implements IIncomable{
 			}			
 		}
 	
-
 		if(player1Things.size() > 0)
 		{
 			controlledBy = ControlledBy.PLAYER1;
-			if(fort != null)
-				fort.controlledBy = ControlledBy.PLAYER1;
+			if(fort != null && fort.controlledBy != ControlledBy.PLAYER1)
+			{				
+				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER1, fort);
+			}
 		}
 		else if(player2Things.size() > 0)
 		{
 			controlledBy = ControlledBy.PLAYER2;
-			if(fort != null)
-				fort.controlledBy = ControlledBy.PLAYER2;
+			if(fort != null && fort.controlledBy != ControlledBy.PLAYER2)
+			{				
+				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER2, fort);
+			}
 		}
 		else if(player3Things.size() > 0)
 		{
 			controlledBy = ControlledBy.PLAYER3;
-			if(fort != null)
-				fort.controlledBy = ControlledBy.PLAYER3;
+			if(fort != null && fort.controlledBy != ControlledBy.PLAYER3)
+			{				
+				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER3, fort);
+			}
 		}
 		else if(player4Things.size() > 0)
 		{
 			controlledBy = ControlledBy.PLAYER4;
-			if(fort != null)
-				fort.controlledBy = ControlledBy.PLAYER4;
+			if(fort != null && fort.controlledBy != ControlledBy.PLAYER4)
+			{				
+				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER4, fort);
+			}
 		}		
 		else
 		{
 			controlledBy = ControlledBy.NEUTRAL;
-			if(fort != null)
-				fort.controlledBy = ControlledBy.NEUTRAL;
+			if(fort != null && fort.controlledBy != ControlledBy.NEUTRAL)
+			{				
+				GameClient.game.gameModel.changeFortFaction(ControlledBy.NEUTRAL, fort);
+			}
 		}
 		
 	}
@@ -399,5 +409,10 @@ public class HexTile implements IIncomable{
 		this.x = x;
 		this.y = y;
 		
+	}
+	
+	public void setConstructionAllowed(boolean allowed)
+	{
+		constructionAllowed = allowed;
 	}
 }

@@ -319,6 +319,9 @@ public final class GameConstants {
 	
 	public static final int SPECIAL_CHARACTER_AUG_ROLL_BEFORE_COST = 5;
 	public static final int SPECIAL_CHARACTER_AUG_ROLL_AFTER_COST = 10;
+
+	public static final int CITADEL_INCOME_4_PLAYERS = 20;
+	public static final int CITADEL_INCOME_2_OR_3_PLAYERS = 15;
 	
 
 

@@ -32,6 +32,7 @@ public class GameModel {
 	private boolean specialElimination = false;
 	
 	public BoardController boardController;
+
 	
 	public Player GetPlayer(int playerNum){
 		return playerFromIndex(playerNum);
@@ -833,8 +834,8 @@ public class GameModel {
 		Fort f = new Fort();
 		f.controlledBy = player.faction;
 		
-		h.addTower(f);
-		player.addTower(f);
+		h.addFort(f);
+		player.addFort(f);
 		
 		return h;
 	}
@@ -937,6 +938,8 @@ public class GameModel {
 	}
 
 	public void updateConstruction(HexTile hexTile, int playerIndex) {
+		hexTile.setConstructionAllowed(false);
+		
 		if(hexTile.hasFort())
 			hexTile.getFort().upgrade();
 		else
@@ -946,32 +949,38 @@ public class GameModel {
 	}
 
 	public boolean isValidConstruction(HexTile h, int playerIndex) {
-		boolean valid = true;
 		Player player = playerFromIndex(playerIndex);
 		
 		//invalid if not controlled
 		if(h.controlledBy != player.faction)
-			valid = false;
+			return false;
+		
+		//invalid if already constructed
+		if(!h.constructionAllowed)
+			return false;
 		
 		//or if cant afford
 		if(player.getGold() < 5)
-			valid = false;
+			return false;
 		
 		//or has fort and...
 		if(h.hasFort())
 		{
-			//is trying to upgrade to citadel but doesn't have the income
+			//is trying to upgrade to citadel but doesn't have the income or..
 			if(h.getFort().getLevel() == Level.CASTLE)
 			{
-				if(player.getIncome() < 20)
-					valid = false;
+				if(player.getIncome() < (playerCount == 4?
+						GameConstants.CITADEL_INCOME_4_PLAYERS 
+						: GameConstants.CITADEL_INCOME_2_OR_3_PLAYERS ))
+						
+					return false;
 			}
 			//cannot upgrade fort further
 			else if(h.getFort().getLevel() == Level.CITADEL)
-				valid = false;
+				return false;
 		}
 		
-		return valid;
+		return true;
 	}
 
 	public ArrayList<SpecialCharacter> getUnownedSpecialCharacters() {
@@ -1077,5 +1086,71 @@ public class GameModel {
 		}
 		
 		unusedTiles = newTiles;
+	}
+
+	public String checkWin() {
+		ArrayList<Player> winningPlayers = new ArrayList<Player>();
+		
+		for(int i=0; i<playerCount; i++)
+		{
+			Player player = playerFromIndex(i);
+			
+			//player has more than 1 citadel (player wins)
+			if(player.getNumCitadels() > 1)	
+				winningPlayers.add(player);
+			
+			//player constructed and held a citadel since last round (player wins)
+			else if(player.citadelWasConstructed() && player.getNumCitadels() == 1)	
+				winningPlayers.add(player);
+			
+			//player constructed citadel this round (store for next round)
+			else if (player.hasCitadel() && !player.citadelWasConstructed())
+				player.setCitadelConstructed(true);
+		}
+		
+		String ret = "";
+		if(winningPlayers.isEmpty())
+			ret = ""+false + "SPLIT";
+		else {
+			ret = "" + true + "SPLIT";
+			for(Player p: winningPlayers)
+				ret += p.GetPlayerNum() +" ";
+		}
+		
+		return ret;
+	}
+
+	public void changeFortFaction(ControlledBy controlledBy, Fort f) {
+		if(f.controlledBy != ControlledBy.NEUTRAL){
+			Player player = playerFromFaction(f.controlledBy);	
+			player.removeFort(f);
+			if(f.getLevel() == Level.CITADEL && player.getNumCitadels() == 1)
+				player.setCitadelConstructed(false);
+		}
+		if(controlledBy != ControlledBy.NEUTRAL){
+			Player newPlayer = playerFromFaction(controlledBy);
+			newPlayer.addFort(f);
+		}
+	}
+
+	private Player playerFromFaction(ControlledBy controlledBy) {
+		switch(controlledBy)
+		{
+		case PLAYER1:
+			return player1;
+		case PLAYER2:
+			return player2;
+		case PLAYER3:
+			return player3;
+		default:
+			return player4;
+		}
+	}
+
+	public void clearConstructions() {
+		for(HexTile[] h1: gameBoard.getTiles())
+			for(HexTile h2: h1)
+				if(h2 != null)
+					h2.setConstructionAllowed(true);
 	}
 }

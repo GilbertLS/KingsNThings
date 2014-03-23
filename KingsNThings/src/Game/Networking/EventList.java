@@ -55,4 +55,7 @@ public class EventList {
 	public static final int RANDOMIZE_UNUSED_TILES = 131;
 	public static final int UPDATE_UNUSED_TILES = 132;
 	public static final int REVEAL_HEX_TILES = 133;
+	public static final int CHECK_WIN = 134;
+	public static final int HANDLE_WIN = 135;
+	public static final int CLEAR_CONSTRUCTION = 136;
 }
