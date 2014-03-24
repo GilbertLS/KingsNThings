@@ -58,4 +58,5 @@ public class EventList {
 	public static final int CHECK_WIN = 134;
 	public static final int HANDLE_WIN = 135;
 	public static final int CLEAR_CONSTRUCTION = 136;
+	public static final int CREATE_DEFENSE_CREATURES = 137;
 }

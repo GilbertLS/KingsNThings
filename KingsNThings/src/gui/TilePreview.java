@@ -11,7 +11,7 @@ public class TilePreview extends VBox {
 	ThingViewList view2 = 		new ThingViewList();
 	ThingViewList view3 = 		new ThingViewList();
 	ThingViewList view4 = 		new ThingViewList();
-	ThingViewList viewNeutral = new ThingViewList();
+	ThingViewList viewDefenders = new ThingViewList();
 	Tile tileRef;
 	int playerNum;
 	
@@ -21,13 +21,13 @@ public class TilePreview extends VBox {
 		view2.getStyleClass().add("preview-list");
 		view3.getStyleClass().add("preview-list");
 		view4.getStyleClass().add("preview-list");
-		//viewNeutral.getStyleClass().add("preview-list");
+		viewDefenders.getStyleClass().add("preview-list");
 		
 		this.getChildren().add(view1);
 		this.getChildren().add(view2);
 		this.getChildren().add(view3);
 		this.getChildren().add(view4);
-		//this.getChildren().add(viewNeutral);
+		this.getChildren().add(viewDefenders);
 		
 		this.playerNum = num;
 	}
@@ -39,7 +39,7 @@ public class TilePreview extends VBox {
 		if (view2 != null) this.getChildren().add(view2);
 		if (view3 != null) this.getChildren().add(view3);
 		if (view4 != null) this.getChildren().add(view4);
-		//if (viewNeutral != null) this.getChildren().add(viewNeutral);
+		if (viewDefenders != null) this.getChildren().add(viewDefenders);
 	}
 	
 	public ThingViewList GetThingList(int playerNum){
@@ -64,7 +64,7 @@ public class TilePreview extends VBox {
 		view2 = new ThingViewList(FXCollections.observableList(t.p2Things));
 		view3 = new ThingViewList(FXCollections.observableList(t.p3Things));
 		view4 = new ThingViewList(FXCollections.observableList(t.p4Things));
-		//viewNeutral = new ThingViewList(FXCollections.observableList(t.neutralThings));
+		viewDefenders = new ThingViewList(FXCollections.observableList(t.defendingThings));
 		
 		show();
 	}
@@ -105,6 +105,13 @@ public class TilePreview extends VBox {
  		}
 		view4 = new ThingViewList(FXCollections.observableList((arr)));
 		
+		arr = new ArrayList<ThingView>();
+		for (Thing thing : tile.defendingThings){
+			thingView = new ThingView(thing);
+			arr.add(thingView);
+ 		}
+		viewDefenders = new ThingViewList(FXCollections.observableList((arr)));
+		
  		if(tile.fort != null)
  		{
  			ThingViewList thingViewForFort;
@@ -136,7 +143,7 @@ public class TilePreview extends VBox {
 			case 2: return view2;
 			case 3: return view3;
 			case 4: return view4;
-			default: return viewNeutral;
+			default: return viewDefenders;
 		}
 	}
 
