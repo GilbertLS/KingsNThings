@@ -323,6 +323,8 @@ public final class GameConstants {
 	public static final int CITADEL_INCOME_4_PLAYERS = 20;
 	public static final int CITADEL_INCOME_2_OR_3_PLAYERS = 15;
 	
+	public static final int MAX_MOVES_PER_TURN = 4;
+	
 
 
 

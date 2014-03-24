@@ -55,10 +55,16 @@ public class ThingViewList extends ListView<ThingView> {
 	 
 	 public void remove(ThingView t) {
 		 this.getItems().remove(t);
+		 
+		 if(getItems().isEmpty())
+			 this.setVisible(false);
 	 }
 	 
 	 public void remove(int i) {
 		 this.getItems().remove(i);
+		 
+		 if(getItems().isEmpty())
+			 this.setVisible(false);
 	 }
 	 
 	 public void removeByThingId(int id) {

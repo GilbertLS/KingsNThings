@@ -1,8 +1,10 @@
 package gui;
 
 import java.util.ArrayList;
+
 import Game.HexTile;
 import Game.Thing;
+import Game.Networking.GameClient;
 import javafx.collections.FXCollections;
 import javafx.scene.layout.VBox;
 
@@ -23,16 +25,10 @@ public class TilePreview extends VBox {
 		view4.getStyleClass().add("preview-list");
 		viewDefenders.getStyleClass().add("preview-list");
 		
-		this.getChildren().add(view1);
-		this.getChildren().add(view2);
-		this.getChildren().add(view3);
-		this.getChildren().add(view4);
-		this.getChildren().add(viewDefenders);
-		
 		this.playerNum = num;
 	}
 	
-	public void show() {
+	public void show(Tile t) {
 		this.getChildren().clear();
 		
 		if (view1 != null) this.getChildren().add(view1);
@@ -40,8 +36,20 @@ public class TilePreview extends VBox {
 		if (view3 != null) this.getChildren().add(view3);
 		if (view4 != null) this.getChildren().add(view4);
 		if (viewDefenders != null) this.getChildren().add(viewDefenders);
+		
+		setInvisibleIfEmpty(t);
 	}
 	
+	private void setInvisibleIfEmpty(Tile t) {
+		//make more awesome
+		
+		view1.setVisible(!t.p1Things.isEmpty());
+		view2.setVisible(!t.p2Things.isEmpty());
+		view3.setVisible(!t.p3Things.isEmpty());
+		view4.setVisible(!t.p4Things.isEmpty());
+		viewDefenders.setVisible(!t.defendingThings.isEmpty());
+	}
+
 	public ThingViewList GetThingList(int playerNum){
 		System.out.println("REMOVING PLAYERS THINGS: " + playerNum);
 		if( playerNum == 0 ){
@@ -64,58 +72,26 @@ public class TilePreview extends VBox {
 		view2 = new ThingViewList(FXCollections.observableList(t.p2Things));
 		view3 = new ThingViewList(FXCollections.observableList(t.p3Things));
 		view4 = new ThingViewList(FXCollections.observableList(t.p4Things));
-		viewDefenders = new ThingViewList(FXCollections.observableList(t.defendingThings));
+		viewDefenders = new ThingViewList(FXCollections.observableList(t.defendingThings));		
 		
-		show();
+		show(tileRef);
 	}
 	
-	public void setPlayerNum(int i) {
-		this.playerNum = i;
+	public void changeBattleTile(Tile t) {
+		//this method is intended to load all things for battle
+		//in addition to base things
+		
+		changeTile(t);
+		addForts(t.getTileRef());
+		show(t);
 	}
 	
-	public void changeTile(HexTile tile){
- 		//change so gets combatants? or, add functionality to load in settlements
-		ThingView thingView;
-		ArrayList<ThingView> arr = new ArrayList<ThingView>();
-
-		for (Thing thing : tile.player1Things){
-			thingView = new ThingView(thing);
-			arr.add(thingView);
-		}
-		view1 = new ThingViewList(FXCollections.observableList((arr)));
-		
-		arr = new ArrayList<ThingView>();
-		for (Thing thing : tile.player2Things){
-			thingView = new ThingView(thing);
-			arr.add(thingView);
-		}
-		view2 = new ThingViewList(FXCollections.observableList((arr)));
-		
-		arr = new ArrayList<ThingView>();
-		for (Thing thing : tile.player3Things){
-			thingView = new ThingView(thing);
-			arr.add(thingView);
-		}
-		view3 = new ThingViewList(FXCollections.observableList((arr)));
-		
-		arr = new ArrayList<ThingView>();
-		for (Thing thing : tile.player4Things){
-			thingView = new ThingView(thing);
-			arr.add(thingView);
- 		}
-		view4 = new ThingViewList(FXCollections.observableList((arr)));
-		
-		arr = new ArrayList<ThingView>();
-		for (Thing thing : tile.defendingThings){
-			thingView = new ThingView(thing);
-			arr.add(thingView);
- 		}
-		viewDefenders = new ThingViewList(FXCollections.observableList((arr)));
-		
- 		if(tile.fort != null)
+	public void addForts(HexTile h)
+	{
+ 		if(tileRef.fort != null)
  		{
  			ThingViewList thingViewForFort;
- 			switch(tile.controlledBy)
+ 			switch(h.controlledBy)
  			{
  			case PLAYER1:
  				thingViewForFort = view1;
@@ -131,10 +107,16 @@ public class TilePreview extends VBox {
  				break;
  			}
 
- 			thingViewForFort.add(new ThingView(tile.fort));
+ 			thingViewForFort.add(new ThingView(h.fort));
  		}
-
- 		show();
+	}
+	
+	public void setPlayerNum(int i) {
+		this.playerNum = i;
+	}
+	
+	public void changeTile(HexTile tile){
+		changeTile(GameClient.game.gameView.board.getTileByHex(tile));
 	}
 	
 	public ThingViewList getThingViewList(int i) {

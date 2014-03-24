@@ -428,9 +428,11 @@ public class HexTile implements IIncomable{
 			case PLAYER3:
 				numCombatants += player3Things.size();
 				break;
-			default:
+			case PLAYER4:
 				numCombatants += player4Things.size();
 				break;
+		default:
+			break;
 		}
 		
 		if(numCombatants > GameConstants.MAX_NUM_THINGS_PER_HEX)
@@ -522,5 +524,9 @@ public class HexTile implements IIncomable{
 			GameClient.game.gameModel.returnToCup(t);
 			
 		return things;
+	}
+
+	public boolean noDefense() {
+		return defendingThings.isEmpty();
 	}
 }
