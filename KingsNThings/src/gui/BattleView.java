@@ -1,14 +1,20 @@
 package gui;
 
+import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
+
 import Game.Combatant;
+import Game.GameConstants;
 import Game.HexTile;
 import Game.Thing;
 import Game.Utility;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -24,11 +30,8 @@ public class BattleView extends Scene {
     public VBox rightPanel;
     public HBox bottomPanel;
     public VBox leftPanel;
-    public BoardView board;
-    public PlayerList playerList;
-    public ButtonBox buttonBox;
-    public RackView rack;
-    public TilePreview tilePreview;
+    public HBox centerPanel;
+    public HBox topPanel;
     public DiceListView diceListView;
     private Button submit = new Button("Submit");
     private Button yes = new Button("Yes");
@@ -42,6 +45,7 @@ public class BattleView extends Scene {
     
     public int tileX;
     public int tileY;
+    private ThingViewList[] thingViewLists;
 	
 	public BattleView(BorderPane root, int tileX, int tileY){
 		super(root, 700, 500);
@@ -57,6 +61,12 @@ public class BattleView extends Scene {
         
         leftPanel = new VBox();
         root.setLeft(leftPanel);
+        
+        centerPanel = new HBox();
+        root.setCenter(centerPanel);
+        
+        topPanel = new HBox();
+        root.setTop(topPanel);
         
         submit.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -89,19 +99,21 @@ public class BattleView extends Scene {
 				}
 			}
 		});
-        //tilePreview = new TilePreview();
-        
-        /*board = new BoardView(tilePreview);
-        root.setCenter(board);        */
+
+        VBox centerVBox = new VBox();
         messageView = new MessageView();
         diceListView = new DiceListView();
-        rightPanel.getChildren().add(diceListView);
-        rightPanel.getChildren().add(submit);
+        centerVBox.getChildren().add(diceListView);
+        centerVBox.getChildren().add(submit);
         HBox yesNo = new HBox();
         yesNo.getChildren().add(yes);
         yesNo.getChildren().add(no);
-        rightPanel.getChildren().add(yesNo);
-        rightPanel.getChildren().add(messageView);
+        centerVBox.getChildren().add(yesNo);
+        centerVBox.getChildren().add(messageView);
+        
+        centerVBox.setAlignment(Pos.CENTER);
+        centerPanel.setAlignment(Pos.CENTER);
+        centerPanel.getChildren().add(centerVBox);
         
         this.getStylesheets().add("gui/main.css");
         
@@ -120,9 +132,9 @@ public class BattleView extends Scene {
 		battleStage.show();
 	}
 	
-	public void RollDice(Thing thing, int diceNum, int roll, int numPreviousRolls){
+	public int RollDice(Thing thing, int diceNum, int numPreviousRolls){
 		if (!thing.IsCombatant()){
-			return;
+			return 0;
 		}
 		
 		Combatant combatant = (Combatant)thing;
@@ -149,22 +161,47 @@ public class BattleView extends Scene {
 		
 		UpdateMessage(s);
 	
-		diceListView.RollDice(diceNum, roll);
+		int roll = diceListView.RollDice(diceNum);
 		
 		ClearMessage();
+		
+		return roll;
 	}
 	
 	public void SetupPlayerThings(){
+		int numPlayers = GameClient.game.gameModel.PlayerCount();
+		thingViewLists = new ThingViewList[numPlayers];
+		
 		HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
-		
-		tilePreview = new TilePreview(
-				GameClient.game.gameView.getCurrentPlayer()
-		);
-		
-		tilePreview.changeTile(tile);
-		
-		leftPanel.getChildren().add(tilePreview);
-		
+		for(int i = 0; i < numPlayers; i++) {
+			ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
+			for(Thing t : tile.GetThings(i)) {
+				thingViews.add(new ThingView(t));
+			}
+			
+			Orientation orientation = i % 2 == 0 ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+			
+			ThingViewList thingViewList = new ThingViewList(
+				FXCollections.observableArrayList(thingViews),
+				orientation
+			);
+			
+			thingViewLists[i] = thingViewList;
+			
+			if (i == 0) {
+				topPanel.getChildren().add(thingViewList);
+				topPanel.setAlignment(Pos.CENTER);
+			} else if (i == 1) {
+				leftPanel.getChildren().add(thingViewList);
+				leftPanel.setAlignment(Pos.CENTER);
+			} else if (i == 2) {
+				bottomPanel.getChildren().add(thingViewList);
+				bottomPanel.setAlignment(Pos.CENTER);
+			} else if (i == 3) {
+				rightPanel.getChildren().add(thingViewList);
+				rightPanel.setAlignment(Pos.CENTER);
+			}
+		}
 	}
 	
 	public void RemoveThings(int[] thingIds, int playerNum){
@@ -176,20 +213,30 @@ public class BattleView extends Scene {
 	public int[] inflictHits(int numHitsTaken) {
 		UpdateMessage("Select " + numHitsTaken + " things to discard.");
 		
+		int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+		
+		int numValid;
 		do {
 			submitPressed = InputState.WAITING_FOR_INPUT;
 			
 			Utility.PromptForInput(inputLock);
-		} while (GameView.selectedThings.size() != numHitsTaken);
+			
+			numValid = 0;
+			for(Thing t : GameView.selectedThings) {
+				if (GameConstants.GetPlayerNumber(t.controlledBy) == currPlayer ) {
+					numValid++;
+				}
+			}
+		} while (numValid != numHitsTaken);
 		
 		submitPressed = InputState.NOT_WAITING_FOR_INPUT;
 		
 		int[] thingsToRemove = new int[numHitsTaken];
 		int i = 0;
-		for (Integer thingId : GameView.selectedThings){
+		for (Thing thing : GameView.selectedThings){
 			System.out.println("--------------");
-			thingsToRemove[i++] = thingId;
-			RemoveThingFromBattle(thingId, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
+			thingsToRemove[i++] = thing.thingID;
+			//RemoveThingFromBattle(thing.thingID, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
 			
 			//also update model
 		}
@@ -243,7 +290,7 @@ public class BattleView extends Scene {
 	}
 	
 	public void RemoveThingFromBattle(final int thingId, int playerNum){
-		final ThingViewList list = tilePreview.GetThingList(playerNum);
+		final ThingViewList list = thingViewLists[playerNum];
 		
 		Platform.runLater(new Runnable() {
 	        @Override

@@ -92,9 +92,17 @@ public class Tile extends Region implements Draggable {
     	getView(t.getControlledByPlayerNum()).add(tv);
     }
     
-    public void removeThing(Thing t) {
-    	ThingView tv = new ThingView(t);
-    	getView(t.getControlledByPlayerNum()).remove(tv);
+    public void removeThing(Thing t) { 	
+    	ThingView removeThing = null;
+    	for(ThingView thing : getView(t.getControlledByPlayerNum())) {
+    		if (thing.thingRef.thingID == t.thingID) {
+    			removeThing = thing;
+    		}
+    	}
+    	
+    	if (removeThing != null) {
+    		getView(t.getControlledByPlayerNum()).remove(removeThing);
+    	}
     }
     
     public void updateThings(int playerNum) {

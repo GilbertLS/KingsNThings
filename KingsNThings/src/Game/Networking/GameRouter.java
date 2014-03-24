@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import Game.GameController;
+import Game.Phases.Phase;
 
 public class GameRouter implements Runnable, Comparable<GameRouter> {
 	
@@ -63,6 +64,10 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 							GameControllerEventHandler.waitingEvents.add(r);
 							GameControllerEventHandler.waitingEvents.notify();
 						}
+					} else if (e.eventId == EventList.SET_PHASE) {
+						Phase phase = Phase.valueOf(e.eventParams[0]);
+						System.out.println("DEBUG---- " + phase.name());
+						GameController.SetPhase(phase);
 					} else {
 						/*boolean[] intendedPlayers = new boolean[4];
 						

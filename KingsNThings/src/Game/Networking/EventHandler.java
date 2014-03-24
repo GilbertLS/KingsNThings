@@ -186,7 +186,7 @@ public class EventHandler {
 					
 					Combatant combatant = (Combatant)thing;
 					
-					rolls += combatant.GetCombatRoll(turn, true, rolls);
+					rolls += combatant.GetCombatRoll(turn, rolls);
 				}
 				
 				GameView.battleView.UpdateMessage("Applying " + rolls + " hits for this " + message + " rolls turn");
@@ -333,29 +333,11 @@ public class EventHandler {
 			boolean battleOver = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size() <= 1;
 			
 			if ( battleOver ){
-				EventHandler.SendEvent(new Event().EventId(EventList.BATTLE_OVER));
+				EventHandler.SendEvent(new Event().EventId(EventList.REMOVE_THINGS));
 			} else {
 				SendNullEvent();
 			}
-		} else if (e.eventId == EventList.ADD_THING_TO_TILE){
-			String type = e.eventParams[0];
-			
-			boolean isMagic = false, isRanged = false;
-			
-			if (type.equals("Magic")) { isMagic = true; }
-			if (type.equals("Ranged")) { isRanged = true; }
-		
-			Creature creature = new Creature(Terrain.DESERT, "C1", 6, GameConstants.GiantImageFront).Magic(isMagic).Ranged(isRanged);
-			creature.SetThingId(Integer.parseInt(e.eventParams[1]));
-			
-			Player player = GameClient.game.gameModel.GetPlayer(Integer.parseInt(e.eventParams[2]));
-			
-			creature.controlledBy = player.faction;
-			
-			int tileX = Integer.parseInt(e.eventParams[3]);
-			int tileY = Integer.parseInt(e.eventParams[4]);
-			GameClient.game.gameModel.boardController.AddThingToTile(creature, player, tileX, tileY);
-		} 	
+		} 
 		else if (e.eventId == EventList.SET_HEX_TILES) 
 		{
 			String[] boardHexTileStrings = e.eventParams[0].trim().split("/");
@@ -1025,7 +1007,38 @@ public class EventHandler {
 		else if(e.eventId == EventList.CLEAR_THING_MOVES)
 		{
 			GameClient.game.clearThingMoves();
-		}
+		} else if (e.eventId == EventList.REMOVE_THING) {
+			int thingId = Integer.parseInt(e.eventParams[0]);
+			int x = Integer.parseInt(e.eventParams[1]);
+			int y = Integer.parseInt(e.eventParams[2]);
+			int playerId = Integer.parseInt(e.eventParams[3]);
+			
+			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x,y);
+			
+			tile.removeThing(thingId, playerId);
+			GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
+		} else if (e.eventId == EventList.ADD_THING){
+			int x = Integer.parseInt(e.eventParams[0]);
+			int y = Integer.parseInt(e.eventParams[1]);
+			int combatValue = Integer.parseInt(e.eventParams[2]);
+			Terrain terrain = Terrain.valueOf(e.eventParams[3]);
+			int playerNum = Integer.parseInt(e.eventParams[4]);
+			
+			Creature creature = new Creature(terrain, combatValue);
+			creature.controlledBy = GameConstants.controlledByFromIndex(playerNum);
+			
+			for(int i = 5; i < e.eventParams.length; i++) {
+				if(e.eventParams[i].equals("Magic")) { creature.Magic(true); }
+				if(e.eventParams[i].equals("Ranged")) { creature.Ranged(true); }
+				if(e.eventParams[i].equals("Charge")) { creature.Charge(true); }
+				if(e.eventParams[i].equals("Flying")) { creature.Flying(true); }
+			}
+			
+			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
+			tile.AddThingToTile(playerNum, creature);
+			GameClient.game.gameView.board.getTileByHex(tile).updateThings();
+			
+		} 	
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);

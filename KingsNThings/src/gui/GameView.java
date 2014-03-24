@@ -16,11 +16,14 @@ import Game.Thing;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -29,7 +32,7 @@ import javafx.stage.Stage;
 
 public class GameView extends Scene {
 	public static BattleView battleView = null;
-    public static List<Integer> selectedThings = new ArrayList<Integer>();
+    public static List<Thing> selectedThings = new ArrayList<Thing>();
 	protected static SpecialCharacterView specialCharacterView = null;
 	
 	private GameView 		self = this;
@@ -54,6 +57,7 @@ public class GameView extends Scene {
 	public 	Semaphore		playLock = new Semaphore(0);
 	public 	Semaphore 		recruitLock = new Semaphore(0);
 	public 	boolean 		characterRecruited = false;
+	public 	EscapeMenu 		escapeMenu;
 	//public boolean moveMade = false;
 	
     public GameView(HBox r, Stage ps) {
@@ -113,12 +117,29 @@ public class GameView extends Scene {
         rightPanel.getChildren().add(zoomout);
         
         this.getStylesheets().add("gui/main.css");
+		BorderPane b = new BorderPane();
+        escapeMenu = new EscapeMenu(this);
+        
+        EventHandler<KeyEvent> keyPressed = new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.M) {
+					escapeMenu.show();
+				}
+			}
+        };
+        
+        this.setOnKeyPressed(keyPressed);
     }
     
     //method to give back a tile
     public Tile chooseTile()
     {  	
     	return this.board.getNextSelectedTile();
+    }
+    
+    public Tile chooseTileFromEditState() {
+    	return this.board.getNextSelectedTileFromEditState();
     }
     
     public void updateHexTile(HexTile h)
