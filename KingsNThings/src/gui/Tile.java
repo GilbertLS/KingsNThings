@@ -357,15 +357,11 @@ public class Tile extends Region implements Draggable {
 								
 								if(GameClient.game.isValidMove(originalTile, tileRef, things))
 								{
-									if(tileRef.controlledBy == ControlledBy.NEUTRAL) //exploration
+									if(tileRef.controlledBy == ControlledBy.NEUTRAL
+											&& tileRef.noDefense()) 						//exploration
 									{
-										//check roll in model
-										boolean spawnCreatures = GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y);
-										
-										if(spawnCreatures)
-										{
-											//handle creatures
-										}
+										//handle creatures
+										GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y);
 
 										gv.updateTiles(tileRef, 4);
 									}

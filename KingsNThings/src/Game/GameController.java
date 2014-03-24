@@ -256,6 +256,16 @@ public class GameController {
 				}
 			}while(!playDone);
 		}
+		handleRackOverload();
+	}
+
+	private void handleRackOverload() {
+		for(GameRouter gr: GameServer.servers)
+		{
+			GameControllerEventHandler.sendEvent(new Event()
+			.EventId(EventList.HANDLE_RACK_OVERLOAD)
+			.EventParameter(""+gr.myID));
+		}
 	}
 
 	private void placeThingsOnTile(int numIter, String pieceToPlace) {
@@ -461,7 +471,7 @@ public class GameController {
 			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
 				if (changedPhase) { changedPhase = false; }
-				//recruitSpecialCharacter();
+				recruitSpecialCharacter();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_THINGS; }
 			}
 			if (currentPhase == Phase.RECRUIT_THINGS) {
@@ -487,7 +497,7 @@ public class GameController {
 			}
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
-				//playConstructionPhase();
+				playConstructionPhase();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
 		

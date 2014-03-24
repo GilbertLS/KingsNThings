@@ -298,19 +298,6 @@ public class GameClientController {
 		Game.Networking.EventHandler.SendEvent(gameEvent);	
 	}
 
-	public void handleRackOverload(Integer playerIndex) {
-		//check if player has too many things in rack
-		if(gameModel.playerRackTooFull(playerIndex))
-		{			
-			//if so, send event out to update other players
-			Event gameEvent = new Event()
-				.EventId(EventList.HANDLE_RACK_OVERLOAD)
-				.EventParameter(""+playerIndex);
-	
-			Game.Networking.EventHandler.SendEvent(gameEvent);	
-		}
-	}
-
 	public void updatePlayerRack(final int playerIndex) {
 		final Player playerToUpdate = GameClient.game.gameModel.playerFromIndex(playerIndex);
 		final boolean isCurrentPlayer = playerToUpdate == GameClient.game.gameModel.GetCurrentPlayer();

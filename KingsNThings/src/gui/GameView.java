@@ -235,7 +235,7 @@ public class GameView extends Scene {
 		
 		currentPhase = CurrentPhase.NULL;
 		
-		GameClient.game.handleRackOverload(getCurrentPlayer());
+		
 		
 		return s;	
 	}
