@@ -1,10 +1,16 @@
 package gui;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 import Game.Utility;
+import Game.Networking.GameClient;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 
@@ -25,19 +31,21 @@ public class DiceView extends Region {
 		return "dice_" + roll + ".png";
 	}
 	
-	public void RollDice(int roll){	
-		this.roll = roll;
-		this.isEnabled = true;
-		
-		PromptForRoll();
-		System.out.println("GOT OUT");
+	public int RollDice(){	
+		do {
+			this.isEnabled = true;
+			PromptForRoll();
+		} while (roll < 1 && roll > 6);
+		return this.roll;
 	}
 	
 	
 	private void UpdateDice(){
-		setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
-		isEnabled = false;
-		Utility.GotInput(inputLock);
+		if (roll != 0) {
+			setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
+			isEnabled = false;
+			Utility.GotInput(inputLock);
+		}
 	};
 	
 	public void PromptForRoll(){
@@ -57,7 +65,22 @@ public class DiceView extends Region {
 		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
 	        @Override
 	        public void handle(MouseEvent e) {
-	        	if (thisDice.isEnabled){
+	        	if (e.getButton() == MouseButton.PRIMARY && thisDice.isEnabled){
+	        		roll = GameClient.game.gameModel.rollDice();
+	        		UpdateDice();
+	        	} else if (e.getButton() == MouseButton.SECONDARY && thisDice.isEnabled) {
+	        		System.out.println("Input roll: ");
+	        		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+	        		roll = 0;
+	        		try {
+						String line = buffer.readLine();
+						roll = Integer.parseInt(line);
+						buffer.close();
+					} catch (Exception e1) {
+						System.out.println("error");
+						roll = 0;
+					}
+	        		
 	        		UpdateDice();
 	        	}
 	        }

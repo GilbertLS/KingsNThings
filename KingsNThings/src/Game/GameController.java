@@ -28,7 +28,7 @@ public class GameController {
 	public static boolean gameEnded = false; 
 	//public String address;
 	public static int numClients;
-	private static Phase currentPhase;
+	private static Phase currentPhase = Phase.NONE;
 	private static boolean changedPhase = false;
 	
 	public static void SetPhase(Phase phase) {
@@ -451,7 +451,9 @@ public class GameController {
 	
 	private void playPhases(){
 		boolean gameWon = false;
-		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS;
+		if (currentPhase == Phase.NONE) {
+    		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; 
+    	}
 		
 		do
 		{

@@ -28,7 +28,7 @@ public class GameController {
 	public static boolean gameEnded = false; 
 	//public String address;
 	public static int numClients;
-	private static Phase currentPhase;
+	private static Phase currentPhase = Phase.NONE;
 	private static boolean changedPhase = false;
 	
 	public static void SetPhase(Phase phase) {
@@ -452,33 +452,17 @@ public class GameController {
 	private void playPhases(){
 <<<<<<< HEAD
 		boolean gameWon = false;
+		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS;
 		
 =======
-		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS;
->>>>>>> Implemented adding/removing/setting phase at any point in time
+		if (currentPhase == Phase.NONE) {
+    		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; 
+    	}
+>>>>>>> Fixed up battle view, looks alright for now.
 		do
 		{
 			distributeIncome();
 			
-<<<<<<< HEAD
-			recruitSpecialCharacter();
-			
-			recruitThings();
-			
-			tradeThings();
-			
-			playThings();
-			
-			moveThings();
-			
-			PlayBattlePhase();
-			
-			gameWon = checkWin();
-			
-			playConstructionPhase();
-			
-			gameWon = checkWin();
-=======
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
 				if (changedPhase) { changedPhase = false; }
 				//recruitSpecialCharacter();
@@ -489,6 +473,7 @@ public class GameController {
 				recruitThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
+			tradeThings();
 			if (currentPhase == Phase.PLAY_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				playThings();
@@ -509,15 +494,10 @@ public class GameController {
 				//playConstructionPhase();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
->>>>>>> Implemented adding/removing/setting phase at any point in time
 		
-			ChangePlayerOrder();
+			//ChangePlayerOrder();
 		
-<<<<<<< HEAD
-		}while(!gameWon);
-=======
 		} while(!gameEnded);
->>>>>>> Implemented adding/removing/setting phase at any point in time
 	}
 	
 	private boolean checkWin() {
@@ -844,7 +824,7 @@ public class GameController {
 								.EventId( EventList.REMOVE_THINGS )
 								.EventParameters(removedThings)
 								.ExpectsResponse()
-						)[0].eventId == EventList.BATTLE_OVER){
+						)[0].eventId == EventList.REMOVE_THINGS){
 							battleOver = true;
 						} else {
 							battleOver = false;

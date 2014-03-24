@@ -40,15 +40,16 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				
 				List<ThingView> list = getListView().getSelectionModel().getSelectedItems();
 				
-				Player currPlayer = GameClient.game.gameModel.GetCurrentPlayer();
 				GameView.selectedThings.clear();
 				for (ThingView thing : list){
 					GameView.selectedThings.add(thing.thingRef);
 				}
 				
-				for (Thing thing : GameView.selectedThings) {
-					System.out.println(thing.thingID + " ");		
-				}
+				/*for (Thing thing : GameView.selectedThings) {
+					if(thing instanceof Creature) {
+						System.out.println((Creature)thing);
+					}
+				}*/
 			}
 		});
 		

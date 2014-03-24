@@ -186,7 +186,7 @@ public class EventHandler {
 					
 					Combatant combatant = (Combatant)thing;
 					
-					rolls += combatant.GetCombatRoll(turn, true, rolls);
+					rolls += combatant.GetCombatRoll(turn, rolls);
 				}
 				
 				GameView.battleView.UpdateMessage("Applying " + rolls + " hits for this " + message + " rolls turn");
