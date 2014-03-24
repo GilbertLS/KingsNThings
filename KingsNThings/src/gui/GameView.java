@@ -15,9 +15,14 @@ import Game.Networking.GameClient;
 import Game.Thing;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -27,44 +32,48 @@ public class GameView extends Scene {
     public static List<Integer> selectedThings = new ArrayList<Integer>();
 	protected static SpecialCharacterView specialCharacterView = null;
 	
-    public BorderPane root;
-    public VBox rightPanel;
-    public HBox bottomPanel;
-    public BoardView board;
-    public PlayerList playerList;
-    public ButtonBox buttonBox;
-    public RackView rack;
-    public TilePreview tilePreview;
-    public MessageView messageView;
-    public CurrentPhase currentPhase = CurrentPhase.NULL;
-    public boolean userInputDone = false;
-	String returnString = "";
-	private int currPlayerNum;
-	public Stage primaryStage;
-	public Semaphore inputLock = new Semaphore(0);
-	public Semaphore submitLock = new Semaphore(0);
-	public Semaphore moveLock = new Semaphore(0);
-	public Semaphore playLock = new Semaphore(0);
-	public Semaphore recruitLock = new Semaphore(0);
-	public boolean characterRecruited = false;
+	private GameView 		self = this;
+	public 	HBox 			root;
+    public 	VBox 			rightPanel;
+    public 	VBox 			leftPanel;
+    public 	BoardView 		board;
+    public 	PlayerList 		playerList;
+    public 	ButtonBox 		buttonBox;
+    public 	RackView 		rack;
+    public 	TilePreview 	tilePreview;
+    public 	MessageView 	messageView;
+    public 	ScrollPane 		scroll;
+    public 	CurrentPhase 	currentPhase = CurrentPhase.NULL;
+    public 	boolean 		userInputDone = false;
+	String 					returnString = "";
+	public 	int 			currPlayerNum;
+	public 	Stage 			primaryStage;
+	public 	Semaphore 		inputLock = new Semaphore(0);
+	public 	Semaphore 		submitLock = new Semaphore(0);
+	public 	Semaphore 		moveLock = new Semaphore(0);
+	public 	Semaphore		playLock = new Semaphore(0);
+	public 	Semaphore 		recruitLock = new Semaphore(0);
+	public 	boolean 		characterRecruited = false;
 	//public boolean moveMade = false;
 	
-    public GameView(BorderPane r, Stage ps) {
-    	super(r, 1000, 660);
+    public GameView(HBox r, Stage ps) {
+    	super(r, 972, 614);
     	root = r; 
     	primaryStage = ps;
         
         rightPanel = new VBox();
-        root.setRight(rightPanel);
-        
-        bottomPanel = new HBox();
-        root.setBottom(bottomPanel);
-        
+        leftPanel = new VBox();
+        root.getChildren().add(leftPanel);
+        root.getChildren().add(rightPanel);
+                
         tilePreview = new TilePreview(0);
         
+        scroll = new ScrollPane();
         board = new BoardView(tilePreview);
-        root.setCenter(board);
-        root.centerProperty();
+        leftPanel.getChildren().add(scroll);
+        scroll.setContent(board);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        HBox.setHgrow(leftPanel, Priority.ALWAYS);
         
         playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
@@ -81,7 +90,27 @@ public class GameView extends Scene {
         for(int i = 0; i < 10; i++)
         	arr.add(new ThingView(new Creature(GameConstants.Terrain.DESERT)));
         rack = new RackView(FXCollections.observableList((arr)));
-        bottomPanel.getChildren().add(rack);
+        leftPanel.getChildren().add(rack);
+        
+        
+        Button zoomin = new Button("zoom in");
+        zoomin.setOnMouseClicked(new EventHandler<MouseEvent>(){
+       	 
+            @Override
+            public void handle(MouseEvent e) {
+            	self.board.zoomIn();
+            }
+        });
+        rightPanel.getChildren().add(zoomin);
+        Button zoomout = new Button("zoom out");
+        zoomout.setOnMouseClicked(new EventHandler<MouseEvent>(){
+       	 
+            @Override
+            public void handle(MouseEvent e) {
+            	self.board.zoomOut();
+            }
+        });
+        rightPanel.getChildren().add(zoomout);
         
         this.getStylesheets().add("gui/main.css");
     }

@@ -40,7 +40,7 @@
 
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     -fx-background-color: blue;
-    -fx-opacity: 0.2;
+    -fx-opacity: 0.6;
 }
 
 .list-cell:filled:hover { 
@@ -61,12 +61,8 @@
     -fx-padding: 2.5;
 }
 
-thingview-list {
+.thingview-list {
 	-fx-background-color: #353535;
-}
-
-.board {
-	/*-fx-background-color: #FFFF00;*/
 }
 
 .tile {
@@ -81,13 +77,13 @@ thingview-list {
 	-fx-border-color: red;
 }
 
-.tile:selected {
-	-fx-border: 10px;
+.tile:focused {
+	-fx-border: 100px;
 	-fx-border-color: red;
 }
 
 .thing {
-	-fx-background: #FFFF00;
+	-fx-background: transparent;
 	-fx-background-repeat: stretch;
 	-fx-background-position: center center;
 	-fx-background-size: cover, auto;
@@ -124,4 +120,21 @@ thingview-list {
 
 .message .label {
 	-fx-text-fill: white;
+}
+
+.scroll-pane {
+	-fx-background-color: blue;
+	-fx-control-inner-background: blue;
+	/*-fx-hbar-policy: never;
+	-fx-vbar-policy: never;*/
+	-fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+
+.scroll-pane .corner {
+    -fx-background-insets: 0;
 }

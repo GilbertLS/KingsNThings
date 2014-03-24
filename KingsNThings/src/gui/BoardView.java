@@ -30,15 +30,14 @@ public class BoardView extends Region {
 		Double width 	= 90.0;
 		Double height 	= 81.0;
 		
-		setMinSize(width*6, height*7+16);
-		setMaxSize(width*6, height*7+16);
+		setPrefSize(width*6, height*7);
 		
 		ArrayList<Tile> list = new ArrayList<Tile>();
 		
         for (int i = 6; i >= 0; i--) {
         	for (int j = 6; j >= 0; j--) {
         		if (h[i][j] != null) {
-	    	        Tile tile = new Tile(width, height, h[i][j]);
+	    	        Tile tile = new Tile(width, height, h[i][j], i, j);
 	    	        
 	    	        Double x = width*3/4*(7+i) - j*width*3/4 - width*3/4*7/2;
 	    	        Double y = height/2*(7-i) - j*height/2 + height/2*7/1.4;
@@ -137,5 +136,59 @@ public class BoardView extends Region {
 						t.hideTile();
 			}
 		}		
+	}
+	
+	public void zoomIn() {
+		resize(1.1);
+	}
+	
+	public void zoomOut() {
+		resize(0.9);
+	}
+	
+	private void resize(double size) {
+		boolean first = true;
+		
+		for (Node n : this.getChildren()) {		
+			if (n.getClass() == Tile.class) {
+				Tile t = (Tile)n;
+				double height = t.getHeight();
+				double width = t.getWidth();
+				int i = t.getI();
+				int j = t.getJ();
+				height *= size;
+				width *= size;
+				
+				if(height < 81 || width < 90) {
+					height = 81;
+					width  = 90;
+				}
+				else if(height == 81 || width == 90) {
+					break;
+				}
+				else if(height > 162 || width > 180) {
+					height = 162;
+					width  = 180;
+				}
+				else if(height == 162 || width == 180) {
+					break;
+				}
+
+				
+				if(first)
+				{
+					this.setPrefSize(width*6, height*7);
+					first = false;
+				}
+				
+				double x = width*3/4*(7+i) - j*width*3/4 - width*3/4*7/2;
+				double y = height/2*(7-i) - j*height/2 + height/2*7/1.4;
+    	        t.relocate(x, y);
+				
+				t.setSize(width, height);
+				
+				i += 1;
+			}
+		}
 	}
 }

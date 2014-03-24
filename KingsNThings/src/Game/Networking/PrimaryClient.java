@@ -11,6 +11,7 @@ import org.controlsfx.dialog.Dialogs;
 
 import javafx.application.Application;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import Game.GameController;
@@ -166,8 +167,7 @@ public class PrimaryClient extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {		
 		// TODO Auto-generated method stub
-		BorderPane root = new BorderPane();
-		gameView = new GameView(root, primaryStage);
+		gameView = new GameView(new HBox(), primaryStage);
 		
 		//UIJoin/Host
 		//---------------------------------------//
