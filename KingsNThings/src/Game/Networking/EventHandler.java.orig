@@ -186,7 +186,7 @@ public class EventHandler {
 					
 					Combatant combatant = (Combatant)thing;
 					
-					rolls += combatant.GetCombatRoll(turn, rolls);
+					rolls += combatant.GetCombatRoll(turn, true, rolls);
 				}
 				
 				GameView.battleView.UpdateMessage("Applying " + rolls + " hits for this " + message + " rolls turn");
@@ -333,14 +333,38 @@ public class EventHandler {
 			boolean battleOver = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size() <= 1;
 			
 			if ( battleOver ){
-				EventHandler.SendEvent(new Event().EventId(EventList.REMOVE_THINGS));
+				EventHandler.SendEvent(new Event().EventId(EventList.BATTLE_OVER));
 			} else {
 				SendNullEvent();
 			}
-		} 
+<<<<<<< HEAD
+		} else if (e.eventId == EventList.ADD_THING_TO_TILE){
+			String type = e.eventParams[0];
+			
+			boolean isMagic = false, isRanged = false;
+			
+			if (type.equals("Magic")) { isMagic = true; }
+			if (type.equals("Ranged")) { isRanged = true; }
+		
+			Creature creature = new Creature(Terrain.DESERT, "C1", 6, GameConstants.GiantImageFront).Magic(isMagic).Ranged(isRanged);
+			creature.SetThingId(Integer.parseInt(e.eventParams[1]));
+			
+			Player player = GameClient.game.gameModel.GetPlayer(Integer.parseInt(e.eventParams[2]));
+			
+			creature.controlledBy = player.faction;
+			
+			int tileX = Integer.parseInt(e.eventParams[3]);
+			int tileY = Integer.parseInt(e.eventParams[4]);
+			GameClient.game.gameModel.boardController.AddThingToTile(creature, player, tileX, tileY);
+		} 	
 		else if (e.eventId == EventList.SET_HEX_TILES) 
 		{
 			String[] boardHexTileStrings = e.eventParams[0].trim().split("/");
+=======
+		} else if (e.eventId == EventList.SET_HEX_TILES) {
+			String boardHexTilesString = e.eventParams[0];
+			String unusedHexTileString = e.eventParams[1];
+>>>>>>> Implemented adding/removing/setting phase at any point in time
 			
 			ArrayList<HexTile> tiles = GameClient.game.parseInitialHexTiles(boardHexTileStrings);
 			

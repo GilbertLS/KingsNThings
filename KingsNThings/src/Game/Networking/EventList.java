@@ -13,7 +13,6 @@ public class EventList {
 	public static final int CHOOSE_PLAYER = 9;
 	public static final int INFLICT_HITS = 10;
 	public static final int REMOVE_THINGS = 11;
-	public static final int ADD_THING_TO_TILE = 12;
 	public static final int BATTLE_OVER = 13;
 	public static final int SET_HEX_TILES = 14;
 	public static final int INITIALIZE_THINGS = 15;
@@ -59,4 +58,7 @@ public class EventList {
 	public static final int HANDLE_WIN = 135;
 	public static final int CLEAR_CONSTRUCTION = 136;
 	public static final int CREATE_DEFENSE_CREATURES = 137;
+	public static final int SET_PHASE = 200;
+	public static final int REMOVE_THING = 201;
+	public static final int ADD_THING = 202;
 }

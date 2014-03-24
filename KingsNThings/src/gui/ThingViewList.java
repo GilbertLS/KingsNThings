@@ -13,21 +13,30 @@ import javafx.util.Callback;
 public class ThingViewList extends ListView<ThingView> {
 	protected ThingViewList self = this;
 	
-	 ThingViewList(ObservableList<ThingView> l) {
+	ThingViewList(ObservableList<ThingView> l) {
 		super(l);
-		setup();
+		setup(Orientation.HORIZONTAL);
+	 }
+	
+	 ThingViewList(ObservableList<ThingView> l, Orientation orientation) {
+		super(l);
+		setup(orientation);
 	 }
 	 
 	 ThingViewList() {
 		 super();
-		 setup();
+		 setup(Orientation.HORIZONTAL);
 	 }
 	 
-	 private void setup() {
+	 private void setup(Orientation orientation) {
 		 this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			this.setOrientation(Orientation.HORIZONTAL);
+			this.setOrientation(orientation);
 			this.getStyleClass().add("thingview-list");
-			this.setPrefHeight(70);
+			if(orientation == Orientation.HORIZONTAL) {
+				this.setPrefHeight(70);
+			} else {
+				this.setPrefWidth(70);
+			}
 			this.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
 	            @Override
 	            public ListCell<ThingView> call(ListView<ThingView> param) {

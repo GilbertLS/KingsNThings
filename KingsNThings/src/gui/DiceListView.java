@@ -1,19 +1,25 @@
 package gui;
 
+import Game.Networking.GameClient;
 import javafx.scene.layout.HBox;
 
 public class DiceListView extends HBox {
-	DiceView[] diceViews = new DiceView[4];
+	DiceView[] diceViews;
 	
-	public DiceListView(){
-		for (int i = 0; i < 4; i++){
+	public DiceListView(int numDice) {
+		diceViews = new DiceView[numDice];
+		for (int i = 0; i < numDice; i++) {
 			diceViews[i] = new DiceView();
 		}
 		this.getChildren().addAll(diceViews);
 	}
 	
-	public Void RollDice(int diceNum, int roll){
-		diceViews[diceNum].RollDice(roll);
-		return null;
+	public DiceListView(){
+		this(4);
+	}
+	
+	public int RollDice(int diceNum) {
+		int roll = diceViews[diceNum].RollDice();
+		return roll;
 	}
 }

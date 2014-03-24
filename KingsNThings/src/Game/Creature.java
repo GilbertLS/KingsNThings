@@ -17,10 +17,14 @@ public class Creature extends Combatant{
 	public Creature(Terrain terrian)
 	{
 		super(ThingType.CREATURE, "creature"+creatureNum++, (int)Math.ceil(Math.random()*6), GameConstants.PlaceHolderImageFront);
+		
+		this.terrain = terrian;
 	}
 	
 	public Creature(Terrain terrain, int combatValue){
 		super(ThingType.CREATURE, "creature"+creatureNum++, combatValue, GameConstants.PlaceHolderImageFront);
+		
+		this.terrain = terrain;
 	}
 	
 	public Creature(Terrain terrain, String name, int attackValue, String frontFileName)

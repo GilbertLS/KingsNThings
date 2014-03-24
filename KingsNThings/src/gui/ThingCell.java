@@ -2,8 +2,15 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import Game.GameConstants.ThingType;
+import Game.Combatant;
+import Game.Creature;
+import Game.Combatant;
+import Game.Creature;
 import Game.Player;
 import Game.GameConstants.CurrentPhase;
+import Game.Thing;
 import Game.Networking.GameClient;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -33,19 +40,16 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				
 				List<ThingView> list = getListView().getSelectionModel().getSelectedItems();
 				
-				Player currPlayer = GameClient.game.gameModel.GetCurrentPlayer();
 				GameView.selectedThings.clear();
 				for (ThingView thing : list){
-					if (currPlayer != null && thing.thingRef.controlledBy != currPlayer.faction){
-						continue;
-					}
-					
-					int thingId = thing.thingRef.thingID;
-					
-					GameView.selectedThings.add(thingId);
+					GameView.selectedThings.add(thing.thingRef);
 				}
 				
-				System.out.println(GameView.selectedThings);
+				/*for (Thing thing : GameView.selectedThings) {
+					if(thing instanceof Creature) {
+						System.out.println((Creature)thing);
+					}
+				}*/
 			}
 		});
 		

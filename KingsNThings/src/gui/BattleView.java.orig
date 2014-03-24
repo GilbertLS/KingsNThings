@@ -1,6 +1,5 @@
 package gui;
 
-import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 import Game.Combatant;
@@ -10,11 +9,15 @@ import Game.Thing;
 import Game.Utility;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+<<<<<<< HEAD
+=======
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+>>>>>>> Fixed up battle view, looks alright for now.
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
