@@ -70,6 +70,7 @@ public class GameController {
 	}	
 	
 	private void initialSetup() {
+		/*begin need to happen even with DEVMODE:*/
 		determineInitialPlayerOrder();
 		
 		initializeHexTiles();
@@ -79,12 +80,22 @@ public class GameController {
 		randomizePlayingCup();
 		
 		intializeSpecialCharacters();
+		/*end need to happen even with DEVMODE*/
+		
+		
 		
 		initializeGold();
 		
+		
+		
+		/*begin need to happen even with DEVMODE:*/
 		placeThingsOnTile(1, "Control_Marker");
 		
 		revealHexTiles();
+		/*end need to happen even with DEVMODE*/
+		
+		
+		
 		
 		placeThingsOnTile(2, "Control_Marker");
 		
