@@ -299,8 +299,8 @@ public class Tile extends Region implements Draggable {
 						ThingCell 					source 		= (ThingCell)e.getGestureSource();
 						ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
 						ObservableList<ThingView> 	items		= source.getListView().getItems();
-						ArrayList<ThingView> 		thingViews		= new ArrayList<ThingView>();
-						ArrayList<Thing> things = new ArrayList<Thing>();
+						ArrayList<ThingView> 		thingViews	= new ArrayList<ThingView>();
+						ArrayList<Thing> 			things 		= new ArrayList<Thing>();
 					
 						GameView gv = (GameView)getScene();
 						if(gv.currentPhase != CurrentPhase.NULL && gv.returnString.equals(""))
@@ -403,10 +403,18 @@ public class Tile extends Region implements Draggable {
 								}
 							}
 						}
+						
+						if(success) {
+							TilePreview 	tp 			= GameClient.game.gameView.tilePreview;
+							tp.changeTile(thisTile);
+							
+							int 			currPlayer 	= GameClient.game.gameModel.getCurrPlayerNumber();
+							ThingViewList 	list 		= tp.GetThingList(currPlayer);
+							int 			size		= list.getItems().size();
+							
+							list.getSelectionModel().selectRange(size - listOfIds.size(), size);
+						}
 					}
-					
-					if(success)
-						GameClient.game.gameView.tilePreview.changeTile(thisTile);
 					
 					e.setDropCompleted(success);
 					e.consume();
