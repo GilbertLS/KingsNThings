@@ -4,9 +4,9 @@
 	-fx-background-position: center center;
 	-fx-background-size: cover, auto;
 	-fx-background-color: #336699;
-	-fx-font: 12px "Arial";
-	padding: 0px;
-	margin: 0px;
+	-fx-font: 12 "Arial";
+	padding: 0;
+	margin: 0;
 }
 
 .player-panel {
@@ -33,9 +33,9 @@
 
 .list-view {
 	-fx-focus-color: transparent;
-	-fx-border-width: 0 0 0 0;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
 	-fx-padding: 0;
-	-fx-margin: 0;
 }
 
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
@@ -62,7 +62,7 @@
 }
 
 .thingview-list {
-	-fx-background-color: #353535;
+	-fx-background-color: #232323;
 }
 
 .tile {
@@ -73,12 +73,12 @@
 }
 
 .tile:hover {
-	-fx-border: 10px;
+	-fx-border: 10;
 	-fx-border-color: red;
 }
 
 .tile:focused {
-	-fx-border: 100px;
+	-fx-border: 10;
 	-fx-border-color: red;
 }
 
@@ -97,16 +97,12 @@
 }
 
 .button-box {
-	-fx-padding: 10px;
+	-fx-padding: 10;
 	-fx-background-color: #000000;
 }
 
 .button-box .button {
-	-fx-margin: 10px;
-}
-
-.preview-list {
-	-fx-width: 100%;
+	-fx-margin: 10;
 }
 
 .message
@@ -115,7 +111,7 @@
 	-fx-border-width: 0 1 1 1;
 	-fx-border-color: #353535;
 	-fx-text-fill: white;
-	-fx-padding: 10px;
+	-fx-padding: 10;
 }
 
 .message .label {
@@ -123,8 +119,8 @@
 }
 
 .scroll-pane {
-	-fx-background-color: blue;
-	-fx-control-inner-background: blue;
+	-fx-background-color: transparent;
+	-fx-control-inner-background: transparent;
 	/*-fx-hbar-policy: never;
 	-fx-vbar-policy: never;*/
 	-fx-background-insets: 0;
@@ -137,4 +133,8 @@
 
 .scroll-pane .corner {
     -fx-background-insets: 0;
+}
+
+.rack-view {
+	-fx-border-width: 0;
 }
