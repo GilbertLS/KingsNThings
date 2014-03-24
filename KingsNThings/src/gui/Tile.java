@@ -26,6 +26,8 @@ import javafx.scene.shape.Polygon;
 public class Tile extends Region implements Draggable {
 	private Tile thisTile = this;
 	private HexTile tileRef;
+	private int i;
+	private int j;
 	public ArrayList<ThingView> p1Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> p2Things = 			new ArrayList<ThingView>();
 	public ArrayList<ThingView> p3Things = 			new ArrayList<ThingView>();
@@ -36,24 +38,15 @@ public class Tile extends Region implements Draggable {
 	private int controllingPlayer = 0;
 	private CurrentPhase currentPhase;
 	
-    public Tile(Double width, Double height, HexTile h)
+    public Tile(Double width, Double height, HexTile h, int ii, int jj)
     {
+    	i 		= ii;
+    	j 		= jj;
     	tileRef = h;
     	
     	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
     	this.getStyleClass().add("tile");
-    	this.setPrefSize(width, height);
-    	
-    	Polygon hex = new Polygon();
-    	hex.getPoints().addAll(new Double[]{
-    			0.0, 		height/2,
-    			width/4, 	0.0,
-    		    3*width/4, 	0.0,
-    		    width, 		height/2,
-    		    3*width/4, 	height,
-    		    width/4, 	height});
-
-    	this.setShape(hex);
+    	this.setSize(width, height);
     	this.initListeners();
     }
     
@@ -68,6 +61,14 @@ public class Tile extends Region implements Draggable {
     		return p4Things;
     	else
     		return defendingThings;
+    }
+    
+    public int getI() {
+    	return i;
+    }
+    
+    public int getJ() {
+    	return j;
     }
     
     public void add(ThingView t, int player) {
@@ -298,8 +299,8 @@ public class Tile extends Region implements Draggable {
 						ThingCell 					source 		= (ThingCell)e.getGestureSource();
 						ArrayList<Integer> 			listOfIds 	= (ArrayList<Integer>) e.getDragboard().getContent(thingRackIds);
 						ObservableList<ThingView> 	items		= source.getListView().getItems();
-						ArrayList<ThingView> 		thingViews		= new ArrayList<ThingView>();
-						ArrayList<Thing> things = new ArrayList<Thing>();
+						ArrayList<ThingView> 		thingViews	= new ArrayList<ThingView>();
+						ArrayList<Thing> 			things 		= new ArrayList<Thing>();
 					
 						GameView gv = (GameView)getScene();
 						if(gv.currentPhase != CurrentPhase.NULL && gv.returnString.equals(""))
@@ -398,10 +399,18 @@ public class Tile extends Region implements Draggable {
 								}
 							}
 						}
+						
+						if(success) {
+							TilePreview 	tp 			= GameClient.game.gameView.tilePreview;
+							tp.changeTile(thisTile);
+							
+							int 			currPlayer 	= GameClient.game.gameModel.getCurrPlayerNumber();
+							ThingViewList 	list 		= tp.GetThingList(currPlayer);
+							int 			size		= list.getItems().size();
+							
+							list.getSelectionModel().selectRange(size - listOfIds.size(), size);
+						}
 					}
-					
-					if(success)
-						GameClient.game.gameView.tilePreview.changeTile(thisTile);
 					
 					e.setDropCompleted(success);
 					e.consume();
@@ -445,6 +454,21 @@ public class Tile extends Region implements Draggable {
 	public void hideTile() {
 		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
 			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");
+	}
+	
+	public void setSize(double width, double height) {
+		this.setPrefSize(width, height);
+    	
+    	Polygon hex = new Polygon();
+    	hex.getPoints().addAll(new Double[]{
+    			0.0, 		height/2,
+    			width/4, 	0.0,
+    		    3*width/4, 	0.0,
+    		    width, 		height/2,
+    		    3*width/4, 	height,
+    		    width/4, 	height});
+
+    	this.setShape(hex);
 	}
 		   
 }

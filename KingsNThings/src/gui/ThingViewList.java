@@ -33,9 +33,11 @@ public class ThingViewList extends ListView<ThingView> {
 			this.setOrientation(orientation);
 			this.getStyleClass().add("thingview-list");
 			if(orientation == Orientation.HORIZONTAL) {
-				this.setPrefHeight(70);
+				this.setMinHeight(70);
+				this.setMaxHeight(70);
 			} else {
-				this.setPrefWidth(70);
+				this.setMinWidth(70);
+				this.setMaxWidth(70);
 			}
 			this.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
 	            @Override
