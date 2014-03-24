@@ -22,9 +22,11 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> player2Things;	//player 2's Things in this Hex Tile
 	public ArrayList<Thing> player3Things;	//player 3's Things in this Hex Tile
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
+	public ArrayList<Thing> defendingThings;	//Defending Things in this Hex Tile
 	public Fort fort;						//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public ArrayList<Settlement> settlements;
+	public ArrayList<Treasure> treasures;
 	public int x;
 	public int y;
 	public int moveValue;
@@ -44,11 +46,13 @@ public class HexTile implements IIncomable{
 		this.player2Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
 		this.player3Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
 		this.player4Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
+		this.defendingThings = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
 		
 		this.fort = null;
 		
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		this.settlements = new ArrayList<Settlement>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
+		this.treasures = new ArrayList<Treasure>();
 		
 		if(terrain == Terrain.SWAMP
 				|| terrain == Terrain.MOUNTAIN
@@ -60,30 +64,45 @@ public class HexTile implements IIncomable{
 	}
 	
 	public void AddThingToTile(Player player, Thing thing){
-		if(handlePlaceSpecialIncome(player, thing))
-			return;
+		int playerIndex = player.GetPlayerNum();
 		
-		if(handleTreasure(player, thing))
-			return;
-		
-		if(handleMagic(player, thing))
-			return;
-		
-		if ( player.GetPlayerNum() == 0 ){
-			player1Things.add(thing);
-		} else if ( player.GetPlayerNum() == 1 ){
-			player2Things.add(thing);
-		} else if ( player.GetPlayerNum() == 2 ){
-			player3Things.add(thing);
-		} else if ( player.GetPlayerNum() == 3 ){
-			player4Things.add(thing);
-		}
+		AddThingToTile(playerIndex, thing);
 	}
 	
-	private boolean handleTreasure(Player player, Thing thing) {
+	public void AddThingToTile(int playerIndex, Thing thing){
+		if(handlePlaceSpecialIncome(playerIndex, thing))
+			return;
+		
+		if(handleTreasure(playerIndex, thing))
+			return;
+		
+		if(handleMagic(playerIndex, thing))
+			return;
+		
+		if ( playerIndex == 0 ){
+			player1Things.add(thing);
+		} else if ( playerIndex == 1 ){
+			player2Things.add(thing);
+		} else if ( playerIndex == 2 ){
+			player3Things.add(thing);
+		} else if ( playerIndex == 3 ){
+			player4Things.add(thing);
+		} else if ( playerIndex == 4 )
+			defendingThings.add(thing);
+		
+	}
+	
+	private boolean handleTreasure(int playerIndex, Thing thing) {
 		if(thing.thingType == ThingType.TREASURE) 
 		{
-			player.addGold(((Treasure)thing).getValue());
+			if(playerIndex == 4)
+				treasures.add((Treasure)thing);
+			else
+			{	
+				Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
+						
+				player.addGold(((Treasure)thing).getValue());
+			}
 			
 			return true;
 		}
@@ -91,39 +110,44 @@ public class HexTile implements IIncomable{
 		return false;
 	}
 
-	private boolean handlePlaceSpecialIncome(Player p, Thing t) {
-		if(t.thingType == ThingType.SPECIAL_INCOME) 
+	private boolean handlePlaceSpecialIncome(int playerIndex, Thing t) {
+		if(!hasSettlement() && !hasSpecialIncome())
 		{
-			SpecialIncome si = (SpecialIncome)t;
+			Player player = null;
 			
-			specialIncomes.add(si);
-			p.addSpecialIncome(si);
+			if(playerIndex != 4)
+				player = GameClient.game.gameModel.playerFromIndex(playerIndex);
 			
-			return true;
-		}
-		else if(t.thingType == ThingType.SETTLEMENT)
-		{
-			Settlement s = (Settlement)t;
-			
-			settlements.add(s);
-			p.addSettlement(s);
-			
-			return true;
+			if(t.thingType == ThingType.SPECIAL_INCOME) 
+			{
+				SpecialIncome si = (SpecialIncome)t;
+				
+				specialIncomes.add(si);
+				
+				if(player != null)
+					player.addSpecialIncome(si);
+				
+				return true;
+			}
+			else if(t.thingType == ThingType.SETTLEMENT)
+			{
+				Settlement s = (Settlement)t;
+				
+				settlements.add(s);
+				
+				if(player != null)
+					player.addSettlement(s);
+				
+				return true;
+			}
 		}
 
 		return false;
-	}
-
-	public void AddThingToTile(int playerIndex, Thing thing){
-		Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
-		
-		AddThingToTile(player, thing);
 	}
 	
-	private boolean handleMagic(Player player, Thing thing) {
+	private boolean handleMagic(int playerIndex, Thing thing) {
 		if(thing.thingType == ThingType.MAGIC)
 		{
-			//handle the magic here
 			
 			return true;
 		}
@@ -144,22 +168,32 @@ public class HexTile implements IIncomable{
 		return false;
 	}
 	
+	public boolean HasThingsOnTile(int playerIndex){
+		
+		if(playerIndex == 4)
+			return !defendingThings.isEmpty();
+		else
+			return HasThingsOnTile(GameClient.game.gameModel.playerFromIndex(playerIndex));
+	}
+	
 	public ArrayList<Thing> GetThings(Player player){
 		ArrayList<Thing> returnList = GetThings(player.GetPlayerNum());
 		
 		return returnList;
 	}
 	
-	public ArrayList<Thing> GetThings(int player){
-		if ( player == 0 ){
+	public ArrayList<Thing> GetThings(int playerIndex){
+		if ( playerIndex == 0 ){
 			return player1Things;
-		} else if ( player == 1 ){
+		} else if ( playerIndex == 1 ){
 			return player2Things;
-		} else if ( player == 2 ){
+		} else if ( playerIndex == 2 ){
 			return player3Things;
-		} else if ( player == 3 ){
+		} else if ( playerIndex == 3 ){
 			return player4Things;
-		}
+		}else if ( playerIndex == 4)
+			return defendingThings;
+		
 		return null;
 	}
 	
@@ -261,7 +295,7 @@ public class HexTile implements IIncomable{
 		case 3:
 			return player4Things;
 		default:
-			return player1Things;
+			return defendingThings;
 		}
 	}
 
@@ -328,16 +362,16 @@ public class HexTile implements IIncomable{
 		switch(playerIndex)
 		{
 		case 0:
-			ret = (player2Things.isEmpty() && player3Things.isEmpty() && player4Things.isEmpty());
+			ret = (player2Things.isEmpty() && player3Things.isEmpty() && player4Things.isEmpty() && defendingThings.isEmpty());
 			break;
 		case 1:
-			ret = (player1Things.isEmpty() && player3Things.isEmpty() && player4Things.isEmpty());
+			ret = (player1Things.isEmpty() && player3Things.isEmpty() && player4Things.isEmpty() && defendingThings.isEmpty());
 			break;
 		case 2:
-			ret = (player1Things.isEmpty() && player2Things.isEmpty() && player4Things.isEmpty());
+			ret = (player1Things.isEmpty() && player2Things.isEmpty() && player4Things.isEmpty() && defendingThings.isEmpty());
 			break;
 		default:
-			ret = (player1Things.isEmpty() && player2Things.isEmpty() && player3Things.isEmpty());
+			ret = (player1Things.isEmpty() && player2Things.isEmpty() && player3Things.isEmpty() && defendingThings.isEmpty());
 			break;
 		}
 		
@@ -414,5 +448,79 @@ public class HexTile implements IIncomable{
 	public void setConstructionAllowed(boolean allowed)
 	{
 		constructionAllowed = allowed;
+	}
+
+	public ArrayList<Thing> enforceValidDefense(ArrayList<Thing> things) {
+		ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
+		ArrayList<SpecialIncome> specialIncomes = new ArrayList<SpecialIncome>();
+		ArrayList<Settlement> settlements = new ArrayList<Settlement>();
+		
+		//find all valid incomes
+		for(Thing t: things)
+		{
+			if (t.thingType == ThingType.SPECIAL_INCOME)
+			{
+				if(((SpecialIncome)t).getTerrain() != terrain)
+					thingsToRemove.add(t);
+				else
+					specialIncomes.add((SpecialIncome)t);
+			}
+			else if (t.thingType == ThingType.SETTLEMENT)
+				settlements.add((Settlement)t);
+				
+		}
+		
+		//find highest special income
+		int highestSpecialIncome = 0;
+		SpecialIncome highestSI = null;
+		for(SpecialIncome si: specialIncomes)
+		{
+			if (si.getIncome() > highestSpecialIncome)
+			{
+				highestSpecialIncome = si.getIncome();
+				
+				if(highestSI != null)
+					thingsToRemove.add(highestSI);	
+				
+				highestSI = si;
+			}
+			else
+				thingsToRemove.add(si);
+		}
+		
+		//find highest settlement
+		int highestSettlementIncome = 0;
+		Settlement highestSettlement = null;
+		for(Settlement s: settlements)
+		{
+			if (s.getIncome() > highestSettlementIncome)
+			{
+				highestSettlementIncome = s.getIncome();
+				
+				if(highestSettlement != null)
+					thingsToRemove.add(highestSettlement);
+			
+				highestSettlement = s;
+			}
+			else
+				thingsToRemove.add(s);
+		}
+			
+		//if a highest settlement and highest special income were found
+		//take the higher of the two (if equal, will take settlement)
+		if(highestSI != null && highestSettlement != null)
+			if(highestSI.getIncome() > highestSettlement.getIncome())
+				thingsToRemove.add(highestSettlement);
+			else
+				thingsToRemove.add(highestSI);
+		
+		//remove invalid things from things to play
+		things.removeAll(thingsToRemove);
+		
+		//return all invalid things to cup
+		for(Thing t: thingsToRemove)
+			GameClient.game.gameModel.returnToCup(t);
+			
+		return things;
 	}
 }
