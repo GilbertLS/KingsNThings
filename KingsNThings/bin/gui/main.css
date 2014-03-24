@@ -4,9 +4,9 @@
 	-fx-background-position: center center;
 	-fx-background-size: cover, auto;
 	-fx-background-color: #336699;
-	-fx-font: 12px "Arial";
-	padding: 0px;
-	margin: 0px;
+	-fx-font: 12 "Arial";
+	padding: 0;
+	margin: 0;
 }
 
 .player-panel {
@@ -33,14 +33,14 @@
 
 .list-view {
 	-fx-focus-color: transparent;
-	-fx-border-width: 0 0 0 0;
+	-fx-border-width: 0 1 1 1;
+	-fx-border-color: #353535;
 	-fx-padding: 0;
-	-fx-margin: 0;
 }
 
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
     -fx-background-color: blue;
-    -fx-opacity: 0.2;
+    -fx-opacity: 0.6;
 }
 
 .list-cell:filled:hover { 
@@ -61,12 +61,8 @@
     -fx-padding: 2.5;
 }
 
-thingview-list {
-	-fx-background-color: #353535;
-}
-
-.board {
-	/*-fx-background-color: #FFFF00;*/
+.thingview-list {
+	-fx-background-color: #232323;
 }
 
 .tile {
@@ -77,17 +73,17 @@ thingview-list {
 }
 
 .tile:hover {
-	-fx-border: 10px;
+	-fx-border: 10;
 	-fx-border-color: red;
 }
 
-.tile:selected {
-	-fx-border: 10px;
+.tile:focused {
+	-fx-border: 10;
 	-fx-border-color: red;
 }
 
 .thing {
-	-fx-background: #FFFF00;
+	-fx-background: transparent;
 	-fx-background-repeat: stretch;
 	-fx-background-position: center center;
 	-fx-background-size: cover, auto;
@@ -101,16 +97,12 @@ thingview-list {
 }
 
 .button-box {
-	-fx-padding: 10px;
+	-fx-padding: 10;
 	-fx-background-color: #000000;
 }
 
 .button-box .button {
-	-fx-margin: 10px;
-}
-
-.preview-list {
-	-fx-width: 100%;
+	-fx-margin: 10;
 }
 
 .message
@@ -119,9 +111,30 @@ thingview-list {
 	-fx-border-width: 0 1 1 1;
 	-fx-border-color: #353535;
 	-fx-text-fill: white;
-	-fx-padding: 10px;
+	-fx-padding: 10;
 }
 
 .message .label {
 	-fx-text-fill: white;
+}
+
+.scroll-pane {
+	-fx-background-color: transparent;
+	-fx-control-inner-background: transparent;
+	/*-fx-hbar-policy: never;
+	-fx-vbar-policy: never;*/
+	-fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+
+.scroll-pane .corner {
+    -fx-background-insets: 0;
+}
+
+.rack-view {
+	-fx-border-width: 0;
 }
