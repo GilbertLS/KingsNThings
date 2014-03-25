@@ -181,6 +181,7 @@ public class SpecialCharacterView extends Dialog{
 				rollLabel.setText("Roll:"+(rolls[0]+rolls[1]));
 				rollTotalLabel.setText("Total Roll:" + (rollAugmentation + rolls[0] + rolls[1]));
 				diceRolled = true;
+				GameClient.game.gameView.characterRecruited = true;	
 			}
 		});
 		
@@ -200,9 +201,6 @@ public class SpecialCharacterView extends Dialog{
 						GameClient.game.sendRecruitSpecialCharacterEvent(selection.thingRef.thingID, playerIndex);
 						GameClient.game.gameView.addToRack(selection.thingRef);
 						selection.thingRef.controlledBy = GameClient.game.gameModel.GetCurrentPlayer().faction;
-						
-						GameClient.game.gameView.characterRecruited = true;	
-						
 					}
 				}
 					
