@@ -26,7 +26,6 @@ import Game.Networking.GameClient;
 public class SpecialCharacterView extends Dialog{
 	SpecialCharacterView self = this;
 	ArrayList<SpecialCharacter> specialCharacters;
-	int numSCs;
 	int playerIndex;
 	int rollAugmentation = 0;
 	int[] rolls;
@@ -46,7 +45,7 @@ public class SpecialCharacterView extends Dialog{
 	ThingView selection;
 	boolean diceRolled = false;
 	
-	public SpecialCharacterView(Stage stage, int numSCs, int playerIndex){
+	public SpecialCharacterView(Stage stage, int playerIndex){
 		super(stage, "Special Character Recruitment", true, false);
 		
 		specialCharacterListBox = new HBox();
@@ -86,7 +85,6 @@ public class SpecialCharacterView extends Dialog{
 		labelBox.getChildren().add(requiredRollLabel);
 		
 		specialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters();
-		this.numSCs = numSCs;
 		this.playerIndex = playerIndex;
 		rolls = new int[2];
 		rolls[0] = 0;

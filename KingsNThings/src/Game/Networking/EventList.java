@@ -61,4 +61,5 @@ public class EventList {
 	public static final int SET_PHASE = 200;
 	public static final int REMOVE_THING = 201;
 	public static final int ADD_THING = 202;
+	public static final int BRIBE_CREATURES = 138;
 }

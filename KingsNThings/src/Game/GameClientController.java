@@ -457,4 +457,59 @@ public class GameClientController {
 			}
 		});
 	}
+
+	public void sendBribeCreaturesEvent(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
+		String param = h.x + "SPLIT" + h.y + "~";
+		
+		for(Thing t: selectedThings){
+			param += t.GetThingId() + " ";
+		}			
+		
+		String[] params = {""+playerIndex, param};
+		
+		boolean[] intendedPlayers = new boolean[gameModel.PlayerCount()];
+		for(int i=0; i<intendedPlayers.length; i++){
+			intendedPlayers[i]=true;
+		}
+		intendedPlayers[playerIndex] = false;
+		
+		Event gameEvent = new Event()
+			.EventId(EventList.BRIBE_CREATURES)
+			.IntendedPlayers(intendedPlayers)
+			.EventParameters(params);
+
+		Game.Networking.EventHandler.SendEvent(gameEvent);	
+		
+	}
+
+	public boolean validBribe(ArrayList<Thing> selectedThings, boolean hasTreasure) {
+		Player currentPlayer = gameModel.GetCurrentPlayer();
+		int cost = gameModel.calculateBribe(selectedThings, hasTreasure);
+		
+		//valid if current player can afford
+		if(currentPlayer.canAfford(cost))
+			return true;
+		
+		return false;
+	}
+
+	public HexTile parseBribeString(String eventParam, ArrayList<Thing> things) {
+		String[] params = eventParam.split("~");
+		
+		String[] hexParams = params[0].split("SPLIT");
+		int x = Integer.parseInt(hexParams[0]);
+		int y = Integer.parseInt(hexParams[1]);
+		HexTile h = gameModel.gameBoard.getTile(x, y);
+		
+		String[] thingIDParams = params[1].trim().split(" ");
+		for(String s: thingIDParams)
+		{
+			int id = Integer.parseInt(s);
+			Thing t = h.getThingFromTileByID(id);
+			
+			things.add(t);
+		}
+		
+		return h;
+	}
 }

@@ -11,6 +11,7 @@ import Game.Utility;
 import Game.Networking.GameClient;
 import Game.HexTile;
 import Game.Thing;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -180,7 +181,7 @@ public class Tile extends Region implements Draggable {
 	    	list.add(imgView);
 	    	
 	    	if(fort == null)
-	    		fort = new ThingView(tileRef.fort);
+	    		fort = new ThingView(tileRef.getFort());
     	}
     	else
     	{
@@ -231,8 +232,8 @@ public class Tile extends Region implements Draggable {
     }
     
     private String getFortString() {
-    	if (tileRef != null && tileRef.fort != null) {
-    		switch (tileRef.fort.getLevel()) {
+    	if (tileRef != null && tileRef.hasFort()) {
+    		switch (tileRef.getFort().getLevel()) {
     			case TOWER: return "C_Fort_375.png";
     			case KEEP: return "C_Fort_377.png";
     			case CASTLE: return "C_Fort_379.png";
@@ -302,7 +303,7 @@ public class Tile extends Region implements Draggable {
 						ArrayList<ThingView> 		thingViews	= new ArrayList<ThingView>();
 						ArrayList<Thing> 			things 		= new ArrayList<Thing>();
 					
-						GameView gv = (GameView)getScene();
+						final GameView gv = (GameView)getScene();
 						if(gv.currentPhase != CurrentPhase.NULL && gv.returnString.equals(""))
 						{											
 							for (Integer i : listOfIds) {
@@ -361,9 +362,17 @@ public class Tile extends Region implements Draggable {
 											&& tileRef.noDefense()) 						//exploration
 									{
 										//handle creatures
-										GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y);
-
-										gv.updateTiles(tileRef, 4);
+										if (GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y)){
+											gv.updateTiles(tileRef, 4);
+											
+											//if not run later, drag drop breaks
+											Platform.runLater(new Runnable(){
+												public void run(){
+													//allow bribing if creatures were created
+													gv.bribeCreatures(thisTile);
+												}
+											});
+										}
 									}
 									
 									thisTile.addAll(thingViews, gv.getCurrentPlayer());
@@ -416,11 +425,6 @@ public class Tile extends Region implements Draggable {
 					e.consume();
 				}
 		});
-	}
-
-	protected void addSpecialIncome(ThingView tv) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void showTile() {  

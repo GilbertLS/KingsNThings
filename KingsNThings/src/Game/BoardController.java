@@ -79,10 +79,10 @@ public class BoardController {
 				}
 			}
 			
-			if(h.fort != null)
+			if(h.hasFort())
 			{
-				if(h.fort.thingID == thingsToRemove[i])
-					h.fort = null;
+				if(h.getFort().thingID == thingsToRemove[i])
+					h.removeFort();
 			}
 			
 			for (Thing thing : removeThings){

@@ -20,6 +20,7 @@ import Game.GameConstants.BattleTurn;
 import Game.GameConstants.Terrain;
 import Game.HexTile;
 import Game.Player;
+import Game.Settlement;
 import Game.Thing;
 import Game.Utility;
 
@@ -171,9 +172,9 @@ public class EventHandler {
 				{
 					thingsBattling.add(t);
 				}
-				if(battleTile.fort != null && currPlayer.faction == battleTile.controlledBy)
+				if(battleTile.hasFort() && currPlayer.faction == battleTile.controlledBy)
 				{
-					thingsBattling.add(battleTile.fort);
+					thingsBattling.add(battleTile.getFort());
 				}
 				
 				for (Thing thing : thingsBattling){
@@ -283,7 +284,7 @@ public class EventHandler {
 				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
-				boolean hasFort = currTile.fort != null && currentPlayer.faction == currTile.controlledBy;
+				boolean hasFort = currTile.hasFort() && currentPlayer.faction == currTile.controlledBy;
 				
 				//also need to handle settlements and any other combatants
 				if(hasFort)
@@ -302,7 +303,7 @@ public class EventHandler {
 						thingsToRemove[i++] = "" + t.thingID;
 					}
 					if(hasFort){
-						thingsToRemove[i++] = "" + currTile.fort.thingID;
+						thingsToRemove[i++] = "" + currTile.getFort().thingID;
 					}
 				}
 				EventHandler.SendEvent(
@@ -921,6 +922,24 @@ public class EventHandler {
 			        }
 				});
 			}
+		}
+		else if(e.eventId == EventList.BRIBE_CREATURES)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			ArrayList<Thing> things = new ArrayList<Thing>();
+			final HexTile h = GameClient.game.parseBribeString(e.eventParams[1], things);
+			
+			GameClient.game.gameModel.handleBribe(h, things, playerIndex);
+			
+			final int gold = GameClient.game.gameModel.GetPlayer(playerIndex).getGold();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.updateTiles(h, 4);
+					GameClient.game.gameView.updateGold(gold, playerIndex);
+		        }
+			});
 		}
 		else if(e.eventId == EventList.CREATE_DEFENSE_CREATURES)
 		{

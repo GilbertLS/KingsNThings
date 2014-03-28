@@ -83,10 +83,9 @@ public class ButtonBox extends HBox {
 				if(GameClient.game.gameView.currentPhase == CurrentPhase.RECRUIT_CHARACTER
 						&& GameClient.game.gameView.characterRecruited == false)
 				{
-					int numSpecialCharacters = GameClient.game.gameModel.getUnownedSpecialCharacters().size();
 					int playerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
 					
-					SpecialCharacterView SCView = new SpecialCharacterView(GameClient.game.gameView.primaryStage, numSpecialCharacters, playerIndex);
+					SpecialCharacterView SCView = new SpecialCharacterView(GameClient.game.gameView.primaryStage, playerIndex);
 					GameView.specialCharacterView = SCView;
 				}
 			}
