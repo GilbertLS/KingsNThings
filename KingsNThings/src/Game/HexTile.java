@@ -23,7 +23,7 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> player3Things;	//player 3's Things in this Hex Tile
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
 	public ArrayList<Thing> defendingThings;	//Defending Things in this Hex Tile
-	public Fort fort;						//Fort for this Hex Tile (if applicable)
+	public ArrayList<Fort> forts;						//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public ArrayList<Settlement> settlements;
 	public ArrayList<Treasure> treasures;
@@ -48,11 +48,10 @@ public class HexTile implements IIncomable{
 		this.player4Things = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
 		this.defendingThings = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS_PER_HEX);
 		
-		this.fort = null;
-		
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		this.settlements = new ArrayList<Settlement>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		this.treasures = new ArrayList<Treasure>();
+		this.forts = new ArrayList<Fort>();
 		
 		if(terrain == Terrain.SWAMP
 				|| terrain == Terrain.MOUNTAIN
@@ -95,7 +94,7 @@ public class HexTile implements IIncomable{
 	private boolean handleTreasure(int playerIndex, Thing thing) {
 		if(thing.thingType == ThingType.TREASURE) 
 		{
-			if(playerIndex == 4)
+			if(playerIndex == 4)	//add treasure to be capture after battle
 				treasures.add((Treasure)thing);
 			else
 			{	
@@ -230,7 +229,7 @@ public class HexTile implements IIncomable{
 	}
 
 	public void addFort(Fort f) {
-		fort = f;
+		forts.add(f);
 	}
 	
 	public int distance(HexTile h)
@@ -282,6 +281,89 @@ public class HexTile implements IIncomable{
 		return null;
 	}
 	
+	public Thing getThingFromTileByID(Integer id) {
+		//check for special income
+		if(hasSpecialIncome()){
+			SpecialIncome si = specialIncomeByID(id);
+			if(si != null)
+				return si;	
+		}
+
+		//check for settlement
+		if(hasSettlement()){
+			Settlement s = settlementByID(id);
+			if(s != null)
+				return s;
+		}
+
+		//check for fort
+		if(hasFort()){
+			Fort f = fortByID(id);
+			if(f != null)
+				return f;
+		}
+		
+		//check for treasure
+		if(hasTreasure()){
+			Treasure t = treasureByID(id);
+			if(t != null)
+				return t;
+		}
+		
+		//check all player things
+		Thing t;
+		for(int i=0; i<5; i++){
+			if(HasThingsOnTile(i)){
+				t = getThingFromTileByID(id, i);
+				if(t != null)
+					return t;
+			}
+		}
+		
+		//thing does not exist on tile
+		return null;
+	}
+	
+	private Treasure treasureByID(Integer id) {
+		for(Treasure t: treasures)
+		{
+			if(t.thingID == id)
+				return t;
+		}
+		
+		return null;
+	}
+
+	private Fort fortByID(Integer id) {
+		for(Fort f: forts)
+		{
+			if(f.thingID == id)
+				return f;
+		}
+		
+		return null;
+	}
+
+	private Settlement settlementByID(Integer id) {
+		for(Settlement s: settlements)
+		{
+			if(s.thingID == id)
+				return s;
+		}
+		
+		return null;
+	}
+
+	private SpecialIncome specialIncomeByID(Integer id) {
+		for(SpecialIncome si: specialIncomes)
+		{
+			if(si.thingID == id)
+				return si;
+		}
+		
+		return null;
+	}
+
 	public ArrayList<Thing> playerThingsFromIndex(int index)
 	{
 		switch(index)
@@ -300,6 +382,8 @@ public class HexTile implements IIncomable{
 	}
 
 	public void handlePostBattle() {
+		Fort fort = getFort();
+		
 		if(fort != null)
 		{
 			int roll = Dice.rollDice(1)[0];
@@ -390,11 +474,15 @@ public class HexTile implements IIncomable{
 	}
 
 	public boolean hasFort() {
-		return fort != null;
+		return !forts.isEmpty();
 	}
 
 	public Fort getFort() {
-		return fort;
+		return forts.get(0);
+	}
+	
+	public ArrayList<Fort> getAllForts() {
+		return forts;
 	}
 
 	public boolean hasSettlement() {
@@ -528,5 +616,58 @@ public class HexTile implements IIncomable{
 
 	public boolean noDefense() {
 		return defendingThings.isEmpty();
+	}
+
+	public boolean hasTreasure() {
+		return !treasures.isEmpty();
+	}
+
+	public ArrayList<Thing> removePlayerThings(ArrayList<Thing> things, int playerIndex) {
+		ArrayList<Thing> thingsToRemoveFrom = GetThings(playerIndex);
+		ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
+		
+		for(Thing t: thingsToRemoveFrom){
+			if(things.contains(t))
+				thingsToRemove.add(t);
+		}
+		
+		thingsToRemoveFrom.removeAll(thingsToRemove);
+		
+		return thingsToRemove;
+	}
+
+	public ArrayList<Thing> removeSettlements(ArrayList<Thing> things) {
+		ArrayList<Thing> settlementsToRemove = new ArrayList<Thing>();
+		
+		for(Settlement s: settlements){
+			if(things.contains(s))
+				settlementsToRemove.add(s);
+		}
+		
+		settlements.removeAll(settlementsToRemove);
+		
+		return settlementsToRemove;
+	}
+
+	public void removeFort() {
+		forts = new ArrayList<Fort>();
+		
+	}
+
+	public ArrayList<Treasure> getTreasures() {
+		return treasures;
+	}
+
+	public ArrayList<Thing> removeSpecialIncomes(ArrayList<Thing> selectedThings) {
+		ArrayList<Thing> specialIncomesToRemove = new ArrayList<Thing>();
+		
+		for(SpecialIncome si: specialIncomes){
+			if(selectedThings.contains(si))
+				specialIncomesToRemove.add(si);
+		}
+		
+		specialIncomes.removeAll(specialIncomesToRemove);
+		
+		return specialIncomesToRemove;
 	}
 }

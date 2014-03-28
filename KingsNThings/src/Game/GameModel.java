@@ -818,7 +818,7 @@ public class GameModel {
 	}
 
 	public boolean isValidTowerPlacement(HexTile selectedTile) {
-		return (selectedTile.controlledBy == currPlayer.faction && selectedTile.fort == null);
+		return (selectedTile.controlledBy == currPlayer.faction && !selectedTile.hasFort());
 	}
 
 	public HexTile addTower(int x, int y, int playerIndex) {
@@ -1161,5 +1161,57 @@ public class GameModel {
 			for(HexTile h2: h1)
 				if(h2 != null)
 					h2.setConstructionAllowed(true);
+	}
+
+	public void removePlayerThings(HexTile h, ArrayList<Thing> things, int playerIndex) {
+		ArrayList<Thing> removedThings = h.removePlayerThings(things, playerIndex);
+		
+		for(Thing t: removedThings){
+			returnToCup(t);
+		}
+	}
+
+	public void removeSettlement(HexTile h, ArrayList<Thing> things) {
+		ArrayList<Thing> removedThings = h.removeSettlements(things);
+		
+		for(Thing t: removedThings){
+			returnToCup(t);
+		}
+	}
+
+	public void handleBribe(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
+		removeSettlement(h, selectedThings);
+		removeSpecialIncome(h, selectedThings);
+		removePlayerThings(h, selectedThings, 4);	
+		payForBribe(h, selectedThings, playerIndex);
+		
+	}
+
+	private void removeSpecialIncome(HexTile h, ArrayList<Thing> selectedThings) {
+		ArrayList<Thing> removedThings = h.removeSpecialIncomes(selectedThings);
+		
+		for(Thing t: removedThings){
+			returnToCup(t);
+		}
+	}
+
+	private void payForBribe(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
+		int cost = 0;
+		
+		cost = calculateBribe(selectedThings, h.hasTreasure());
+		
+		playerFromIndex(playerIndex).payGold(cost);
+	}
+
+	public int calculateBribe(ArrayList<Thing> selectedThings, boolean hasTreasure) {
+		int cost = 0;
+		
+		for(Thing t: selectedThings)
+			cost += ((Combatant)t).GetCombatValue();
+		
+		if(hasTreasure)
+			cost *= 2;
+		
+		return cost;
 	}
 }

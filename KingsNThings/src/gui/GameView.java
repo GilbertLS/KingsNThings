@@ -34,6 +34,7 @@ public class GameView extends Scene {
 	public static BattleView battleView = null;
     public static List<Thing> selectedThings = new ArrayList<Thing>();
 	protected static SpecialCharacterView specialCharacterView = null;
+	protected static BribeView bribeView = null;
 	
 	private GameView 		self = this;
 	public 	HBox 			root;
@@ -425,6 +426,17 @@ public class GameView extends Scene {
 				//output the winning players here
 			}
 		});
+	}
+	
+	public void bribeCreatures(Tile t)
+	{		
+		BribeView BView = new BribeView(GameClient.game.gameView.primaryStage, t);
+		GameView.bribeView = BView;
+	}
+	
+	public void endBribeCreatures()
+	{
+		bribeView = null;
 	}
 	
 }

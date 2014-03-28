@@ -107,7 +107,7 @@ public class TilePreview extends VBox {
  				break;
  			}
 
- 			thingViewForFort.add(new ThingView(h.fort));
+ 			thingViewForFort.add(new ThingView(h.getFort()));
  		}
 	}
 	

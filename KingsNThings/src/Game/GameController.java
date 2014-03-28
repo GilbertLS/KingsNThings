@@ -105,13 +105,13 @@ public class GameController {
 		
 		
 		
-		placeThingsOnTile(2, "Control_Marker");
+		//placeThingsOnTile(2, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
-		tradeInitialThings();
+		//tradeInitialThings();
 		
 		playThings();
 		
@@ -471,7 +471,7 @@ public class GameController {
 			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
 				if (changedPhase) { changedPhase = false; }
-				recruitSpecialCharacter();
+				//recruitSpecialCharacter();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_THINGS; }
 			}
 			if (currentPhase == Phase.RECRUIT_THINGS) {
@@ -497,7 +497,7 @@ public class GameController {
 			}
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
-				playConstructionPhase();
+				//playConstructionPhase();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
 		
