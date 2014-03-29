@@ -72,10 +72,8 @@ public class GameModel {
 		this.player3 = new Player(2);
 		this.player4 = new Player(3);
 		
-		//initialize Special Characters (and store in unownedCharacters)
-		createNewSpecialCharacters();
-		
 		ownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
+		unownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		playingCup = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS);
 		
 		dice = new Dice(4);
@@ -83,29 +81,6 @@ public class GameModel {
 		boardController = new BoardController(gameBoard);
 		
 		initializePlayingCup();
-	}
-	private void createNewSpecialCharacters() {
-		this.unownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
-		
-		//REMOVED FOR ITERATION 1
-		/*
-		//placeholder until we get the time to determine proper values for all Special Characters
-		for(int i=0; i< Math.floor(GameConstants.MAX_NUM_SPECIAL_CHARACTERS/2); i++)
-		{
-			unownedCharacters.add(new SpecialCharacter());		
-		}
-		
-		for(int i=0; i<2; i++)
-		{
-			unownedCharacters.add(new TerrainLord(Terrain.DESERT));
-			unownedCharacters.add(new TerrainLord(Terrain.FOREST));
-			unownedCharacters.add(new TerrainLord(Terrain.FROZEN_WASTE));
-			unownedCharacters.add(new TerrainLord(Terrain.JUNGLE));
-			unownedCharacters.add(new TerrainLord(Terrain.MOUNTAIN));
-			unownedCharacters.add(new TerrainLord(Terrain.PLAINS));
-			unownedCharacters.add(new TerrainLord(Terrain.SWAMP));
-		}
-		*/
 	}
 	
 	//create the 48 HexTiles to use for the Game
@@ -950,6 +925,9 @@ public class GameModel {
 		else
 			addTower(hexTile, playerIndex);
 		
+		if(hexTile.getFort().getLevel() == Level.CITADEL)
+			playerFromIndex(playerIndex).setCitadelConstructed(true);
+		
 		playerFromIndex(playerIndex).decrementGold(GameConstants.CONSTRUCTION_COST);
 	}
 
@@ -1100,21 +1078,17 @@ public class GameModel {
 	public String checkWin() {
 		ArrayList<Player> winningPlayers = new ArrayList<Player>();
 		
-		for(int i=0; i<playerCount; i++)
+		for(int i=0; i<4; i++)
 		{
-			Player player = playerFromIndex(i);
+			Player player = playerByOrder(i);
 			
 			//player has more than 1 citadel (player wins)
 			if(player.getNumCitadels() > 1)	
 				winningPlayers.add(player);
 			
 			//player constructed and held a citadel since last round (player wins)
-			else if(player.citadelWasConstructed() && player.getNumCitadels() == 1)	
+			else if(player.citadelWasConstructed() && player.getRoundsSinceCitadel() == 1)	
 				winningPlayers.add(player);
-			
-			//player constructed citadel this round (store for next round)
-			else if (player.hasCitadel() && !player.citadelWasConstructed())
-				player.setCitadelConstructed(true);
 		}
 		
 		String ret = "";
@@ -1129,17 +1103,27 @@ public class GameModel {
 		return ret;
 	}
 
+	private Player playerByOrder(int i) {
+		if(player1.getPlayerOrder() == i)
+			return player1;
+		else if(player2.getPlayerOrder() == i)
+			return player2;
+		else if(player3.getPlayerOrder() == i)
+			return player3;
+		else if(player4.getPlayerOrder() == i)
+			return player4;
+		else
+			return null;
+	}
+
 	public void changeFortFaction(ControlledBy controlledBy, Fort f) {
-		if(f.controlledBy != ControlledBy.NEUTRAL){
-			Player player = playerFromFaction(f.controlledBy);	
-			player.removeFort(f);
-			if(f.getLevel() == Level.CITADEL && player.getNumCitadels() == 1)
-				player.setCitadelConstructed(false);
-		}
-		if(controlledBy != ControlledBy.NEUTRAL){
-			Player newPlayer = playerFromFaction(controlledBy);
-			newPlayer.addFort(f);
-		}
+		//remove fort from previous player
+		Player player = playerFromFaction(f.controlledBy);	
+		player.removeFort(f);
+		
+		//add fort to new player
+		Player newPlayer = playerFromFaction(controlledBy);
+		newPlayer.addFort(f);
 	}
 
 	private Player playerFromFaction(ControlledBy controlledBy) {

@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -12,7 +13,7 @@ import Game.GameController;
 
 public class GameServer implements Runnable {
 	InetAddress address;
-	public static Queue<GameRouter> servers = new ConcurrentLinkedQueue<GameRouter>();
+	public static ArrayList<GameRouter> servers = new ArrayList<GameRouter>();
 	
 	public GameServer() throws UnknownHostException {
 		this.address = InetAddress.getLocalHost();
@@ -47,7 +48,7 @@ public class GameServer implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 2;
+		return servers.size() == 4;
 	}
 	
 	public void run(){

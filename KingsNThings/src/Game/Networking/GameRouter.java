@@ -107,12 +107,12 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 	}
 
 	private void updateGameRouterOrder(Event e) {
-		int numPlayers = Integer.parseInt(e.eventParams[0]);
+		int numPlayers = GameClient.game.gameModel.PlayerCount();
 		
 		if(e.eventId == EventList.SET_PLAYER_ORDER)
 			myPlayerOrder = (myPlayerOrder + (numPlayers - Integer.parseInt(e.eventParams[1]))) % numPlayers;
 		else if(e.eventId == EventList.UPDATE_PLAYER_ORDER)
-			myPlayerOrder = (myPlayerOrder + 1) % numPlayers;
+			myPlayerOrder = ((myPlayerOrder-1) + numPlayers) % numPlayers;
 	
 		System.out.println("GAME ROUTER WITH INDEX " + myID + " HAS SET ITS PLAYER ORDER TO - " + myPlayerOrder);
 	}

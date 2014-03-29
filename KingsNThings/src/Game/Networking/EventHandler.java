@@ -18,6 +18,7 @@ import Game.GameConstants;
 import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.BattleTurn;
 import Game.GameConstants.Terrain;
+import Game.Dice;
 import Game.HexTile;
 import Game.Player;
 import Game.Settlement;
@@ -49,16 +50,18 @@ public class EventHandler {
 			System.out.println("Handling event " + e.eventId);
 		}
 		if (e.eventId == EventList.READY){}
-		else if (e.eventId == EventList.ROLL_DICE)
+		else if (e.eventId == EventList.ROLL_TWO_DICE)
 		{
 			System.out.println("CREATING DIE ROLL RESPONSE EVENT");
 			
 			String[] args = new String[1];
-			args[0] = Integer.toString((int)Math.ceil(Math.random()*6));
+			
+			int[] rolls = Dice.rollDice(2);
+			args[0] = Integer.toString(rolls[0] + rolls[1]);
 			
 			EventHandler.SendEvent(
 					new Event()
-						.EventId(EventList.ROLL_DICE)
+						.EventId(EventList.ROLL_TWO_DICE)
 						.EventParameters(args)
 			);
 		}

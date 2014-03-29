@@ -21,6 +21,7 @@ public class Player {
 	public ArrayList<Settlement> ownedSettlements;
 	public ArrayList<HexTile> ownedHexTiles;
 	private boolean citadelConstructed = false;
+	private int roundsSinceCitadel = 0;
 	
 	
 	public int GetPlayerNum(){
@@ -70,8 +71,13 @@ public class Player {
 	}
 
 	public void updatePlayerOrder(int playerCount) {
-		playerOrder = (playerOrder++)%playerCount;
-		
+		playerOrder = ((playerOrder-1) + playerCount)%playerCount;
+	}
+	
+	public void incrementCitadels()
+	{
+		if(hasCitadel())
+			roundsSinceCitadel++;
 	}
 
 	public void addThingToRack(Thing currentThing) {
@@ -90,6 +96,9 @@ public class Player {
 	public void addFort(Fort f) {
 		ownedForts.add(f);
 		f.controlledBy = faction;
+		
+		if(f.getLevel() == Level.CITADEL && getNumCitadels() == 1)
+			setCitadelConstructed(true);
 	}
 
 	public void addHexTile(HexTile h) {
@@ -204,6 +213,8 @@ public class Player {
 
 	public void setCitadelConstructed(boolean constructed) {
 		citadelConstructed = constructed;
+
+		roundsSinceCitadel = 0;
 	}
 
 	public int getNumCitadels() {
@@ -218,5 +229,13 @@ public class Player {
 	
 	public void removeFort(Fort f){
 		ownedForts.remove(f);
+		f.controlledBy = ControlledBy.NEUTRAL;
+		
+		if(f.getLevel() == Level.CITADEL && getNumCitadels() == 0)
+			setCitadelConstructed(false);
+	}
+
+	public int getRoundsSinceCitadel() {
+		return roundsSinceCitadel;
 	}
 }

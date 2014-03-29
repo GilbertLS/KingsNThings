@@ -397,47 +397,23 @@ public class HexTile implements IIncomable{
 			}			
 		}
 	
-		if(player1Things.size() > 0)
-		{
+		if(HasThingsOnTile(0))
 			controlledBy = ControlledBy.PLAYER1;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER1)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER1, fort);
-			}
-		}
-		else if(player2Things.size() > 0)
-		{
+		else if(HasThingsOnTile(1))
 			controlledBy = ControlledBy.PLAYER2;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER2)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER2, fort);
-			}
-		}
-		else if(player3Things.size() > 0)
-		{
+		else if(HasThingsOnTile(2))
 			controlledBy = ControlledBy.PLAYER3;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER3)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER3, fort);
-			}
-		}
-		else if(player4Things.size() > 0)
-		{
-			controlledBy = ControlledBy.PLAYER4;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER4)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER4, fort);
-			}
-		}		
+		else if(HasThingsOnTile(3))
+			controlledBy = ControlledBy.PLAYER4;	
 		else
-		{
 			controlledBy = ControlledBy.NEUTRAL;
-			if(fort != null && fort.controlledBy != ControlledBy.NEUTRAL)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.NEUTRAL, fort);
-			}
-		}
 		
+		changeFortFaction(controlledBy, fort);
+	}
+
+	private void changeFortFaction(ControlledBy controlledBy, Fort f) {
+		if(f.controlledBy != controlledBy && f != null)		
+			GameClient.game.gameModel.changeFortFaction(controlledBy, f);
 	}
 
 	public boolean isOnlyPlayerOnTile(int playerIndex) {
@@ -651,7 +627,6 @@ public class HexTile implements IIncomable{
 
 	public void removeFort() {
 		forts = new ArrayList<Fort>();
-		
 	}
 
 	public ArrayList<Treasure> getTreasures() {

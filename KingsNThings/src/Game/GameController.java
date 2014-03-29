@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -410,7 +412,7 @@ public class GameController {
 			}
 			
 			Event e = new Event()
-				.EventId(EventList.ROLL_DICE)
+				.EventId(EventList.ROLL_TWO_DICE)
 				.IntendedPlayers(intendedPlayers)
 				.ExpectsResponse(true);
 			
@@ -444,6 +446,7 @@ public class GameController {
 		System.out.println("First Player is player with index: " + highestRollPlayerIndex);
 		
 		assignInitialPlayerOrder(highestRollPlayerIndex);
+		sortServersByOrder();
 	}
 
 	private void assignInitialPlayerOrder(int startPlayerIndex) {
@@ -495,13 +498,15 @@ public class GameController {
 				PlayBattlePhase();
 				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
 			}
+			gameWon = checkWin();
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
 				//playConstructionPhase();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
+			gameWon = checkWin();
 		
-			//ChangePlayerOrder();
+			ChangePlayerOrder();
 		
 		} while(!gameEnded);
 	}
@@ -712,7 +717,18 @@ public class GameController {
 	}
 
 	private void ChangePlayerOrder(){
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.UPDATE_PLAYER_ORDER)
+			);	
 		
+		sortServersByOrder();
+	}
+	
+	private void sortServersByOrder()
+	{
+		if(GameServer.servers.size() != 2)	//player order stays the same in 2 playe game
+			Collections.sort(GameServer.servers, new ServerComparator());
 	}
 	
 	private void PlayBattlePhase(){
