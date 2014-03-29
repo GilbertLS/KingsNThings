@@ -101,4 +101,8 @@ public abstract class Thing {
 		isFlipped = b;
 		
 	}
+
+	public void setMovementFinished() {
+		numMoves = GameConstants.MAX_MOVES_PER_TURN;
+	}
 }

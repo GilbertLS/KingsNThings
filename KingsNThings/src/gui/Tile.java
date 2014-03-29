@@ -361,6 +361,10 @@ public class Tile extends Region implements Draggable {
 									if(tileRef.controlledBy == ControlledBy.NEUTRAL
 											&& tileRef.noDefense()) 						//exploration
 									{
+										//things can not move further
+										for(Thing t: things)
+											t.setMovementFinished();
+										
 										//handle creatures
 										if (GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y)){
 											gv.updateTiles(tileRef, 4);

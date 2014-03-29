@@ -877,7 +877,7 @@ public class GameModel {
 			movedThings.add(thingPlayed);
 			
 			if(!player.ownedHexTiles.contains(tileTo) && tileTo.controlledBy == ControlledBy.NEUTRAL
-					&& tileTo.isOnlyPlayerOnTile(playerIndex))
+					&& tileTo.noOtherPlayerOnTile(playerIndex))
 			{
 				updateTileFaction(playerIndex, tileTo.x, tileTo.y);
 			}
@@ -1148,54 +1148,73 @@ public class GameModel {
 	}
 
 	public void removePlayerThings(HexTile h, ArrayList<Thing> things, int playerIndex) {
-		ArrayList<Thing> removedThings = h.removePlayerThings(things, playerIndex);
-		
-		for(Thing t: removedThings){
-			returnToCup(t);
-		}
+		h.removePlayerThings(things, playerIndex);
 	}
 
 	public void removeSettlement(HexTile h, ArrayList<Thing> things) {
-		ArrayList<Thing> removedThings = h.removeSettlements(things);
-		
-		for(Thing t: removedThings){
-			returnToCup(t);
-		}
+		h.removeSettlements(things);
 	}
 
 	public void handleBribe(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
-		removeSettlement(h, selectedThings);
-		removeSpecialIncome(h, selectedThings);
+		bribeSettlement(h, selectedThings);
+		removeSpecialIncomes(h, selectedThings);
 		removePlayerThings(h, selectedThings, 4);	
 		payForBribe(h, selectedThings, playerIndex);
-		
 	}
 
-	private void removeSpecialIncome(HexTile h, ArrayList<Thing> selectedThings) {
-		ArrayList<Thing> removedThings = h.removeSpecialIncomes(selectedThings);
-		
-		for(Thing t: removedThings){
-			returnToCup(t);
-		}
+	private void bribeSettlement(HexTile h, ArrayList<Thing> selectedThings) {
+		h.bribeSettlement(selectedThings);
+	}
+
+	private void removeSpecialIncomes(HexTile h, ArrayList<Thing> selectedThings) {
+		h.removeSpecialIncomes(selectedThings);
 	}
 
 	private void payForBribe(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
 		int cost = 0;
 		
-		cost = calculateBribe(selectedThings, h.hasTreasure());
+		cost = calculateBribe(selectedThings, h);
 		
 		playerFromIndex(playerIndex).payGold(cost);
 	}
 
-	public int calculateBribe(ArrayList<Thing> selectedThings, boolean hasTreasure) {
+	public int calculateBribe(ArrayList<Thing> selectedThings, HexTile h) {
 		int cost = 0;
 		
 		for(Thing t: selectedThings)
 			cost += ((Combatant)t).GetCombatValue();
 		
-		if(hasTreasure)
+		if(h.hasTreasure() || h.hasMagic() || h.hasSettlement() || h.hasSpecialIncome())
 			cost *= 2;
 		
 		return cost;
+	}
+
+	public ArrayList<HexTile> eliminateSeaHexThings(int playerIndex) {
+		HexTile[][] hexTiles = gameBoard.getTiles();
+		ArrayList<HexTile> seaTiles = new ArrayList<HexTile>();
+		
+		for(HexTile[] tileArray: hexTiles)
+			for(HexTile h: tileArray)
+				if(h != null && !h.isLand()){				//for all existent sea hexes...
+					if(h.HasThingsOnTile(playerIndex)){		//...if indicated player has things...
+						
+						seaTiles.add(h);	
+							
+						ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
+						for(Thing t: h.GetThings(playerIndex))
+						{
+							returnToCup(t);					//...return them to the cup...
+							thingsToRemove.add(t);
+						}
+							
+						//...and remove from the hex
+						h.removePlayerThings(thingsToRemove, playerIndex);
+					
+					}
+				}
+		
+		//return all modified hexes to update view
+		return seaTiles;
 	}
 }

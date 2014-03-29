@@ -102,6 +102,8 @@ public class GameController {
 		placeThingsOnTile(1, "Control_Marker");
 		
 		revealHexTiles();
+		
+		allowTileSwap();
 		/*end need to happen even with DEVMODE*/
 		
 		
@@ -119,6 +121,31 @@ public class GameController {
 		
 	}
 	
+	private void allowTileSwap() {
+		for(GameRouter gr: GameServer.servers)
+		{			
+			String[] args  = {""+gr.myID, ""};
+			Response[] responses = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.CHECK_TILE_SWAP)
+						.ExpectsResponse(true)
+						.EventParameters(args)
+				);		
+			
+			for(Response r: responses)
+			{
+				if(r.fromPlayer == gr.myID)
+					args[1] = r.message;	
+			}
+			
+			GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId(EventList.CHECK_TILE_SWAP)
+						.EventParameters(args)
+				);	
+		}
+	}
+
 	private void revealHexTiles() {
 		GameControllerEventHandler.sendEvent(
 				new Event()
@@ -637,6 +664,12 @@ public class GameController {
 						.EventId(EventList.CLEAR_THING_MOVES)
 						.IntendedPlayers(intendedPlayers);
 			
+			GameControllerEventHandler.sendEvent(e);
+			
+			
+			//eliminate any things which ended their turn on a sea hex
+			e = new Event()
+						.EventId(EventList.ELIMINATE_SEA_HEX_THINGS);
 			GameControllerEventHandler.sendEvent(e);
 		}
 		

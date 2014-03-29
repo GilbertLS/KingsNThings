@@ -58,4 +58,8 @@ public class Fort extends Building implements IIncomable{
 			break;
 		}
 	}
+
+	public boolean isCitadel() {
+		return level == Level.CITADEL;
+	}
 }

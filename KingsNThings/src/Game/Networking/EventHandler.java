@@ -83,6 +83,39 @@ public class EventHandler {
 			
 			GameClient.game.updatePlayerOrder();
 		}
+		else if (e.eventId == EventList.CHECK_TILE_SWAP){
+			//placeholder, deferred for iteration 2
+			/*
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			if(GameClient.game.gameModel.getCurrPlayerNumber() == playerIndex)
+			{
+				//check for swap
+				
+				//send changes if applicable
+			}
+			else
+			{
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "swap Tiles.");
+			}*/
+		}
+		else if(e.eventId == EventList.HANDLE_TILE_SWAP){
+			//placeholder, deferred for iteration 2
+			
+			//String[] hexStrings = e.eventParams.split();
+		}
+		else if(e.eventId == EventList.ELIMINATE_SEA_HEX_THINGS){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			final ArrayList<HexTile> hexTiles = GameClient.game.gameModel.eliminateSeaHexThings(playerIndex);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.updateTiles(hexTiles);
+		        }
+		    });
+		}
 		else if(e.eventId == EventList.BEGIN_BATTLE)
 		{
 			int tileX = Integer.parseInt(e.eventParams[0]);
@@ -1074,13 +1107,13 @@ public class EventHandler {
 
 	
 	private static void waitForOtherPlayer(boolean expectsResponse, final int playerIndex, final String actionBeingTaken) {
-		waitForOtherPlayer(expectsResponse, Integer.toString(playerIndex), actionBeingTaken);
+		waitForOtherPlayer(expectsResponse, Integer.toString(playerIndex+1), actionBeingTaken);
 	}
 	
-	private static void waitForOtherPlayer(boolean expectsResponse, final String playerIndexString, final String actionBeingTaken) {
-		String s = "Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".";
+	private static void waitForOtherPlayer(boolean expectsResponse, final String playerNumString, final String actionBeingTaken) {
+		String s = "Waiting for player" + playerNumString + " to " + actionBeingTaken + ".";
 
-		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".");
+		GameClient.game.sendMessageToView("Waiting for player" + playerNumString + " to " + actionBeingTaken + ".");
 		
 		if(expectsResponse)
 			SendNullEvent();		

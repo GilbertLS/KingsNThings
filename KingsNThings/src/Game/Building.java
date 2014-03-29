@@ -8,6 +8,7 @@ import Game.GameConstants.ThingType;
  */
 public abstract class Building extends Combatant {
 	private int hits; //number of hits currently applied to the building
+	public boolean neutralized;
 	
 	public Building(ThingType thingType, String name, int combatValue, String backFileName, String frontFileName)
 	{
@@ -16,5 +17,14 @@ public abstract class Building extends Combatant {
 		this.backFileName = backFileName;
 		
 		this.hits = 0;
+	}
+	
+	public void resetCounters() {
+		hits = 0;
+	}
+	
+	public void neutralize()
+	{
+		neutralized = true;
 	}
 }

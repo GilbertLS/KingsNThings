@@ -62,4 +62,7 @@ public class EventList {
 	public static final int REMOVE_THING = 201;
 	public static final int ADD_THING = 202;
 	public static final int BRIBE_CREATURES = 138;
+	public static final int CHECK_TILE_SWAP = 139;
+	public static final int HANDLE_TILE_SWAP = 140;
+	public static final int ELIMINATE_SEA_HEX_THINGS = 141;
 }
