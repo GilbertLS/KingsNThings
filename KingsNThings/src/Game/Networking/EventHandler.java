@@ -139,7 +139,7 @@ public class EventHandler {
 			
 			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
 			
-			h.handlePostBattle();
+			GameClient.game.gameModel.handlePostBattle(h);
 			GameView.battleView.UpdateMessage("Battle is over");
 			
 			Platform.runLater(new Runnable() {
@@ -215,7 +215,7 @@ public class EventHandler {
 				{
 					thingsBattling.add(t);
 				}
-				if(battleTile.hasFort() && currPlayer.faction == battleTile.controlledBy)
+				if(battleTile.hasFort() && battleTile.isControlledBy(currPlayer.faction))
 				{
 					thingsBattling.add(battleTile.getFort());
 				}
@@ -327,7 +327,7 @@ public class EventHandler {
 				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
-				boolean hasFort = currTile.hasFort() && currentPlayer.faction == currTile.controlledBy;
+				boolean hasFort = currTile.hasFort() && currTile.isControlledBy(currentPlayer.faction);
 				
 				//also need to handle settlements and any other combatants
 				if(hasFort)
@@ -639,7 +639,7 @@ public class EventHandler {
 				
 				if(pieceBeingPlacedString.equals("Control Marker"))
 				{
-					GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+					GameClient.game.gameModel.claimNewTile(playerIndex, x, y);
 				}
 				else if(pieceBeingPlacedString.equals("Tower"))
 				{
@@ -687,7 +687,7 @@ public class EventHandler {
 			HexTile h = null;
 			if(pieceBeingPlaced.equals("Control_Marker"))
 			{
-				h = GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+				h = GameClient.game.gameModel.claimNewTile(playerIndex, x, y);
 			}
 			else if(pieceBeingPlaced.equals("Tower"))
 			{
@@ -1089,7 +1089,7 @@ public class EventHandler {
 			int playerNum = Integer.parseInt(e.eventParams[4]);
 			
 			Creature creature = new Creature(terrain, combatValue);
-			creature.controlledBy = GameConstants.controlledByFromIndex(playerNum);
+			creature.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
 			
 			for(int i = 5; i < e.eventParams.length; i++) {
 				if(e.eventParams[i].equals("Magic")) { creature.Magic(true); }

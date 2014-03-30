@@ -220,7 +220,7 @@ public class Tile extends Region implements Draggable {
     
     private String getMarkerString() {
     	if (tileRef != null) {
-    		switch (tileRef.controlledBy) {
+    		switch (tileRef.getControlledBy()) {
     			case PLAYER1: return "CM_411.png";
     			case PLAYER2: return "CM_412.png";
     			case PLAYER3: return "CM_413.png";
@@ -359,7 +359,7 @@ public class Tile extends Region implements Draggable {
 								
 								if(GameClient.game.isValidMove(originalTile, tileRef, things))
 								{
-									if(tileRef.controlledBy == ControlledBy.NEUTRAL
+									if(tileRef.isControlledBy(ControlledBy.NEUTRAL)
 											&& tileRef.noDefense()) 						//exploration
 									{
 										//things can not move further
@@ -461,7 +461,7 @@ public class Tile extends Region implements Draggable {
 	}
 	
 	public void hideTile() {
-		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+		if(tileRef.isControlledBy(ControlledBy.NEUTRAL))
 			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");
 	}
 	

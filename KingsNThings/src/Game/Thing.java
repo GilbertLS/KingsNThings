@@ -14,7 +14,7 @@ public abstract class Thing {
 	String name;				//display name of this Thing
 	HexTile currentTile;
 	public String backFileName, frontFileName;
-	public ControlledBy controlledBy;		//Faction currently controlling this Tile
+	private ControlledBy controlledBy;		//Faction currently controlling
 	public int numMoves = 0;
 	
 	public Thing(ThingType thingType, String name, String frontFileName)
@@ -31,6 +31,11 @@ public abstract class Thing {
 		
 		this.currentTile = null;
 	}
+	
+	public void setControlledBy(ControlledBy controlledBy)	{this.controlledBy = controlledBy;}
+	public ControlledBy getControlledBy(){return controlledBy;}
+	public boolean isControlledBy(ControlledBy controlledBy){return this.controlledBy == controlledBy;}
+	
 	
 	public ThingType getThingType()
 	{

@@ -91,7 +91,7 @@ public class TilePreview extends VBox {
  		if(tileRef.fort != null)
  		{
  			ThingViewList thingViewForFort;
- 			switch(h.controlledBy)
+ 			switch(h.getControlledBy())
  			{
  			case PLAYER1:
  				thingViewForFort = view1;

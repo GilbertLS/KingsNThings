@@ -223,7 +223,7 @@ public class BattleView extends Scene {
 			
 			numValid = 0;
 			for(Thing t : GameView.selectedThings) {
-				if (GameConstants.GetPlayerNumber(t.controlledBy) == currPlayer ) {
+				if (GameConstants.GetPlayerNumber(t.getControlledBy()) == currPlayer ) {
 					numValid++;
 				}
 			}

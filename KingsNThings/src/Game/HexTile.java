@@ -17,7 +17,7 @@ import Game.Networking.GameClient;
  */
 public class HexTile implements IIncomable{
 	public Terrain terrain;				//Tile's terrain type
-	public ControlledBy controlledBy;		//Faction currently controlling this Tile
+	private ControlledBy controlledBy;		//Faction currently controlling this Tile
 	public ArrayList<Thing> player1Things;	//player 1's Things in this Hex Tile
 	public ArrayList<Thing> player2Things;	//player 2's Things in this Hex Tile
 	public ArrayList<Thing> player3Things;	//player 3's Things in this Hex Tile
@@ -27,6 +27,7 @@ public class HexTile implements IIncomable{
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public ArrayList<Settlement> settlements;
 	public ArrayList<Treasure> treasures;
+	public ArrayList<Magic> magics;
 	public int x;
 	public int y;
 	public int moveValue;
@@ -51,6 +52,7 @@ public class HexTile implements IIncomable{
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		this.settlements = new ArrayList<Settlement>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		this.treasures = new ArrayList<Treasure>();
+		this.magics = new ArrayList<Magic>();
 		this.forts = new ArrayList<Fort>();
 		
 		if(terrain == Terrain.SWAMP
@@ -61,6 +63,10 @@ public class HexTile implements IIncomable{
 		else
 			moveValue = 1;
 	}
+	
+	public void setControlledBy(ControlledBy controlledBy)	{this.controlledBy = controlledBy;}
+	public ControlledBy getControlledBy(){return controlledBy;}
+	public boolean isControlledBy(ControlledBy controlledBy){return this.controlledBy == controlledBy;}
 	
 	public void AddThingToTile(Player player, Thing thing){
 		int playerIndex = player.GetPlayerNum();
@@ -416,27 +422,6 @@ public class HexTile implements IIncomable{
 		}
 		
 		resetCounters();
-
-		switch(controlledBy){
-		case PLAYER1:
-			if(!noOtherPlayerOnTile(0))
-				changeControll();
-			break;
-		case PLAYER2:
-			if(!noOtherPlayerOnTile(1))
-				changeControll();
-			break;
-		case PLAYER3:
-			if(!noOtherPlayerOnTile(2))
-				changeControll();
-			break;
-		case PLAYER4:
-			if(!noOtherPlayerOnTile(3))
-				changeControll();
-			break;
-		default:
-			changeControll();
-		}
 	}
 
 	private void resetCounters() {
@@ -473,7 +458,7 @@ public class HexTile implements IIncomable{
 	}
 
 	private void changeFortFaction(ControlledBy controlledBy, Fort f) {
-		if(f.controlledBy != controlledBy && f != null)		
+		if(f.getControlledBy() != controlledBy && f != null)		
 			GameClient.game.gameModel.changeFortFaction(controlledBy, f);
 	}
 
@@ -736,11 +721,11 @@ public class HexTile implements IIncomable{
 		ControlledBy playerFaction = GameClient.game.gameModel.playerFromIndex(playerIndex).faction;
 		
 		//true if player controls fort
-		if(hasFort() && getFort().controlledBy == playerFaction)
+		if(hasFort() && getFort().isControlledBy(playerFaction))
 			return true;
 		
 		//true if player controls settlement
-		if(hasSettlement() && getSettlement().controlledBy == playerFaction)
+		if(hasSettlement() && getSettlement().isControlledBy(playerFaction))
 			return true;
 		
 		//true if player has things in hex
@@ -773,5 +758,17 @@ public class HexTile implements IIncomable{
 			}
 		}
 			
+	}
+
+	public ArrayList<Magic> getMagics() {
+		return magics;
+	}
+
+	public void clearTreasure() {
+		treasures = new ArrayList<Treasure>();
+	}
+
+	public void clearMagic() {
+		magics = new ArrayList<Magic>();
 	}
 }

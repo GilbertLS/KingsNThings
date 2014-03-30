@@ -128,7 +128,7 @@ public class GameClientController {
 	}
 
 	public boolean rollForCreatures(int playerIndex, int x, int y) {
-		int[] roll = Dice.rollDice(1); //hard coded for iteration 1
+		int[] roll = Dice.rollDice(1);
 		
 		boolean defendingCreatures = false;
 		if(roll[0] != 1 && roll[0] != 6)
@@ -140,7 +140,7 @@ public class GameClientController {
 		}
 		else
 		{
-			gameModel.updateTileFaction(playerIndex, x, y);
+			gameModel.claimNewTile(playerIndex, x, y);
 		}
 
 		
@@ -166,9 +166,6 @@ public class GameClientController {
 	public void createDefenseCreatures(int roll, int x, int y) {
 		HexTile h = gameModel.gameBoard.getTile(x, y);
 		ArrayList<Thing> things = gameModel.getThingsFromCup(roll);
-		
-		//creating defense creatures implies this tile should be neutral
-		h.controlledBy = ControlledBy.NEUTRAL;
 		
 		//eliminate invalid defense creatrues
 		things = h.enforceValidDefense(things);
@@ -230,14 +227,14 @@ public class GameClientController {
 	}
 
 	public boolean isValidPlacement(HexTile tileRef, ArrayList<Thing> things, int playerIndex) {
-		ControlledBy tileControl = tileRef.controlledBy;
+		ControlledBy tileControl = tileRef.getControlledBy();
 		
 		//invalid if not land and not all flying
 		if(!tileRef.isLand() && !GameClient.game.areAllFlying(things))
 			return false;
 		
 		//invalid if thing not controlled
-		if(tileControl != things.get(0).controlledBy)
+		if(!things.get(0).isControlledBy(tileControl))
 			return false;
 		
 		if(!tileRef.hasRoomForThings(things))
@@ -456,7 +453,7 @@ public class GameClientController {
 					params[0] = "" + thing.thingID;
 					params[1] = "" + selectedTile.getTileRef().x;
 					params[2] = "" + selectedTile.getTileRef().y;
-					params[3] = "" + GameConstants.GetPlayerNumber(thing.controlledBy);
+					params[3] = "" + GameConstants.GetPlayerNumber(thing.getControlledBy());
 					
 					Event e = new Event()
 								.EventId(EventList.REMOVE_THING)

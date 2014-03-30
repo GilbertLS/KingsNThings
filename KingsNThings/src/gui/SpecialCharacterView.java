@@ -198,7 +198,6 @@ public class SpecialCharacterView extends Dialog{
 					{
 						GameClient.game.sendRecruitSpecialCharacterEvent(selection.thingRef.thingID, playerIndex);
 						GameClient.game.gameView.addToRack(selection.thingRef);
-						selection.thingRef.controlledBy = GameClient.game.gameModel.GetCurrentPlayer().faction;
 					}
 				}
 					
