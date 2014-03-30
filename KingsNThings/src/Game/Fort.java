@@ -10,7 +10,7 @@ import Game.GameConstants;
  */
 public class Fort extends Building implements IIncomable{
 	private Level level;	//The current level of the Fort
-	private static int fortIndex =0;
+	private static int fortIndex = 0;
 	
 	public Fort()
 	{

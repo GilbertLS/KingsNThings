@@ -128,11 +128,6 @@ public class Tile extends Region implements Draggable {
     private String getBackgroundFromType()
     {
     	if (tileRef != null) {
-    		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
-    		{
-    			return "Tuile_Back.png";
-    		}
-    		else
    			 switch (tileRef.getTerrain()) {
 			 	case SEA: return GameConstants.SeaTileFront;
 				case JUNGLE: return GameConstants.JungleTileFront;
@@ -142,7 +137,7 @@ public class Tile extends Region implements Draggable {
 				case SWAMP: return GameConstants.SwampTileFront;
 				case MOUNTAIN: return GameConstants.MountainTileFront;
 				case DESERT: return GameConstants.DesertTileFront;
-			 }
+   			 }
     	}
     	
     	return "Tuile_Back.png";
@@ -210,11 +205,17 @@ public class Tile extends Region implements Draggable {
     		specialIncome = null;
     	}
     	
-    	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
-    		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
     	
     	this.getChildren().setAll(list);
     	
+    }
+    
+    public void changeHex(HexTile h)
+    {
+    	tileRef = h;
+    	
+    	update();
     }
     
     private String getMarkerString() {

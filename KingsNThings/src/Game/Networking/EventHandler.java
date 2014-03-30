@@ -84,25 +84,32 @@ public class EventHandler {
 			GameClient.game.updatePlayerOrder();
 		}
 		else if (e.eventId == EventList.CHECK_TILE_SWAP){
-			//placeholder, deferred for iteration 2
-			/*
-			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			ArrayList<HexTile> newTiles = new ArrayList<HexTile>();
+			ArrayList<HexTile> invalidHexTiles;
 			
-			if(GameClient.game.gameModel.getCurrPlayerNumber() == playerIndex)
-			{
-				//check for swap
+			
+			GameClient.game.sendMessageToView("Invalid initial tiles will be swapped");
+			GameClient.game.gameView.performPhase(CurrentPhase.SWAP_INITIAL_HEXES);
+			GameClient.game.clearMessageOnView();
+			
+			do{
+				invalidHexTiles = GameClient.game.gameModel.getInitTilesToSwap();
 				
-				//send changes if applicable
-			}
-			else
-			{
-				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "swap Tiles.");
-			}*/
-		}
-		else if(e.eventId == EventList.HANDLE_TILE_SWAP){
-			//placeholder, deferred for iteration 2
+				newTiles = GameClient.game.gameModel.handleTileSwap(invalidHexTiles);
+				
+				final ArrayList<HexTile> newTilesCopy = newTiles;
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+			        	GameClient.game.gameView.changeHexes(newTilesCopy);
+			        }
+			    });
+			}while(!invalidHexTiles.isEmpty());
 			
-			//String[] hexStrings = e.eventParams.split();
+			EventHandler.SendEvent(
+					new Event()
+						.EventId( EventList.CHECK_TILE_SWAP)
+			);
 		}
 		else if(e.eventId == EventList.ELIMINATE_SEA_HEX_THINGS){
 			int playerIndex = Integer.parseInt(e.eventParams[0]);

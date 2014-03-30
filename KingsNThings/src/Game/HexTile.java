@@ -23,7 +23,7 @@ public class HexTile implements IIncomable{
 	public ArrayList<Thing> player3Things;	//player 3's Things in this Hex Tile
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
 	public ArrayList<Thing> defendingThings;	//Defending Things in this Hex Tile
-	public ArrayList<Fort> forts;						//Fort for this Hex Tile (if applicable)
+	public ArrayList<Fort> forts;					//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public ArrayList<Settlement> settlements;
 	public ArrayList<Treasure> treasures;
@@ -515,7 +515,10 @@ public class HexTile implements IIncomable{
 	}
 
 	public Fort getFort() {
-		return forts.get(0);
+		if(hasFort())
+			return forts.get(0);
+		else
+			return null;
 	}
 	
 	public ArrayList<Fort> getAllForts() {

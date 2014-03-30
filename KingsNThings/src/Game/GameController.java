@@ -109,41 +109,24 @@ public class GameController {
 		
 		
 		
-		//placeThingsOnTile(2, "Control_Marker");
+		placeThingsOnTile(2, "Control_Marker");
 		
-		//placeThingsOnTile(1, "Tower");
+		placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
-		//tradeInitialThings();
+		tradeInitialThings();
 		
 		playThings();
 		
 	}
 	
-	private void allowTileSwap() {
-		for(GameRouter gr: GameServer.servers)
-		{			
-			String[] args  = {""+gr.myID, ""};
-			Response[] responses = GameControllerEventHandler.sendEvent(
-					new Event()
-						.EventId(EventList.CHECK_TILE_SWAP)
-						.ExpectsResponse(true)
-						.EventParameters(args)
-				);		
-			
-			for(Response r: responses)
-			{
-				if(r.fromPlayer == gr.myID)
-					args[1] = r.message;	
-			}
-			
-			GameControllerEventHandler.sendEvent(
-					new Event()
-						.EventId(EventList.CHECK_TILE_SWAP)
-						.EventParameters(args)
-				);	
-		}
+	private void allowTileSwap() {		
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.CHECK_TILE_SWAP)
+					.ExpectsResponse(true)
+			);		
 	}
 
 	private void revealHexTiles() {
@@ -501,7 +484,7 @@ public class GameController {
 			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
 				if (changedPhase) { changedPhase = false; }
-				//recruitSpecialCharacter();
+				recruitSpecialCharacter();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_THINGS; }
 			}
 			if (currentPhase == Phase.RECRUIT_THINGS) {
@@ -528,7 +511,7 @@ public class GameController {
 			gameWon = checkWin();
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
-				//playConstructionPhase();
+				playConstructionPhase();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
 			gameWon = checkWin();

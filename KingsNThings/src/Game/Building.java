@@ -21,6 +21,7 @@ public abstract class Building extends Combatant {
 	
 	public void resetCounters() {
 		hits = 0;
+		neutralized = false;
 	}
 	
 	public void neutralize()

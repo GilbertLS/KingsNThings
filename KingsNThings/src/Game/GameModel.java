@@ -724,6 +724,9 @@ public class GameModel {
 	public boolean isValidControlMarkerPlacement(HexTile selectedTile) {
 		if(selectedTile.controlledBy == ControlledBy.NEUTRAL)
 		{
+			if(!selectedTile.isLand() && !currPlayer.ownedHexTiles.isEmpty())
+				return false;
+			
 			if(currPlayer.ownedHexTiles.isEmpty())
 			{
 				int x = selectedTile.x;
@@ -793,7 +796,9 @@ public class GameModel {
 	}
 
 	public boolean isValidTowerPlacement(HexTile selectedTile) {
-		return (selectedTile.controlledBy == currPlayer.faction && !selectedTile.hasFort());
+		return (selectedTile.controlledBy == currPlayer.faction 
+				&& !selectedTile.hasFort()
+				&& selectedTile.isLand());
 	}
 
 	public HexTile addTower(int x, int y, int playerIndex) {
@@ -1216,5 +1221,98 @@ public class GameModel {
 		
 		//return all modified hexes to update view
 		return seaTiles;
+	}
+
+	public ArrayList<HexTile> handleTileSwap(ArrayList<HexTile> hexTiles) {
+		ArrayList<HexTile> ret = new ArrayList<HexTile>();
+		
+		for(HexTile h: hexTiles){
+			unusedTiles.add(0, h);
+			
+			HexTile newTile = unusedTiles.remove(unusedTiles.size()-1);
+			newTile.controlledBy = h.controlledBy;
+			gameBoard.addHexTile(newTile, h.x, h.y);
+			
+			ret.add(newTile);
+		}
+		
+		return ret;
+	}
+
+	public void swapInitTiles() {
+		
+
+	}
+
+	public ArrayList<HexTile> getInitTilesToSwap() {
+		ArrayList<HexTile> ret = new ArrayList<HexTile>();
+		
+		for(int i=0; i<4; i++){
+			int x = 0;
+			int y = 0;
+				
+			if(playerCount == 4){
+				switch(i){
+				case 0:
+					x = 3;
+					y = 1;
+					break;
+				case 1:
+					x = 1;
+					y = 3;
+					break;
+				case 2:
+					x = -3;
+					y = -1;
+					break;
+				case 3:
+					x = -1;
+					y = -3;
+					break;
+				}
+			}
+			else{
+				switch(i){
+				case 0:
+					x = 2;
+					y = 1;
+					break;
+				case 1:
+					x = 1;
+					y = 2;
+					break;
+				case 2:
+					x = -2;
+					y = -1;
+					break;
+				case 3:
+					x = -1;
+					y = -2;
+					break;
+				}
+			}
+				
+			HexTile h = gameBoard.getTile(x, y);
+			if(h.controlledBy == ControlledBy.NEUTRAL)
+				continue;
+			
+			if(!h.isLand())
+				ret.add(h);
+				
+			ArrayList<HexTile> adjacentSeaHexes = new ArrayList<HexTile>();
+			for(HexTile[] hexArray: gameBoard.getTiles())
+				for(HexTile h2: hexArray)
+					if(h2 != null){
+						if( !ret.contains(h2)){
+							if(h.isAdjacent(h2) && !h2.isLand())
+								adjacentSeaHexes.add(h2);	
+						}
+					}	
+				
+			if(adjacentSeaHexes.size() >= 2)
+				ret.addAll(adjacentSeaHexes);
+		}
+		
+		return ret;
 	}
 }
