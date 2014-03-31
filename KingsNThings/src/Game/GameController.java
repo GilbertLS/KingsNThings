@@ -109,13 +109,13 @@ public class GameController {
 		
 		
 		
-		placeThingsOnTile(2, "Control_Marker");
+		//placeThingsOnTile(2, "Control_Marker");
 		
-		placeThingsOnTile(1, "Tower");
+		//placeThingsOnTile(1, "Tower");
 		
 		assignInitialThings();
 		
-		tradeInitialThings();
+		//tradeInitialThings();
 		
 		playThings();
 		
@@ -395,7 +395,7 @@ public class GameController {
 
 	private void determineInitialPlayerOrder() {
 		
-		//array to hold player rolls
+		//array to hold whether player is currently rolling
 		boolean[] playerRolling = new boolean[numClients];	
 		for(int i=0; i<numClients; i++)
 		{
@@ -415,10 +415,8 @@ public class GameController {
 			boolean[] intendedPlayers = new boolean[numClients];
 			for(int i=0; i<numClients; i++)
 			{
-				if(playerRolling[i] != false)
-					intendedPlayers[i] = true;
-				else
-					intendedPlayers[i] = false;
+				//send events to participating players
+				intendedPlayers[i] = playerRolling[i];
 			}
 			
 			Event e = new Event()
@@ -428,10 +426,11 @@ public class GameController {
 			
 			Response[] playerRolls = GameControllerEventHandler.sendEvent(e);
 			
-			for(int i=0; i<playerRolls.length; i++)
+			//find highest roll and player index
+			for(int i=0; i<numClients; i++)
 			{
 				int currentIndex = playerRolls[i].fromPlayer;
-				int currentRoll = Character.getNumericValue(playerRolls[i].message.charAt(0));
+				int currentRoll = Integer.parseInt(playerRolls[i].message);
 				
 				if(currentRoll > highestRoll)
 				{
@@ -440,10 +439,11 @@ public class GameController {
 				}
 			}	
 			
-			for(int i=0; i<playerRolls.length; i++)
+			//remove players who did not tie for highest roll
+			for(int i=0; i<numClients; i++)
 			{
 				int currentIndex = playerRolls[i].fromPlayer;
-				int currentRoll = Character.getNumericValue(playerRolls[i].message.charAt(0));
+				int currentRoll = Integer.parseInt(playerRolls[i].message);
 				
 				if (currentRoll < highestRoll)
 				{
@@ -738,13 +738,13 @@ public class GameController {
 					.EventId( EventList.UPDATE_PLAYER_ORDER)
 			);	
 		
-		sortServersByOrder();
+		if(GameServer.servers.size() != 2)	//player order stays the same in 2 player game
+			sortServersByOrder();
 	}
 	
 	private void sortServersByOrder()
 	{
-		if(GameServer.servers.size() != 2)	//player order stays the same in 2 playe game
-			Collections.sort(GameServer.servers, new ServerComparator());
+		Collections.sort(GameServer.servers, new ServerComparator());
 	}
 	
 	private void PlayBattlePhase(){

@@ -196,6 +196,7 @@ public class SpecialCharacterView extends Dialog{
 					
 					if(totalRoll >= ((Combatant) selection.thingRef).GetCombatValue()*2)
 					{
+						GameClient.game.gameModel.recruitSpecialCharacter(selection.thingRef.thingID, playerIndex);
 						GameClient.game.sendRecruitSpecialCharacterEvent(selection.thingRef.thingID, playerIndex);
 						GameClient.game.gameView.addToRack(selection.thingRef);
 					}

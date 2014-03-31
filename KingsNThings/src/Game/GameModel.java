@@ -8,6 +8,7 @@ import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Level;
 import Game.GameConstants.SettlementType;
 import Game.GameConstants.Terrain;
+import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
 
 import java.util.Collections;
@@ -685,6 +686,7 @@ public class GameModel {
 			if(!playingCup.isEmpty())
 			{
 				Thing currentThing = playingCup.remove(playingCup.size()-1);
+				currentThing.setControlledBy(ControlledBy.NEUTRAL);
 				things.add(currentThing);
 			}
 			else
@@ -1016,6 +1018,19 @@ public class GameModel {
 	}
 
 	public void returnToCup(Thing t) {
+		if(!t.isControlledBy(ControlledBy.NEUTRAL))
+		{
+			Player player = playerFromFaction(t.getControlledBy());
+			if(t.thingType == ThingType.SETTLEMENT)
+				player.removeSettlement((Settlement)t);
+			else if(t.thingType == ThingType.SPECIAL_INCOME)
+				player.removeSpecialIncome((SpecialIncome)t);
+			else if(t.thingType == ThingType.SPECIAL_CHARACTER)
+				player.removeSpecialCharacter((SpecialCharacter)t);
+		}	
+		
+		t.setControlledBy(ControlledBy.NEUTRAL);
+		
 		//enforce special elimination
 		if(!specialElimination)
 			playingCup.add(0, t);
@@ -1142,10 +1157,11 @@ public class GameModel {
 		removePlayerThings(h, selectedThings, 4);	
 		payForBribe(h, selectedThings, playerIndex);
 		
-		if(h.defendingThings.isEmpty())
+		if(h.defendingThings.isEmpty())		//take over hex if all things bribed (including settlement)
 			if((h.hasSettlement() && h.getSettlement().neutralized)
-				|| !h.hasSettlement())
-					updateTileFaction(h);
+				|| !h.hasSettlement()){
+					handlePostBattle(h);
+			}
 	}
 
 
@@ -1296,7 +1312,7 @@ public class GameModel {
 	}
 
 	public void handlePostBattle(HexTile h) {
-		switch(h.getControlledBy()){
+		switch(h.getControlledBy()){	//only update after a battle if other player remain
 		case PLAYER1:
 			if(!h.noOtherPlayerOnTile(0))
 				updateTileFaction(h);
@@ -1317,6 +1333,7 @@ public class GameModel {
 			updateTileFaction(h);
 		}
 		
+		//deal with forts etc.
 		h.handlePostBattle();
 	}
 
@@ -1361,7 +1378,7 @@ public class GameModel {
 			Player player = playerFromFaction(faction);
 			
 			for(Treasure t: h.getTreasures())
-				h.AddThingToTile(player.GetPlayerNum(), t);
+				player.addThingToRack(t);
 			
 			h.clearTreasure();
 			

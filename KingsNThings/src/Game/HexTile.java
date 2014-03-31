@@ -69,9 +69,7 @@ public class HexTile implements IIncomable{
 	public boolean isControlledBy(ControlledBy controlledBy){return this.controlledBy == controlledBy;}
 	
 	public void AddThingToTile(Player player, Thing thing){
-		int playerIndex = player.GetPlayerNum();
-		
-		AddThingToTile(playerIndex, thing);
+		AddThingToTile(player.GetPlayerNum(), thing);
 	}
 	
 	public void AddThingToTile(int playerIndex, Thing thing){
@@ -95,6 +93,13 @@ public class HexTile implements IIncomable{
 		} else if ( playerIndex == 4 )
 			defendingThings.add(thing);
 		
+		Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
+		if(thing.isSpecialCharacter())
+			player.addSpecialCharacter((SpecialCharacter) thing);
+		else if(thing.thingType == ThingType.SETTLEMENT)
+			player.addSettlement((Settlement) thing);
+		else if(thing.thingType == ThingType.SPECIAL_INCOME)
+			player.addSpecialIncome((SpecialIncome)thing);
 	}
 	
 	private boolean handleTreasure(int playerIndex, Thing thing) {
@@ -442,26 +447,6 @@ public class HexTile implements IIncomable{
 		specialIncomes = new ArrayList<SpecialIncome>();
 	}
 
-	private void changeControll() {
-		if(HasThingsOnTile(0))
-			controlledBy = ControlledBy.PLAYER1;
-		else if(HasThingsOnTile(1))
-			controlledBy = ControlledBy.PLAYER2;
-		else if(HasThingsOnTile(2))
-			controlledBy = ControlledBy.PLAYER3;
-		else if(HasThingsOnTile(3))
-			controlledBy = ControlledBy.PLAYER4;	
-		else
-			controlledBy = ControlledBy.NEUTRAL;
-		
-		changeFortFaction(controlledBy, getFort());
-	}
-
-	private void changeFortFaction(ControlledBy controlledBy, Fort f) {
-		if(f.getControlledBy() != controlledBy && f != null)		
-			GameClient.game.gameModel.changeFortFaction(controlledBy, f);
-	}
-
 	public boolean noOtherPlayerOnTile(int playerIndex) {
 		boolean ret = false;
 		
@@ -525,7 +510,7 @@ public class HexTile implements IIncomable{
 	public boolean hasRoomForThings(ArrayList<Thing> things) {		
 		int numCombatants = 0;
 		
-		if(getFort().isCitadel())
+		if(hasFort() && getFort().isCitadel())
 			return true;
 		
 		//list of things may contain non-combatants, parse them to combatants
@@ -718,7 +703,12 @@ public class HexTile implements IIncomable{
 	}
 
 	private boolean hasCombatants(int playerIndex) {
-		ControlledBy playerFaction = GameClient.game.gameModel.playerFromIndex(playerIndex).faction;
+		
+		ControlledBy playerFaction;
+		if(playerIndex == 4)
+			playerFaction = ControlledBy.NEUTRAL;
+		else
+			playerFaction = GameClient.game.gameModel.playerFromIndex(playerIndex).faction;
 		
 		//true if player controls fort
 		if(hasFort() && getFort().isControlledBy(playerFaction))

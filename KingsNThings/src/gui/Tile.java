@@ -385,10 +385,6 @@ public class Tile extends Region implements Draggable {
 									
 									success = true;
 									
-									//gv.moveMade = true;
-									
-									//string to update 
-									
 									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~";
 										
 									for(ThingView t: thingViews)

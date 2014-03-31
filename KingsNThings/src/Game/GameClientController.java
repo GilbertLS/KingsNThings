@@ -294,6 +294,11 @@ public class GameClientController {
 
 	public void sendRecruitSpecialCharacterEvent(
 			int thingID, int playerIndex) {
+		boolean[] intendedPlayers = new boolean[GameClient.game.gameModel.PlayerCount()];
+		
+		for(int i=0; i<GameClient.game.gameModel.PlayerCount(); i++)
+			if(i != playerIndex)
+				intendedPlayers[i] = true;
 		
 		String[] args = {""+thingID,""+playerIndex};
 		

@@ -84,13 +84,6 @@ public class Player {
 	public void addThingToRack(Thing currentThing) {
 		playerRack.addThing(currentThing);
 		currentThing.setControlledBy(faction);
-		
-		if(currentThing.isSpecialCharacter())
-			specialCharacters.add((SpecialCharacter) currentThing);
-		else if(currentThing.thingType == ThingType.SETTLEMENT)
-			ownedSettlements.add((Settlement) currentThing);
-		else if(currentThing.thingType == ThingType.SPECIAL_INCOME)
-			ownedSpecialIncomes.add((SpecialIncome)currentThing);
 	}
 	
 	public PlayerRack getPlayerRack() {
@@ -173,26 +166,37 @@ public class Player {
 		
 		//gold pieces for land hexes
 		for(HexTile h: ownedHexTiles)
-				if(h.terrain != Terrain.SEA)
-				{
-						gold += h.getIncome();
-						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
-				}
+			if(h.terrain != Terrain.SEA){
+				gold += h.getIncome();
+			}
+				
+		
+		System.out.println("Player index " + playerNum + "- income from hexTiles:" + gold);
 		
 		//combat values for forts
-		for(Fort f: ownedForts)
+		for(Fort f: ownedForts){
 			gold+= f.getIncome();
+			System.out.println("Player index " + playerNum + "- income from fort:" + f.getIncome());
+		}
+			
 		
 		//special income tiles
-		for(SpecialIncome si: ownedSpecialIncomes)
+		for(SpecialIncome si: ownedSpecialIncomes){
 			gold+= si.getIncome();
+			System.out.println("Player index " + playerNum + "- income from special income:" + si.getIncome());
+		}
+			
 		
-		for(Settlement s: ownedSettlements)
+		for(Settlement s: ownedSettlements){
 			gold+= s.getIncome();
+			System.out.println("Player index " + playerNum + "- income from settlement:" + s.getIncome());
+		}
 		
 		//special characters
-		for(SpecialCharacter sc: specialCharacters)
-			gold += sc.getIncome();
+		for(SpecialCharacter sc: specialCharacters){
+			gold+= sc.getIncome();
+			System.out.println("Player index " + playerNum + "- income from special character:" + sc.getIncome());
+		}
 		
 		return gold;
 	}
@@ -259,5 +263,21 @@ public class Player {
 
 	public boolean ownsTile(HexTile hex) {
 		return ownedHexTiles.contains(hex);
+	}
+
+	public void addSpecialCharacter(SpecialCharacter thing) {
+		specialCharacters.add(thing);
+	}
+
+	public void removeSpecialCharacter(SpecialCharacter t) {
+		specialCharacters.remove(t);
+	}
+
+	public void removeSpecialIncome(SpecialIncome t) {
+		ownedSpecialIncomes.remove(t);
+	}
+
+	public void removeSettlement(Settlement t) {
+		ownedSettlements.remove(t);
 	}
 }
