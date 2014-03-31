@@ -1070,28 +1070,35 @@ public class GameModel {
 	}
 
 	public String checkWin() {
-		ArrayList<Player> winningPlayers = new ArrayList<Player>();
-		
-		for(int i=0; i<4; i++)
+		boolean winnerFound = false;
+		int winningIndex = -1;
+		for(int i=0; i<GameClient.game.gameModel.playerCount; i++)
 		{
-			Player player = playerByOrder(i);
-			
-			//player has more than 1 citadel (player wins)
-			if(player.getNumCitadels() > 1)	
-				winningPlayers.add(player);
-			
-			//player constructed and held a citadel since last round (player wins)
-			else if(player.citadelWasConstructed() && player.getRoundsSinceCitadel() == 1)	
-				winningPlayers.add(player);
+			if(!winnerFound)	//ensure unique winner
+			{
+				Player player = playerByOrder(i);
+				
+				//player has more than 1 citadel (player wins)
+				if(player.getNumCitadels() > 1)
+				{
+					winningIndex = i;
+					winnerFound = true;
+				}				
+				//player constructed and held a citadel since last round (player wins)
+				else if(player.citadelWasConstructed() && player.getRoundsSinceCitadel() >= 1)
+				{
+					winningIndex = i;
+					winnerFound = true;
+				}
+			}
 		}
 		
 		String ret = "";
-		if(winningPlayers.isEmpty())
-			ret = ""+false + "SPLIT";
-		else {
+		if(winnerFound){
 			ret = "" + true + "SPLIT";
-			for(Player p: winningPlayers)
-				ret += p.GetPlayerNum() +" ";
+			ret += winningIndex;
+		} else {
+			ret = ""+false + "SPLIT";
 		}
 		
 		return ret;
@@ -1160,7 +1167,8 @@ public class GameModel {
 		if(h.defendingThings.isEmpty())		//take over hex if all things bribed (including settlement)
 			if((h.hasSettlement() && h.getSettlement().neutralized)
 				|| !h.hasSettlement()){
-					handlePostBattle(h);
+					updateTileFaction(h);
+					h.resetCounters();
 			}
 	}
 
@@ -1193,27 +1201,28 @@ public class GameModel {
 		return cost;
 	}
 
-	public ArrayList<HexTile> eliminateSeaHexThings(int playerIndex) {
+	public ArrayList<HexTile> eliminateSeaHexThings() {
 		HexTile[][] hexTiles = gameBoard.getTiles();
 		ArrayList<HexTile> seaTiles = new ArrayList<HexTile>();
 		
 		for(HexTile[] tileArray: hexTiles)
 			for(HexTile h: tileArray)
 				if(h != null && !h.isLand()){				//for all existent sea hexes...
-					if(h.HasThingsOnTile(playerIndex)){		//...if indicated player has things...
-						
-						seaTiles.add(h);	
-							
-						ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
-						for(Thing t: h.GetThings(playerIndex))
-						{
-							returnToCup(t);					//...return them to the cup...
-							thingsToRemove.add(t);
+					for(int i=0; i<5; i++){				//...for each player...
+						if(h.HasThingsOnTile(i)){		//...if indicated player has things...
+							if(!seaTiles.contains(h))
+								seaTiles.add(h);	
+								
+							ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
+							for(Thing t: h.GetThings(i))
+							{
+								returnToCup(t);					//...return them to the cup...
+								thingsToRemove.add(t);
+							}
+								
+							//...and remove from the hex
+							h.removePlayerThings(thingsToRemove, i);
 						}
-							
-						//...and remove from the hex
-						h.removePlayerThings(thingsToRemove, playerIndex);
-					
 					}
 				}
 		
@@ -1396,5 +1405,12 @@ public class GameModel {
 		player.addHexTile(h);
 		
 		return h;
+	}
+
+	public void incrementCitadelRounds() {
+		player1.incrementCitadels();
+		player2.incrementCitadels();
+		player3.incrementCitadels();
+		player4.incrementCitadels();
 	}
 }
