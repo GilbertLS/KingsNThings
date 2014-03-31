@@ -8,6 +8,7 @@ import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Level;
 import Game.GameConstants.SettlementType;
 import Game.GameConstants.Terrain;
+import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
 
 import java.util.Collections;
@@ -72,10 +73,8 @@ public class GameModel {
 		this.player3 = new Player(2);
 		this.player4 = new Player(3);
 		
-		//initialize Special Characters (and store in unownedCharacters)
-		createNewSpecialCharacters();
-		
 		ownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
+		unownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		playingCup = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS);
 		
 		dice = new Dice(4);
@@ -83,29 +82,6 @@ public class GameModel {
 		boardController = new BoardController(gameBoard);
 		
 		initializePlayingCup();
-	}
-	private void createNewSpecialCharacters() {
-		this.unownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
-		
-		//REMOVED FOR ITERATION 1
-		/*
-		//placeholder until we get the time to determine proper values for all Special Characters
-		for(int i=0; i< Math.floor(GameConstants.MAX_NUM_SPECIAL_CHARACTERS/2); i++)
-		{
-			unownedCharacters.add(new SpecialCharacter());		
-		}
-		
-		for(int i=0; i<2; i++)
-		{
-			unownedCharacters.add(new TerrainLord(Terrain.DESERT));
-			unownedCharacters.add(new TerrainLord(Terrain.FOREST));
-			unownedCharacters.add(new TerrainLord(Terrain.FROZEN_WASTE));
-			unownedCharacters.add(new TerrainLord(Terrain.JUNGLE));
-			unownedCharacters.add(new TerrainLord(Terrain.MOUNTAIN));
-			unownedCharacters.add(new TerrainLord(Terrain.PLAINS));
-			unownedCharacters.add(new TerrainLord(Terrain.SWAMP));
-		}
-		*/
 	}
 	
 	//create the 48 HexTiles to use for the Game
@@ -710,6 +686,7 @@ public class GameModel {
 			if(!playingCup.isEmpty())
 			{
 				Thing currentThing = playingCup.remove(playingCup.size()-1);
+				currentThing.setControlledBy(ControlledBy.NEUTRAL);
 				things.add(currentThing);
 			}
 			else
@@ -747,9 +724,12 @@ public class GameModel {
 	}
 
 	public boolean isValidControlMarkerPlacement(HexTile selectedTile) {
-		if(selectedTile.controlledBy == ControlledBy.NEUTRAL)
+		if(selectedTile.isControlledBy(ControlledBy.NEUTRAL))
 		{
-			if(currPlayer.ownedHexTiles.isEmpty())
+			if(!selectedTile.isLand() && !currPlayer.hasNoHexes())
+				return false;
+			
+			if(currPlayer.hasNoHexes())
 			{
 				int x = selectedTile.x;
 				int y = selectedTile.y;
@@ -776,12 +756,12 @@ public class GameModel {
 				for(int i=0; i<playerCount; i++)
 				{
 					if(i != currPlayer.GetPlayerNum())
-						for(HexTile h: playerFromIndex(i).ownedHexTiles)
+						for(HexTile h: playerFromIndex(i).getOwnedHexTiles())
 							if(h.isAdjacent(selectedTile))
 								return false;
 				}
 				
-				for(HexTile h: currPlayer.ownedHexTiles)
+				for(HexTile h: currPlayer.getOwnedHexTiles())
 				{
 					if(selectedTile.isAdjacent(h))
 						return true;
@@ -791,34 +771,10 @@ public class GameModel {
 		return false;
 	}
 
-	public HexTile updateTileFaction(int playerIndex, int x, int y) {
-		HexTile h = gameBoard.getTile(x, y);
-		ControlledBy oldFaction = h.controlledBy;	
-		
-		Player player = playerFromIndex(playerIndex);
-		ControlledBy faction = player.faction;
-		
-		h.controlledBy = faction;
-		
-		player.addHexTile(h);
-		
-		if(oldFaction != ControlledBy.NEUTRAL)
-		{
-			if(oldFaction == ControlledBy.PLAYER1)
-				player1.removeHexTile(h);
-			else if(oldFaction == ControlledBy.PLAYER2)
-				player2.removeHexTile(h);
-			else if(oldFaction == ControlledBy.PLAYER3)
-				player3.removeHexTile(h);
-			else if(oldFaction == ControlledBy.PLAYER4)
-				player4.removeHexTile(h);
-		}
-		
-		return h;
-	}
-
 	public boolean isValidTowerPlacement(HexTile selectedTile) {
-		return (selectedTile.controlledBy == currPlayer.faction && !selectedTile.hasFort());
+		return (selectedTile.isControlledBy(currPlayer.faction)
+				&& !selectedTile.hasFort()
+				&& selectedTile.isLand());
 	}
 
 	public HexTile addTower(int x, int y, int playerIndex) {
@@ -834,7 +790,7 @@ public class GameModel {
 		Player player = playerFromIndex(playerIndex);
 	
 		Fort f = new Fort();
-		f.controlledBy = player.faction;
+		f.setControlledBy(player.faction);
 		
 		h.addFort(f);
 		player.addFort(f);
@@ -901,10 +857,10 @@ public class GameModel {
 			
 			movedThings.add(thingPlayed);
 			
-			if(!player.ownedHexTiles.contains(tileTo) && tileTo.controlledBy == ControlledBy.NEUTRAL
-					&& tileTo.isOnlyPlayerOnTile(playerIndex))
+			if(!player.ownsTile(tileTo) && tileTo.isControlledBy(ControlledBy.NEUTRAL)
+					&& tileTo.noOtherPlayerOnTile(playerIndex))
 			{
-				updateTileFaction(playerIndex, tileTo.x, tileTo.y);
+				updateTileFaction(tileTo);
 			}
 		}
 	}
@@ -950,6 +906,9 @@ public class GameModel {
 		else
 			addTower(hexTile, playerIndex);
 		
+		if(hexTile.getFort().getLevel() == Level.CITADEL)
+			playerFromIndex(playerIndex).setCitadelConstructed(true);
+		
 		playerFromIndex(playerIndex).decrementGold(GameConstants.CONSTRUCTION_COST);
 	}
 
@@ -957,7 +916,7 @@ public class GameModel {
 		Player player = playerFromIndex(playerIndex);
 		
 		//invalid if not controlled
-		if(h.controlledBy != player.faction)
+		if(!player.ownsTile(h))
 			return false;
 		
 		//invalid if already constructed
@@ -1059,6 +1018,19 @@ public class GameModel {
 	}
 
 	public void returnToCup(Thing t) {
+		if(!t.isControlledBy(ControlledBy.NEUTRAL))
+		{
+			Player player = playerFromFaction(t.getControlledBy());
+			if(t.thingType == ThingType.SETTLEMENT)
+				player.removeSettlement((Settlement)t);
+			else if(t.thingType == ThingType.SPECIAL_INCOME)
+				player.removeSpecialIncome((SpecialIncome)t);
+			else if(t.thingType == ThingType.SPECIAL_CHARACTER)
+				player.removeSpecialCharacter((SpecialCharacter)t);
+		}	
+		
+		t.setControlledBy(ControlledBy.NEUTRAL);
+		
 		//enforce special elimination
 		if(!specialElimination)
 			playingCup.add(0, t);
@@ -1100,21 +1072,17 @@ public class GameModel {
 	public String checkWin() {
 		ArrayList<Player> winningPlayers = new ArrayList<Player>();
 		
-		for(int i=0; i<playerCount; i++)
+		for(int i=0; i<4; i++)
 		{
-			Player player = playerFromIndex(i);
+			Player player = playerByOrder(i);
 			
 			//player has more than 1 citadel (player wins)
 			if(player.getNumCitadels() > 1)	
 				winningPlayers.add(player);
 			
 			//player constructed and held a citadel since last round (player wins)
-			else if(player.citadelWasConstructed() && player.getNumCitadels() == 1)	
+			else if(player.citadelWasConstructed() && player.getRoundsSinceCitadel() == 1)	
 				winningPlayers.add(player);
-			
-			//player constructed citadel this round (store for next round)
-			else if (player.hasCitadel() && !player.citadelWasConstructed())
-				player.setCitadelConstructed(true);
 		}
 		
 		String ret = "";
@@ -1129,17 +1097,27 @@ public class GameModel {
 		return ret;
 	}
 
+	private Player playerByOrder(int i) {
+		if(player1.getPlayerOrder() == i)
+			return player1;
+		else if(player2.getPlayerOrder() == i)
+			return player2;
+		else if(player3.getPlayerOrder() == i)
+			return player3;
+		else if(player4.getPlayerOrder() == i)
+			return player4;
+		else
+			return null;
+	}
+
 	public void changeFortFaction(ControlledBy controlledBy, Fort f) {
-		if(f.controlledBy != ControlledBy.NEUTRAL){
-			Player player = playerFromFaction(f.controlledBy);	
-			player.removeFort(f);
-			if(f.getLevel() == Level.CITADEL && player.getNumCitadels() == 1)
-				player.setCitadelConstructed(false);
-		}
-		if(controlledBy != ControlledBy.NEUTRAL){
-			Player newPlayer = playerFromFaction(controlledBy);
-			newPlayer.addFort(f);
-		}
+		//remove fort from previous player
+		Player player = playerFromFaction(f.getControlledBy());	
+		player.removeFort(f);
+		
+		//add fort to new player
+		Player newPlayer = playerFromFaction(controlledBy);
+		newPlayer.addFort(f);
 	}
 
 	private Player playerFromFaction(ControlledBy controlledBy) {
@@ -1151,8 +1129,10 @@ public class GameModel {
 			return player2;
 		case PLAYER3:
 			return player3;
-		default:
+		case PLAYER4:
 			return player4;
+		default:
+			return null;
 		}
 	}
 
@@ -1164,54 +1144,257 @@ public class GameModel {
 	}
 
 	public void removePlayerThings(HexTile h, ArrayList<Thing> things, int playerIndex) {
-		ArrayList<Thing> removedThings = h.removePlayerThings(things, playerIndex);
-		
-		for(Thing t: removedThings){
-			returnToCup(t);
-		}
+		h.removePlayerThings(things, playerIndex);
 	}
 
 	public void removeSettlement(HexTile h, ArrayList<Thing> things) {
-		ArrayList<Thing> removedThings = h.removeSettlements(things);
-		
-		for(Thing t: removedThings){
-			returnToCup(t);
-		}
+		h.removeSettlements(things);
 	}
 
 	public void handleBribe(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
-		removeSettlement(h, selectedThings);
-		removeSpecialIncome(h, selectedThings);
+		bribeSettlement(h, selectedThings);
+		removeSpecialIncomes(h, selectedThings);
 		removePlayerThings(h, selectedThings, 4);	
 		payForBribe(h, selectedThings, playerIndex);
 		
+		if(h.defendingThings.isEmpty())		//take over hex if all things bribed (including settlement)
+			if((h.hasSettlement() && h.getSettlement().neutralized)
+				|| !h.hasSettlement()){
+					handlePostBattle(h);
+			}
 	}
 
-	private void removeSpecialIncome(HexTile h, ArrayList<Thing> selectedThings) {
-		ArrayList<Thing> removedThings = h.removeSpecialIncomes(selectedThings);
-		
-		for(Thing t: removedThings){
-			returnToCup(t);
-		}
+
+	private void bribeSettlement(HexTile h, ArrayList<Thing> selectedThings) {
+		h.bribeSettlement(selectedThings);
+	}
+
+	private void removeSpecialIncomes(HexTile h, ArrayList<Thing> selectedThings) {
+		h.removeSpecialIncomes(selectedThings);
 	}
 
 	private void payForBribe(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
 		int cost = 0;
 		
-		cost = calculateBribe(selectedThings, h.hasTreasure());
+		cost = calculateBribe(selectedThings, h);
 		
 		playerFromIndex(playerIndex).payGold(cost);
 	}
 
-	public int calculateBribe(ArrayList<Thing> selectedThings, boolean hasTreasure) {
+	public int calculateBribe(ArrayList<Thing> selectedThings, HexTile h) {
 		int cost = 0;
 		
 		for(Thing t: selectedThings)
 			cost += ((Combatant)t).GetCombatValue();
 		
-		if(hasTreasure)
+		if(h.hasTreasure() || h.hasMagic() || h.hasSettlement() || h.hasSpecialIncome())
 			cost *= 2;
 		
 		return cost;
+	}
+
+	public ArrayList<HexTile> eliminateSeaHexThings(int playerIndex) {
+		HexTile[][] hexTiles = gameBoard.getTiles();
+		ArrayList<HexTile> seaTiles = new ArrayList<HexTile>();
+		
+		for(HexTile[] tileArray: hexTiles)
+			for(HexTile h: tileArray)
+				if(h != null && !h.isLand()){				//for all existent sea hexes...
+					if(h.HasThingsOnTile(playerIndex)){		//...if indicated player has things...
+						
+						seaTiles.add(h);	
+							
+						ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
+						for(Thing t: h.GetThings(playerIndex))
+						{
+							returnToCup(t);					//...return them to the cup...
+							thingsToRemove.add(t);
+						}
+							
+						//...and remove from the hex
+						h.removePlayerThings(thingsToRemove, playerIndex);
+					
+					}
+				}
+		
+		//return all modified hexes to update view
+		return seaTiles;
+	}
+
+	public ArrayList<HexTile> handleTileSwap(ArrayList<HexTile> hexTiles) {
+		ArrayList<HexTile> ret = new ArrayList<HexTile>();
+		
+		for(HexTile h: hexTiles){
+			unusedTiles.add(0, h);
+			
+			HexTile newTile = unusedTiles.remove(unusedTiles.size()-1);
+			gameBoard.addHexTile(newTile, h.x, h.y);
+			if(h.getControlledBy() != ControlledBy.NEUTRAL){
+				claimNewTile(playerFromFaction(h.getControlledBy()).GetPlayerNum() ,newTile.x, newTile.y);
+			}
+			
+			ret.add(newTile);
+		}
+		
+		return ret;
+	}
+
+	public ArrayList<HexTile> getInitTilesToSwap() {
+		ArrayList<HexTile> ret = new ArrayList<HexTile>();
+		
+		for(int i=0; i<4; i++){
+			int x = 0;
+			int y = 0;
+				
+			if(playerCount == 4){
+				switch(i){
+				case 0:
+					x = 3;
+					y = 1;
+					break;
+				case 1:
+					x = 1;
+					y = 3;
+					break;
+				case 2:
+					x = -3;
+					y = -1;
+					break;
+				case 3:
+					x = -1;
+					y = -3;
+					break;
+				}
+			}
+			else{
+				switch(i){
+				case 0:
+					x = 2;
+					y = 1;
+					break;
+				case 1:
+					x = 1;
+					y = 2;
+					break;
+				case 2:
+					x = -2;
+					y = -1;
+					break;
+				case 3:
+					x = -1;
+					y = -2;
+					break;
+				}
+			}
+				
+			HexTile h = gameBoard.getTile(x, y);
+			if(h.isControlledBy(ControlledBy.NEUTRAL))
+				continue;
+			
+			if(!h.isLand())
+				ret.add(h);
+				
+			ArrayList<HexTile> adjacentSeaHexes = new ArrayList<HexTile>();
+			for(HexTile[] hexArray: gameBoard.getTiles())
+				for(HexTile h2: hexArray)
+					if(h2 != null){
+						if( !ret.contains(h2)){
+							if(h.isAdjacent(h2) && !h2.isLand())
+								adjacentSeaHexes.add(h2);	
+						}
+					}	
+				
+			if(adjacentSeaHexes.size() >= 2)
+				ret.addAll(adjacentSeaHexes);
+		}
+		
+		return ret;
+	}
+
+	public void handlePostBattle(HexTile h) {
+		switch(h.getControlledBy()){	//only update after a battle if other player remain
+		case PLAYER1:
+			if(!h.noOtherPlayerOnTile(0))
+				updateTileFaction(h);
+			break;
+		case PLAYER2:
+			if(!h.noOtherPlayerOnTile(1))
+				updateTileFaction(h);
+			break;
+		case PLAYER3:
+			if(!h.noOtherPlayerOnTile(2))
+				updateTileFaction(h);
+			break;
+		case PLAYER4:
+			if(!h.noOtherPlayerOnTile(3))
+				updateTileFaction(h);
+			break;
+		default:
+			updateTileFaction(h);
+		}
+		
+		//deal with forts etc.
+		h.handlePostBattle();
+	}
+
+	private void updateTileFaction(HexTile h) {
+		ControlledBy oldFaction = h.getControlledBy();	
+		ControlledBy faction = ControlledBy.NEUTRAL;
+		
+		if(h.HasThingsOnTile(0))
+			faction = player1.faction;
+		else if(h.HasThingsOnTile(1))
+			faction = player2.faction;
+		else if(h.HasThingsOnTile(2))
+			faction = player3.faction;
+		else if(h.HasThingsOnTile(3))
+			faction = player4.faction;
+		else
+			faction = ControlledBy.NEUTRAL;
+		h.setControlledBy(faction);
+		
+		
+		//if a player, add to owned hexes
+		if(faction != ControlledBy.NEUTRAL){
+			playerFromFaction(faction).addHexTile(h);
+		}
+		
+		//if tile was owned by a player, remove from their controlled hexes
+		if(oldFaction != ControlledBy.NEUTRAL)
+		{
+			if(oldFaction == ControlledBy.PLAYER1)
+				player1.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER2)
+				player2.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER3)
+				player3.removeHexTile(h);
+			else if(oldFaction == ControlledBy.PLAYER4)
+				player4.removeHexTile(h);
+		}
+		
+		if(oldFaction == ControlledBy.NEUTRAL			//take over explored hex (claim treasure, magic)
+				&& faction != ControlledBy.NEUTRAL)
+		{
+			Player player = playerFromFaction(faction);
+			
+			for(Treasure t: h.getTreasures())
+				player.addThingToRack(t);
+			
+			h.clearTreasure();
+			
+			for(Magic m: h.getMagics())
+				player.addThingToRack(m);
+			
+			h.clearMagic();
+		}
+	}
+
+	public HexTile claimNewTile(int playerIndex, int x, int y) {
+		Player player = playerFromIndex(playerIndex);
+		HexTile h = gameBoard.getTile(x, y);
+		
+		player.addHexTile(h);
+		
+		return h;
 	}
 }

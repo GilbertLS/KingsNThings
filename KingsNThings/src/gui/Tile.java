@@ -128,11 +128,6 @@ public class Tile extends Region implements Draggable {
     private String getBackgroundFromType()
     {
     	if (tileRef != null) {
-    		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
-    		{
-    			return "Tuile_Back.png";
-    		}
-    		else
    			 switch (tileRef.getTerrain()) {
 			 	case SEA: return GameConstants.SeaTileFront;
 				case JUNGLE: return GameConstants.JungleTileFront;
@@ -142,7 +137,7 @@ public class Tile extends Region implements Draggable {
 				case SWAMP: return GameConstants.SwampTileFront;
 				case MOUNTAIN: return GameConstants.MountainTileFront;
 				case DESERT: return GameConstants.DesertTileFront;
-			 }
+   			 }
     	}
     	
     	return "Tuile_Back.png";
@@ -210,16 +205,22 @@ public class Tile extends Region implements Draggable {
     		specialIncome = null;
     	}
     	
-    	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
-    		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
     	
     	this.getChildren().setAll(list);
     	
     }
     
+    public void changeHex(HexTile h)
+    {
+    	tileRef = h;
+    	
+    	update();
+    }
+    
     private String getMarkerString() {
     	if (tileRef != null) {
-    		switch (tileRef.controlledBy) {
+    		switch (tileRef.getControlledBy()) {
     			case PLAYER1: return "CM_411.png";
     			case PLAYER2: return "CM_412.png";
     			case PLAYER3: return "CM_413.png";
@@ -358,9 +359,13 @@ public class Tile extends Region implements Draggable {
 								
 								if(GameClient.game.isValidMove(originalTile, tileRef, things))
 								{
-									if(tileRef.controlledBy == ControlledBy.NEUTRAL
+									if(tileRef.isControlledBy(ControlledBy.NEUTRAL)
 											&& tileRef.noDefense()) 						//exploration
 									{
+										//things can not move further
+										for(Thing t: things)
+											t.setMovementFinished();
+										
 										//handle creatures
 										if (GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y)){
 											gv.updateTiles(tileRef, 4);
@@ -379,10 +384,6 @@ public class Tile extends Region implements Draggable {
 									source.getListView().getItems().removeAll(thingViews);
 									
 									success = true;
-									
-									//gv.moveMade = true;
-									
-									//string to update 
 									
 									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~";
 										
@@ -456,7 +457,7 @@ public class Tile extends Region implements Draggable {
 	}
 	
 	public void hideTile() {
-		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+		if(tileRef.isControlledBy(ControlledBy.NEUTRAL))
 			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");
 	}
 	

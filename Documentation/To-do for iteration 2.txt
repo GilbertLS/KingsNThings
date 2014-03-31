@@ -1,0 +1,41 @@
+Major Things:
+-Random Events
+-Special Powers
+-Special character abilities
+-bluffing
+-defense creature control
+-Battle
+-Magic
+
+Edge-cases:
+-re-draw starting hexes
+-discharge special characters
+-return special characters after elimination
+-remove special income (anytime except combat)
+-call bluff anytime
+-Turn in treasure anytime
+-movement creature limit doesnt apply to citadels
+-only pin if enemy units have combat values
+-request reveal bluff beginning of movement
+-cannot play creatures into sea
+-if creatures end movement on sea, eliminate
+-enemy pinning doesn't apply to flying creatures (unless enemy flying)
+-reveal flying creatures to continue
+-allow revealing of enemy flyign creatures
+-unexplored territory stops movement
+-auto-capture hex if no combat counters
+-defense creatures do not require support
+-capture treasure after defense battle
+-random events returned to cup immediately if drawn for defense
+-bribe cost doubled for magic, special income
+-if bribe all combatants, win treasure/magic
+-bribing village/city makes it "neutralized" (need to win after battle)
+-if all attackers eliminated, hex control remains
+-restore forts after battle
+
+
+Silly Things:
+-why only 48 hex tiles?
+-technically special character shouldn't go on rack temporarily
+-player enforced rack limit
+-player decides between defense special incomes if equal 

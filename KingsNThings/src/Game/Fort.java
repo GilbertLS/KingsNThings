@@ -10,7 +10,7 @@ import Game.GameConstants;
  */
 public class Fort extends Building implements IIncomable{
 	private Level level;	//The current level of the Fort
-	private static int fortIndex =0;
+	private static int fortIndex = 0;
 	
 	public Fort()
 	{
@@ -32,9 +32,11 @@ public class Fort extends Building implements IIncomable{
 		{
 		case KEEP:
 			level = Level.TOWER;
+			combatValue = 1;
 			break;
 		case CASTLE:
 			level = Level.KEEP;
+			combatValue = 2;
 			Ranged(false);
 			break;
 		}
@@ -46,16 +48,23 @@ public class Fort extends Building implements IIncomable{
 		{
 		case TOWER:
 			level = Level.KEEP;
+			combatValue = 2;
 			break;
 		case KEEP:
 			level = Level.CASTLE;
+			combatValue = 3;
 			Ranged(true);
 			break;
 		case CASTLE:
 			level = Level.CITADEL;
+			combatValue = 4;
 			Ranged(false);
 			Magic(true);
 			break;
 		}
+	}
+
+	public boolean isCitadel() {
+		return level == Level.CITADEL;
 	}
 }

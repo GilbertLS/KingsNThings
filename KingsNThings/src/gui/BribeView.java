@@ -126,7 +126,7 @@ public class BribeView extends Dialog {
 						selectedThings.add(selectedThingViews.get(i).thingRef);
 				}
 				
-				if(GameClient.game.validBribe(selectedThings, hasTreasure)){					
+				if(GameClient.game.validBribe(selectedThings, referenceHexTile)){					
 					//need to handle special incomes as well
 					GameClient.game.gameModel.handleBribe(referenceHexTile, selectedThings, playerIndex);
 					GameClient.game.gameView.updateTiles(referenceHexTile, 4);

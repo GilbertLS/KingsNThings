@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -100,6 +102,8 @@ public class GameController {
 		placeThingsOnTile(1, "Control_Marker");
 		
 		revealHexTiles();
+		
+		allowTileSwap();
 		/*end need to happen even with DEVMODE*/
 		
 		
@@ -117,6 +121,14 @@ public class GameController {
 		
 	}
 	
+	private void allowTileSwap() {		
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId(EventList.CHECK_TILE_SWAP)
+					.ExpectsResponse(true)
+			);		
+	}
+
 	private void revealHexTiles() {
 		GameControllerEventHandler.sendEvent(
 				new Event()
@@ -383,7 +395,7 @@ public class GameController {
 
 	private void determineInitialPlayerOrder() {
 		
-		//array to hold player rolls
+		//array to hold whether player is currently rolling
 		boolean[] playerRolling = new boolean[numClients];	
 		for(int i=0; i<numClients; i++)
 		{
@@ -403,23 +415,22 @@ public class GameController {
 			boolean[] intendedPlayers = new boolean[numClients];
 			for(int i=0; i<numClients; i++)
 			{
-				if(playerRolling[i] != false)
-					intendedPlayers[i] = true;
-				else
-					intendedPlayers[i] = false;
+				//send events to participating players
+				intendedPlayers[i] = playerRolling[i];
 			}
 			
 			Event e = new Event()
-				.EventId(EventList.ROLL_DICE)
+				.EventId(EventList.ROLL_TWO_DICE)
 				.IntendedPlayers(intendedPlayers)
 				.ExpectsResponse(true);
 			
 			Response[] playerRolls = GameControllerEventHandler.sendEvent(e);
 			
-			for(int i=0; i<playerRolls.length; i++)
+			//find highest roll and player index
+			for(int i=0; i<numClients; i++)
 			{
 				int currentIndex = playerRolls[i].fromPlayer;
-				int currentRoll = Character.getNumericValue(playerRolls[i].message.charAt(0));
+				int currentRoll = Integer.parseInt(playerRolls[i].message);
 				
 				if(currentRoll > highestRoll)
 				{
@@ -428,10 +439,11 @@ public class GameController {
 				}
 			}	
 			
-			for(int i=0; i<playerRolls.length; i++)
+			//remove players who did not tie for highest roll
+			for(int i=0; i<numClients; i++)
 			{
 				int currentIndex = playerRolls[i].fromPlayer;
-				int currentRoll = Character.getNumericValue(playerRolls[i].message.charAt(0));
+				int currentRoll = Integer.parseInt(playerRolls[i].message);
 				
 				if (currentRoll < highestRoll)
 				{
@@ -444,6 +456,7 @@ public class GameController {
 		System.out.println("First Player is player with index: " + highestRollPlayerIndex);
 		
 		assignInitialPlayerOrder(highestRollPlayerIndex);
+		sortServersByOrder();
 	}
 
 	private void assignInitialPlayerOrder(int startPlayerIndex) {
@@ -471,7 +484,7 @@ public class GameController {
 			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
 				if (changedPhase) { changedPhase = false; }
-				//recruitSpecialCharacter();
+				recruitSpecialCharacter();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_THINGS; }
 			}
 			if (currentPhase == Phase.RECRUIT_THINGS) {
@@ -495,13 +508,15 @@ public class GameController {
 				PlayBattlePhase();
 				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
 			}
+			gameWon = checkWin();
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
-				//playConstructionPhase();
+				playConstructionPhase();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
+			gameWon = checkWin();
 		
-			//ChangePlayerOrder();
+			ChangePlayerOrder();
 		
 		} while(!gameEnded);
 	}
@@ -633,6 +648,12 @@ public class GameController {
 						.IntendedPlayers(intendedPlayers);
 			
 			GameControllerEventHandler.sendEvent(e);
+			
+			
+			//eliminate any things which ended their turn on a sea hex
+			e = new Event()
+						.EventId(EventList.ELIMINATE_SEA_HEX_THINGS);
+			GameControllerEventHandler.sendEvent(e);
 		}
 		
 	}
@@ -712,7 +733,18 @@ public class GameController {
 	}
 
 	private void ChangePlayerOrder(){
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.UPDATE_PLAYER_ORDER)
+			);	
 		
+		if(GameServer.servers.size() != 2)	//player order stays the same in 2 player game
+			sortServersByOrder();
+	}
+	
+	private void sortServersByOrder()
+	{
+		Collections.sort(GameServer.servers, new ServerComparator());
 	}
 	
 	private void PlayBattlePhase(){

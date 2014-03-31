@@ -101,6 +101,8 @@ public class BoardView extends Region {
         	
         	this.getChildren().setAll(list);
         }
+        
+        showHideAllTiles(false);
 	}
 	
 	public Tile getLastSelectedTile() {
@@ -135,6 +137,19 @@ public class BoardView extends Region {
 			if (n.getClass() == Tile.class) {
 				Tile t = (Tile)n;
 				if (t.getTileRef() == h) {
+					return t;
+				}
+			}
+		}
+		return null;
+	}
+	
+	public Tile getTileByCoords(int x, int y)
+	{
+		for (Node n : this.getChildren()) {
+			if (n.getClass() == Tile.class) {
+				Tile t = (Tile)n;
+				if (t.getTileRef().x == x && t.getTileRef().y == y) {
 					return t;
 				}
 			}

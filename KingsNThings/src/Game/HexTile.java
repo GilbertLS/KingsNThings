@@ -17,16 +17,17 @@ import Game.Networking.GameClient;
  */
 public class HexTile implements IIncomable{
 	public Terrain terrain;				//Tile's terrain type
-	public ControlledBy controlledBy;		//Faction currently controlling this Tile
+	private ControlledBy controlledBy;		//Faction currently controlling this Tile
 	public ArrayList<Thing> player1Things;	//player 1's Things in this Hex Tile
 	public ArrayList<Thing> player2Things;	//player 2's Things in this Hex Tile
 	public ArrayList<Thing> player3Things;	//player 3's Things in this Hex Tile
 	public ArrayList<Thing> player4Things;	//player 4's Things in this Hex Tile
 	public ArrayList<Thing> defendingThings;	//Defending Things in this Hex Tile
-	public ArrayList<Fort> forts;						//Fort for this Hex Tile (if applicable)
+	public ArrayList<Fort> forts;					//Fort for this Hex Tile (if applicable)
 	public ArrayList<SpecialIncome> specialIncomes;	//Special Income for this Hex Tile (if applicable)
 	public ArrayList<Settlement> settlements;
 	public ArrayList<Treasure> treasures;
+	public ArrayList<Magic> magics;
 	public int x;
 	public int y;
 	public int moveValue;
@@ -51,6 +52,7 @@ public class HexTile implements IIncomable{
 		this.specialIncomes = new ArrayList<SpecialIncome>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		this.settlements = new ArrayList<Settlement>(GameConstants.MAX_NUM_SPECIAL_INCOME_PER_HEX);
 		this.treasures = new ArrayList<Treasure>();
+		this.magics = new ArrayList<Magic>();
 		this.forts = new ArrayList<Fort>();
 		
 		if(terrain == Terrain.SWAMP
@@ -62,10 +64,12 @@ public class HexTile implements IIncomable{
 			moveValue = 1;
 	}
 	
+	public void setControlledBy(ControlledBy controlledBy)	{this.controlledBy = controlledBy;}
+	public ControlledBy getControlledBy(){return controlledBy;}
+	public boolean isControlledBy(ControlledBy controlledBy){return this.controlledBy == controlledBy;}
+	
 	public void AddThingToTile(Player player, Thing thing){
-		int playerIndex = player.GetPlayerNum();
-		
-		AddThingToTile(playerIndex, thing);
+		AddThingToTile(player.GetPlayerNum(), thing);
 	}
 	
 	public void AddThingToTile(int playerIndex, Thing thing){
@@ -89,6 +93,13 @@ public class HexTile implements IIncomable{
 		} else if ( playerIndex == 4 )
 			defendingThings.add(thing);
 		
+		Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
+		if(thing.isSpecialCharacter())
+			player.addSpecialCharacter((SpecialCharacter) thing);
+		else if(thing.thingType == ThingType.SETTLEMENT)
+			player.addSettlement((Settlement) thing);
+		else if(thing.thingType == ThingType.SPECIAL_INCOME)
+			player.addSpecialIncome((SpecialIncome)thing);
 	}
 	
 	private boolean handleTreasure(int playerIndex, Thing thing) {
@@ -382,65 +393,61 @@ public class HexTile implements IIncomable{
 	}
 
 	public void handlePostBattle() {
-		Fort fort = getFort();
-		
-		if(fort != null)
+		if(hasFort())
 		{
 			int roll = Dice.rollDice(1)[0];
 			
 			if(roll != 1 && roll != 6)
 			{
-				if(fort.getLevel() == Level.TOWER)
-					fort = null;
+				if(getFort().getLevel() == Level.TOWER)
+					removeFort();
 				else
-					fort.decrementLevel();
+					getFort().decrementLevel();
 			}			
 		}
-	
-		if(player1Things.size() > 0)
+		
+		if(hasSpecialIncome())
 		{
-			controlledBy = ControlledBy.PLAYER1;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER1)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER1, fort);
-			}
-		}
-		else if(player2Things.size() > 0)
-		{
-			controlledBy = ControlledBy.PLAYER2;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER2)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER2, fort);
-			}
-		}
-		else if(player3Things.size() > 0)
-		{
-			controlledBy = ControlledBy.PLAYER3;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER3)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER3, fort);
-			}
-		}
-		else if(player4Things.size() > 0)
-		{
-			controlledBy = ControlledBy.PLAYER4;
-			if(fort != null && fort.controlledBy != ControlledBy.PLAYER4)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.PLAYER4, fort);
-			}
-		}		
-		else
-		{
-			controlledBy = ControlledBy.NEUTRAL;
-			if(fort != null && fort.controlledBy != ControlledBy.NEUTRAL)
-			{				
-				GameClient.game.gameModel.changeFortFaction(ControlledBy.NEUTRAL, fort);
-			}
+			int roll = Dice.rollDice(1)[0];
+			
+			if(roll != 1 && roll != 6)
+			{
+				removeSpecialIncome();
+			}			
 		}
 		
+		if(hasSettlement())
+		{
+			int roll = Dice.rollDice(1)[0];
+			
+			if(roll != 1 && roll != 6)
+			{
+				removeSettlement();
+			}			
+		}
+		
+		resetCounters();
 	}
 
-	public boolean isOnlyPlayerOnTile(int playerIndex) {
+	private void resetCounters() {
+		if(hasFort())
+			getFort().resetCounters();
+			
+		if(hasSettlement())
+			getSettlement().resetCounters();
+	}
+
+	private void removeSettlement() {
+		GameClient.game.gameModel.returnToCup(getSettlement());
+		settlements = new ArrayList<Settlement>();
+	}
+
+	private void removeSpecialIncome() {
+		GameClient.game.gameModel.returnToCup(getSpecialIncome());
+		specialIncomes = new ArrayList<SpecialIncome>();
+	}
+
+	public boolean noOtherPlayerOnTile(int playerIndex) {
 		boolean ret = false;
 		
 		switch(playerIndex)
@@ -478,7 +485,10 @@ public class HexTile implements IIncomable{
 	}
 
 	public Fort getFort() {
-		return forts.get(0);
+		if(hasFort())
+			return forts.get(0);
+		else
+			return null;
 	}
 	
 	public ArrayList<Fort> getAllForts() {
@@ -499,6 +509,9 @@ public class HexTile implements IIncomable{
 
 	public boolean hasRoomForThings(ArrayList<Thing> things) {		
 		int numCombatants = 0;
+		
+		if(hasFort() && getFort().isCitadel())
+			return true;
 		
 		//list of things may contain non-combatants, parse them to combatants
 		for(Thing t: things){
@@ -622,7 +635,7 @@ public class HexTile implements IIncomable{
 		return !treasures.isEmpty();
 	}
 
-	public ArrayList<Thing> removePlayerThings(ArrayList<Thing> things, int playerIndex) {
+	public void removePlayerThings(ArrayList<Thing> things, int playerIndex) {
 		ArrayList<Thing> thingsToRemoveFrom = GetThings(playerIndex);
 		ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
 		
@@ -633,10 +646,11 @@ public class HexTile implements IIncomable{
 		
 		thingsToRemoveFrom.removeAll(thingsToRemove);
 		
-		return thingsToRemove;
+		for(Thing t: thingsToRemove)
+			GameClient.game.gameModel.returnToCup(t);
 	}
 
-	public ArrayList<Thing> removeSettlements(ArrayList<Thing> things) {
+	public void removeSettlements(ArrayList<Thing> things) {
 		ArrayList<Thing> settlementsToRemove = new ArrayList<Thing>();
 		
 		for(Settlement s: settlements){
@@ -646,28 +660,105 @@ public class HexTile implements IIncomable{
 		
 		settlements.removeAll(settlementsToRemove);
 		
-		return settlementsToRemove;
+		for(Thing t: settlementsToRemove)
+			GameClient.game.gameModel.returnToCup(t);
 	}
 
 	public void removeFort() {
 		forts = new ArrayList<Fort>();
-		
 	}
 
 	public ArrayList<Treasure> getTreasures() {
 		return treasures;
 	}
 
-	public ArrayList<Thing> removeSpecialIncomes(ArrayList<Thing> selectedThings) {
-		ArrayList<Thing> specialIncomesToRemove = new ArrayList<Thing>();
+	public void removeSpecialIncomes(ArrayList<Thing> things) {
+		ArrayList<SpecialIncome> specialIncomesToRemove = new ArrayList<SpecialIncome>();
 		
 		for(SpecialIncome si: specialIncomes){
-			if(selectedThings.contains(si))
+			if(things.contains(si))
 				specialIncomesToRemove.add(si);
 		}
 		
-		specialIncomes.removeAll(specialIncomesToRemove);
+		settlements.removeAll(specialIncomesToRemove);
 		
-		return specialIncomesToRemove;
+		for(Thing t: specialIncomesToRemove)
+			GameClient.game.gameModel.returnToCup(t);
+	}
+
+	public boolean isOnlyCombatantPlayerOnTile(int playerIndex) {
+		for(int i=0; i<5; i++)
+		{
+			//false if does not have combatants
+			if(i == playerIndex){
+				if(!hasCombatants(i))
+					return false;
+			}else{	//or other players do
+				if(hasCombatants(i))
+					return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean hasCombatants(int playerIndex) {
+		
+		ControlledBy playerFaction;
+		if(playerIndex == 4)
+			playerFaction = ControlledBy.NEUTRAL;
+		else
+			playerFaction = GameClient.game.gameModel.playerFromIndex(playerIndex).faction;
+		
+		//true if player controls fort
+		if(hasFort() && getFort().isControlledBy(playerFaction))
+			return true;
+		
+		//true if player controls settlement
+		if(hasSettlement() && getSettlement().isControlledBy(playerFaction))
+			return true;
+		
+		//true if player has things in hex
+		switch(playerIndex){
+		case 0:
+			return !player1Things.isEmpty();
+		case 1:
+			return !player2Things.isEmpty();
+		case 2:
+			return !player3Things.isEmpty();
+		case 3:
+			return !player4Things.isEmpty();
+		default:
+			return !defendingThings.isEmpty();
+		}
+	}
+
+	public boolean hasMagic() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void bribeSettlement(ArrayList<Thing> things) {
+		ArrayList<Settlement> settlementsToBribe = new ArrayList<Settlement>();
+		
+		for(Settlement s: settlements){
+			if(things.contains(s)){
+				settlementsToBribe.add(s);
+				s.neutralize();
+			}
+		}
+			
+	}
+
+	public ArrayList<Magic> getMagics() {
+		return magics;
+	}
+
+	public void clearTreasure() {
+		treasures = new ArrayList<Treasure>();
+	}
+
+	public void clearMagic() {
+		magics = new ArrayList<Magic>();
 	}
 }

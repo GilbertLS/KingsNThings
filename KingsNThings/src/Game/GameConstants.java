@@ -10,7 +10,13 @@ public final class GameConstants {
 		MOVEMENT,
 		BATTLE,
 		NULL, 
-		PLAY_THINGS, CONSTRUCTION, RECRUIT_CHARACTER, INITIAL_TRADE_THINGS, TRADE_THINGS, AWARD_INCOME
+		PLAY_THINGS, 
+		CONSTRUCTION, 
+		RECRUIT_CHARACTER, 
+		INITIAL_TRADE_THINGS,
+		TRADE_THINGS, 
+		AWARD_INCOME, 
+		SWAP_INITIAL_HEXES
 	}
 
 	//The different types of possible terrain in the game
@@ -276,7 +282,7 @@ public final class GameConstants {
 	public static final int MAX_NUM_THINGS = 300;
 	public static final int MAX_NUM_THINGS_IN_RACK = 10;
 	public static final int MAX_NUM_SPECIAL_CHARACTERS = 30;
-	public static final int MAX_NUM_TILES = 50;
+	public static final int MAX_NUM_TILES = 100;
 	public static final int NUM_FOUR_PLAYER_TILE_RINGS = 3;
 	public static final int NUM_TWO_OR_THREE_PLAYER_TILE_RINGS = 2;
 	public static final int INITIAL_GOLD_AMOUNT = 10;

@@ -128,7 +128,7 @@ public class GameClientController {
 	}
 
 	public boolean rollForCreatures(int playerIndex, int x, int y) {
-		int[] roll = Dice.rollDice(1); //hard coded for iteration 1
+		int[] roll = Dice.rollDice(1);
 		
 		boolean defendingCreatures = false;
 		if(roll[0] != 1 && roll[0] != 6)
@@ -140,7 +140,7 @@ public class GameClientController {
 		}
 		else
 		{
-			gameModel.updateTileFaction(playerIndex, x, y);
+			gameModel.claimNewTile(playerIndex, x, y);
 		}
 
 		
@@ -167,9 +167,6 @@ public class GameClientController {
 		HexTile h = gameModel.gameBoard.getTile(x, y);
 		ArrayList<Thing> things = gameModel.getThingsFromCup(roll);
 		
-		//creating defense creatures implies this tile should be neutral
-		h.controlledBy = ControlledBy.NEUTRAL;
-		
 		//eliminate invalid defense creatrues
 		things = h.enforceValidDefense(things);
 		
@@ -183,6 +180,10 @@ public class GameClientController {
 
 	public boolean isValidMove(HexTile originalTile, HexTile tileRef,
 			ArrayList<Thing> things) {
+		
+		//invalid if not land and not all flying
+		if(!tileRef.isLand() && !GameClient.game.areAllFlying(things))
+			return false;
 		
 		if(!tileRef.hasRoomForThings(things))
 			return false;
@@ -208,7 +209,7 @@ public class GameClientController {
 	private boolean allThingsAbleToMove(HexTile tileRef, ArrayList<Thing> things) {		
 		for(Thing t: things)
 		{
-			if(t.numMoves + tileRef.moveValue > 4)
+			if(t.numMoves + tileRef.moveValue > GameConstants.MAX_MOVES_PER_TURN)
 				return false;
 		}
 	
@@ -226,14 +227,20 @@ public class GameClientController {
 	}
 
 	public boolean isValidPlacement(HexTile tileRef, ArrayList<Thing> things, int playerIndex) {
-		ControlledBy tileControl = tileRef.controlledBy;
+		ControlledBy tileControl = tileRef.getControlledBy();
 		
-		if(tileControl != things.get(0).controlledBy)
+		//invalid if not land and not all flying
+		if(!tileRef.isLand() && !GameClient.game.areAllFlying(things))
+			return false;
+		
+		//invalid if thing not controlled
+		if(!things.get(0).isControlledBy(tileControl))
 			return false;
 		
 		if(!tileRef.hasRoomForThings(things))
 			return false;
 		
+		//check for multiple special incomes
 		int numIncomes =0;		
 		for(Thing t: things)
 		{
@@ -248,7 +255,6 @@ public class GameClientController {
 					return false;
 				
 			}
-
 		}
 			
 		return true;
@@ -288,6 +294,11 @@ public class GameClientController {
 
 	public void sendRecruitSpecialCharacterEvent(
 			int thingID, int playerIndex) {
+		boolean[] intendedPlayers = new boolean[GameClient.game.gameModel.PlayerCount()];
+		
+		for(int i=0; i<GameClient.game.gameModel.PlayerCount(); i++)
+			if(i != playerIndex)
+				intendedPlayers[i] = true;
 		
 		String[] args = {""+thingID,""+playerIndex};
 		
@@ -326,6 +337,8 @@ public class GameClientController {
 	}
 	
 	public boolean validDragStart(GameView gv, ListView<ThingView> listView, ArrayList<Integer> selectedIds) {
+		HexTile hexTile = gv.tilePreview.getTile().getTileRef();
+		
 		//invalid if play things phase, and source isn't rack
 		if(!listView.equals(gv.rack) && gv.currentPhase == CurrentPhase.PLAY_THINGS)
 			return false;
@@ -336,9 +349,26 @@ public class GameClientController {
 			if(items.get(i).thingRef.getControlledByPlayerNum() != GameClient.game.gameView.getCurrentPlayer())
 				return false;
 		
+		
+		ArrayList<Thing> movingThings = new ArrayList<Thing>();
+		for(ThingView tv: items)
+			movingThings.add(tv.thingRef);
+		
+		ArrayList<Thing> flyers = getFlyers(hexTile.GetThings(gv.getCurrentPlayer()));
+		int numLeft = flyers.size() - movingThings.size();
+		
+		int numFlyingDefend =0;	//total flying defenders
+		for(int i=0; i<5; i++)
+		{
+			if(i != gv.getCurrentPlayer()){
+				numFlyingDefend += getFlyers(hexTile.GetThings(i)).size();
+			}
+		}
 		//invalid if movement phase and player isn't alone on the tile
+		//unless all are flying and no flying enemies
 		if(gv.currentPhase == CurrentPhase.MOVEMENT
-			&& !gv.tilePreview.getTile().getTileRef().isOnlyPlayerOnTile(gv.getCurrentPlayer()))
+			&& !hexTile.isOnlyCombatantPlayerOnTile(gv.getCurrentPlayer())
+			&& !(GameClient.game.areAllFlying(movingThings) && numLeft >= numFlyingDefend))
 				return false;
 		
 		//invalid if recruit character phase and the dragged items
@@ -349,6 +379,17 @@ public class GameClientController {
 				return false;
 		
 		return true;
+	}
+
+	private ArrayList<Thing> getFlyers(ArrayList<Thing> things) {
+		ArrayList<Thing> flyers = new ArrayList<Thing>();
+		
+		for(Thing t: things){
+			if(((Combatant)t).isFlying);
+			flyers.add(t);
+		}
+		
+		return flyers;
 	}
 
 	public void sendPlayThingEvent(String param) {
@@ -417,7 +458,7 @@ public class GameClientController {
 					params[0] = "" + thing.thingID;
 					params[1] = "" + selectedTile.getTileRef().x;
 					params[2] = "" + selectedTile.getTileRef().y;
-					params[3] = "" + GameConstants.GetPlayerNumber(thing.controlledBy);
+					params[3] = "" + GameConstants.GetPlayerNumber(thing.getControlledBy());
 					
 					Event e = new Event()
 								.EventId(EventList.REMOVE_THING)
@@ -482,9 +523,9 @@ public class GameClientController {
 		
 	}
 
-	public boolean validBribe(ArrayList<Thing> selectedThings, boolean hasTreasure) {
+	public boolean validBribe(ArrayList<Thing> selectedThings, HexTile h) {
 		Player currentPlayer = gameModel.GetCurrentPlayer();
-		int cost = gameModel.calculateBribe(selectedThings, hasTreasure);
+		int cost = gameModel.calculateBribe(selectedThings, h);
 		
 		//valid if current player can afford
 		if(currentPlayer.canAfford(cost))

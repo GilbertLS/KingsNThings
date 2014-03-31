@@ -329,9 +329,6 @@ public class GameView extends Scene {
 	
 	 private String getBackgroundFromType(int tileX, int tileY) {
 		 HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
-		 if(tile.controlledBy == ControlledBy.NEUTRAL) {
-			return "Tuile_Back.png";
-		 } else {
 			 switch (tile.getTerrain()) {
 			 	case SEA: return GameConstants.SeaTileFront;
 				case JUNGLE: return GameConstants.JungleTileFront;
@@ -342,7 +339,6 @@ public class GameView extends Scene {
 				case MOUNTAIN: return GameConstants.MountainTileFront;
 				case DESERT: return GameConstants.DesertTileFront;
 			 }
-		 }
 	    	
 	    return "Tuile_Back.png";
 	}
@@ -437,6 +433,20 @@ public class GameView extends Scene {
 	public void endBribeCreatures()
 	{
 		bribeView = null;
+	}
+	
+	public void changeHex(HexTile h)
+	{
+		int x = h.x;
+		int y = h.y; 
+		
+		Tile t = board.getTileByCoords(x, y);
+		t.changeHex(h);
+	}
+
+	public void changeHexes(ArrayList<HexTile> hexes) {
+		for(HexTile h: hexes)
+			changeHex(h);
 	}
 	
 }
