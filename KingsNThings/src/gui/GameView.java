@@ -67,16 +67,17 @@ public class GameView extends Scene {
     	primaryStage = ps;
         
         rightPanel = new VBox();
+        rightPanel.getStyleClass().add("right-panel");
         leftPanel = new VBox();
         root.getChildren().add(leftPanel);
         root.getChildren().add(rightPanel);
                 
         tilePreview = new TilePreview(0);
         
-        scroll = new ScrollPane();
         board = new BoardView(tilePreview);
+        scroll = new BoardScrollPane(board);
         leftPanel.getChildren().add(scroll);
-        scroll.setContent(board);
+        
         VBox.setVgrow(scroll, Priority.ALWAYS);
         HBox.setHgrow(leftPanel, Priority.ALWAYS);
         
@@ -100,7 +101,6 @@ public class GameView extends Scene {
         
         Button zoomin = new Button("zoom in");
         zoomin.setOnMouseClicked(new EventHandler<MouseEvent>(){
-       	 
             @Override
             public void handle(MouseEvent e) {
             	self.board.zoomIn();
@@ -116,6 +116,7 @@ public class GameView extends Scene {
             }
         });
         rightPanel.getChildren().add(zoomout);
+        
         
         this.getStylesheets().add("gui/main.css");
 		BorderPane b = new BorderPane();
@@ -313,6 +314,8 @@ public class GameView extends Scene {
 				String style = "-fx-background-image: url(/res/images/ " + getBackgroundFromType(tileX, tileY) + ");";
 				
 				p.setStyle(style);
+				
+				self.primaryStage.setScene(battleView);
 
 				
 				/*Stage battleStage = new Stage();
@@ -362,7 +365,7 @@ public class GameView extends Scene {
 				public void run(){
 					tileView.updateThings();
 					tileView.update();
-					GameView.battleView.battleStage.close();
+					self.primaryStage.setScene(self);
 					GameView.battleView = null;
 				}
 			});

@@ -29,22 +29,24 @@ public class ThingViewList extends ListView<ThingView> {
 	 }
 	 
 	 private void setup(Orientation orientation) {
-		 this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-			this.setOrientation(orientation);
-			this.getStyleClass().add("thingview-list");
-			if(orientation == Orientation.HORIZONTAL) {
-				this.setMinHeight(70);
-				this.setMaxHeight(70);
-			} else {
-				this.setMinWidth(70);
-				this.setMaxWidth(70);
-			}
-			this.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
-	            @Override
-	            public ListCell<ThingView> call(ListView<ThingView> param) {
-	                return new ThingCell();
-	            }
-	        });
+		this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		this.setOrientation(orientation);
+		this.getStyleClass().add("thingview-list");
+		
+		if(orientation == Orientation.HORIZONTAL) {
+			this.setMinHeight(70);
+			this.setMaxHeight(70);
+		} else {
+			this.setMinWidth(70);
+			this.setMaxWidth(70);
+		}
+		
+		this.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
+			@Override
+	        public ListCell<ThingView> call(ListView<ThingView> param) {
+				return new ThingCell();
+	        }
+	    });
 	 }
 	 
 	 public void add(ThingView t) {
@@ -101,5 +103,9 @@ public class ThingViewList extends ListView<ThingView> {
 		 }
 		 
 		 this.setAll(list);
+	 }
+	 
+	 public boolean isEmpty() {
+		 return this.getItems().isEmpty();
 	 }
 }

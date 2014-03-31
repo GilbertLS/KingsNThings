@@ -40,7 +40,7 @@ public class BattleView extends Scene {
     protected InputState yesPressed = InputState.NOT_WAITING_FOR_INPUT;
     protected InputState noPressed = InputState.NOT_WAITING_FOR_INPUT;
     public MessageView messageView;
-    public Stage battleStage;
+    //public Stage battleStage;
     private Semaphore inputLock = new Semaphore(0);
     
     public int tileX;
@@ -119,17 +119,17 @@ public class BattleView extends Scene {
         
         SetupPlayerThings();
         
-        battleStage = new Stage();
+        /*battleStage = new Stage();
 		battleStage.setTitle("Combat Time - Player " + (GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() + 1) );
 		battleStage.setScene(this);
         battleStage.initStyle(StageStyle.UNDECORATED);
         battleStage.initModality(Modality.WINDOW_MODAL);
-        battleStage.initOwner(GameClient.game.gameView.getWindow());
+        battleStage.initOwner(GameClient.game.gameView.getWindow());*/
 		
 		//battleStage.setX(battleStage.getX() + 150);
 		//battleStage.setY(battleStage.getY() + 150);
 
-		battleStage.show();
+		//battleStage.show();
 	}
 	
 	public int RollDice(Thing thing, int diceNum, int numPreviousRolls){

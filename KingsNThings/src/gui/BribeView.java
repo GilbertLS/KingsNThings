@@ -108,7 +108,7 @@ public class BribeView extends Dialog {
 	      
 	    this.setResizable(false);
 	    this.setContent(root);
-	    this.setClosable(true);
+	    this.setClosable(false);
 	    this.show();
 	}
 	
