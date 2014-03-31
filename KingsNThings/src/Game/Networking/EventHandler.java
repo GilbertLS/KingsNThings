@@ -112,9 +112,7 @@ public class EventHandler {
 			);
 		}
 		else if(e.eventId == EventList.ELIMINATE_SEA_HEX_THINGS){
-			int playerIndex = Integer.parseInt(e.eventParams[0]);
-			
-			final ArrayList<HexTile> hexTiles = GameClient.game.gameModel.eliminateSeaHexThings(playerIndex);
+			final ArrayList<HexTile> hexTiles = GameClient.game.gameModel.eliminateSeaHexThings();
 			
 			Platform.runLater(new Runnable() {
 		        @Override
@@ -535,14 +533,9 @@ public class EventHandler {
 		}
 		else if (e.eventId == EventList.HANDLE_WIN)
 		{
-			String[] winingIndiciesString = e.eventParams[0].trim().split(" ");
+			int winningIndex = (Integer.parseInt(e.eventParams[0]));
 			
-			ArrayList<Integer> winningIndicies = new ArrayList<Integer>();
-			
-			for(String s: winingIndiciesString)
-				winningIndicies.add(Integer.parseInt(s));
-			
-			GameClient.game.gameView.handleWin(winningIndicies);
+			GameClient.game.gameView.handleWin(winningIndex);
 		}
 		else if (e.eventId == EventList.DISTRIBUTE_INITIAL_GOLD)
 		{
@@ -915,6 +908,10 @@ public class EventHandler {
 		else if(e.eventId == EventList.CLEAR_CONSTRUCTION)
 		{
 			GameClient.game.gameModel.clearConstructions();
+		}
+		else if(e.eventId == EventList.INCREMENT_CITADEL_ROUNDS)
+		{
+			GameClient.game.gameModel.incrementCitadelRounds();
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{

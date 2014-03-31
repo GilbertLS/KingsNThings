@@ -228,6 +228,8 @@ public class Player {
 	public void setCitadelConstructed(boolean constructed) {
 		citadelConstructed = constructed;
 
+		//rounds since last citadel resets if citadel is constructed
+		//or destructed
 		roundsSinceCitadel = 0;
 	}
 
