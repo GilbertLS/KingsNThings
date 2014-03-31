@@ -10,6 +10,7 @@ import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
+import Game.Player;
 import Game.Utility;
 import Game.Networking.GameClient;
 import Game.Thing;
@@ -419,12 +420,8 @@ public class GameView extends Scene {
 		rack.add(new ThingView(thingRef));
 	}
 
-	public void handleWin(final ArrayList<Integer> winingPlayers) {
-		Platform.runLater(new Runnable(){
-			public void run(){
-				//output the winning players here
-			}
-		});
+	public void handleWin(final int winningIndex) {
+		displayMessage("PLAYER " + winningIndex +" WINS!!!");
 	}
 	
 	public void bribeCreatures(Tile t)

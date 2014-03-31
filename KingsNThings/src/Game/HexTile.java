@@ -174,8 +174,7 @@ public class HexTile implements IIncomable{
 			return !player3Things.isEmpty();
 		} else if ( player.GetPlayerNum() == 3 ){
 			return !player4Things.isEmpty();
-		}
-		return false;
+		} else {return !defendingThings.isEmpty();}
 	}
 	
 	public boolean HasThingsOnTile(int playerIndex){
@@ -429,7 +428,7 @@ public class HexTile implements IIncomable{
 		resetCounters();
 	}
 
-	private void resetCounters() {
+	public void resetCounters() {
 		if(hasFort())
 			getFort().resetCounters();
 			

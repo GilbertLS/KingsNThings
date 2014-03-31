@@ -477,6 +477,8 @@ public class GameController {
 		
 		do
 		{
+			incrementCitadelRounds();
+			
 			distributeIncome();
 			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
@@ -518,12 +520,20 @@ public class GameController {
 		} while(!gameEnded);
 	}
 	
+	private void incrementCitadelRounds() {
+		GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.INCREMENT_CITADEL_ROUNDS)
+			);	
+	}
+
 	private boolean checkWin() {
 		String[] args = {"",""};
 		
 		boolean[] intendedPlayers = new boolean[numClients];
 		intendedPlayers[0] = true;
 		
+		//ask first player to determine whether a win has occured
 		Response[] responses = GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId(EventList.CHECK_WIN)
@@ -646,13 +656,11 @@ public class GameController {
 			
 			GameControllerEventHandler.sendEvent(e);
 			
-			
-			//eliminate any things which ended their turn on a sea hex
-			e = new Event()
-						.EventId(EventList.ELIMINATE_SEA_HEX_THINGS);
-			GameControllerEventHandler.sendEvent(e);
 		}
-		
+		//eliminate any things which ended their turn on a sea hex
+		Event e = new Event()
+					.EventId(EventList.ELIMINATE_SEA_HEX_THINGS);
+		GameControllerEventHandler.sendEvent(e);
 	}
 
 	private void recruitThings() {
