@@ -43,7 +43,7 @@ public class EditStateWindow extends Dialog {
 	public ChoiceBox<ControlledBy> controlledByDropDown;
 	
 	public EditStateWindow() {
-		super(null, "Edit State Menu");
+		super(null, "Edit State Menu", false, false);
 		StackPane stackPane = new StackPane();
 		this.setContent(stackPane);
 		

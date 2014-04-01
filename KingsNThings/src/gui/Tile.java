@@ -480,6 +480,7 @@ public class Tile extends Region implements Draggable {
     		    width/4, 	height});
 
     	this.setShape(hex);
+    	this.update();
 	}
 		   
 }
