@@ -77,15 +77,6 @@ public class TilePreview extends VBox {
 		show(tileRef);
 	}
 	
-	public void changeBattleTile(Tile t) {
-		//this method is intended to load all things for battle
-		//in addition to base things
-		
-		changeTile(t);
-		addForts(t.getTileRef());
-		show(t);
-	}
-	
 	public void addForts(HexTile h)
 	{
  		if(tileRef.fort != null)
