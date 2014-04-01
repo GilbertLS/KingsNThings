@@ -175,7 +175,7 @@ public class BattleView extends Scene {
 		HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
 		for(int i = 0; i < numPlayers; i++) {
 			ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
-			for(Thing t : tile.GetThings(i)) {
+			for(Thing t : tile.getCombatants(i)) {
 				thingViews.add(new ThingView(t));
 			}
 			

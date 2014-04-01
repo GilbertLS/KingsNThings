@@ -102,9 +102,7 @@ public class Player {
 			setCitadelConstructed(true);
 	}
 
-	public void addHexTile(HexTile h) {
-		h.setControlledBy(faction);
-		
+	public void addHexTile(HexTile h) {		
 		ownedHexTiles.add(h);
 		
 		if(h.hasFort())
@@ -199,10 +197,6 @@ public class Player {
 		}
 		
 		return gold;
-	}
-
-	public void decrementGold(int amount) {
-		gold -= amount;
 	}
 
 	public boolean canAfford(int amount) {

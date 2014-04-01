@@ -313,7 +313,7 @@ public class EventHandler {
 			if (numHitsTaken > 0){
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
 				
-				ArrayList<Thing> things = currTile.GetThings(currentPlayer);
+				ArrayList<Thing> things = currTile.getCombatants(currentPlayer.GetPlayerNum());
 				
 				//System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
 				//System.out.print("Things:");
@@ -325,11 +325,12 @@ public class EventHandler {
 				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
+				/*should be handled by using getCombatants method above instead of getThings
 				boolean hasFort = currTile.hasFort() && currTile.isControlledBy(currentPlayer.faction);
 				
 				//also need to handle settlements and any other combatants
 				if(hasFort)
-					numHitsToApply++;
+					numHitsToApply++;*/
 				
 				String[] thingsToRemove = new String[numHitsToApply];
 				
@@ -343,9 +344,10 @@ public class EventHandler {
 					for (Thing t : things){
 						thingsToRemove[i++] = "" + t.thingID;
 					}
+					/*
 					if(hasFort){
 						thingsToRemove[i++] = "" + currTile.getFort().thingID;
-					}
+					}*/
 				}
 				EventHandler.SendEvent(
 					new Event()
@@ -828,7 +830,7 @@ public class EventHandler {
 			int amount = Integer.parseInt(e.eventParams[0].trim());
 			int playerIndex = Integer.parseInt(e.eventParams[1].trim());
 			
-			GameClient.game.gameModel.augmentRoll(amount, playerIndex);
+			GameClient.game.gameModel.payGold(amount, playerIndex);
 			GameClient.game.gameView.updateGold(GameClient.game.gameModel.playerFromIndex(playerIndex).getGold(), playerIndex);		
 			
 		}

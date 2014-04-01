@@ -270,7 +270,7 @@ public class GameClientController {
 
 	public void augmentRoll(int amount,
 			int playerIndex) {
-		GameClient.game.gameModel.augmentRoll(amount, playerIndex);
+		GameClient.game.gameModel.payGold(amount, playerIndex);
 		GameClient.game.gameView.updateGold(gameModel.playerFromIndex(playerIndex).getGold(), playerIndex);			
 	}
 
@@ -357,13 +357,16 @@ public class GameClientController {
 		ArrayList<Thing> flyers = getFlyers(hexTile.GetThings(gv.getCurrentPlayer()));
 		int numLeft = flyers.size() - movingThings.size();
 		
-		int numFlyingDefend =0;	//total flying defenders
-		for(int i=0; i<5; i++)
+		int numFlyingDefend =0;	//total player flying defenders
+		for(int i=0; i<gameModel.PlayerCount(); i++)
 		{
 			if(i != gv.getCurrentPlayer()){
 				numFlyingDefend += getFlyers(hexTile.GetThings(i)).size();
 			}
 		}
+		
+		numFlyingDefend += getFlyers(hexTile.GetThings(4)).size();
+		
 		//invalid if movement phase and player isn't alone on the tile
 		//unless all are flying and no flying enemies
 		if(gv.currentPhase == CurrentPhase.MOVEMENT

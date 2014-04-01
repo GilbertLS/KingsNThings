@@ -84,14 +84,20 @@ public class HexTile implements IIncomable{
 		
 		if ( playerIndex == 0 ){
 			player1Things.add(thing);
+			thing.setControlledBy(ControlledBy.PLAYER1);
 		} else if ( playerIndex == 1 ){
 			player2Things.add(thing);
+			thing.setControlledBy(ControlledBy.PLAYER2);
 		} else if ( playerIndex == 2 ){
 			player3Things.add(thing);
+			thing.setControlledBy(ControlledBy.PLAYER3);
 		} else if ( playerIndex == 3 ){
 			player4Things.add(thing);
-		} else if ( playerIndex == 4 )
+			thing.setControlledBy(ControlledBy.PLAYER4);
+		} else if ( playerIndex == 4 ){
 			defendingThings.add(thing);
+			thing.setControlledBy(ControlledBy.NEUTRAL);
+		}
 		
 		Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
 		if(thing.isSpecialCharacter())
@@ -125,8 +131,12 @@ public class HexTile implements IIncomable{
 		{
 			Player player = null;
 			
-			if(playerIndex != 4)
+			if(playerIndex != 4){
 				player = GameClient.game.gameModel.playerFromIndex(playerIndex);
+				t.setControlledBy(player.faction);
+			}
+			else
+				t.setControlledBy(ControlledBy.NEUTRAL);
 			
 			if(t.thingType == ThingType.SPECIAL_INCOME) 
 			{
@@ -158,7 +168,6 @@ public class HexTile implements IIncomable{
 	private boolean handleMagic(int playerIndex, Thing thing) {
 		if(thing.thingType == ThingType.MAGIC)
 		{
-			
 			return true;
 		}
 		
@@ -255,7 +264,7 @@ public class HexTile implements IIncomable{
 	}
 
 	public boolean hasThingWithID(String id, int playerIndex) {
-		ArrayList<Thing> thingsToCheck = playerThingsFromIndex(playerIndex);
+		ArrayList<Thing> thingsToCheck = GetThings(playerIndex);
 		
 		for(Thing t: thingsToCheck)
 		{
@@ -267,7 +276,7 @@ public class HexTile implements IIncomable{
 	}
 
 	public void removeThing(int id, int playerIndex) {
-		ArrayList<Thing> thingsToCheck = playerThingsFromIndex(playerIndex);
+		ArrayList<Thing> thingsToCheck = GetThings(playerIndex);
 		
 		Thing thingToRemove = null;
 		for(Thing t: thingsToCheck)
@@ -280,7 +289,7 @@ public class HexTile implements IIncomable{
 	}
 
 	public Thing getThingFromTileByID(Integer id, int playerIndex) {
-		ArrayList<Thing> thingsToCheck = playerThingsFromIndex(playerIndex);
+		ArrayList<Thing> thingsToCheck = GetThings(playerIndex);
 
 		for(Thing t: thingsToCheck)
 		{
@@ -374,23 +383,6 @@ public class HexTile implements IIncomable{
 		return null;
 	}
 
-	public ArrayList<Thing> playerThingsFromIndex(int index)
-	{
-		switch(index)
-		{
-		case 0:
-			return player1Things;
-		case 1:
-			return player2Things;
-		case 2:
-			return player3Things;
-		case 3:
-			return player4Things;
-		default:
-			return defendingThings;
-		}
-	}
-
 	public void handlePostBattle() {
 		if(hasFort())
 		{
@@ -436,13 +428,11 @@ public class HexTile implements IIncomable{
 			getSettlement().resetCounters();
 	}
 
-	private void removeSettlement() {
-		GameClient.game.gameModel.returnToCup(getSettlement());
+	public void removeSettlement() {
 		settlements = new ArrayList<Settlement>();
 	}
 
-	private void removeSpecialIncome() {
-		GameClient.game.gameModel.returnToCup(getSpecialIncome());
+	public void removeSpecialIncome() {
 		specialIncomes = new ArrayList<SpecialIncome>();
 	}
 
@@ -621,7 +611,7 @@ public class HexTile implements IIncomable{
 		
 		//return all invalid things to cup
 		for(Thing t: thingsToRemove)
-			GameClient.game.gameModel.returnToCup(t);
+			GameClient.game.gameModel.handleElimination(t, null);
 			
 		return things;
 	}
@@ -644,23 +634,6 @@ public class HexTile implements IIncomable{
 		}
 		
 		thingsToRemoveFrom.removeAll(thingsToRemove);
-		
-		for(Thing t: thingsToRemove)
-			GameClient.game.gameModel.returnToCup(t);
-	}
-
-	public void removeSettlements(ArrayList<Thing> things) {
-		ArrayList<Thing> settlementsToRemove = new ArrayList<Thing>();
-		
-		for(Settlement s: settlements){
-			if(things.contains(s))
-				settlementsToRemove.add(s);
-		}
-		
-		settlements.removeAll(settlementsToRemove);
-		
-		for(Thing t: settlementsToRemove)
-			GameClient.game.gameModel.returnToCup(t);
 	}
 
 	public void removeFort() {
@@ -669,20 +642,6 @@ public class HexTile implements IIncomable{
 
 	public ArrayList<Treasure> getTreasures() {
 		return treasures;
-	}
-
-	public void removeSpecialIncomes(ArrayList<Thing> things) {
-		ArrayList<SpecialIncome> specialIncomesToRemove = new ArrayList<SpecialIncome>();
-		
-		for(SpecialIncome si: specialIncomes){
-			if(things.contains(si))
-				specialIncomesToRemove.add(si);
-		}
-		
-		settlements.removeAll(specialIncomesToRemove);
-		
-		for(Thing t: specialIncomesToRemove)
-			GameClient.game.gameModel.returnToCup(t);
 	}
 
 	public boolean isOnlyCombatantPlayerOnTile(int playerIndex) {
@@ -701,7 +660,7 @@ public class HexTile implements IIncomable{
 		return true;
 	}
 
-	private boolean hasCombatants(int playerIndex) {
+	public boolean hasCombatants(int playerIndex) {
 		
 		ControlledBy playerFaction;
 		if(playerIndex == 4)
@@ -737,16 +696,20 @@ public class HexTile implements IIncomable{
 		return false;
 	}
 
-	public void bribeSettlement(ArrayList<Thing> things) {
+	public boolean bribeSettlement(ArrayList<Thing> things) {
 		ArrayList<Settlement> settlementsToBribe = new ArrayList<Settlement>();
+		boolean settlementBribed = false;
 		
 		for(Settlement s: settlements){
 			if(things.contains(s)){
 				settlementsToBribe.add(s);
 				s.neutralize();
+				settlementBribed = true;
+				things.remove(s);	//remove from list so is not eliminated
 			}
 		}
-			
+	
+		return settlementBribed;
 	}
 
 	public ArrayList<Magic> getMagics() {
@@ -759,5 +722,48 @@ public class HexTile implements IIncomable{
 
 	public void clearMagic() {
 		magics = new ArrayList<Magic>();
+	}
+
+	public ArrayList<Thing> getCombatants(int playerIndex) {
+		ArrayList<Thing> combatants = new ArrayList<Thing>();
+		ControlledBy faction;
+		
+		if(playerIndex == 4)
+			faction = ControlledBy.NEUTRAL;
+		else
+			faction = GameClient.game.gameModel.playerFromIndex(playerIndex).faction;
+		
+		if(isControlledBy(faction)){ //player controls this tile, 
+			if(hasFort())
+				combatants.add(getFort());
+		
+			if(hasSettlement())
+				combatants.add(getSettlement());
+		}
+		
+		//add things
+		switch(playerIndex){
+		case 0:
+			combatants.addAll(player1Things);
+			break;
+		case 1:
+			combatants.addAll(player2Things);
+			break;
+		case 2:
+			combatants.addAll(player3Things);
+			break;
+		case 3:
+			combatants.addAll(player4Things);
+			break;
+		default:
+			combatants.addAll(defendingThings);
+			break;
+		}
+		
+		return combatants;
+	}
+
+	public boolean isBribeDoubled() {
+		return hasTreasure() || hasMagic() || hasSettlement() || hasSpecialIncome();
 	}
 }

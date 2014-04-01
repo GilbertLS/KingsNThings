@@ -88,6 +88,10 @@ public class BribeView extends Dialog {
 	    root.setTop(viewBox);
 	    
 	    //add info pane
+	    if(t.getTileRef().isBribeDoubled())
+	    {
+	    	info.setText("INFO: Bribes are doubled!!!");
+	    }
 	    children = infoBox.getChildren();
 	    children.add(info);
 	    
