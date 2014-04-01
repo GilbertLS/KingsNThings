@@ -92,8 +92,6 @@ public class GameController {
 		intializeSpecialCharacters();
 		/*end need to happen even with DEVMODE*/
 		
-		
-		
 		initializeGold();
 		
 		
@@ -117,8 +115,7 @@ public class GameController {
 		
 		//tradeInitialThings();
 		
-		playThings();
-		
+		playThings();		
 	}
 	
 	private void allowTileSwap() {		
