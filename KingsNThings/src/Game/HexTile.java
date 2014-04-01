@@ -505,7 +505,7 @@ public class HexTile implements IIncomable{
 		
 		//list of things may contain non-combatants, parse them to combatants
 		for(Thing t: things){
-			if(t.IsCombatant())
+			if(t.IsCombatant() && !t.isSpecialIncome())
 				numCombatants++;
 		}
 		

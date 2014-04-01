@@ -17,15 +17,20 @@ public abstract class Building extends Combatant {
 		this.backFileName = backFileName;
 		
 		this.hits = 0;
+		
+		isFlipped = false;
 	}
 	
 	public void resetCounters() {
 		hits = 0;
 		neutralized = false;
+		isFlipped = false;
 	}
 	
 	public void neutralize()
 	{
+		hits = combatValue;
 		neutralized = true;
+		isFlipped = true;
 	}
 }

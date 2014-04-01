@@ -975,6 +975,7 @@ public class EventHandler {
 			
 			final int gold = GameClient.game.gameModel.GetPlayer(playerIndex).getGold();
 			
+			GameClient.game.updatePlayerRack(playerIndex);
 			Platform.runLater(new Runnable() {
 		        @Override
 		        public void run() {

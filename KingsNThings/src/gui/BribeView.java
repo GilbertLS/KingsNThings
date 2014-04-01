@@ -131,7 +131,8 @@ public class BribeView extends Dialog {
 				}
 				
 				if(GameClient.game.validBribe(selectedThings, referenceHexTile)){					
-					//need to handle special incomes as well
+					GameClient.game.sendBribeCreaturesEvent(referenceHexTile, selectedThings, playerIndex);	
+					
 					GameClient.game.gameModel.handleBribe(referenceHexTile, selectedThings, playerIndex);
 					GameClient.game.gameView.updateTiles(referenceHexTile, 4);
 					
@@ -140,12 +141,9 @@ public class BribeView extends Dialog {
 					
 					GameClient.game.gameView.tilePreview.changeTile(t);
 					
-					GameClient.game.sendBribeCreaturesEvent(referenceHexTile, selectedThings, playerIndex);	
-					
 					self.hide();
 					GameClient.game.gameView.endBribeCreatures();
-				}
-					
+				}	
 				else
 					info.setText("INFO: Invalid Bribe, please try again");
 			}
