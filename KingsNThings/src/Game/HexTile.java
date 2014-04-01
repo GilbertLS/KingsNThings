@@ -390,8 +390,9 @@ public class HexTile implements IIncomable{
 			
 			if(roll != 1 && roll != 6)
 			{
-				if(getFort().getLevel() == Level.TOWER)
-					removeFort();
+				if(getFort().getLevel() == Level.TOWER){
+					GameClient.game.gameModel.handleElimination(getFort(), this);
+				}
 				else
 					getFort().decrementLevel();
 			}			
@@ -403,7 +404,7 @@ public class HexTile implements IIncomable{
 			
 			if(roll != 1 && roll != 6)
 			{
-				removeSpecialIncome();
+				GameClient.game.gameModel.handleElimination(getSpecialIncome(), this);
 			}			
 		}
 		
@@ -413,7 +414,7 @@ public class HexTile implements IIncomable{
 			
 			if(roll != 1 && roll != 6)
 			{
-				removeSettlement();
+				GameClient.game.gameModel.handleElimination(getSettlement(), this);
 			}			
 		}
 		

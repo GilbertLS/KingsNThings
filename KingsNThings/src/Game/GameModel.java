@@ -1264,14 +1264,11 @@ public class GameModel {
 
 
 	public void handleElimination(Thing t, HexTile hex) {
-		if(t.isSpecialCharacter())
-			GameClient.game.gameModel.returnSpecialCharacter((SpecialCharacter)t, true);
-		else if(t.thingType != ThingType.FORT)
-			GameClient.game.gameModel.returnToCup(t);
-		
 		if(hex != null){	//deal with thing coming from a hex tile
-			if(t.thingType == ThingType.FORT)
+			if(t.thingType == ThingType.FORT){
 				hex.removeFort();
+				playerFromFaction(t.getControlledBy()).removeFort((Fort)t);
+			}
 			else if(t.thingType == ThingType.SETTLEMENT)
 				hex.removeSettlement();
 			else if(t.thingType == ThingType.SPECIAL_INCOME)
@@ -1279,7 +1276,12 @@ public class GameModel {
 			
 			if(!t.isControlledBy(ControlledBy.NEUTRAL))
 				hex.removeThing(t.thingID, playerFromFaction(t.getControlledBy()).GetPlayerNum());
-		}		
+		}	
+		
+		if(t.isSpecialCharacter())
+			GameClient.game.gameModel.returnSpecialCharacter((SpecialCharacter)t, true);
+		else if(t.thingType != ThingType.FORT)
+			GameClient.game.gameModel.returnToCup(t);
 	}
 
 	private void bribeSettlement(HexTile h, ArrayList<Thing> selectedThings) {
