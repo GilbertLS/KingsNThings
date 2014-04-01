@@ -1079,7 +1079,8 @@ public class EventHandler {
 			
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x,y);
 			
-			tile.removeThing(thingId, playerId);
+			Thing thing = tile.getThingFromTileByID(thingId);
+			GameClient.game.gameModel.handleElimination(thing, tile);
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
 		} else if (e.eventId == EventList.ADD_THING){
 			int x = Integer.parseInt(e.eventParams[0]);

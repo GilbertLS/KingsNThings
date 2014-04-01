@@ -3,6 +3,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+import Game.Building;
 import Game.Combatant;
 import Game.GameConstants;
 import Game.HexTile;
@@ -223,7 +224,9 @@ public class BattleView extends Scene {
 			
 			numValid = 0;
 			for(Thing t : GameView.selectedThings) {
-				if (GameConstants.GetPlayerNumber(t.getControlledBy()) == currPlayer ) {
+				//ensure controlled by, and not a neutralized building
+				if (GameConstants.GetPlayerNumber(t.getControlledBy()) == currPlayer 
+						&& !(t.isBuilding() && ((Building)t).isNeutralized())) {
 					numValid++;
 				}
 			}

@@ -1453,6 +1453,7 @@ public class GameModel {
 		ControlledBy oldFaction = h.getControlledBy();	
 		ControlledBy faction = ControlledBy.NEUTRAL;
 		
+		//update faction to player with things on tile
 		if(h.HasThingsOnTile(0))
 			faction = player1.faction;
 		else if(h.HasThingsOnTile(1))
@@ -1463,13 +1464,8 @@ public class GameModel {
 			faction = player4.faction;
 		else
 			faction = ControlledBy.NEUTRAL;
+		
 		h.setControlledBy(faction);
-		
-		
-		//if a player, add to owned hexes
-		if(faction != ControlledBy.NEUTRAL){
-			playerFromFaction(faction).addHexTile(h);
-		}
 		
 		//if tile was owned by a player, remove from their controlled hexes
 		if(oldFaction != ControlledBy.NEUTRAL)
@@ -1482,6 +1478,11 @@ public class GameModel {
 				player3.removeHexTile(h);
 			else if(oldFaction == ControlledBy.PLAYER4)
 				player4.removeHexTile(h);
+		}
+		
+		//if a player, add to owned hexes
+		if(faction != ControlledBy.NEUTRAL){
+			playerFromFaction(faction).addHexTile(h);
 		}
 		
 		if(oldFaction == ControlledBy.NEUTRAL			//take over explored hex (claim treasure, magic)

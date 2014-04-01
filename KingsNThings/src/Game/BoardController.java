@@ -86,7 +86,15 @@ public class BoardController {
 			
 			for (Thing thing : removeThings){
 				things.remove(thing);
-				GameClient.game.gameModel.handleElimination(thing, h);
+				if(thing.thingType == ThingType.SETTLEMENT
+						|| thing.thingType == ThingType.FORT)	//buildings take hits
+				{
+					((Building)thing).takeHit();
+				}
+				else{
+					//everything else is eliminated
+					GameClient.game.gameModel.handleElimination(thing, h);
+				}
 			}
 		}
 		

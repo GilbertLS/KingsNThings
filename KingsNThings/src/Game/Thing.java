@@ -114,4 +114,9 @@ public abstract class Thing {
 	public void setMovementFinished() {
 		numMoves = GameConstants.MAX_MOVES_PER_TURN;
 	}
+
+	public boolean isBuilding() {
+		return thingType == ThingType.FORT
+				|| thingType == ThingType.SETTLEMENT;
+	}
 }
