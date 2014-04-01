@@ -1,5 +1,7 @@
 package gui;
 
+import org.controlsfx.dialog.Dialog;
+
 import com.sun.glass.events.MouseEvent;
 
 import Game.Networking.GameClient;
@@ -18,7 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class EscapeMenu extends Stage {
+public class EscapeMenu extends Dialog {
 	
 	private int boxWidth = 200;
 	private int menuWidth = 250;
@@ -27,16 +29,13 @@ public class EscapeMenu extends Stage {
 	private Button returnButton;
 	private Button editMenuButton;
 	private StackPane stackPane;
-	private Scene scene;
 	
 	private EditStateWindow editWindow;
 
-	public EscapeMenu(GameView g) {
-		stackPane = new StackPane();
-		scene = new Scene(stackPane);
-		
-		this.setScene(scene);
-		this.setHeight(menuHeight);
+	public EscapeMenu() {
+		super(null, "Menu");
+		stackPane = new StackPane();		
+		this.setContent(stackPane);
 		
 		final EscapeMenu _this = this;
 		
@@ -60,7 +59,7 @@ public class EscapeMenu extends Stage {
 			}
         };
         
-        scene.setOnKeyPressed(keyPressed);
+        //scene.setOnKeyPressed(keyPressed);
         
         returnButton.setMinWidth(boxWidth);
         returnButton.setMaxWidth(boxWidth);
@@ -70,7 +69,7 @@ public class EscapeMenu extends Stage {
 		editMenuButton.setMinWidth(boxWidth);
 		editMenuButton.setMaxWidth(boxWidth);
 		
-		editWindow = new EditStateWindow(g);
+		editWindow = new EditStateWindow();
 		editMenuButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -81,14 +80,6 @@ public class EscapeMenu extends Stage {
 		box.getChildren().add(editMenuButton);
 		
 		stackPane.getChildren().add(box);
-		
-		this.setWidth(menuWidth);
-		this.setMaxWidth(menuWidth);
-		this.setMinWidth(menuWidth);
-		this.setTitle("Menu");
-		this.initStyle(StageStyle.UTILITY);
-		this.initModality(Modality.APPLICATION_MODAL);
-		this.initOwner(g.getWindow());
 	}
 
 	public void hideMenu() {

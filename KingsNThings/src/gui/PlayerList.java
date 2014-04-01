@@ -15,4 +15,15 @@ public class PlayerList extends VBox {
 	{
 			return ((PlayerPanel)this.getChildren().get(playerNum));
 	}
+	
+	public void updatePlayerNumber(int i) {
+		int size = this.getChildren().size();
+		
+		if(size > i)
+		{
+			for(int j = size - 1; j >= i; j--) {
+				this.getChildren().remove(j);
+			}
+		}
+	}
 }

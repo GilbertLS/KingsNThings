@@ -1,5 +1,7 @@
 package gui;
 
+import org.controlsfx.dialog.Dialog;
+
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.Phases;
@@ -23,7 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class EditStateWindow extends Stage {
+public class EditStateWindow extends Dialog {
 	public Scene scene;
 	private Button executeCommandButton;
 	
@@ -40,13 +42,11 @@ public class EditStateWindow extends Stage {
 	public ChoiceBox<Phase> changePhaseDropDown;
 	public ChoiceBox<ControlledBy> controlledByDropDown;
 	
-	public EditStateWindow(GameView g) {
+	public EditStateWindow() {
+		super(null, "Edit State Menu");
 		StackPane stackPane = new StackPane();
-		scene = new Scene(stackPane);
+		this.setContent(stackPane);
 		
-		this.setScene(scene);
-		this.setWidth(450);
-		this.setHeight(250);
 		
 		_this = this;
 		
@@ -72,11 +72,6 @@ public class EditStateWindow extends Stage {
 		vbox.getChildren().add(executeCommandButton);
 		
 		stackPane.getChildren().add(vbox);
-		
-		this.setTitle("Edit State");
-		this.initStyle(StageStyle.UTILITY);
-		this.initModality(Modality.APPLICATION_MODAL);
-		this.initOwner(g.getWindow());
 	}
 	
 	private VBox CreateAddThingView(ToggleGroup toggleGroup) {

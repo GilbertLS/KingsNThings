@@ -550,6 +550,9 @@ public class EventHandler {
 		        public void run() {
 		        	for(int i=0; i<numClients; i++)
 		        	{
+		        		/*Update player list*/
+		        		GameClient.game.gameView.playerList.updatePlayerNumber(numClients);
+		        		/*Init Gold*/
 		        		GameClient.game.gameView.updateGold(GameClient.game.gameModel.playerFromIndex(i).getGold(), i);	
 		        	}
 		        }

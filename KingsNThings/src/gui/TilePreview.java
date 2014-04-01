@@ -9,45 +9,25 @@ import javafx.collections.FXCollections;
 import javafx.scene.layout.VBox;
 
 public class TilePreview extends VBox {
-	ThingViewList view1 = 		new ThingViewList();
-	ThingViewList view2 = 		new ThingViewList();
-	ThingViewList view3 = 		new ThingViewList();
-	ThingViewList view4 = 		new ThingViewList();
-	ThingViewList viewDefenders = new ThingViewList();
-	Tile tileRef;
-	int playerNum;
+	ThingViewList 	view1 			= new ThingViewList();
+	ThingViewList 	view2 			= new ThingViewList();
+	ThingViewList 	view3 			= new ThingViewList();
+	ThingViewList 	view4 			= new ThingViewList();
+	ThingViewList 	viewDefenders 	= new ThingViewList();
+	Tile 			tileRef;
+	int 			playerNum;
 	
-	TilePreview(int num) {
-		this.getStyleClass().add("tile-preview");
-		view1.getStyleClass().add("preview-list");
-		view2.getStyleClass().add("preview-list");
-		view3.getStyleClass().add("preview-list");
-		view4.getStyleClass().add("preview-list");
-		viewDefenders.getStyleClass().add("preview-list");
-		
+	TilePreview(int num) {	
 		this.playerNum = num;
 	}
 	
-	public void show(Tile t) {
+	private void show(Tile t) {
 		this.getChildren().clear();
-		
-		if (view1 != null) this.getChildren().add(view1);
-		if (view2 != null) this.getChildren().add(view2);
-		if (view3 != null) this.getChildren().add(view3);
-		if (view4 != null) this.getChildren().add(view4);
-		if (viewDefenders != null) this.getChildren().add(viewDefenders);
-		
-		setInvisibleIfEmpty(t);
-	}
-	
-	private void setInvisibleIfEmpty(Tile t) {
-		//make more awesome
-		
-		view1.setVisible(!t.p1Things.isEmpty());
-		view2.setVisible(!t.p2Things.isEmpty());
-		view3.setVisible(!t.p3Things.isEmpty());
-		view4.setVisible(!t.p4Things.isEmpty());
-		viewDefenders.setVisible(!t.defendingThings.isEmpty());
+		if (view1 != null && !view1.isEmpty()) this.getChildren().add(view1);
+		if (view2 != null && !view2.isEmpty()) this.getChildren().add(view2);
+		if (view3 != null && !view3.isEmpty()) this.getChildren().add(view3);
+		if (view4 != null && !view4.isEmpty()) this.getChildren().add(view4);
+		if (viewDefenders != null && !viewDefenders.isEmpty()) this.getChildren().add(viewDefenders);
 	}
 
 	public ThingViewList GetThingList(int playerNum){
@@ -77,7 +57,16 @@ public class TilePreview extends VBox {
 		show(tileRef);
 	}
 	
-	public void addForts(HexTile h)
+	public void changeBattleTile(Tile t) {
+		//this method is intended to load all things for battle
+		//in addition to base things
+		
+		changeTile(t);
+		addForts(t.getTileRef());
+		show(t);
+	}
+	
+	private void addForts(HexTile h)
 	{
  		if(tileRef.fort != null)
  		{
