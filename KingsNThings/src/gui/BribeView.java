@@ -33,7 +33,7 @@ public class BribeView extends Dialog {
 	BribeView self = this;
 	VBox viewBox = new VBox();
 	Label defendingCreaturesLabel = new Label("Defending Creatrues");
-	ThingViewList defenseCreaturesList;
+	ThingViewList defenseCreaturesList = new ThingViewList();
 	Label treasureLabel = new Label("Tile has no Treasure");
 	ThingViewList treasureList;
 	
@@ -65,7 +65,8 @@ public class BribeView extends Dialog {
 
 	    //add defense creatures (with settlements)
 	    children = viewBox.getChildren();
-	    defenseCreaturesList = new ThingViewList(FXCollections.observableList(t.defendingThings));
+	    for(ThingView tv: FXCollections.observableList(t.defendingThings))
+	    	defenseCreaturesList.add(tv);
 	    if(referenceHexTile.hasSettlement())
 	    	defenseCreaturesList.add(new ThingView(referenceHexTile.getSettlement()));
 	    children.add(defendingCreaturesLabel);
@@ -131,7 +132,9 @@ public class BribeView extends Dialog {
 				}
 				
 				if(GameClient.game.validBribe(selectedThings, referenceHexTile)){					
-					//need to handle special incomes as well
+					GameClient.game.sendBribeCreaturesEvent(referenceHexTile, selectedThings, playerIndex);	
+					
+					GameClient.game.updatePlayerRack(playerIndex);
 					GameClient.game.gameModel.handleBribe(referenceHexTile, selectedThings, playerIndex);
 					GameClient.game.gameView.updateTiles(referenceHexTile, 4);
 					
@@ -140,12 +143,9 @@ public class BribeView extends Dialog {
 					
 					GameClient.game.gameView.tilePreview.changeTile(t);
 					
-					GameClient.game.sendBribeCreaturesEvent(referenceHexTile, selectedThings, playerIndex);	
-					
 					self.hide();
 					GameClient.game.gameView.endBribeCreatures();
-				}
-					
+				}	
 				else
 					info.setText("INFO: Invalid Bribe, please try again");
 			}

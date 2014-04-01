@@ -98,6 +98,10 @@ public abstract class Thing {
 		
 	}
 	
+	public String getBackImage() {
+		return backFileName;
+	}
+	
 	public boolean isFlipped() {
 		return this.isFlipped;
 	}

@@ -1168,17 +1168,13 @@ public class GameModel {
 				Player player = playerByOrder(i);
 				
 				//player has more than 1 citadel (player wins)
-				if(player.getNumCitadels() > 1)
+				//or player constructed and held a citadel since last round (player wins)
+				if(player.getNumCitadels() > 1
+						|| player.citadelWasConstructed() && player.getRoundsSinceCitadel() >= 1)
 				{
 					winningIndex = i;
 					winnerFound = true;
 				}				
-				//player constructed and held a citadel since last round (player wins)
-				else if(player.citadelWasConstructed() && player.getRoundsSinceCitadel() >= 1)
-				{
-					winningIndex = i;
-					winnerFound = true;
-				}
 			}
 		}
 		
@@ -1244,9 +1240,9 @@ public class GameModel {
 	}
 
 	public void handleBribe(HexTile h, ArrayList<Thing> selectedThings, int playerIndex) {
+		payForBribe(h, selectedThings, playerIndex);
 		bribeSettlement(h, selectedThings);
 		removePlayerThings(h, selectedThings, 4);	
-		payForBribe(h, selectedThings, playerIndex);
 		
 		//eliminate bribed things
 		for(Thing t: selectedThings)

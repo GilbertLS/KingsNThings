@@ -170,7 +170,7 @@ public class GameClientController {
 		//eliminate invalid defense creatrues
 		things = h.enforceValidDefense(things);
 		
-		for(Thing t: things)
+		for(Thing t: things)	//defending things aren't flipped
 			if(t.isFlipped())
 				t.setFlipped(false);
 		

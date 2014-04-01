@@ -250,9 +250,15 @@ public class Tile extends Region implements Draggable {
     	if (tileRef != null)
     	{
     		if (tileRef.hasSpecialIncome())
-    			return tileRef.getSpecialIncome().getFrontImage();
+    			if(tileRef.getSpecialIncome().isFlipped())
+    				return tileRef.getSpecialIncome().getBackImage();
+    			else
+    				return tileRef.getSpecialIncome().getFrontImage();
     	    else if(tileRef.hasSettlement())
-    	    	return tileRef.getSettlement().getFrontImage();
+    			if(tileRef.getSettlement().isFlipped())
+    				return tileRef.getSettlement().getBackImage();
+    			else
+    				return tileRef.getSettlement().getFrontImage();
     	}
     	
     	return null;
