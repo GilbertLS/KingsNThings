@@ -138,3 +138,20 @@
 .rack-view {
 	-fx-border-width: 0;
 }
+
+.battle-player {
+	-fx-background-color: #564456;
+	-fx-background-repeat: stretch;
+	-fx-background-position: center center;
+	-fx-background-size: cover, auto;
+}
+
+.battle-player:hover {
+	-fx-border: 10;
+	-fx-border-color: red;
+}
+
+.battle-player:focused {
+	-fx-border: 10;
+	-fx-border-color: red;
+}

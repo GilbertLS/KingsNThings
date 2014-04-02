@@ -17,7 +17,7 @@ public class PlayerPanel extends VBox {
 		this.getStyleClass().add("player-panel");		
 		this.playerNum = playerNumber;
 		
-		String iconPath = this.getPlayerIcon(playerNumber);
+		String iconPath = PlayerPanel.getPlayerIcon(playerNumber);
 		if(iconPath != null) {
 			Image playerIcon = new Image(iconPath, 25, 25, false, true);
 			ImageView iconView = new ImageView(playerIcon);
@@ -91,7 +91,7 @@ public class PlayerPanel extends VBox {
 		thingText.setText("Rack: " + prevNumThings);
 	}
 	
-	private String getPlayerIcon(int i) {
+	public static String getPlayerIcon(int i) {
 		switch(i) {
 			case 1: return "res/images/CM_411.png";
 			case 2: return "res/images/CM_412.png";

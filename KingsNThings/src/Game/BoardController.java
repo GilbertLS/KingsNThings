@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import Game.GameConstants.Level;
+
 public class BoardController {
 	private GameBoard gameBoard;
 	
@@ -70,7 +72,6 @@ public class BoardController {
 			return;
 		}*/
 		
-		
 		for (int i = 0; i < thingsToRemove.length; i++){
 			List<Thing> removeThings = new ArrayList<Thing>(things.size());
 			for (Thing thing : things){
@@ -81,14 +82,18 @@ public class BoardController {
 			
 			if(h.fort != null)
 			{
-				if(h.fort.thingID == thingsToRemove[i])
-					h.fort = null;
+				if(h.fort.thingID == thingsToRemove[i]) {
+					if(h.fort.getLevel() == Level.TOWER) {
+						h.fort = null;
+					} else {
+						h.fort.decrementLevel();
+					}
+				}
 			}
 			
 			for (Thing thing : removeThings){
 				things.remove(thing);
 			}
 		}
-		
 	}
 }
