@@ -1338,17 +1338,35 @@ public class GameModel {
 		
 		for(HexTile h: hexTiles){
 			unusedTiles.add(0, h);
-			
 			HexTile newTile = unusedTiles.remove(unusedTiles.size()-1);
-			gameBoard.addHexTile(newTile, h.x, h.y);
-			if(h.getControlledBy() != ControlledBy.NEUTRAL){
-				claimNewTile(playerFromFaction(h.getControlledBy()).GetPlayerNum() ,newTile.x, newTile.y);
-			}
+			
+			swapTile(h, newTile);
 			
 			ret.add(newTile);
 		}
 		
 		return ret;
+	}
+	
+	public void swapTile(HexTile oldTile, HexTile newTile)
+	{
+		//remove tile from board
+		unusedTiles.add(0, oldTile);
+
+		//eliminate all things on tile
+		for(Thing t: oldTile.getAllThings())
+			handleElimination(t, oldTile);
+		
+		//add new hex to board
+		gameBoard.addHexTile(newTile, oldTile.x, oldTile.y);
+		
+		//if tile was owned, remove from player's list
+		//and claim new tile instead
+		if(oldTile.getControlledBy() != ControlledBy.NEUTRAL){
+			Player player = playerFromFaction(oldTile.getControlledBy());
+			player.removeHexTile(oldTile);
+			claimNewTile(player, newTile.x, newTile.y);
+		}		
 	}
 
 	public ArrayList<HexTile> getInitTilesToSwap() {
@@ -1502,8 +1520,7 @@ public class GameModel {
 		}
 	}
 
-	public HexTile claimNewTile(int playerIndex, int x, int y) {
-		Player player = playerFromIndex(playerIndex);
+	public HexTile claimNewTile(Player player, int x, int y) {
 		HexTile h = gameBoard.getTile(x, y);
 		
 		player.addHexTile(h);

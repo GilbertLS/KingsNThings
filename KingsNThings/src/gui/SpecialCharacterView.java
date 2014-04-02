@@ -179,7 +179,6 @@ public class SpecialCharacterView extends Dialog{
 				rollLabel.setText("Roll:"+(rolls[0]+rolls[1]));
 				rollTotalLabel.setText("Total Roll:" + (rollAugmentation + rolls[0] + rolls[1]));
 				diceRolled = true;
-				GameClient.game.gameView.characterRecruited = true;	
 			}
 		});
 		
@@ -199,11 +198,13 @@ public class SpecialCharacterView extends Dialog{
 						GameClient.game.gameModel.recruitSpecialCharacter(selection.thingRef.thingID, playerIndex);
 						GameClient.game.sendRecruitSpecialCharacterEvent(selection.thingRef.thingID, playerIndex);
 						GameClient.game.gameView.addToRack(selection.thingRef);
+						
+						GameClient.game.gameView.characterRecruited = true;	
 					}
 				}
 					
 				self.hide();
-				GameClient.game.gameView.endRecruitSpecialCharacter();
+				GameClient.game.gameView.endRecruitSpecialCharacter(diceRolled);
 			}
 		});
 	}

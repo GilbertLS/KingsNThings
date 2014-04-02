@@ -117,6 +117,15 @@ public class Player {
 	
 	public void removeHexTile(HexTile h){
 		ownedHexTiles.remove(h);
+		
+		if(h.hasFort())
+			ownedForts.remove(h.getFort());	
+		
+		if(h.hasSpecialIncome())
+			ownedSpecialIncomes.remove(h.getSpecialIncome());
+		
+		if(h.hasSettlement())
+			ownedSettlements.remove(h.getSettlement());
 	}
 
 	public boolean canTradeForRecruits(int numRecruits) {

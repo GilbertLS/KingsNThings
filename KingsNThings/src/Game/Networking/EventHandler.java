@@ -334,6 +334,7 @@ public class EventHandler {
 				
 				String[] thingsToRemove = new String[numHitsToApply];
 				
+				//need to change to take into account buildings takng multiple hits
 				if (things.size() > numHitsTaken){
 						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
 						for (int i = 0; i < tilesToRemove.length; i++){
@@ -637,7 +638,7 @@ public class EventHandler {
 				
 				if(pieceBeingPlacedString.equals("Control Marker"))
 				{
-					GameClient.game.gameModel.claimNewTile(playerIndex, x, y);
+					GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetCurrentPlayer(), x, y);
 				}
 				else if(pieceBeingPlacedString.equals("Tower"))
 				{
@@ -685,7 +686,7 @@ public class EventHandler {
 			HexTile h = null;
 			if(pieceBeingPlaced.equals("Control_Marker"))
 			{
-				h = GameClient.game.gameModel.claimNewTile(playerIndex, x, y);
+				h = GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.playerFromIndex(playerIndex), x, y);
 			}
 			else if(pieceBeingPlaced.equals("Tower"))
 			{

@@ -767,4 +767,21 @@ public class HexTile implements IIncomable{
 	public boolean isBribeDoubled() {
 		return hasTreasure() || hasMagic() || hasSettlement() || hasSpecialIncome();
 	}
+
+	public ArrayList<Thing> getAllThings() {
+		ArrayList<Thing> ret = new ArrayList<Thing>();
+		
+		ret.addAll(forts);
+		ret.addAll(specialIncomes);
+		ret.addAll(settlements);
+		ret.addAll(treasures);
+		ret.addAll(magics);
+		ret.addAll(player1Things);
+		ret.addAll(player2Things);
+		ret.addAll(player3Things);
+		ret.addAll(player4Things);
+		ret.addAll(defendingThings);
+		
+		return ret;
+	}
 }

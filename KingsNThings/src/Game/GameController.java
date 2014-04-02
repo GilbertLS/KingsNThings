@@ -489,9 +489,10 @@ public class GameController {
 			if (currentPhase == Phase.RECRUIT_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				recruitThings();
+				tradeThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
-			tradeThings();
+
 			if (currentPhase == Phase.PLAY_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				playThings();

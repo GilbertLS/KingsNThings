@@ -127,28 +127,28 @@ public class GameClientController {
 		});
 	}
 
-	public boolean rollForCreatures(int playerIndex, int x, int y) {
+	public boolean rollForCreatures(Player player, int x, int y) {
 		int[] roll = Dice.rollDice(1);
 		
 		boolean defendingCreatures = false;
 		if(roll[0] != 1 && roll[0] != 6)
 		{
 			createDefenseCreatures(roll[0], x, y);
-			sendCreateDefenseCreaturesEvent(playerIndex, roll[0], x, y);
+			sendCreateDefenseCreaturesEvent(player, roll[0], x, y);
 			
 			defendingCreatures = true;
 		}
 		else
 		{
-			gameModel.claimNewTile(playerIndex, x, y);
+			gameModel.claimNewTile(player, x, y);
 		}
 
 		
 		return defendingCreatures;
 	}
 
-	private void sendCreateDefenseCreaturesEvent(int playerIndex, int roll, int x, int y) {
-		String[] args = {""+ playerIndex, ""+ roll, ""+x, ""+y};
+	private void sendCreateDefenseCreaturesEvent(Player player, int roll, int x, int y) {
+		String[] args = {""+ player.GetPlayerNum(), ""+ roll, ""+x, ""+y};
 		
 		boolean[] intendedPlayers = new boolean[GameClient.game.gameModel.PlayerCount()];
 		for(int i=0; i<intendedPlayers.length; i++)
