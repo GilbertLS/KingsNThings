@@ -392,8 +392,9 @@ public class GameClientController {
 		ArrayList<Thing> flyers = new ArrayList<Thing>();
 		
 		for(Thing t: things){
-			if(((Combatant)t).isFlying);
-			flyers.add(t);
+			if(t.IsCombatant())
+				if(((Combatant)t).isFlying);
+					flyers.add(t);
 		}
 		
 		return flyers;
