@@ -134,10 +134,13 @@ public class EventHandler {
 		} else if (e.eventId == EventList.BATTLE_OVER){
 			int x = Integer.parseInt(e.eventParams[0]);
 			int y = Integer.parseInt(e.eventParams[1]);
+			boolean fortHit = Boolean.parseBoolean(e.eventParams[2]);
+			boolean specialIncomeHit = Boolean.parseBoolean(e.eventParams[3]);
+			boolean settlementHit = Boolean.parseBoolean(e.eventParams[4]);
 			
 			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
 			
-			GameClient.game.gameModel.handlePostBattle(h);
+			GameClient.game.gameModel.handlePostBattle(h, fortHit, specialIncomeHit, settlementHit);
 			GameView.battleView.UpdateMessage("Battle is over");
 			
 			Platform.runLater(new Runnable() {
@@ -151,6 +154,23 @@ public class EventHandler {
 			while(GameView.BattleOccuring()){
 				Thread.sleep(1000);
 			}
+		} else if (e.eventId == EventList.GET_POST_BATTLE_BUILDING_ELIMINATIONS){
+			int x = Integer.parseInt(e.eventParams[0]);
+			int y = Integer.parseInt(e.eventParams[1]);
+			
+			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
+			
+			boolean[] buldingsEliminated = h.getBuildingEliminations();
+			
+			String params = new String();
+			for(boolean b: buldingsEliminated)
+				params += Boolean.toString(b) + "~";
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId( EventList.GET_POST_BATTLE_BUILDING_ELIMINATIONS )
+						.EventParameter(params)
+				);
 		}
 		else if(e.eventId == EventList.GET_CONTESTED_ZONES)
 		{

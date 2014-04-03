@@ -1253,15 +1253,26 @@ public class GameModel {
 
 	public void handleElimination(Thing t, HexTile hex) {
 		if(hex != null){	//deal with thing coming from a hex tile
+			
+			//remove forts, settlements, special income from hex and player's lists
 			if(t.thingType == ThingType.FORT){
 				hex.removeFort();
 				playerFromFaction(t.getControlledBy()).removeFort((Fort)t);
 			}
-			else if(t.thingType == ThingType.SETTLEMENT)
+			else if(t.thingType == ThingType.SETTLEMENT){
 				hex.removeSettlement();
-			else if(t.thingType == ThingType.SPECIAL_INCOME)
+				
+				if(!t.isControlledBy(ControlledBy.NEUTRAL))
+					playerFromFaction(t.getControlledBy()).removeSettlement((Settlement)t);
+			}
+			else if(t.thingType == ThingType.SPECIAL_INCOME){
 				hex.removeSpecialIncome();
+				
+				if(!t.isControlledBy(ControlledBy.NEUTRAL))
+					playerFromFaction(t.getControlledBy()).removeSpecialIncome((SpecialIncome)t);
+			}
 			
+			//remove thing from the tile's list of things
 			if(!t.isControlledBy(ControlledBy.NEUTRAL))
 				hex.removeThing(t.thingID, playerFromFaction(t.getControlledBy()).GetPlayerNum());
 			else {
@@ -1436,7 +1447,7 @@ public class GameModel {
 		return ret;
 	}
 
-	public void handlePostBattle(HexTile h) {
+	public void handlePostBattle(HexTile h, boolean fortHit,  boolean settlementHit , boolean specialIncomeHit) {
 		switch(h.getControlledBy()){	//only update after a battle if other player remain
 		case PLAYER1:
 			if(!h.noOtherPlayerOnTile(0))
@@ -1459,7 +1470,7 @@ public class GameModel {
 		}
 		
 		//deal with forts etc.
-		h.handlePostBattle();
+		h.handlePostBattle(fortHit, settlementHit, specialIncomeHit);
 	}
 
 	private void updateTileFaction(HexTile h) {

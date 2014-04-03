@@ -908,11 +908,34 @@ public class GameController {
 				}
 				
 			} while (!battleOver);
-
+			
+			boolean[] intendedPlayers = new boolean[GameServer.servers.size()];
+			intendedPlayers[0] = true;
+			//get builidng eliminations
+			Response[] responses = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId( EventList.GET_POST_BATTLE_BUILDING_ELIMINATIONS)
+						.IntendedPlayers(intendedPlayers)
+						.EventParameters(coordinates)
+				);
+			
+			String[] params = new String[5];
+			params[0] = coordinates[0];
+			params[1] = coordinates[1];
+			
+			for(Response response: responses){
+				if (response.fromPlayer == 0){
+					String[] messageParams = response.message.trim().split("~");
+					params[2] = messageParams[0];
+					params[3] = messageParams[1];
+					params[4] = messageParams[2];
+				}
+			}
+			
 			GameControllerEventHandler.sendEvent(
 					new Event()
 						.EventId( EventList.BATTLE_OVER)
-						.EventParameters(coordinates)
+						.EventParameters(params)
 				);
 		}
 	}

@@ -383,40 +383,21 @@ public class HexTile implements IIncomable{
 		return null;
 	}
 
-	public void handlePostBattle() {
-		if(hasFort())
-		{
-			int roll = Dice.rollDice(1)[0];
-			
-			if(roll != 1 && roll != 6)
-			{
-				if(getFort().getLevel() == Level.TOWER){
+	public void handlePostBattle(boolean fortHit, boolean settlementHit, boolean specialIncomeHit) {
+		if(hasFort())	
+			if(fortHit)
+				if(getFort().getLevel() == Level.TOWER)
 					GameClient.game.gameModel.handleElimination(getFort(), this);
-				}
 				else
 					getFort().decrementLevel();
-			}			
-		}
-		
+
 		if(hasSpecialIncome())
-		{
-			int roll = Dice.rollDice(1)[0];
-			
-			if(roll != 1 && roll != 6)
-			{
-				GameClient.game.gameModel.handleElimination(getSpecialIncome(), this);
-			}			
-		}
+			if(specialIncomeHit)
+				GameClient.game.gameModel.handleElimination(getSpecialIncome(), this);		
 		
-		if(hasSettlement())
-		{
-			int roll = Dice.rollDice(1)[0];
-			
-			if(roll != 1 && roll != 6)
-			{
-				GameClient.game.gameModel.handleElimination(getSettlement(), this);
-			}			
-		}
+		if(hasSettlement())		
+			if(settlementHit)
+				GameClient.game.gameModel.handleElimination(getSettlement(), this);		
 		
 		resetCounters();
 	}
@@ -781,6 +762,31 @@ public class HexTile implements IIncomable{
 		ret.addAll(player3Things);
 		ret.addAll(player4Things);
 		ret.addAll(defendingThings);
+		
+		return ret;
+	}
+
+	public boolean[] getBuildingEliminations() {
+		boolean[] ret = new boolean[3];
+		int roll = 0;
+		if(hasFort()){
+			 Dice.rollDice(1);
+			 roll = Dice.getRoll(0);
+			 if(roll == 1 || roll == 6)
+				 ret[0] = true;
+		}
+		if(hasSettlement()){
+			 Dice.rollDice(1);
+			 roll = Dice.getRoll(0);
+			 if(roll == 1 || roll == 6)
+				 ret[1] = true;
+		}
+		if(hasSpecialIncome()){
+			 Dice.rollDice(1);
+			 roll = Dice.getRoll(0);
+			 if(roll == 1 || roll == 6)
+				 ret[2] = true;
+		}
 		
 		return ret;
 	}
