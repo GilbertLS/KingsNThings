@@ -23,11 +23,17 @@ public class TilePreview extends VBox {
 	
 	private void show(Tile t) {
 		this.getChildren().clear();
-		if (view1 != null && !view1.isEmpty()) this.getChildren().add(view1);
-		if (view2 != null && !view2.isEmpty()) this.getChildren().add(view2);
-		if (view3 != null && !view3.isEmpty()) this.getChildren().add(view3);
-		if (view4 != null && !view4.isEmpty()) this.getChildren().add(view4);
-		if (viewDefenders != null && !viewDefenders.isEmpty()) this.getChildren().add(viewDefenders);
+		if (view1 != null) this.getChildren().add(view1);
+		if (view2 != null) this.getChildren().add(view2);
+		if (view3 != null) this.getChildren().add(view3);
+		if (view4 != null) this.getChildren().add(view4);
+		if (viewDefenders != null) this.getChildren().add(viewDefenders);
+		
+		view1.setVisible(!view1.isEmpty());
+		view2.setVisible(!view2.isEmpty());
+		view3.setVisible(!view3.isEmpty());
+		view4.setVisible(!view4.isEmpty());
+		viewDefenders.setVisible(!viewDefenders.isEmpty());
 	}
 
 	public ThingViewList GetThingList(int playerNum){
