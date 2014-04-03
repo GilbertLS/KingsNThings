@@ -5,6 +5,7 @@ import java.util.Vector;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Level;
 import Game.GameConstants.Terrain;
+import Game.GameConstants.ThingType;
 
 /*
  * Represents one of the player of a Kings N' Things Game.
@@ -15,12 +16,13 @@ public class Player {
 	private int gold;					//current gold stash of this player
 	private int playerOrder;			//order within current order of play
 	public ControlledBy faction;
-	public ArrayList<Fort> ownedForts;
-	public ArrayList<SpecialCharacter> specialCharacters;
-	public ArrayList<SpecialIncome> ownedSpecialIncomes;
-	public ArrayList<Settlement> ownedSettlements;
-	public ArrayList<HexTile> ownedHexTiles;
+	private ArrayList<Fort> ownedForts;
+	private ArrayList<SpecialCharacter> specialCharacters;
+	private ArrayList<SpecialIncome> ownedSpecialIncomes;
+	private ArrayList<Settlement> ownedSettlements;
+	private ArrayList<HexTile> ownedHexTiles;
 	private boolean citadelConstructed = false;
+	private int roundsSinceCitadel = 0;
 	
 	
 	public int GetPlayerNum(){
@@ -70,13 +72,18 @@ public class Player {
 	}
 
 	public void updatePlayerOrder(int playerCount) {
-		playerOrder = (playerOrder++)%playerCount;
-		
+		playerOrder = ((playerOrder-1) + playerCount)%playerCount;
+	}
+	
+	public void incrementCitadels()
+	{
+		if(hasCitadel())
+			roundsSinceCitadel++;
 	}
 
 	public void addThingToRack(Thing currentThing) {
 		playerRack.addThing(currentThing);
-		currentThing.controlledBy = faction;
+		currentThing.setControlledBy(faction);
 	}
 	
 	public PlayerRack getPlayerRack() {
@@ -89,10 +96,13 @@ public class Player {
 
 	public void addFort(Fort f) {
 		ownedForts.add(f);
-		f.controlledBy = faction;
+		f.setControlledBy(faction);
+		
+		if(f.getLevel() == Level.CITADEL && getNumCitadels() == 1)
+			setCitadelConstructed(true);
 	}
 
-	public void addHexTile(HexTile h) {
+	public void addHexTile(HexTile h) {		
 		ownedHexTiles.add(h);
 		
 		if(h.hasFort())
@@ -107,6 +117,15 @@ public class Player {
 	
 	public void removeHexTile(HexTile h){
 		ownedHexTiles.remove(h);
+		
+		if(h.hasFort())
+			ownedForts.remove(h.getFort());	
+		
+		if(h.hasSpecialIncome())
+			ownedSpecialIncomes.remove(h.getSpecialIncome());
+		
+		if(h.hasSettlement())
+			ownedSettlements.remove(h.getSettlement());
 	}
 
 	public boolean canTradeForRecruits(int numRecruits) {
@@ -154,32 +173,39 @@ public class Player {
 		
 		//gold pieces for land hexes
 		for(HexTile h: ownedHexTiles)
-				if(h.terrain != Terrain.SEA)
-				{
-						gold += h.getIncome();
-						System.out.println("INCOME FROM HEX TILE: " + h.getIncome());
-				}
+			if(h.terrain != Terrain.SEA){
+				gold += h.getIncome();
+			}
+				
+		
+		System.out.println("Player index " + playerNum + "- income from hexTiles:" + gold);
 		
 		//combat values for forts
-		for(Fort f: ownedForts)
+		for(Fort f: ownedForts){
 			gold+= f.getIncome();
+			System.out.println("Player index " + playerNum + "- income from fort:" + f.getIncome());
+		}
+			
 		
 		//special income tiles
-		for(SpecialIncome si: ownedSpecialIncomes)
+		for(SpecialIncome si: ownedSpecialIncomes){
 			gold+= si.getIncome();
+			System.out.println("Player index " + playerNum + "- income from special income:" + si.getIncome());
+		}
+			
 		
-		for(Settlement s: ownedSettlements)
+		for(Settlement s: ownedSettlements){
 			gold+= s.getIncome();
+			System.out.println("Player index " + playerNum + "- income from settlement:" + s.getIncome());
+		}
 		
 		//special characters
-		for(SpecialCharacter sc: specialCharacters)
-			gold += sc.getIncome();
+		for(SpecialCharacter sc: specialCharacters){
+			gold+= sc.getIncome();
+			System.out.println("Player index " + playerNum + "- income from special character:" + sc.getIncome());
+		}
 		
 		return gold;
-	}
-
-	public void decrementGold(int amount) {
-		gold -= amount;
 	}
 
 	public boolean canAfford(int amount) {
@@ -204,6 +230,10 @@ public class Player {
 
 	public void setCitadelConstructed(boolean constructed) {
 		citadelConstructed = constructed;
+
+		//rounds since last citadel resets if citadel is constructed
+		//or destructed
+		roundsSinceCitadel = 0;
 	}
 
 	public int getNumCitadels() {
@@ -218,5 +248,41 @@ public class Player {
 	
 	public void removeFort(Fort f){
 		ownedForts.remove(f);
+		f.setControlledBy(ControlledBy.NEUTRAL);
+		
+		if(f.getLevel() == Level.CITADEL && getNumCitadels() == 0)
+			setCitadelConstructed(false);
+	}
+
+	public int getRoundsSinceCitadel() {
+		return roundsSinceCitadel;
+	}
+
+	public boolean hasNoHexes() {
+		return ownedHexTiles.size() == 0;
+	}
+
+	public ArrayList<HexTile> getOwnedHexTiles() {
+		return ownedHexTiles;
+	}
+
+	public boolean ownsTile(HexTile hex) {
+		return ownedHexTiles.contains(hex);
+	}
+
+	public void addSpecialCharacter(SpecialCharacter thing) {
+		specialCharacters.add(thing);
+	}
+
+	public void removeSpecialCharacter(SpecialCharacter t) {
+		specialCharacters.remove(t);
+	}
+
+	public void removeSpecialIncome(SpecialIncome t) {
+		ownedSpecialIncomes.remove(t);
+	}
+
+	public void removeSettlement(Settlement t) {
+		ownedSettlements.remove(t);
 	}
 }

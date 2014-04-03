@@ -69,12 +69,8 @@ public class PlayerRack {
 
 	public void handleRackOverload() {
 		for(int i=things.size()-1; i>9; i--){
-			eliminateThing(things.remove(i));
+			GameClient.game.gameModel.handleElimination(things.remove(i), null);
 		}
-	}
-
-	private void eliminateThing(Thing t) {
-		GameClient.game.gameModel.returnToCup(t);
 	}
 
 	public boolean tooFull() {

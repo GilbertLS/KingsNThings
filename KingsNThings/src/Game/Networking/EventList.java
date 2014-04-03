@@ -2,7 +2,7 @@ package Game.Networking;
 
 public class EventList {
 	public static final int READY = 0;
-	public static final int ROLL_DICE = 1;
+	public static final int ROLL_TWO_DICE = 1;
 	public static final int SET_PLAYER_ORDER = 2;
 	public static final int SET_NUM_PLAYERS = 3;
 	public static final int BEGIN_BATTLE = 4;
@@ -61,4 +61,9 @@ public class EventList {
 	public static final int SET_PHASE = 200;
 	public static final int REMOVE_THING = 201;
 	public static final int ADD_THING = 202;
+	public static final int BRIBE_CREATURES = 138;
+	public static final int CHECK_TILE_SWAP = 139;
+	public static final int HANDLE_TILE_SWAP = 140;
+	public static final int ELIMINATE_SEA_HEX_THINGS = 141;
+	public static final int INCREMENT_CITADEL_ROUNDS = 142;
 }

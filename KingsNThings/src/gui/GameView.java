@@ -10,6 +10,7 @@ import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.HexTile;
+import Game.Player;
 import Game.Utility;
 import Game.Networking.GameClient;
 import Game.Thing;
@@ -34,6 +35,7 @@ public class GameView extends Scene {
 	public static BattleView battleView = null;
     public static List<Thing> selectedThings = new ArrayList<Thing>();
 	protected static SpecialCharacterView specialCharacterView = null;
+	protected static BribeView bribeView = null;
 	
 	private GameView 		self = this;
 	public 	HBox 			root;
@@ -66,16 +68,17 @@ public class GameView extends Scene {
     	primaryStage = ps;
         
         rightPanel = new VBox();
+        rightPanel.getStyleClass().add("right-panel");
         leftPanel = new VBox();
         root.getChildren().add(leftPanel);
         root.getChildren().add(rightPanel);
                 
         tilePreview = new TilePreview(0);
         
-        scroll = new ScrollPane();
         board = new BoardView(tilePreview);
+        scroll = new BoardScrollPane(board);
         leftPanel.getChildren().add(scroll);
-        scroll.setContent(board);
+        
         VBox.setVgrow(scroll, Priority.ALWAYS);
         HBox.setHgrow(leftPanel, Priority.ALWAYS);
         
@@ -99,7 +102,6 @@ public class GameView extends Scene {
         
         Button zoomin = new Button("zoom in");
         zoomin.setOnMouseClicked(new EventHandler<MouseEvent>(){
-       	 
             @Override
             public void handle(MouseEvent e) {
             	self.board.zoomIn();
@@ -116,9 +118,10 @@ public class GameView extends Scene {
         });
         rightPanel.getChildren().add(zoomout);
         
+        
         this.getStylesheets().add("gui/main.css");
 		BorderPane b = new BorderPane();
-        escapeMenu = new EscapeMenu(this);
+        escapeMenu = new EscapeMenu();
         
         EventHandler<KeyEvent> keyPressed = new EventHandler<KeyEvent>() {
 			@Override
@@ -312,6 +315,8 @@ public class GameView extends Scene {
 				String style = "-fx-background-image: url(/res/images/ " + getBackgroundFromType(tileX, tileY) + ");";
 				
 				p.setStyle(style);
+				
+				self.primaryStage.setScene(battleView);
 
 				
 				/*Stage battleStage = new Stage();
@@ -328,9 +333,6 @@ public class GameView extends Scene {
 	
 	 private String getBackgroundFromType(int tileX, int tileY) {
 		 HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
-		 if(tile.controlledBy == ControlledBy.NEUTRAL) {
-			return "Tuile_Back.png";
-		 } else {
 			 switch (tile.getTerrain()) {
 			 	case SEA: return GameConstants.SeaTileFront;
 				case JUNGLE: return GameConstants.JungleTileFront;
@@ -341,7 +343,6 @@ public class GameView extends Scene {
 				case MOUNTAIN: return GameConstants.MountainTileFront;
 				case DESERT: return GameConstants.DesertTileFront;
 			 }
-		 }
 	    	
 	    return "Tuile_Back.png";
 	}
@@ -365,7 +366,7 @@ public class GameView extends Scene {
 				public void run(){
 					tileView.updateThings();
 					tileView.update();
-					GameView.battleView.battleStage.close();
+					self.primaryStage.setScene(self);
 					GameView.battleView = null;
 				}
 			});
@@ -388,7 +389,7 @@ public class GameView extends Scene {
 		updateTiles(hexTileList, playerIndex);
 	}
 	
-	public void endRecruitSpecialCharacter()
+	public void endRecruitSpecialCharacter(final boolean diceRolled)
 	{
 		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
 		{
@@ -401,6 +402,11 @@ public class GameView extends Scene {
 						Utility.GotInput(inputLock);
 							
 						userInputDone = true;
+						
+						if(diceRolled && !characterRecruited)
+							Utility.GotInput(recruitLock);
+						
+						
 					}
 				}
 			});
@@ -419,12 +425,33 @@ public class GameView extends Scene {
 		rack.add(new ThingView(thingRef));
 	}
 
-	public void handleWin(final ArrayList<Integer> winingPlayers) {
-		Platform.runLater(new Runnable(){
-			public void run(){
-				//output the winning players here
-			}
-		});
+	public void handleWin(final int winningIndex) {
+		displayMessage("PLAYER " + winningIndex +" WINS!!!");
+	}
+	
+	public void bribeCreatures(Tile t)
+	{		
+		BribeView BView = new BribeView(GameClient.game.gameView.primaryStage, t);
+		GameView.bribeView = BView;
+	}
+	
+	public void endBribeCreatures()
+	{
+		bribeView = null;
+	}
+	
+	public void changeHex(HexTile h)
+	{
+		int x = h.x;
+		int y = h.y; 
+		
+		Tile t = board.getTileByCoords(x, y);
+		t.changeHex(h);
+	}
+
+	public void changeHexes(ArrayList<HexTile> hexes) {
+		for(HexTile h: hexes)
+			changeHex(h);
 	}
 	
 }

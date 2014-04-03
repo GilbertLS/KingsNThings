@@ -18,8 +18,10 @@ import Game.GameConstants;
 import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.BattleTurn;
 import Game.GameConstants.Terrain;
+import Game.Dice;
 import Game.HexTile;
 import Game.Player;
+import Game.Settlement;
 import Game.Thing;
 import Game.Utility;
 
@@ -48,16 +50,18 @@ public class EventHandler {
 			System.out.println("Handling event " + e.eventId);
 		}
 		if (e.eventId == EventList.READY){}
-		else if (e.eventId == EventList.ROLL_DICE)
+		else if (e.eventId == EventList.ROLL_TWO_DICE)
 		{
 			System.out.println("CREATING DIE ROLL RESPONSE EVENT");
 			
 			String[] args = new String[1];
-			args[0] = Integer.toString((int)Math.ceil(Math.random()*6));
+			
+			int[] rolls = Dice.rollDice(2);
+			args[0] = Integer.toString(rolls[0] + rolls[1]);
 			
 			EventHandler.SendEvent(
 					new Event()
-						.EventId(EventList.ROLL_DICE)
+						.EventId(EventList.ROLL_TWO_DICE)
 						.EventParameters(args)
 			);
 		}
@@ -79,6 +83,44 @@ public class EventHandler {
 			
 			GameClient.game.updatePlayerOrder();
 		}
+		else if (e.eventId == EventList.CHECK_TILE_SWAP){
+			ArrayList<HexTile> newTiles = new ArrayList<HexTile>();
+			ArrayList<HexTile> invalidHexTiles;
+			
+			
+			GameClient.game.sendMessageToView("Invalid initial tiles will be swapped");
+			GameClient.game.gameView.performPhase(CurrentPhase.SWAP_INITIAL_HEXES);
+			GameClient.game.clearMessageOnView();
+			
+			do{
+				invalidHexTiles = GameClient.game.gameModel.getInitTilesToSwap();
+				
+				newTiles = GameClient.game.gameModel.handleTileSwap(invalidHexTiles);
+				
+				final ArrayList<HexTile> newTilesCopy = newTiles;
+				Platform.runLater(new Runnable() {
+			        @Override
+			        public void run() {
+			        	GameClient.game.gameView.changeHexes(newTilesCopy);
+			        }
+			    });
+			}while(!invalidHexTiles.isEmpty());
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId( EventList.CHECK_TILE_SWAP)
+			);
+		}
+		else if(e.eventId == EventList.ELIMINATE_SEA_HEX_THINGS){
+			final ArrayList<HexTile> hexTiles = GameClient.game.gameModel.eliminateSeaHexThings();
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.updateTiles(hexTiles);
+		        }
+		    });
+		}
 		else if(e.eventId == EventList.BEGIN_BATTLE)
 		{
 			int tileX = Integer.parseInt(e.eventParams[0]);
@@ -95,7 +137,7 @@ public class EventHandler {
 			
 			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
 			
-			h.handlePostBattle();
+			GameClient.game.gameModel.handlePostBattle(h);
 			GameView.battleView.UpdateMessage("Battle is over");
 			
 			Platform.runLater(new Runnable() {
@@ -167,9 +209,9 @@ public class EventHandler {
 				{
 					thingsBattling.add(t);
 				}
-				if(battleTile.fort != null && currPlayer.faction == battleTile.controlledBy)
+				if(battleTile.hasFort() && battleTile.isControlledBy(currPlayer.faction))
 				{
-					thingsBattling.add(battleTile.fort);
+					thingsBattling.add(battleTile.getFort());
 				}
 				
 				for (Thing thing : thingsBattling){
@@ -263,18 +305,20 @@ public class EventHandler {
 			if (numHitsTaken > 0){
 				HexTile currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
 				
-				ArrayList<Thing> things = currTile.GetThings(currentPlayer);
+				ArrayList<Thing> things = currTile.getCombatants(currentPlayer.GetPlayerNum());
 				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
-				boolean hasFort = currTile.fort != null && currentPlayer.faction == currTile.controlledBy;
+				/*should be handled by using getCombatants method above instead of getThings
+				boolean hasFort = currTile.hasFort() && currTile.isControlledBy(currentPlayer.faction);
 				
 				//also need to handle settlements and any other combatants
 				if(hasFort)
-					numHitsToApply++;
+					numHitsToApply++;*/
 				
 				String[] thingsToRemove = new String[numHitsToApply];
 				
+				//need to change to take into account buildings takng multiple hits
 				if (things.size() > numHitsTaken){
 					int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
 					for (int i = 0; i < tilesToRemove.length; i++){
@@ -285,9 +329,10 @@ public class EventHandler {
 					for (Thing t : things){
 						thingsToRemove[i++] = "" + t.thingID;
 					}
+					/*
 					if(hasFort){
-						thingsToRemove[i++] = "" + currTile.fort.thingID;
-					}
+						thingsToRemove[i++] = "" + currTile.getFort().thingID;
+					}*/
 				}
 				EventHandler.SendEvent(
 					new Event()
@@ -475,14 +520,9 @@ public class EventHandler {
 		}
 		else if (e.eventId == EventList.HANDLE_WIN)
 		{
-			String[] winingIndiciesString = e.eventParams[0].trim().split(" ");
+			int winningIndex = (Integer.parseInt(e.eventParams[0]));
 			
-			ArrayList<Integer> winningIndicies = new ArrayList<Integer>();
-			
-			for(String s: winingIndiciesString)
-				winningIndicies.add(Integer.parseInt(s));
-			
-			GameClient.game.gameView.handleWin(winningIndicies);
+			GameClient.game.gameView.handleWin(winningIndex);
 		}
 		else if (e.eventId == EventList.DISTRIBUTE_INITIAL_GOLD)
 		{
@@ -495,6 +535,9 @@ public class EventHandler {
 		        public void run() {
 		        	for(int i=0; i<numClients; i++)
 		        	{
+		        		/*Update player list*/
+		        		GameClient.game.gameView.playerList.updatePlayerNumber(numClients);
+		        		/*Init Gold*/
 		        		GameClient.game.gameView.updateGold(GameClient.game.gameModel.playerFromIndex(i).getGold(), i);	
 		        	}
 		        }
@@ -579,7 +622,7 @@ public class EventHandler {
 				
 				if(pieceBeingPlacedString.equals("Control Marker"))
 				{
-					GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+					GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetCurrentPlayer(), x, y);
 				}
 				else if(pieceBeingPlacedString.equals("Tower"))
 				{
@@ -627,7 +670,7 @@ public class EventHandler {
 			HexTile h = null;
 			if(pieceBeingPlaced.equals("Control_Marker"))
 			{
-				h = GameClient.game.gameModel.updateTileFaction(playerIndex, x, y);
+				h = GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.playerFromIndex(playerIndex), x, y);
 			}
 			else if(pieceBeingPlaced.equals("Tower"))
 			{
@@ -775,7 +818,7 @@ public class EventHandler {
 			int amount = Integer.parseInt(e.eventParams[0].trim());
 			int playerIndex = Integer.parseInt(e.eventParams[1].trim());
 			
-			GameClient.game.gameModel.augmentRoll(amount, playerIndex);
+			GameClient.game.gameModel.payGold(amount, playerIndex);
 			GameClient.game.gameView.updateGold(GameClient.game.gameModel.playerFromIndex(playerIndex).getGold(), playerIndex);		
 			
 		}
@@ -856,6 +899,10 @@ public class EventHandler {
 		{
 			GameClient.game.gameModel.clearConstructions();
 		}
+		else if(e.eventId == EventList.INCREMENT_CITADEL_ROUNDS)
+		{
+			GameClient.game.gameModel.incrementCitadelRounds();
+		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
@@ -905,6 +952,25 @@ public class EventHandler {
 			        }
 				});
 			}
+		}
+		else if(e.eventId == EventList.BRIBE_CREATURES)
+		{
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			ArrayList<Thing> things = new ArrayList<Thing>();
+			final HexTile h = GameClient.game.parseBribeString(e.eventParams[1], things);
+			
+			GameClient.game.gameModel.handleBribe(h, things, playerIndex);
+			
+			final int gold = GameClient.game.gameModel.GetPlayer(playerIndex).getGold();
+			
+			GameClient.game.updatePlayerRack(playerIndex);
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+					GameClient.game.gameView.updateTiles(h, 4);
+					GameClient.game.gameView.updateGold(gold, playerIndex);
+		        }
+			});
 		}
 		else if(e.eventId == EventList.CREATE_DEFENSE_CREATURES)
 		{
@@ -1001,7 +1067,8 @@ public class EventHandler {
 			
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x,y);
 			
-			tile.removeThing(thingId, playerId);
+			Thing thing = tile.getThingFromTileByID(thingId);
+			GameClient.game.gameModel.handleElimination(thing, tile);
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
 		} else if (e.eventId == EventList.ADD_THING){
 			int x = Integer.parseInt(e.eventParams[0]);
@@ -1011,7 +1078,7 @@ public class EventHandler {
 			int playerNum = Integer.parseInt(e.eventParams[4]);
 			
 			Creature creature = new Creature(terrain, combatValue);
-			creature.controlledBy = GameConstants.controlledByFromIndex(playerNum);
+			creature.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
 			
 			for(int i = 5; i < e.eventParams.length; i++) {
 				if(e.eventParams[i].equals("Magic")) { creature.Magic(true); }
@@ -1036,13 +1103,13 @@ public class EventHandler {
 
 	
 	private static void waitForOtherPlayer(boolean expectsResponse, final int playerIndex, final String actionBeingTaken) {
-		waitForOtherPlayer(expectsResponse, Integer.toString(playerIndex), actionBeingTaken);
+		waitForOtherPlayer(expectsResponse, Integer.toString(playerIndex+1), actionBeingTaken);
 	}
 	
-	private static void waitForOtherPlayer(boolean expectsResponse, final String playerIndexString, final String actionBeingTaken) {
-		String s = "Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".";
+	private static void waitForOtherPlayer(boolean expectsResponse, final String playerNumString, final String actionBeingTaken) {
+		String s = "Waiting for player" + playerNumString + " to " + actionBeingTaken + ".";
 
-		GameClient.game.sendMessageToView("Waiting for player with index " + playerIndexString + " to " + actionBeingTaken + ".");
+		GameClient.game.sendMessageToView("Waiting for player" + playerNumString + " to " + actionBeingTaken + ".");
 		
 		if(expectsResponse)
 			SendNullEvent();		

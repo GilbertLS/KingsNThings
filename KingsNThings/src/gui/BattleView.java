@@ -3,6 +3,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+import Game.Building;
 import Game.Combatant;
 import Game.Fort;
 import Game.GameConstants;
@@ -45,7 +46,7 @@ public class BattleView extends Scene {
     protected InputState yesPressed = InputState.NOT_WAITING_FOR_INPUT;
     protected InputState noPressed = InputState.NOT_WAITING_FOR_INPUT;
     public MessageView messageView;
-    public Stage battleStage;
+    //public Stage battleStage;
     private Semaphore inputLock = new Semaphore(0);
     VBox centerVBox = new VBox();
     
@@ -129,15 +130,19 @@ public class BattleView extends Scene {
         centerPanel.getChildren().add(centerVBox);
         
         this.getStylesheets().add("gui/main.css");
+		
         
-        battleStage = new Stage();
+        /*battleStage = new Stage();
 		battleStage.setTitle("Combat Time - Player " + (GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() + 1) );
 		battleStage.setScene(this);
         battleStage.initStyle(StageStyle.UNDECORATED);
         battleStage.initModality(Modality.WINDOW_MODAL);
-        battleStage.initOwner(GameClient.game.gameView.getWindow());
+        battleStage.initOwner(GameClient.game.gameView.getWindow());*/
 		
-		battleStage.show();
+		//battleStage.setX(battleStage.getX() + 150);
+		//battleStage.setY(battleStage.getY() + 150);
+
+		//battleStage.show();
 	}
 	
 	public int RollDice(Thing thing, int diceNum, int numPreviousRolls){
@@ -182,7 +187,7 @@ public class BattleView extends Scene {
 		
 		for(int i = 0; i < numPlayers; i++) {
 			ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
-			for(Thing t : currTile.GetThings(i)) {
+			for(Thing t : currTile.getCombatants(i)) {
 				thingViews.add(new ThingView(t));
 			}
 			
@@ -232,14 +237,6 @@ public class BattleView extends Scene {
 			FXCollections.observableArrayList(thingViews)
 		);
 		
-		if(currTile.hasFort()) {
-			Fort f = currTile.getFort();
-			ThingView fortView = new ThingView(f);
-			int playerWithFort = GameConstants.GetPlayerNumber(f.controlledBy);
-			System.out.println("DEBUG------------------ adding fort view to: " + playerWithFort);
-			thingViewLists[playerWithFort].add(fortView);
-		}
-			
 		thingViewLists[numPlayers] = thingViewList;
 		if (!thingViews.isEmpty()) {
 			centerVBox.getChildren().add(thingViewList);
@@ -265,30 +262,14 @@ public class BattleView extends Scene {
 			Utility.PromptForInput(inputLock);
 			
 			numValid = 0;
-			boolean fortSelected = false;
 			for(Thing t : GameView.selectedThings) {
-				if (GameConstants.GetPlayerNumber(t.controlledBy) == currPlayer ) {
-					if (!(t instanceof Fort)) {
-						numValid++;
-					} else {
-						fortSelected = true;
-						numValid++;
-					}
-				}
-			}
-			
-			int numHitsLeft = numHitsTaken - numValid;
-			if(		numHitsLeft > 0 &&
-					fortSelected && 
-					currTile.hasFort() && 
-					(GameConstants.GetPlayerNumber(currTile.fort.controlledBy) == currPlayer) &&
-					currTile.fort.GetCombatValue() >= numHitsLeft) {
-				for (int i = 1; i < numHitsLeft; i++) {
-					GameView.selectedThings.add(currTile.fort);
+				//ensure controlled by, and not a neutralized building
+				if (GameConstants.GetPlayerNumber(t.getControlledBy()) == currPlayer 
+						&& !(t.isBuilding() && ((Building)t).isNeutralized())) {
 					numValid++;
 				}
 			}
-			System.out.println("DEBUG- NUM VALID " + numHitsTaken);
+			System.out.println("DEBUG- NUM VALID " + numValid);
 		} while (numValid != numHitsTaken);
 		
 		submitPressed = InputState.NOT_WAITING_FOR_INPUT;
@@ -384,7 +365,7 @@ public class BattleView extends Scene {
 			Utility.PromptForInput(targetLock);
 		} while (targetedPlayerNotValid());
 		
-		this.UpdateMessage("Targeted player " + currentlyTargeting);
+		this.UpdateMessage("Targeted player " + targetedPlayer);
 		int temp = targetedPlayer;
 		targetedPlayer = -1;
 		currentlyTargeting = false;

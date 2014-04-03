@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import Game.GameConstants.ThingType;
+import Game.Networking.GameClient;
 import Game.GameConstants.Level;
 
 public class BoardController {
@@ -19,19 +21,21 @@ public class BoardController {
 		List<int[]> conflictedTiles = new ArrayList<int[]>();
 		int[] addTiles = new int[2];
 		
-		for(int i = -3; i < 4; i++){
-			for(int j = -3; j < 4; j++){
+		for(int x = -3; x < 4; x++){
+			for(int y = -3; y < 4; y++){
 				int numPlayers = 0;
 	
-				if (gameBoard.getTile(i, j) == null){ continue; }
+				HexTile h = gameBoard.getTile(x, y);
+				if (h == null)
+					continue;
 				
-				if (!gameBoard.getTile(i, j).player1Things.isEmpty()) { numPlayers++; }
-				if (!gameBoard.getTile(i, j).player2Things.isEmpty()) { numPlayers++; }
-				if (!gameBoard.getTile(i, j).player3Things.isEmpty()) { numPlayers++; }
-				if (!gameBoard.getTile(i, j).player4Things.isEmpty()) { numPlayers++; }
+				for(int i=0; i< 5; i++){
+					if (h.hasCombatants(i)) 
+						numPlayers++;
+				}
 				
 				if(numPlayers > 1){
-					conflictedTiles.add(new int[]{ i, j });
+					conflictedTiles.add(new int[]{ x, y });
 				}
 			}
 		}
@@ -64,7 +68,7 @@ public class BoardController {
 	public void RemoveThings(int[] thingsToRemove, Player player, int tileX, int tileY){
 		
 		HexTile h = gameBoard.getTile(tileX, tileY);
-		ArrayList<Thing> things = h.GetThings(player);
+		ArrayList<Thing> things = h.getCombatants(player.GetPlayerNum());
 		
 		/* removing this for visibility reasons
 		if (thingsToRemove.length > things.size()){
@@ -72,27 +76,25 @@ public class BoardController {
 			return;
 		}*/
 		
+		List<Thing> removeThings = new ArrayList<Thing>(things.size());
+		
 		for (int i = 0; i < thingsToRemove.length; i++){
-			List<Thing> removeThings = new ArrayList<Thing>(things.size());
 			for (Thing thing : things){
 				if (thing.GetThingId() == thingsToRemove[i]){
 					removeThings.add(thing);
 				}
 			}
-			
-			if(h.fort != null)
+		}
+		
+		for (Thing thing : removeThings){
+			if(thing.thingType == ThingType.SETTLEMENT
+					|| thing.thingType == ThingType.FORT)	//buildings take hits
 			{
-				if(h.fort.thingID == thingsToRemove[i]) {
-					if(h.fort.getLevel() == Level.TOWER) {
-						h.fort = null;
-					} else {
-						h.fort.decrementLevel();
-					}
-				}
+				((Building)thing).takeHit();
 			}
-			
-			for (Thing thing : removeThings){
-				things.remove(thing);
+			else{
+				//everything else is eliminated
+				GameClient.game.gameModel.handleElimination(thing, h);
 			}
 		}
 	}

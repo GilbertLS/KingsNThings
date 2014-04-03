@@ -10,7 +10,7 @@ import Game.GameConstants;
  */
 public class Fort extends Building implements IIncomable{
 	private Level level;	//The current level of the Fort
-	private static int fortIndex =0;
+	private static int fortIndex = 0;
 	
 	public Fort()
 	{
@@ -32,16 +32,12 @@ public class Fort extends Building implements IIncomable{
 		{
 		case KEEP:
 			level = Level.TOWER;
-			frontFileName = GameConstants.TowerImageFront;
-			backFileName = GameConstants.TowerImageBack;
+			combatValue = 1;
 			break;
 		case CASTLE:
 			level = Level.KEEP;
-			frontFileName = GameConstants.KeepImageFront;
-			backFileName = GameConstants.KeepImageBack;
+			combatValue = 2;
 			Ranged(false);
-			break;
-		default:
 			break;
 		}
 	}
@@ -52,24 +48,25 @@ public class Fort extends Building implements IIncomable{
 		{
 		case TOWER:
 			level = Level.KEEP;
-			frontFileName = GameConstants.KeepImageFront;
-			backFileName = GameConstants.KeepImageBack;
+			combatValue = 2;
 			break;
 		case KEEP:
 			level = Level.CASTLE;
-			frontFileName = GameConstants.CastleImageFront;
-			backFileName = GameConstants.CastleImageBack;
+			combatValue = 3;
 			Ranged(true);
 			break;
 		case CASTLE:
 			level = Level.CITADEL;
-			frontFileName = GameConstants.CitadelImageFront;
-			backFileName = GameConstants.CitadelImageBack;
+			combatValue = 4;
 			Ranged(false);
 			Magic(true);
 			break;
 		default:
 			break;
 		}
+	}
+
+	public boolean isCitadel() {
+		return level == Level.CITADEL;
 	}
 }

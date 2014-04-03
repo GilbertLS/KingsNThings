@@ -11,6 +11,7 @@ import Game.Utility;
 import Game.Networking.GameClient;
 import Game.HexTile;
 import Game.Thing;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -127,11 +128,6 @@ public class Tile extends Region implements Draggable {
     private String getBackgroundFromType()
     {
     	if (tileRef != null) {
-    		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
-    		{
-    			return "Tuile_Back.png";
-    		}
-    		else
    			 switch (tileRef.getTerrain()) {
 			 	case SEA: return GameConstants.SeaTileFront;
 				case JUNGLE: return GameConstants.JungleTileFront;
@@ -141,7 +137,7 @@ public class Tile extends Region implements Draggable {
 				case SWAMP: return GameConstants.SwampTileFront;
 				case MOUNTAIN: return GameConstants.MountainTileFront;
 				case DESERT: return GameConstants.DesertTileFront;
-			 }
+   			 }
     	}
     	
     	return "Tuile_Back.png";
@@ -180,7 +176,7 @@ public class Tile extends Region implements Draggable {
 	    	list.add(imgView);
 	    	
 	    	if(fort == null)
-	    		fort = new ThingView(tileRef.fort);
+	    		fort = new ThingView(tileRef.getFort());
     	}
     	else
     	{
@@ -209,16 +205,22 @@ public class Tile extends Region implements Draggable {
     		specialIncome = null;
     	}
     	
-    	if(tileRef.controlledBy != ControlledBy.NEUTRAL)
-    		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
     	
     	this.getChildren().setAll(list);
     	
     }
     
+    public void changeHex(HexTile h)
+    {
+    	tileRef = h;
+    	
+    	update();
+    }
+    
     private String getMarkerString() {
     	if (tileRef != null) {
-    		switch (tileRef.controlledBy) {
+    		switch (tileRef.getControlledBy()) {
     			case PLAYER1: return "CM_411.png";
     			case PLAYER2: return "CM_412.png";
     			case PLAYER3: return "CM_413.png";
@@ -231,8 +233,8 @@ public class Tile extends Region implements Draggable {
     }
     
     private String getFortString() {
-    	if (tileRef != null && tileRef.fort != null) {
-    		switch (tileRef.fort.getLevel()) {
+    	if (tileRef != null && tileRef.hasFort()) {
+    		switch (tileRef.getFort().getLevel()) {
     			case TOWER: return "C_Fort_375.png";
     			case KEEP: return "C_Fort_377.png";
     			case CASTLE: return "C_Fort_379.png";
@@ -248,9 +250,15 @@ public class Tile extends Region implements Draggable {
     	if (tileRef != null)
     	{
     		if (tileRef.hasSpecialIncome())
-    			return tileRef.getSpecialIncome().getFrontImage();
+    			if(tileRef.getSpecialIncome().isFlipped())
+    				return tileRef.getSpecialIncome().getBackImage();
+    			else
+    				return tileRef.getSpecialIncome().getFrontImage();
     	    else if(tileRef.hasSettlement())
-    	    	return tileRef.getSettlement().getFrontImage();
+    			if(tileRef.getSettlement().isFlipped())
+    				return tileRef.getSettlement().getBackImage();
+    			else
+    				return tileRef.getSettlement().getFrontImage();
     	}
     	
     	return null;
@@ -302,7 +310,7 @@ public class Tile extends Region implements Draggable {
 						ArrayList<ThingView> 		thingViews	= new ArrayList<ThingView>();
 						ArrayList<Thing> 			things 		= new ArrayList<Thing>();
 					
-						GameView gv = (GameView)getScene();
+						final GameView gv = (GameView)getScene();
 						if(gv.currentPhase != CurrentPhase.NULL && gv.returnString.equals(""))
 						{											
 							for (Integer i : listOfIds) {
@@ -357,23 +365,31 @@ public class Tile extends Region implements Draggable {
 								
 								if(GameClient.game.isValidMove(originalTile, tileRef, things))
 								{
-									if(tileRef.controlledBy == ControlledBy.NEUTRAL
+									if(tileRef.isControlledBy(ControlledBy.NEUTRAL)
 											&& tileRef.noDefense()) 						//exploration
 									{
+										//things can not move further
+										for(Thing t: things)
+											t.setMovementFinished();
+										
 										//handle creatures
-										GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y);
-
-										gv.updateTiles(tileRef, 4);
+										if (GameClient.game.rollForCreatures(GameClient.game.gameModel.GetCurrentPlayer(), tileRef.x, tileRef.y)){
+											gv.updateTiles(tileRef, 4);
+											
+											//if not run later, drag drop breaks
+											Platform.runLater(new Runnable(){
+												public void run(){
+													//allow bribing if creatures were created
+													gv.bribeCreatures(thisTile);
+												}
+											});
+										}
 									}
 									
 									thisTile.addAll(thingViews, gv.getCurrentPlayer());
 									source.getListView().getItems().removeAll(thingViews);
 									
 									success = true;
-									
-									//gv.moveMade = true;
-									
-									//string to update 
 									
 									gv.returnString += originalTileString + tileRef.x + "SPLIT"+ tileRef.y+"~";
 										
@@ -418,11 +434,6 @@ public class Tile extends Region implements Draggable {
 		});
 	}
 
-	protected void addSpecialIncome(ThingView tv) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void showTile() {  
 		String s = "";
 				
@@ -452,7 +463,7 @@ public class Tile extends Region implements Draggable {
 	}
 	
 	public void hideTile() {
-		if(tileRef.controlledBy == ControlledBy.NEUTRAL)
+		if(tileRef.isControlledBy(ControlledBy.NEUTRAL))
 			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");
 	}
 	

@@ -25,6 +25,8 @@ public class PlayerBattleBox extends Region {
     	this.setPrefSize(50, 50);
     	this.setMaxHeight(50);
     	this.setMaxWidth(50);
+    	this.setMinHeight(50);
+    	this.setMinWidth(50);
     	this.initListeners();
 	}
 
