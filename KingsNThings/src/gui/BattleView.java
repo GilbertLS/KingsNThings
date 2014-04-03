@@ -377,7 +377,7 @@ public class BattleView extends Scene {
 		int currPlayer = GameClient.game.gameModel.getCurrPlayerNumber();
 		boolean targetedPlayerValid = targetedPlayer != currPlayer && targetedPlayer >= 0 && targetedPlayer <= 3;
 		
-		if (currTile.GetThings(targetedPlayer).isEmpty()) {
+		if (currTile.getCombatants(targetedPlayer).isEmpty()) {
 			targetedPlayerValid = false;
 		}
 		
