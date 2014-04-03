@@ -916,6 +916,7 @@ public class GameController {
 					new Event()
 						.EventId( EventList.GET_POST_BATTLE_BUILDING_ELIMINATIONS)
 						.IntendedPlayers(intendedPlayers)
+						.ExpectsResponse(true)
 						.EventParameters(coordinates)
 				);
 			

@@ -490,7 +490,7 @@ public class HexTile implements IIncomable{
 				numCombatants++;
 		}
 		
-		switch(controlledBy){
+		switch(things.get(0).getControlledBy()){
 			case PLAYER1:
 				numCombatants += player1Things.size();
 				break;

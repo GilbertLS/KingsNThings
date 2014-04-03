@@ -509,7 +509,7 @@ public class GameModel {
 		}
 		
 		for(int i=0; i<4; i++) { //there are 4 ghosts
-			playingCup.add(new Creature(Terrain.SWAMP, "Ghost", 3, GameConstants.GhostImageFront)
+			playingCup.add(new Creature(Terrain.SWAMP, "Ghost", 1, GameConstants.GhostImageFront)
 			.Flying(true));
 		}
 	}
@@ -1503,7 +1503,7 @@ public class GameModel {
 				player4.removeHexTile(h);
 		}
 		
-		//if a player, add to owned hexes
+		//if a player now owns this hex, add to owned hexes
 		if(faction != ControlledBy.NEUTRAL){
 			playerFromFaction(faction).addHexTile(h);
 		}

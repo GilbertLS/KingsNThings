@@ -108,7 +108,6 @@ public abstract class Thing {
 
 	public void setFlipped(boolean b) {
 		isFlipped = b;
-		
 	}
 
 	public void setMovementFinished() {

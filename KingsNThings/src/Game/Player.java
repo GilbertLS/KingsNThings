@@ -102,30 +102,46 @@ public class Player {
 			setCitadelConstructed(true);
 	}
 
-	public void addHexTile(HexTile h) {		
+	public void addHexTile(HexTile h) {	
+		h.setControlledBy(faction);
+		
 		ownedHexTiles.add(h);
 		
-		if(h.hasFort())
+		if(h.hasFort()){
 			ownedForts.add(h.getFort());	
-		
-		if(h.hasSpecialIncome())
+			h.getFort().setControlledBy(faction);
+		}
+			
+		if(h.hasSpecialIncome()){
 			ownedSpecialIncomes.add(h.getSpecialIncome());
+			h.getSpecialIncome().setControlledBy(faction);
+		}
 		
-		if(h.hasSettlement())
+		if(h.hasSettlement()){
 			ownedSettlements.add(h.getSettlement());
+			h.getSettlement().setControlledBy(faction);
+		}
 	}
 	
 	public void removeHexTile(HexTile h){
+		h.setControlledBy(ControlledBy.NEUTRAL);
+		
 		ownedHexTiles.remove(h);
 		
-		if(h.hasFort())
+		if(h.hasFort()){
 			ownedForts.remove(h.getFort());	
+			h.getFort().setControlledBy(ControlledBy.NEUTRAL);
+		}
 		
-		if(h.hasSpecialIncome())
+		if(h.hasSpecialIncome()){
 			ownedSpecialIncomes.remove(h.getSpecialIncome());
-		
-		if(h.hasSettlement())
+			h.getSpecialIncome().setControlledBy(ControlledBy.NEUTRAL);
+		}
+			
+		if(h.hasSettlement()){
 			ownedSettlements.remove(h.getSettlement());
+			h.getSettlement().setControlledBy(ControlledBy.NEUTRAL);
+		}
 	}
 
 	public boolean canTradeForRecruits(int numRecruits) {
