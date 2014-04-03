@@ -5,10 +5,12 @@ import java.util.concurrent.Semaphore;
 
 import Game.Building;
 import Game.Combatant;
+import Game.Fort;
 import Game.GameConstants;
 import Game.HexTile;
 import Game.Thing;
 import Game.Utility;
+import Game.GameConstants.Level;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -20,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -28,11 +31,13 @@ import javafx.stage.StageStyle;
 
 public class BattleView extends Scene {
 	public BorderPane root;
+	
     public VBox rightPanel;
     public HBox bottomPanel;
     public VBox leftPanel;
     public HBox centerPanel;
     public HBox topPanel;
+    
     public DiceListView diceListView;
     private Button submit = new Button("Submit");
     private Button yes = new Button("Yes");
@@ -43,16 +48,23 @@ public class BattleView extends Scene {
     public MessageView messageView;
     //public Stage battleStage;
     private Semaphore inputLock = new Semaphore(0);
+    VBox centerVBox = new VBox();
     
     public int tileX;
     public int tileY;
+    private HexTile currTile;
     private ThingViewList[] thingViewLists;
+    
+    private boolean currentlyTargeting = false;
+    private int targetedPlayer = -1;
+    private Semaphore targetLock = new Semaphore(0);
 	
 	public BattleView(BorderPane root, int tileX, int tileY){
 		super(root, 700, 500);
 		
 		this.tileX = tileX;
 		this.tileY = tileY;
+		this.currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
 		
 		rightPanel = new VBox();
         root.setRight(rightPanel);
@@ -100,8 +112,9 @@ public class BattleView extends Scene {
 				}
 			}
 		});
-
-        VBox centerVBox = new VBox();
+        
+        SetupPlayerThings();
+    
         messageView = new MessageView();
         diceListView = new DiceListView();
         centerVBox.getChildren().add(diceListView);
@@ -117,8 +130,7 @@ public class BattleView extends Scene {
         centerPanel.getChildren().add(centerVBox);
         
         this.getStylesheets().add("gui/main.css");
-        
-        SetupPlayerThings();
+		
         
         /*battleStage = new Stage();
 		battleStage.setTitle("Combat Time - Player " + (GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() + 1) );
@@ -171,12 +183,11 @@ public class BattleView extends Scene {
 	
 	public void SetupPlayerThings(){
 		int numPlayers = GameClient.game.gameModel.PlayerCount();
-		thingViewLists = new ThingViewList[numPlayers];
+		thingViewLists = new ThingViewList[numPlayers + 1];
 		
-		HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
 		for(int i = 0; i < numPlayers; i++) {
 			ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
-			for(Thing t : tile.getCombatants(i)) {
+			for(Thing t : currTile.getCombatants(i)) {
 				thingViews.add(new ThingView(t));
 			}
 			
@@ -189,19 +200,46 @@ public class BattleView extends Scene {
 			
 			thingViewLists[i] = thingViewList;
 			
-			if (i == 0) {
-				topPanel.getChildren().add(thingViewList);
-				topPanel.setAlignment(Pos.CENTER);
-			} else if (i == 1) {
-				leftPanel.getChildren().add(thingViewList);
-				leftPanel.setAlignment(Pos.CENTER);
-			} else if (i == 2) {
-				bottomPanel.getChildren().add(thingViewList);
-				bottomPanel.setAlignment(Pos.CENTER);
-			} else if (i == 3) {
-				rightPanel.getChildren().add(thingViewList);
-				rightPanel.setAlignment(Pos.CENTER);
+			Pane panel = null;
+			
+			if (i == 0) { panel = topPanel; } 
+			else if (i == 1) { panel = leftPanel; }
+			else if (i == 2) { panel = bottomPanel; } 
+			else if (i == 3) { panel = rightPanel; }
+			
+			if (i % 2 == 0) {
+				HBox playerAndThings = new HBox();
+				playerAndThings.getChildren().add(new PlayerBattleBox(i));
+				playerAndThings.getChildren().add(thingViewList);
+				HBox hb = (HBox)panel;
+				
+				hb.getChildren().add(playerAndThings);
+				hb.setAlignment(Pos.CENTER);
+				
+			} else {
+				VBox playerAndThings = new VBox();
+				playerAndThings.getChildren().add(new PlayerBattleBox(i));
+				playerAndThings.getChildren().add(thingViewList);
+				
+				VBox vb = (VBox)panel;
+				
+				vb.getChildren().add(playerAndThings);
+				vb.setAlignment(Pos.CENTER);
 			}
+		}
+		
+		ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
+		for(Thing t : currTile.GetThings(4)) {
+			thingViews.add(new ThingView(t));
+		}
+		
+		ThingViewList thingViewList = new ThingViewList(
+			FXCollections.observableArrayList(thingViews)
+		);
+		
+		thingViewLists[numPlayers] = thingViewList;
+		if (!thingViews.isEmpty()) {
+			centerVBox.getChildren().add(thingViewList);
 		}
 	}
 	
@@ -212,7 +250,8 @@ public class BattleView extends Scene {
 	}
 	
 	public int[] inflictHits(int numHitsTaken) {
-		UpdateMessage("Select " + numHitsTaken + " things to discard.");
+		UpdateMessage("Select " + numHitsTaken + " things to take hits."
+				+ "\nSelecting a fort will take however amount of hits are leftover.");
 		
 		int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
 		
@@ -230,6 +269,7 @@ public class BattleView extends Scene {
 					numValid++;
 				}
 			}
+			System.out.println("DEBUG- NUM VALID " + numValid);
 		} while (numValid != numHitsTaken);
 		
 		submitPressed = InputState.NOT_WAITING_FOR_INPUT;
@@ -239,9 +279,6 @@ public class BattleView extends Scene {
 		for (Thing thing : GameView.selectedThings){
 			System.out.println("--------------");
 			thingsToRemove[i++] = thing.thingID;
-			//RemoveThingFromBattle(thing.thingID, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
-			
-			//also update model
 		}
 		ClearMessage();
 		
@@ -298,9 +335,59 @@ public class BattleView extends Scene {
 		Platform.runLater(new Runnable() {
 	        @Override
 	        public void run() {
-	        	list.removeByThingId(thingId);
+	        	boolean removeThing = true;
+	        	if(currTile.hasFort() && currTile.getFort().thingID == thingId) {
+	        		Fort f = currTile.getFort();
+	        		if (f != null) {
+	        			removeThing = false;
+	        			ThingView thingView = new ThingView(f);
+	        			list.removeByThingId(thingId);
+	        			list.add(thingView);
+	        		}
+	        	}
+	        	if(removeThing) {
+	        		list.removeByThingId(thingId);
+	        	}
 	        }
 	    });
 		
+	}
+	
+	public int GetTargetPlayer() {
+		this.UpdateMessage("Target player");
+		currentlyTargeting = true;
+		do {
+			if (targetedPlayer != -1) {
+				this.UpdateMessage("Cannot target player, target someone else");
+			}
+			
+			targetLock = new Semaphore(0);
+			Utility.PromptForInput(targetLock);
+		} while (targetedPlayerNotValid());
+		
+		this.UpdateMessage("Targeted player " + targetedPlayer);
+		int temp = targetedPlayer;
+		targetedPlayer = -1;
+		currentlyTargeting = false;
+		
+		return temp;
+	}
+	
+	private boolean targetedPlayerNotValid() {
+		int currPlayer = GameClient.game.gameModel.getCurrPlayerNumber();
+		boolean targetedPlayerValid = targetedPlayer != currPlayer && targetedPlayer >= 0 && targetedPlayer <= 3;
+		
+		if (currTile.GetThings(targetedPlayer).isEmpty()) {
+			targetedPlayerValid = false;
+		}
+		
+		return !targetedPlayerValid;
+	}
+
+	public void setPlayerTarget(int playerNum) {
+		if (currentlyTargeting) {
+			targetedPlayer = playerNum;
+			Utility.GotInput(targetLock);
+		}
 	}
 }

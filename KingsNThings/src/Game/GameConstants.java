@@ -31,6 +31,7 @@ public final class GameConstants {
 		else if ( c == ControlledBy.PLAYER2 ){ return 1; }
 		else if ( c == ControlledBy.PLAYER3 ){ return 2; }
 		else if ( c == ControlledBy.PLAYER4 ){ return 3; }
+		else if ( c == ControlledBy.NEUTRAL){ return 4; }
 		return -1; 
 	}
 	
@@ -351,8 +352,10 @@ public final class GameConstants {
 			return ControlledBy.PLAYER2;
 		case 2:
 			return ControlledBy.PLAYER3;
-		default:
+		case 3:
 			return ControlledBy.PLAYER4;
+		default:
+			return ControlledBy.NEUTRAL;
 		}
 	}
 }
