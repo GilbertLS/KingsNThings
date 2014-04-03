@@ -152,7 +152,7 @@ public class Player {
 		playerRack.removeFromRack(thingID);
 	}
 
-	public Thing getThingByID(int thingID) {
+	public Thing getThingInRackByID(int thingID) {
 		return playerRack.getThing(thingID);
 	}
 	

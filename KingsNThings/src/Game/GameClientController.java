@@ -355,23 +355,27 @@ public class GameClientController {
 			movingThings.add(tv.thingRef);
 		
 		ArrayList<Thing> flyers = getFlyers(hexTile.GetThings(gv.getCurrentPlayer()));
-		int numLeft = flyers.size() - movingThings.size();
+		int numFlyersLeft = flyers.size() -  getFlyers(movingThings).size();
 		
-		int numFlyingDefend =0;	//total player flying defenders
+		int numFlyingDefend =0;	//total flipped player flying defenders
 		for(int i=0; i<gameModel.PlayerCount(); i++)
 		{
 			if(i != gv.getCurrentPlayer()){
-				numFlyingDefend += getFlyers(hexTile.GetThings(i)).size();
+				for(Thing t: getFlyers(hexTile.GetThings(i)))
+					if(t.isFlipped())
+						numFlyingDefend++;
 			}
 		}
 		
-		numFlyingDefend += getFlyers(hexTile.GetThings(4)).size();
+		for(Thing t: getFlyers(hexTile.GetThings(4)))
+			if(t.isFlipped())
+				numFlyingDefend++;
 		
 		//invalid if movement phase and player isn't alone on the tile
 		//unless all are flying and no flying enemies
 		if(gv.currentPhase == CurrentPhase.MOVEMENT
 			&& !hexTile.isOnlyCombatantPlayerOnTile(gv.getCurrentPlayer())
-			&& !(GameClient.game.areAllFlying(movingThings) && numLeft >= numFlyingDefend))
+			&& !(GameClient.game.areAllFlying(movingThings) && numFlyersLeft >= numFlyingDefend))
 				return false;
 		
 		//invalid if recruit character phase and the dragged items

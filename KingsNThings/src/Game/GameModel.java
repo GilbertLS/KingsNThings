@@ -25,7 +25,6 @@ public class GameModel {
 	private Player currPlayer;
 	private ArrayList<Thing> playingCup;					//Container to hold unplayed Things
 	private ArrayList<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
-	private Dice dice;									//Object to emulate up to 4 dice
 	private int playerCount;
 	public GameBoard gameBoard;
 	private ArrayList<Thing> movedThings = new ArrayList<Thing>();
@@ -74,9 +73,7 @@ public class GameModel {
 		
 		unownedCharacters = new ArrayList<SpecialCharacter>(GameConstants.MAX_NUM_SPECIAL_CHARACTERS);
 		playingCup = new ArrayList<Thing>(GameConstants.MAX_NUM_THINGS);
-		
-		dice = new Dice(4);
-		
+
 		boardController = new BoardController(gameBoard);
 		
 		initializePlayingCup();
@@ -161,14 +158,6 @@ public class GameModel {
 		
 	}
 	//--------------/end INITIAL SETUP METHODS-----------
-	
-	public int rollDice() {
-		return dice.rollDice();
-	}
-	
-	public int[] rollDice(int numDice){
-		return dice.rollDice(numDice);
-	}
 	
 	
 	public void setPlayerCount(int playerCount)
@@ -539,9 +528,11 @@ public class GameModel {
 		String[] initValues = s.trim().split(" ");
 		
 		if(Integer.parseInt(initValues[0]) == 0)
-			unownedCharacters.add(new SpecialCharacter("Arch Cleric", 5, GameConstants.ArchClericImageFront));
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Arch Cleric", 5, GameConstants.ArchClericImageFront)
+			.Magic(true));
 		else
-			unownedCharacters.add(new SpecialCharacter("Arch Mage", 6, GameConstants.ArchMageImageFront));
+			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Arch Mage", 6, GameConstants.ArchMageImageFront)
+			.Magic(true));
 		
 		if(Integer.parseInt(initValues[1]) == 0)
 			unownedCharacters.add(new SpecialCharacter("Assassin Primus", 4, GameConstants.AssassinPrimusImageFront));
@@ -614,6 +605,7 @@ public class GameModel {
 	}
 
 	private void initializeMagic() {
+		/* deferred for now
 		playingCup.add(new Magic("Balloon", GameConstants.BalloonImageFront));
 		playingCup.add(new Magic("Bow Magic", GameConstants.BowMagicImageFront));
 		playingCup.add(new Magic("Dispell Magic", GameConstants.DispellMagicImageFront));
@@ -624,7 +616,7 @@ public class GameModel {
 		playingCup.add(new Magic("Golem", GameConstants.GolemImageFront));
 		playingCup.add(new Magic("Lucky Charm", GameConstants.LuckyCharmImageFront));
 		playingCup.add(new Magic("Sword", GameConstants.SwordImageFront));
-		playingCup.add(new Magic("Talisman", GameConstants.TalismanImageFront));
+		playingCup.add(new Magic("Talisman", GameConstants.TalismanImageFront));*/
 	}
 
 	private void initializeTreasure() {
@@ -832,7 +824,7 @@ public class GameModel {
 		{
 			int thingID = thingIDs.get(i++);
 			
-			Thing thingPlayed = player.getThingByID(thingID);
+			Thing thingPlayed = player.getThingInRackByID(thingID);
 				
 			gameBoard.getTile(h.x, h.y).AddThingToTile(playerIndex, thingPlayed);
 		}
