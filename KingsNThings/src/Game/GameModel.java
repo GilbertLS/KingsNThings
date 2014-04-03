@@ -1264,6 +1264,9 @@ public class GameModel {
 			
 			if(!t.isControlledBy(ControlledBy.NEUTRAL))
 				hex.removeThing(t.thingID, playerFromFaction(t.getControlledBy()).GetPlayerNum());
+			else {
+				hex.removeThing(t.thingID, 4);
+			}
 		}	
 		
 		if(t.isSpecialCharacter())

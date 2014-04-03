@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
+import Game.GameConstants.Level;
 
 public class BoardController {
 	private GameBoard gameBoard;
@@ -75,28 +76,26 @@ public class BoardController {
 			return;
 		}*/
 		
+		List<Thing> removeThings = new ArrayList<Thing>(things.size());
 		
 		for (int i = 0; i < thingsToRemove.length; i++){
-			List<Thing> removeThings = new ArrayList<Thing>(things.size());
 			for (Thing thing : things){
 				if (thing.GetThingId() == thingsToRemove[i]){
 					removeThings.add(thing);
 				}
 			}
-			
-			for (Thing thing : removeThings){
-				things.remove(thing);
-				if(thing.thingType == ThingType.SETTLEMENT
-						|| thing.thingType == ThingType.FORT)	//buildings take hits
-				{
-					((Building)thing).takeHit();
-				}
-				else{
-					//everything else is eliminated
-					GameClient.game.gameModel.handleElimination(thing, h);
-				}
-			}
 		}
 		
+		for (Thing thing : removeThings){
+			if(thing.thingType == ThingType.SETTLEMENT
+					|| thing.thingType == ThingType.FORT)	//buildings take hits
+			{
+				((Building)thing).takeHit();
+			}
+			else{
+				//everything else is eliminated
+				GameClient.game.gameModel.handleElimination(thing, h);
+			}
+		}
 	}
 }

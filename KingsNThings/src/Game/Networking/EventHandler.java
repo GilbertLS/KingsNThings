@@ -169,10 +169,6 @@ public class EventHandler {
 					.EventParameters(args)
 			);
 		}
-		else if(e.eventId == EventList.TEST_EVENT)
-		{
-			GameClient.game.gameView.playerList.getChildren().get(0).setStyle("-fx-background-color: 'red'");
-		}
 		else if (e.eventId == EventList.GET_CREATURE_ROLLS){
 			int tileX = Integer.parseInt(e.eventParams[0]);
 			int tileY = Integer.parseInt(e.eventParams[1]);
@@ -276,12 +272,8 @@ public class EventHandler {
 										playersOnTile.get(1) :
 										playersOnTile.get(0);
 						
-				} else {
-					BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-					System.out.println("Enter a player to target (0,1,2,3)");
-					try {
-						targetedPlayer = Integer.parseInt(bufferRead.readLine());
-					} catch (Exception ex){}
+				} else {	
+					targetedPlayer = GameView.battleView.GetTargetPlayer();
 				}
 				
 				System.out.println("current player: " + currentPlayer.GetPlayerNum() + 
@@ -315,14 +307,6 @@ public class EventHandler {
 				
 				ArrayList<Thing> things = currTile.getCombatants(currentPlayer.GetPlayerNum());
 				
-				//System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
-				//System.out.print("Things:");
-				//for (Thing thing : things){
-					//System.out.print(thing.GetThingId() + " ");
-				//}
-				
-
-				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
 				/*should be handled by using getCombatants method above instead of getThings
@@ -336,10 +320,10 @@ public class EventHandler {
 				
 				//need to change to take into account buildings takng multiple hits
 				if (things.size() > numHitsTaken){
-						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
-						for (int i = 0; i < tilesToRemove.length; i++){
-							thingsToRemove[i] = "" + tilesToRemove[i];
-						}
+					int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
+					for (int i = 0; i < tilesToRemove.length; i++){
+						thingsToRemove[i] = "" + tilesToRemove[i];
+					}
 				} else {
 					int i = 0;
 					for (Thing t : things){

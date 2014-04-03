@@ -61,6 +61,8 @@ public class Fort extends Building implements IIncomable{
 			Ranged(false);
 			Magic(true);
 			break;
+		default:
+			break;
 		}
 	}
 

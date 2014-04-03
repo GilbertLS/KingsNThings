@@ -73,6 +73,7 @@ public class GameController {
     	//GAME START
     	System.out.println("GAME HAS BEGUN!");
     	 
+    	GameController.currentPhase = Phase.SETUP;
     	initialSetup();
     	 
     	//play game turns while game is not won
@@ -106,16 +107,16 @@ public class GameController {
 		
 		
 		
+		if(GameController.currentPhase == Phase.SETUP){ placeThingsOnTile(2, "Control_Marker"); }
 		
-		//placeThingsOnTile(2, "Control_Marker");
+		if(GameController.currentPhase == Phase.SETUP){ placeThingsOnTile(1, "Tower"); }
 		
-		//placeThingsOnTile(1, "Tower");
+		if(GameController.currentPhase == Phase.SETUP){ assignInitialThings(); }
 		
-		assignInitialThings();
+		if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
 		
-		//tradeInitialThings();
+		if(GameController.currentPhase == Phase.SETUP){ playThings(); }
 		
-		playThings();		
 	}
 	
 	private void allowTileSwap() {		
@@ -471,15 +472,16 @@ public class GameController {
 	
 	private void playPhases(){
 		boolean gameWon = false;
-		if (currentPhase == Phase.NONE) {
+		if (currentPhase == Phase.SETUP) {
     		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; 
     	}
 		
 		do
 		{
 			incrementCitadelRounds();
-			
-			distributeIncome();
+			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) {
+				distributeIncome();
+			}
 			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
 				if (changedPhase) { changedPhase = false; }
@@ -492,7 +494,7 @@ public class GameController {
 				tradeThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
-
+			
 			if (currentPhase == Phase.PLAY_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				playThings();
