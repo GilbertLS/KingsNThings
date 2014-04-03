@@ -135,12 +135,12 @@ public class EventHandler {
 			int x = Integer.parseInt(e.eventParams[0]);
 			int y = Integer.parseInt(e.eventParams[1]);
 			boolean fortHit = Boolean.parseBoolean(e.eventParams[2]);
-			boolean specialIncomeHit = Boolean.parseBoolean(e.eventParams[3]);
-			boolean settlementHit = Boolean.parseBoolean(e.eventParams[4]);
+			boolean settlementHit = Boolean.parseBoolean(e.eventParams[3]);
+			boolean specialIncomeHit = Boolean.parseBoolean(e.eventParams[4]);
 			
 			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
 			
-			GameClient.game.gameModel.handlePostBattle(h, fortHit, specialIncomeHit, settlementHit);
+			GameClient.game.gameModel.handlePostBattle(h, fortHit, settlementHit, specialIncomeHit);
 			GameView.battleView.UpdateMessage("Battle is over");
 			
 			Platform.runLater(new Runnable() {
