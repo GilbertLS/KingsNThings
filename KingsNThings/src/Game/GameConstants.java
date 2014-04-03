@@ -300,7 +300,7 @@ public final class GameConstants {
 	public static final int MAX_NUM_SPECIAL_INCOME_PER_HEX = 1;
 	
 	//HexTile type counts
-	public static final int NUM_SEA_TILES = 20;
+	public static final int NUM_SEA_TILES = 8;
 	public static final int NUM_JUNGLE_TILES = 6;
 	public static final int NUM_FROZEN_WASTE_TILES = 6;
 	public static final int NUM_FOREST_TILES = 6;

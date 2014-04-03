@@ -19,6 +19,8 @@ public class SpecialIncome extends Thing implements IIncomable {
 		
 		this.income = income;
 		this.terrain = terrain;
+		
+		isFlipped = false;
 	}
 	
 	public int getIncome()

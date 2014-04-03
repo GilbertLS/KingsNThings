@@ -59,7 +59,6 @@ public class GameModel {
 		return playerCount;
 	}
 	
-	//-----------INITIAL SETUP METHODS--------------------
 	public GameModel()
 	{
 		gameBoard = new GameBoard();
@@ -157,8 +156,7 @@ public class GameModel {
 		System.out.println("Player 4 Player order: " + player4.getPlayerOrder());
 		
 	}
-	//--------------/end INITIAL SETUP METHODS-----------
-	
+
 	
 	public void setPlayerCount(int playerCount)
 	{
@@ -649,7 +647,8 @@ public class GameModel {
 		{
 			playingCup.add(new Settlement("Village", 1, GameConstants.VillageImageFront, GameConstants.VillageImageBack, SettlementType.VILLAGE));
 		}
-			
+
+		
 		playingCup.add(new SpecialIncome(Terrain.MOUNTAIN, "Copper Mine", GameConstants.CopperMineImageFront, 1));
 		playingCup.add(new SpecialIncome(Terrain.MOUNTAIN, "Silver Mine", GameConstants.SilverMineImageFront, 2));
 		playingCup.add(new SpecialIncome(Terrain.MOUNTAIN, "Gold Mine", GameConstants.GoldMineImageFront, 3));
