@@ -371,29 +371,27 @@ public class GameView extends Scene {
 	    return "Tuile_Back.png";
 	}
 	
-	public void EndBattle(){
-		if (GameView.BattleOccuring()){
-			for(int i = 0; i < 3; i++) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {}
-			}
-			
+	public void PreEndBattle() {
+		if (GameView.BattleOccuring()) {
 			HexTile hexTile = GameClient.game.gameModel.boardController.GetTile(
 				GameView.battleView.tileX, 
 				GameView.battleView.tileY
 			);
-			
+				
 			final Tile tileView = GameClient.game.gameView.board.getTileByHex(hexTile);
-			
 			Platform.runLater(new Runnable(){
 				public void run(){
 					tileView.updateThings();
 					tileView.update();
-					self.primaryStage.setScene(self);
-					GameView.battleView = null;
 				}
 			});
+		}
+	}
+	 
+	public void EndBattle(){
+		if (GameView.BattleOccuring()){
+			self.primaryStage.setScene(self);
+			GameView.battleView = null;
 		}
 	}
 

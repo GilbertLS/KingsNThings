@@ -14,6 +14,8 @@ public class Creature extends Combatant{
 	
 	public static int creatureNum = 0;
 	
+	public Terrain GetTerrain() { return terrain; }
+	
 	public Creature(Terrain terrian)
 	{
 		super(ThingType.CREATURE, "creature"+creatureNum++, (int)Math.ceil(Math.random()*6), GameConstants.PlaceHolderImageFront);
