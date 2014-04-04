@@ -167,7 +167,7 @@ public class GameClientController {
 		HexTile h = gameModel.gameBoard.getTile(x, y);
 		ArrayList<Thing> things = gameModel.getThingsFromCup(roll);
 		
-		//eliminate invalid defense creatrues
+		//eliminate invalid defense creatures
 		things = h.enforceValidDefense(things);
 		
 		for(Thing t: things)	//defending things aren't flipped
@@ -560,5 +560,17 @@ public class GameClientController {
 		}
 		
 		return h;
+	}
+
+	public void stealGold(int thiefPlayerIndex, int victimPlayerIndex) {
+		gameModel.stealGold(thiefPlayerIndex, victimPlayerIndex);
+		gameView.updateGold(gameModel.GetPlayer(thiefPlayerIndex).getGold(), thiefPlayerIndex);
+		gameView.updateGold(gameModel.GetPlayer(victimPlayerIndex).getGold(), victimPlayerIndex);
+	}
+
+	public void stealRecruit(int thiefPlayerIndex, int victimPlayerIndex) {
+		gameModel.stealRecruit(thiefPlayerIndex, victimPlayerIndex);
+		this.updatePlayerRack(thiefPlayerIndex);
+		this.updatePlayerRack(victimPlayerIndex);
 	}
 }

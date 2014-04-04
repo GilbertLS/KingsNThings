@@ -113,14 +113,14 @@ public class GameController {
 		
 		if(GameController.currentPhase == Phase.SETUP){ assignInitialThings(); }
 		
-		if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
+		//if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
 		
 		if(GameController.currentPhase == Phase.SETUP){ playThings(); }
 		
 	}
 	
 	private void allowTileSwap() {		
-		Response[] responses = GameControllerEventHandler.sendEvent(
+		GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId(EventList.CHECK_TILE_SWAP)
 					.ExpectsResponse(true)
@@ -491,7 +491,7 @@ public class GameController {
 			if (currentPhase == Phase.RECRUIT_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				recruitThings();
-				tradeThings();
+				//tradeThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
 			
@@ -505,7 +505,7 @@ public class GameController {
 			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
-				moveThings();
+				//moveThings();
 				if (!changedPhase) { currentPhase = Phase.BATTLE; }
 			}
 			if (currentPhase == Phase.BATTLE) {
@@ -530,12 +530,56 @@ public class GameController {
 	}
 	
 	private void performSpecialPowersPhase() {
-		for(GameRouter gr: GameServer.servers){
-			GameControllerEventHandler.sendEvent(
-					new Event()
-						.EventId( EventList.PERFORM_SPECIAL_POWERS)
-						.EventParameter(""+gr.myID)
-				);	
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.PERFORM_SPECIAL_POWERS)
+					.ExpectsResponse(true)
+			);	
+		
+		//for each player, if they have used a special power,
+		//send the appropriate update event
+		for(Response r: responses){
+			//split to individual updates
+			String[] updates = r.message.split(" ");
+			
+			//send event for each update
+			for(String s: updates){
+				String[] params = s.split("~");
+				
+				switch(params[0]){
+				//handle Master Thief
+				case "thief":
+					int thiefPlayerIndex = Integer.parseInt(params[1]);
+					int victimPlayerIndex = -1;
+					
+					switch (params[3]){
+					case "gold":	
+						victimPlayerIndex = Integer.parseInt(params[2]);
+						GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId(EventList.STEAL_GOLD)
+									.EventParameters(new String[]{"" + thiefPlayerIndex, "" + victimPlayerIndex})
+							);	
+						break;
+					case "recruit":
+						victimPlayerIndex = Integer.parseInt(params[2]);
+						GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId(EventList.STEAL_RECRUIT)
+									.EventParameters(new String[]{"" + thiefPlayerIndex, "" + victimPlayerIndex})
+							);	
+						break;
+					case "eliminate":
+						int thingID = Integer.parseInt(params[4]);
+						GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId(EventList.ELIMINATE_THING_BY_ID)
+									.EventParameters(new String[]{"" + thiefPlayerIndex, "" + thingID})
+							);	
+						break;
+					}
+				}
+			}
 		}
 	}
 

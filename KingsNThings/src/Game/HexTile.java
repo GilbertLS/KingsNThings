@@ -288,7 +288,8 @@ public class HexTile implements IIncomable{
 		thingsToCheck.remove(thingToRemove);
 	}
 
-	public Thing getThingFromTileByID(Integer id, int playerIndex) {
+	private Thing getThingFromTileByID(Integer id, int playerIndex) {
+		
 		ArrayList<Thing> thingsToCheck = GetThings(playerIndex);
 
 		for(Thing t: thingsToCheck)

@@ -923,16 +923,20 @@ public class EventHandler {
 			GameClient.game.gameModel.incrementCitadelRounds();
 		}
 		else if(e.eventId == EventList.PERFORM_SPECIAL_POWERS){
-			int playerIndex = Integer.parseInt(e.eventParams[0]);
-
-			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
-			{
-				GameClient.game.gameModel.checkForSpecialPowers();
-			}
-			else
-			{
-				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "perform Special Powers");
-			}
+			
+			GameClient.game.sendMessageToView("Performing Special Powers");
+			ArrayList<String> eventParams = GameClient.game.gameModel.checkForSpecialPowers(GameClient.game.gameModel.getCurrPlayerNumber());
+			
+			String params = "";
+			for(String s: eventParams)
+				params += s+" ";
+			
+			//send finished
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.PERFORM_SPECIAL_POWERS)
+						.EventParameter(params)
+			);
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
@@ -1122,8 +1126,27 @@ public class EventHandler {
 			tile.AddThingToTile(playerNum, creature);
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings();
 			
-		} 	
-		
+		} 
+		else if(e.eventId == EventList.ELIMINATE_THING_BY_ID){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			int thingID = Integer.parseInt(e.eventParams[1]);
+			
+			HexTile h = GameClient.game.gameModel.handleElimination(thingID, playerIndex);
+			
+			GameClient.game.gameView.board.getTileByHex(h).updateThings(playerIndex);
+		}
+		else if(e.eventId == EventList.STEAL_GOLD){
+			int thiefPlayerIndex = Integer.parseInt(e.eventParams[0]);
+			int victimPlayerIndex = Integer.parseInt(e.eventParams[1]);
+			
+			GameClient.game.stealGold(thiefPlayerIndex, victimPlayerIndex);
+		}
+		else if(e.eventId == EventList.STEAL_RECRUIT){
+			int thiefPlayerIndex = Integer.parseInt(e.eventParams[0]);
+			int victimPlayerIndex = Integer.parseInt(e.eventParams[1]);
+			
+			GameClient.game.stealRecruit(thiefPlayerIndex, victimPlayerIndex);
+		}
 		if (e.expectsResponseEvent && numberOfSends == 0){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
 		} else if (!e.expectsResponseEvent && numberOfSends != 0){

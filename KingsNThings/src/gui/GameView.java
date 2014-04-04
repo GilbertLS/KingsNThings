@@ -173,6 +173,30 @@ public class GameView extends Scene {
 		return num;
 	}
 	
+	public String performUserFeedback(String feedback){
+		return performPhaseWithUserFeedback(CurrentPhase.USER_FEEDBACK, feedback);
+	}
+	
+	public String performPhaseWithUserFeedback(CurrentPhase currentPhase, final String feedback){
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	displayMessage(feedback);
+	        }
+		});
+		
+		String ret = performPhase(currentPhase);
+		
+		Platform.runLater(new Runnable() {
+	        @Override
+	        public void run() {
+	        	clearMessage();
+	        }
+		});
+	        	
+		return ret;
+	}
+	
 	public String performPhase(CurrentPhase currentPhase){
 		//pass and set phase, update controls accordingly, exit when "Done" is pressed
 		this.currentPhase = currentPhase;
