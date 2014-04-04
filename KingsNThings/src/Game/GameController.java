@@ -500,6 +500,9 @@ public class GameController {
 				playThings();
 				if (!changedPhase) { currentPhase = Phase.MOVE_THINGS; }
 			}
+			
+			//randomEventsPhase();
+			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				moveThings();
@@ -508,21 +511,34 @@ public class GameController {
 			if (currentPhase == Phase.BATTLE) {
 				if (changedPhase) { changedPhase = false; }
 				PlayBattlePhase();
+				gameWon = checkWin();
 				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
 			}
-			gameWon = checkWin();
+
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
 				playConstructionPhase();
+				gameWon = checkWin();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
-			gameWon = checkWin();
+			
+			performSpecialPowersPhase();
 		
 			ChangePlayerOrder();
 		
 		} while(!gameEnded);
 	}
 	
+	private void performSpecialPowersPhase() {
+		for(GameRouter gr: GameServer.servers){
+			GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId( EventList.PERFORM_SPECIAL_POWERS)
+						.EventParameter(""+gr.myID)
+				);	
+		}
+	}
+
 	private void incrementCitadelRounds() {
 		GameControllerEventHandler.sendEvent(
 				new Event()
