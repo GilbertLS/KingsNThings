@@ -6,6 +6,7 @@ import gui.MenuView;
 
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.Semaphore;
 
 import org.controlsfx.dialog.Dialogs;
 
@@ -156,10 +157,13 @@ public class PrimaryClient extends Application {
     }
     
     private static void HostGame() throws Exception {
-    	GameServer server = new GameServer();
+    	Semaphore waitForGameSetup = new Semaphore(0);
+    	GameServer server = new GameServer(waitForGameSetup);
     	Thread thread = new Thread(server);
     	thread.start();
-    	Thread.sleep(2000);
+    	
+    	waitForGameSetup.acquire();
+    	
     	GameClient client = new GameClient(gameView);
     	client.ConnectToHost(server.address.getHostName());
     }
