@@ -1540,4 +1540,11 @@ public class GameModel {
 		player3.incrementCitadels();
 		player4.incrementCitadels();
 	}
+
+	public void checkForSpecialPowers() {
+		player1.performSpecialPowers();
+		player2.performSpecialPowers();
+		player3.performSpecialPowers();
+		player4.performSpecialPowers();
+	}
 }

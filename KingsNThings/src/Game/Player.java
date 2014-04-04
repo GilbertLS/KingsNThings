@@ -301,4 +301,10 @@ public class Player {
 	public void removeSettlement(Settlement t) {
 		ownedSettlements.remove(t);
 	}
+
+	public void performSpecialPowers() {
+		for(SpecialCharacter sc: specialCharacters)
+			if(sc.name.equals("Master Theif"))
+				sc.performSpecialPower();
+	}
 }

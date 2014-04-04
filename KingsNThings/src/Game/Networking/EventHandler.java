@@ -830,7 +830,6 @@ public class EventHandler {
 				GameClient.game.gameModel.removeFromPlayerRack(thingIDs, playerIndex);
 				
 				final ArrayList<HexTile> hexTilesCopy = GameClient.game.parseToUniqueHexTiles(hexTiles);
-				final ArrayList<Integer> thingIDsCopy = thingIDs;
 				final int gold = GameClient.game.gameModel.GetPlayer(playerIndex).getGold();
 				final int numThings = GameClient.game.gameModel.GetPlayer(playerIndex).getPlayerRack().size();
 				Platform.runLater(new Runnable() {
@@ -932,6 +931,18 @@ public class EventHandler {
 		else if(e.eventId == EventList.INCREMENT_CITADEL_ROUNDS)
 		{
 			GameClient.game.gameModel.incrementCitadelRounds();
+		}
+		else if(e.eventId == EventList.PERFORM_SPECIAL_POWERS){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
+				GameClient.game.gameModel.checkForSpecialPowers();
+			}
+			else
+			{
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "perform Special Powers");
+			}
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{

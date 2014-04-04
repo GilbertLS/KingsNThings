@@ -16,7 +16,7 @@ public final class GameConstants {
 		INITIAL_TRADE_THINGS,
 		TRADE_THINGS, 
 		AWARD_INCOME, 
-		SWAP_INITIAL_HEXES
+		SWAP_INITIAL_HEXES, SELECT_TARGET_PLAYER, CHOOSE_THEIF_ACTION
 	}
 
 	//The different types of possible terrain in the game

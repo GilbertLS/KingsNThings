@@ -450,6 +450,5 @@ public class GameView extends Scene {
 	public void changeHexes(ArrayList<HexTile> hexes) {
 		for(HexTile h: hexes)
 			changeHex(h);
-	}
-	
+	}	
 }
