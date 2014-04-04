@@ -373,7 +373,7 @@ public class Tile extends Region implements Draggable {
 											t.setMovementFinished();
 										
 										//handle creatures
-										if (GameClient.game.rollForCreatures(gv.getCurrentPlayer(), tileRef.x, tileRef.y)){
+										if (GameClient.game.rollForCreatures(GameClient.game.gameModel.GetCurrentPlayer(), tileRef.x, tileRef.y)){
 											gv.updateTiles(tileRef, 4);
 											
 											//if not run later, drag drop breaks

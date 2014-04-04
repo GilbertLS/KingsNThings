@@ -134,10 +134,13 @@ public class EventHandler {
 		} else if (e.eventId == EventList.BATTLE_OVER){
 			int x = Integer.parseInt(e.eventParams[0]);
 			int y = Integer.parseInt(e.eventParams[1]);
+			boolean fortHit = Boolean.parseBoolean(e.eventParams[2]);
+			boolean settlementHit = Boolean.parseBoolean(e.eventParams[3]);
+			boolean specialIncomeHit = Boolean.parseBoolean(e.eventParams[4]);
 			
 			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
 			
-			GameClient.game.gameModel.handlePostBattle(h);
+			GameClient.game.gameModel.handlePostBattle(h, fortHit, settlementHit, specialIncomeHit);
 			GameView.battleView.UpdateMessage("Battle is over");
 			
 			Platform.runLater(new Runnable() {
@@ -151,6 +154,23 @@ public class EventHandler {
 			while(GameView.BattleOccuring()){
 				Thread.sleep(1000);
 			}
+		} else if (e.eventId == EventList.GET_POST_BATTLE_BUILDING_ELIMINATIONS){
+			int x = Integer.parseInt(e.eventParams[0]);
+			int y = Integer.parseInt(e.eventParams[1]);
+			
+			final HexTile h = GameClient.game.gameModel.boardController.GetTile(x, y);
+			
+			boolean[] buldingsEliminated = h.getBuildingEliminations();
+			
+			String params = new String();
+			for(boolean b: buldingsEliminated)
+				params += Boolean.toString(b) + "~";
+			
+			EventHandler.SendEvent(
+					new Event()
+						.EventId( EventList.GET_POST_BATTLE_BUILDING_ELIMINATIONS )
+						.EventParameter(params)
+				);
 		}
 		else if(e.eventId == EventList.GET_CONTESTED_ZONES)
 		{
@@ -168,10 +188,6 @@ public class EventHandler {
 					.EventId( EventList.GET_CONTESTED_ZONES )
 					.EventParameters(args)
 			);
-		}
-		else if(e.eventId == EventList.TEST_EVENT)
-		{
-			GameClient.game.gameView.playerList.getChildren().get(0).setStyle("-fx-background-color: 'red'");
 		}
 		else if (e.eventId == EventList.GET_CREATURE_ROLLS){
 			int tileX = Integer.parseInt(e.eventParams[0]);
@@ -276,12 +292,8 @@ public class EventHandler {
 										playersOnTile.get(1) :
 										playersOnTile.get(0);
 						
-				} else {
-					BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-					System.out.println("Enter a player to target (0,1,2,3)");
-					try {
-						targetedPlayer = Integer.parseInt(bufferRead.readLine());
-					} catch (Exception ex){}
+				} else {	
+					targetedPlayer = GameView.battleView.GetTargetPlayer();
 				}
 				
 				System.out.println("current player: " + currentPlayer.GetPlayerNum() + 
@@ -315,14 +327,6 @@ public class EventHandler {
 				
 				ArrayList<Thing> things = currTile.getCombatants(currentPlayer.GetPlayerNum());
 				
-				//System.out.println("Choose " + numHitsTaken + " thing(s) to remove:");
-				//System.out.print("Things:");
-				//for (Thing thing : things){
-					//System.out.print(thing.GetThingId() + " ");
-				//}
-				
-
-				
 				int numHitsToApply = things.size() > numHitsTaken ? numHitsTaken : things.size();
 				
 				/*should be handled by using getCombatants method above instead of getThings
@@ -334,11 +338,12 @@ public class EventHandler {
 				
 				String[] thingsToRemove = new String[numHitsToApply];
 				
+				//need to change to take into account buildings takng multiple hits
 				if (things.size() > numHitsTaken){
-						int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
-						for (int i = 0; i < tilesToRemove.length; i++){
-							thingsToRemove[i] = "" + tilesToRemove[i];
-						}
+					int[] tilesToRemove = GameView.battleView.inflictHits(numHitsTaken);
+					for (int i = 0; i < tilesToRemove.length; i++){
+						thingsToRemove[i] = "" + tilesToRemove[i];
+					}
 				} else {
 					int i = 0;
 					for (Thing t : things){
@@ -637,7 +642,7 @@ public class EventHandler {
 				
 				if(pieceBeingPlacedString.equals("Control Marker"))
 				{
-					GameClient.game.gameModel.claimNewTile(playerIndex, x, y);
+					GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetCurrentPlayer(), x, y);
 				}
 				else if(pieceBeingPlacedString.equals("Tower"))
 				{
@@ -685,7 +690,7 @@ public class EventHandler {
 			HexTile h = null;
 			if(pieceBeingPlaced.equals("Control_Marker"))
 			{
-				h = GameClient.game.gameModel.claimNewTile(playerIndex, x, y);
+				h = GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.playerFromIndex(playerIndex), x, y);
 			}
 			else if(pieceBeingPlaced.equals("Tower"))
 			{
@@ -1082,7 +1087,8 @@ public class EventHandler {
 			
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x,y);
 			
-			tile.removeThing(thingId, playerId);
+			Thing thing = tile.getThingFromTileByID(thingId);
+			GameClient.game.gameModel.handleElimination(thing, tile);
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
 		} else if (e.eventId == EventList.ADD_THING){
 			int x = Integer.parseInt(e.eventParams[0]);

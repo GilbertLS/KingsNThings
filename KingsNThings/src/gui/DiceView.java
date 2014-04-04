@@ -1,11 +1,10 @@
 package gui;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
+import Game.Dice;
 import Game.Utility;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
@@ -41,7 +40,7 @@ public class DiceView extends Region {
 	
 	
 	private void UpdateDice(){
-		if (roll != 0) {
+		if (roll >= 1 && roll <= 6) {
 			setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
 			isEnabled = false;
 			Utility.GotInput(inputLock);
@@ -66,7 +65,7 @@ public class DiceView extends Region {
 	        @Override
 	        public void handle(MouseEvent e) {
 	        	if (e.getButton() == MouseButton.PRIMARY && thisDice.isEnabled){
-	        		roll = GameClient.game.gameModel.rollDice();
+	        		roll = Dice.rollDice(1)[0];
 	        		UpdateDice();
 	        	} else if (e.getButton() == MouseButton.SECONDARY && thisDice.isEnabled) {
 	        		System.out.println("Input roll: ");
@@ -75,9 +74,8 @@ public class DiceView extends Region {
 	        		try {
 						String line = buffer.readLine();
 						roll = Integer.parseInt(line);
-						buffer.close();
 					} catch (Exception e1) {
-						System.out.println("error");
+						e1.printStackTrace();
 						roll = 0;
 					}
 	        		

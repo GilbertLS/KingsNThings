@@ -389,7 +389,7 @@ public class GameView extends Scene {
 		updateTiles(hexTileList, playerIndex);
 	}
 	
-	public void endRecruitSpecialCharacter()
+	public void endRecruitSpecialCharacter(final boolean diceRolled)
 	{
 		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
 		{
@@ -402,6 +402,11 @@ public class GameView extends Scene {
 						Utility.GotInput(inputLock);
 							
 						userInputDone = true;
+						
+						if(diceRolled && !characterRecruited)
+							Utility.GotInput(recruitLock);
+						
+						
 					}
 				}
 			});

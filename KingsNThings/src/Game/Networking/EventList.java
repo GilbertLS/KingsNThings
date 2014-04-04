@@ -66,4 +66,5 @@ public class EventList {
 	public static final int HANDLE_TILE_SWAP = 140;
 	public static final int ELIMINATE_SEA_HEX_THINGS = 141;
 	public static final int INCREMENT_CITADEL_ROUNDS = 142;
+	public static final int GET_POST_BATTLE_BUILDING_ELIMINATIONS = 143;
 }

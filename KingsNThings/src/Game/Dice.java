@@ -2,7 +2,7 @@ package Game;
 
 public class Dice {
 	//individual die values
-	private static int[] dieValues;
+	private static int[] dieValues = new int[4];
 	//private List<DiceView> diceViews;
 	
 	public Dice(int numDice) {

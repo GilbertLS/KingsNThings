@@ -33,4 +33,15 @@ public abstract class Building extends Combatant {
 		neutralized = true;
 		isFlipped = true;
 	}
+
+	public void takeHit() {
+		hits++;
+		
+		if(hits >= combatValue)
+			neutralize();
+	}
+
+	public boolean isNeutralized() {
+		return neutralized;
+	}
 }

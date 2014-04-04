@@ -127,28 +127,28 @@ public class GameClientController {
 		});
 	}
 
-	public boolean rollForCreatures(int playerIndex, int x, int y) {
+	public boolean rollForCreatures(Player player, int x, int y) {
 		int[] roll = Dice.rollDice(1);
 		
 		boolean defendingCreatures = false;
 		if(roll[0] != 1 && roll[0] != 6)
 		{
 			createDefenseCreatures(roll[0], x, y);
-			sendCreateDefenseCreaturesEvent(playerIndex, roll[0], x, y);
+			sendCreateDefenseCreaturesEvent(player, roll[0], x, y);
 			
 			defendingCreatures = true;
 		}
 		else
 		{
-			gameModel.claimNewTile(playerIndex, x, y);
+			gameModel.claimNewTile(player, x, y);
 		}
 
 		
 		return defendingCreatures;
 	}
 
-	private void sendCreateDefenseCreaturesEvent(int playerIndex, int roll, int x, int y) {
-		String[] args = {""+ playerIndex, ""+ roll, ""+x, ""+y};
+	private void sendCreateDefenseCreaturesEvent(Player player, int roll, int x, int y) {
+		String[] args = {""+ player.GetPlayerNum(), ""+ roll, ""+x, ""+y};
 		
 		boolean[] intendedPlayers = new boolean[GameClient.game.gameModel.PlayerCount()];
 		for(int i=0; i<intendedPlayers.length; i++)
@@ -355,23 +355,27 @@ public class GameClientController {
 			movingThings.add(tv.thingRef);
 		
 		ArrayList<Thing> flyers = getFlyers(hexTile.GetThings(gv.getCurrentPlayer()));
-		int numLeft = flyers.size() - movingThings.size();
+		int numFlyersLeft = flyers.size() -  getFlyers(movingThings).size();
 		
-		int numFlyingDefend =0;	//total player flying defenders
+		int numFlyingDefend =0;	//total flipped player flying defenders
 		for(int i=0; i<gameModel.PlayerCount(); i++)
 		{
 			if(i != gv.getCurrentPlayer()){
-				numFlyingDefend += getFlyers(hexTile.GetThings(i)).size();
+				for(Thing t: getFlyers(hexTile.GetThings(i)))
+					if(t.isFlipped())
+						numFlyingDefend++;
 			}
 		}
 		
-		numFlyingDefend += getFlyers(hexTile.GetThings(4)).size();
+		for(Thing t: getFlyers(hexTile.GetThings(4)))
+			if(t.isFlipped())
+				numFlyingDefend++;
 		
 		//invalid if movement phase and player isn't alone on the tile
 		//unless all are flying and no flying enemies
 		if(gv.currentPhase == CurrentPhase.MOVEMENT
 			&& !hexTile.isOnlyCombatantPlayerOnTile(gv.getCurrentPlayer())
-			&& !(GameClient.game.areAllFlying(movingThings) && numLeft >= numFlyingDefend))
+			&& !(GameClient.game.areAllFlying(movingThings) && numFlyersLeft >= numFlyingDefend))
 				return false;
 		
 		//invalid if recruit character phase and the dragged items
@@ -388,8 +392,9 @@ public class GameClientController {
 		ArrayList<Thing> flyers = new ArrayList<Thing>();
 		
 		for(Thing t: things){
-			if(((Combatant)t).isFlying);
-			flyers.add(t);
+			if(t.IsCombatant())
+				if(((Combatant)t).isFlying);
+					flyers.add(t);
 		}
 		
 		return flyers;
