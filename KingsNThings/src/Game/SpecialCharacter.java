@@ -14,6 +14,13 @@ public class SpecialCharacter extends Combatant implements IIncomable{
 		isFlipped = false;
 	}
 	
+	public SpecialCharacter(ThingType thingType, String name, int combatValue, String frontFileName)
+	{
+		super(ThingType.TERRAIN_LORD, name, combatValue, frontFileName);
+		
+		isFlipped = false;
+	}
+	
 	public SpecialCharacter IsFlying(boolean isFlying){
 		super.isFlying = isFlying;
 		return this;

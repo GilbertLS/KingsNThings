@@ -12,6 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import Game.BoardController;
 import Game.Combatant;
 import Game.Creature;
 import Game.GameConstants;
@@ -147,7 +148,16 @@ public class EventHandler {
 		        @Override
 		        public void run() {
 		        	GameClient.game.gameView.updateHexTile(h);
-					GameClient.game.gameView.EndBattle();
+					GameClient.game.gameView.PreEndBattle();
+		        }
+		    });
+			
+			Thread.sleep(2000);
+			
+			Platform.runLater(new Runnable() {
+		        @Override
+		        public void run() {
+		        	GameClient.game.gameView.EndBattle();
 		        }
 		    });
 			
@@ -1111,7 +1121,32 @@ public class EventHandler {
 			tile.AddThingToTile(playerNum, creature);
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings();
 			
-		} 	
+		} else if (e.eventId == EventList.REMOVE_BLUFFS) {
+			int tileX = Integer.parseInt(e.eventParams[0]);
+			int tileY = Integer.parseInt(e.eventParams[1]);
+			
+			for(int playerNum = 0; playerNum < GameClient.game.gameModel.PlayerCount(); playerNum++) {
+				BoardController boardController = GameClient.game.gameModel.boardController;
+				ArrayList<Thing> bluffs = boardController.GetBluffs(tileX, tileY, playerNum);
+				Player player = GameClient.game.gameModel.GetPlayer(playerNum);
+				
+				int[] removeThings = new int[bluffs.size()];
+				for(int i = 0; i < bluffs.size(); i++) {
+					removeThings[i] = bluffs.get(i).thingID;
+				}
+				
+				boardController.RemoveThings(removeThings, player, tileX, tileY);
+				GameView.battleView.RemoveThings(removeThings, playerNum);
+			}
+			
+			boolean battleOver = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size() <= 1;
+			
+			if ( battleOver ){
+				EventHandler.SendEvent(new Event().EventId(EventList.REMOVE_BLUFFS));
+			} else {
+				SendNullEvent();
+			}
+		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
