@@ -32,8 +32,8 @@ public class EscapeMenu extends Dialog {
 	
 	private EditStateWindow editWindow;
 
-	public EscapeMenu() {
-		super(null, "Menu");
+	public EscapeMenu(GameView g) {
+		super(g, "Menu", true, false);
 		stackPane = new StackPane();		
 		this.setContent(stackPane);
 		
