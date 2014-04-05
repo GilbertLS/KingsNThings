@@ -62,6 +62,9 @@ public class EventList {
 	public static final int REMOVE_THING = 201;
 	public static final int ADD_THING = 202;
 	public static final int REMOVE_BLUFFS = 203;
+	public static final int GET_NEUTRAL_HITS = 204;
+	public static final int GET_NEUTRAL_THINGS_REMOVED = 205;
+	public static final int GET_NUMBER_NEUTRAL_CREATURES = 206;
 	public static final int BRIBE_CREATURES = 138;
 	public static final int CHECK_TILE_SWAP = 139;
 	public static final int HANDLE_TILE_SWAP = 140;
@@ -69,4 +72,5 @@ public class EventList {
 	public static final int INCREMENT_CITADEL_ROUNDS = 142;
 	public static final int GET_POST_BATTLE_BUILDING_ELIMINATIONS = 143;
 	public static final int PERFORM_SPECIAL_POWERS = 144;
+	
 }

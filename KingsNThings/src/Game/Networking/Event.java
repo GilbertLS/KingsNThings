@@ -16,7 +16,12 @@ public class Event {
 	}
 	
 	public Event EventParameters(String[] eventParams){
-		this.eventParams = eventParams;
+		String[] copy = new String[eventParams.length];
+		for(int i = 0; i < eventParams.length; i++) {
+			copy[i] = eventParams[i];
+		}
+		
+		this.eventParams = copy;
 		return this;
 	}
 	

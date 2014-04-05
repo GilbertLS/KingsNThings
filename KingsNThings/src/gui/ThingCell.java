@@ -50,6 +50,10 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 						System.out.println((Creature)thing);
 					}
 				}*/
+				for (Thing thing : GameView.selectedThings) {
+					System.out.print(thing.thingID + " ");
+				}
+				System.out.println();
 			}
 		});
 		

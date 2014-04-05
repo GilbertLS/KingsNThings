@@ -59,18 +59,23 @@ public class BoardController {
 	
 	public List<Integer> PlayersOnTile(int tileX, int tileY){
 		List<Integer> playersOnTile = new ArrayList<Integer>();
-		if (!gameBoard.getTile(tileX, tileY).player1Things.isEmpty()) { playersOnTile.add(0); }
-		if (!gameBoard.getTile(tileX, tileY).player2Things.isEmpty()) { playersOnTile.add(1); }
-		if (!gameBoard.getTile(tileX, tileY).player3Things.isEmpty()) { playersOnTile.add(2); }
-		if (!gameBoard.getTile(tileX, tileY).player4Things.isEmpty()) { playersOnTile.add(3); }
+		HexTile tile = gameBoard.getTile(tileX, tileY);
+		
+		for(int i = 0; i < GameClient.game.gameModel.PlayerCount(); i++) {
+			ArrayList<Thing> combatants = tile.getCombatants(i);
+			if (Utility.NumberCombatants(combatants) > 0) { playersOnTile.add(i); }
+		}
+		
+		ArrayList<Thing> combatants = tile.getCombatants(4);
+		if (Utility.NumberCombatants(combatants) > 0) { playersOnTile.add(4); }
 		
 		return playersOnTile;
 	}
 	
-	public void RemoveThings(int[] thingsToRemove, Player player, int tileX, int tileY){
+	public void RemoveThings(int[] thingsToRemove, int player, int tileX, int tileY){
 		
 		HexTile h = gameBoard.getTile(tileX, tileY);
-		ArrayList<Thing> things = h.getCombatants(player.GetPlayerNum());
+		ArrayList<Thing> things = h.getCombatants(player);
 		
 		/* removing this for visibility reasons
 		if (thingsToRemove.length > things.size()){

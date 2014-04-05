@@ -22,6 +22,7 @@ public class GameControllerEventHandler {
 		
 		if (e.expectsResponseEvent) {
 			waitingEvent = new Event().EventId(e.eventId);
+			waitingEvents = new ArrayList<Response>();
 		}
 		
 		Response[] responses = new Response[numResponses];
@@ -44,18 +45,34 @@ public class GameControllerEventHandler {
 			int i = 0;
 			
 			for (Response reply : waitingEvents) {
-				responses[i++] = reply;
+				if (i >= numResponses) {
+					System.out.println("ERROR ------- NumExpected: " + numResponses + " NumActual: " + i);
+					System.out.print("ERROR ------- Responses intended for event: " + waitingEvent.eventId 
+							+ " but got for event(s) ");
+					for(Response r : responses) {
+						System.out.print(r.eventId + " ");
+					}
+					System.out.println();
+
+				} else {
+					responses[i++] = reply;
+				}
 			}
 			
+			int waitingEventId = waitingEvent.eventId;
 			waitingEvents = new ArrayList<Response>();
 			waitingEvent = null;
 		
 			
 			for (int j = 0; j < responses.length; j++){
-				System.out.println("Response from player " 
+				System.out.print("Response from player " 
 									+ responses[j].fromPlayer
-									+ " event: " + responses[j].eventId + " message: "
-									+ responses[j].message);
+									+ " event: " + waitingEventId);
+				if (responses[j].IsNullEvent()) {
+					System.out.println(" returned NULL EVENT");
+				} else {
+					System.out.println(" message: " + responses[j].message);
+				}
 			}
 		} 
 		
