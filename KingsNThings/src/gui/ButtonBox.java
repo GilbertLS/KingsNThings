@@ -17,6 +17,8 @@ public class ButtonBox extends HBox {
 	Button showHideTiles = new Button("Show Tiles");
 	Button recruitSpecial = new Button("Recruit Special Character");
 	Button userInputComplete = new Button("Done Phase");
+	Button stealGold = new Button("Steal Gold");
+	Button stealRecruit = new Button("Steal Recruit");
 	Button trade = new Button("Trade");
 	ArrayList<Button> buttons;
 	
@@ -117,6 +119,28 @@ public class ButtonBox extends HBox {
 				}
 			}
 		});
+		
+		stealGold.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+		    public void handle(ActionEvent e) {
+				GameView gv = GameClient.game.gameView;
+				
+				gv.returnString = "gold";
+				Utility.GotInput(gv.inputLock);
+			}
+		});
+		
+		stealRecruit.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+		    public void handle(ActionEvent e) {
+				GameView gv = GameClient.game.gameView;
+				
+				gv.returnString = "recruit";
+				Utility.GotInput(gv.inputLock);
+			}
+		});
 	}
 	
 	public void updateButtons(final CurrentPhase currentPhase)
@@ -130,6 +154,12 @@ public class ButtonBox extends HBox {
 					break;
 				case RECRUIT_CHARACTER:
 					getChildren().setAll(recruitSpecial, userInputComplete);
+					break;
+				case CHOOSE_THIEF_ACTION:
+					getChildren().setAll(stealGold, stealRecruit);
+					break;
+				case SELECT_TARGET_PLAYER:
+					getChildren().setAll();
 					break;
 				default:
 					getChildren().setAll(buttons);

@@ -1,9 +1,12 @@
 package Game;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
+import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
 import Game.GameConstants.Level;
@@ -19,7 +22,6 @@ public class BoardController {
 	
 	public List<int[]> GetContestedZones(){
 		List<int[]> conflictedTiles = new ArrayList<int[]>();
-		int[] addTiles = new int[2];
 		
 		for(int x = -3; x < 4; x++){
 			for(int y = -3; y < 4; y++){
@@ -57,18 +59,23 @@ public class BoardController {
 	
 	public List<Integer> PlayersOnTile(int tileX, int tileY){
 		List<Integer> playersOnTile = new ArrayList<Integer>();
-		if (!gameBoard.getTile(tileX, tileY).player1Things.isEmpty()) { playersOnTile.add(0); }
-		if (!gameBoard.getTile(tileX, tileY).player2Things.isEmpty()) { playersOnTile.add(1); }
-		if (!gameBoard.getTile(tileX, tileY).player3Things.isEmpty()) { playersOnTile.add(2); }
-		if (!gameBoard.getTile(tileX, tileY).player4Things.isEmpty()) { playersOnTile.add(3); }
+		HexTile tile = gameBoard.getTile(tileX, tileY);
+		
+		for(int i = 0; i < GameClient.game.gameModel.PlayerCount(); i++) {
+			ArrayList<Thing> combatants = tile.getCombatants(i);
+			if (Utility.NumberCombatants(combatants) > 0) { playersOnTile.add(i); }
+		}
+		
+		ArrayList<Thing> combatants = tile.getCombatants(4);
+		if (Utility.NumberCombatants(combatants) > 0) { playersOnTile.add(4); }
 		
 		return playersOnTile;
 	}
 	
-	public void RemoveThings(int[] thingsToRemove, Player player, int tileX, int tileY){
+	public void RemoveThings(int[] thingsToRemove, int player, int tileX, int tileY){
 		
 		HexTile h = gameBoard.getTile(tileX, tileY);
-		ArrayList<Thing> things = h.getCombatants(player.GetPlayerNum());
+		ArrayList<Thing> things = h.getCombatants(player);
 		
 		/* removing this for visibility reasons
 		if (thingsToRemove.length > things.size()){
@@ -97,5 +104,68 @@ public class BoardController {
 				GameClient.game.gameModel.handleElimination(thing, h);
 			}
 		}
+	}
+	
+	public ArrayList<Thing> GetBluffs(int tileX, int tileY, int player) {
+		HexTile tile = this.GetTile(tileX, tileY);
+		
+		ArrayList<Terrain> controlledTerrains = getControlledTerrains(player);
+		ArrayList<Terrain> terrainsControlledByTerrainLords = getControlledTerrainsByTerrainLords(player, tile);
+		
+		ArrayList<Thing> things = tile.getCombatants(player);
+		ArrayList<Thing> bluffs = new ArrayList<Thing>();
+		
+		for(Thing t : things) {
+			if(t.thingType == ThingType.CREATURE) {
+				Creature c = (Creature)t;
+				if (!controlledTerrains.contains(c.GetTerrain()) &&
+					!terrainsControlledByTerrainLords.contains(c.GetTerrain()) &&
+					!c.isBuilding()) 
+				{
+					bluffs.add(c);
+				}
+			}
+		}
+		
+		return bluffs;
+	}
+
+	public ArrayList<Terrain> getControlledTerrains(int player) {
+		ArrayList<Terrain> controlledTerrains = new ArrayList<Terrain>();
+		
+		for(int x = -3; x < 4; x++) {
+			for(int y = -3; y < 4; y++) {
+				HexTile tile = gameBoard.getTile(x, y);
+				if (tile == null) { continue; }
+				
+				if (tile.isControlledBy(GameConstants.controlledByFromIndex(player))) {
+					if (!controlledTerrains.contains(tile.getTerrain())) {
+						controlledTerrains.add(tile.getTerrain());
+					}
+				} 
+				
+			}
+		}
+		
+		return controlledTerrains;
+	}
+	
+	public ArrayList<Terrain> getControlledTerrainsByTerrainLords(int player, HexTile tile) {
+		ArrayList<Terrain> controlledTerrains = new ArrayList<Terrain>();
+		
+		List<Thing> things = tile.getCombatants(player);
+		
+		for(Thing t : things) {
+			if (t.thingType == ThingType.TERRAIN_LORD) {
+				TerrainLord tlord = (TerrainLord)t;
+				
+				if(!controlledTerrains.contains(tlord.getTerrain())) {
+					controlledTerrains.add(tlord.getTerrain());
+				}
+				
+			}
+		}
+		
+		return controlledTerrains;
 	}
 }

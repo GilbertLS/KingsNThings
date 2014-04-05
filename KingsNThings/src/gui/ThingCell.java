@@ -50,6 +50,10 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 						System.out.println((Creature)thing);
 					}
 				}*/
+				for (Thing thing : GameView.selectedThings) {
+					System.out.print(thing.thingID + " ");
+				}
+				System.out.println();
 			}
 		});
 		
@@ -64,7 +68,8 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				//drag can be started from any of these phases
 				if(gv.currentPhase == CurrentPhase.MOVEMENT 
 						|| gv.currentPhase == CurrentPhase.PLAY_THINGS
-						|| gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+						|| gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+						|| gv.currentPhase == CurrentPhase.PLAY_RANDOM_EVENT)
 				{
 					ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
 					

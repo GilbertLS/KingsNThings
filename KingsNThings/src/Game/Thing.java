@@ -118,4 +118,8 @@ public abstract class Thing {
 		return thingType == ThingType.FORT
 				|| thingType == ThingType.SETTLEMENT;
 	}
+
+	public boolean isRandomEvent() {
+		return thingType == ThingType.RANDOM_EVENT;
+	}
 }

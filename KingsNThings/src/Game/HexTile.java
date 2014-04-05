@@ -82,6 +82,9 @@ public class HexTile implements IIncomable{
 		if(handleMagic(playerIndex, thing))
 			return;
 		
+		if(handleRandomEvent(playerIndex, thing))
+			return;
+		
 		if ( playerIndex == 0 ){
 			player1Things.add(thing);
 			thing.setControlledBy(ControlledBy.PLAYER1);
@@ -173,6 +176,15 @@ public class HexTile implements IIncomable{
 		
 		return false;
 	}
+	
+	private boolean handleRandomEvent(int playerIndex, Thing thing) {
+		if(thing.isRandomEvent())
+		{
+			return true;
+		}
+		
+		return false;
+	}
 
 	public boolean HasThingsOnTile(Player player){
 		if ( player.GetPlayerNum() == 0 ){
@@ -216,17 +228,14 @@ public class HexTile implements IIncomable{
 	}
 	
 	public void Print(){
-		System.out.print("Player 1 things: ");
-		for(Thing thing : player1Things){ System.out.print(thing.GetThingId() + " ");}
-		System.out.println();
-		System.out.print("Player 2 things: ");
-		for(Thing thing : player2Things){ System.out.print(thing.GetThingId() + " ");}
-		System.out.println();
-		System.out.print("Player 3 things: ");
-		for(Thing thing : player3Things){ System.out.print(thing.GetThingId() + " ");}
-		System.out.println();
-		System.out.print("Player 4 things: ");
-		for(Thing thing : player4Things){ System.out.print(thing.GetThingId() + " ");}
+		for(int i = 0; i < GameClient.game.gameModel.PlayerCount(); i++) {
+			System.out.print("Player " + i + " things: ");
+			for(Thing thing : this.GetThings(i)){ System.out.print(thing.GetThingId() + " ");}
+			System.out.println();
+		}
+		
+		System.out.print("Neutral things: ");
+		for(Thing thing : defendingThings){ System.out.print(thing.GetThingId() + " ");}
 		System.out.println();
 	}
 
@@ -288,7 +297,8 @@ public class HexTile implements IIncomable{
 		thingsToCheck.remove(thingToRemove);
 	}
 
-	public Thing getThingFromTileByID(Integer id, int playerIndex) {
+	private Thing getThingFromTileByID(Integer id, int playerIndex) {
+		
 		ArrayList<Thing> thingsToCheck = GetThings(playerIndex);
 
 		for(Thing t: thingsToCheck)
@@ -737,7 +747,7 @@ public class HexTile implements IIncomable{
 		case 3:
 			combatants.addAll(player4Things);
 			break;
-		default:
+		case 4:
 			combatants.addAll(defendingThings);
 			break;
 		}

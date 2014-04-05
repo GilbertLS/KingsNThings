@@ -229,7 +229,7 @@ public class BattleView extends Scene {
 		}
 		
 		ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
-		for(Thing t : currTile.GetThings(4)) {
+		for(Thing t : currTile.getCombatants(4)) {
 			thingViews.add(new ThingView(t));
 		}
 		
@@ -239,7 +239,11 @@ public class BattleView extends Scene {
 		
 		thingViewLists[numPlayers] = thingViewList;
 		if (!thingViews.isEmpty()) {
-			centerVBox.getChildren().add(thingViewList);
+			HBox neutralThings = new HBox();
+			neutralThings.getChildren().add(new PlayerBattleBox(4));
+			neutralThings.getChildren().add(thingViewList);
+			
+			centerVBox.getChildren().add(neutralThings);
 		}
 	}
 	
@@ -375,7 +379,11 @@ public class BattleView extends Scene {
 	
 	private boolean targetedPlayerNotValid() {
 		int currPlayer = GameClient.game.gameModel.getCurrPlayerNumber();
-		boolean targetedPlayerValid = targetedPlayer != currPlayer && targetedPlayer >= 0 && targetedPlayer <= 3;
+		int numPlayers = GameClient.game.gameModel.PlayerCount();
+		
+		boolean targetedPlayerValid = targetedPlayer != currPlayer && 
+				((targetedPlayer >= 0 && targetedPlayer < numPlayers) ||
+				 (targetedPlayer == 4));
 		
 		if (currTile.getCombatants(targetedPlayer).isEmpty()) {
 			targetedPlayerValid = false;

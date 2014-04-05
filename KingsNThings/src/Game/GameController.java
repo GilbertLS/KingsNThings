@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Game.GameConstants.BattleTurn;
@@ -113,14 +114,14 @@ public class GameController {
 		
 		if(GameController.currentPhase == Phase.SETUP){ assignInitialThings(); }
 		
-		if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
+		//if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
 		
 		if(GameController.currentPhase == Phase.SETUP){ playThings(); }
 		
 	}
 	
 	private void allowTileSwap() {		
-		Response[] responses = GameControllerEventHandler.sendEvent(
+		GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId(EventList.CHECK_TILE_SWAP)
 					.ExpectsResponse(true)
@@ -491,7 +492,7 @@ public class GameController {
 			if (currentPhase == Phase.RECRUIT_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				recruitThings();
-				tradeThings();
+				//tradeThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
 			
@@ -500,29 +501,126 @@ public class GameController {
 				playThings();
 				if (!changedPhase) { currentPhase = Phase.MOVE_THINGS; }
 			}
+			
+			randomEventsPhase();
+			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
-				moveThings();
+				//moveThings();
 				if (!changedPhase) { currentPhase = Phase.BATTLE; }
 			}
 			if (currentPhase == Phase.BATTLE) {
 				if (changedPhase) { changedPhase = false; }
 				PlayBattlePhase();
+				gameWon = checkWin();
 				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
 			}
-			gameWon = checkWin();
+
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
 				playConstructionPhase();
+				gameWon = checkWin();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
-			gameWon = checkWin();
+			
+			performSpecialPowersPhase();
 		
 			ChangePlayerOrder();
 		
 		} while(!gameEnded);
 	}
 	
+	private void randomEventsPhase() {
+		//allow each player to play a random event
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.PLAY_RANDOM_EVENTS)
+					.ExpectsResponse(true)
+			);	
+		
+		//update all players with changes
+		for(Response r: responses){
+			if(!r.message.equals("")){
+				GameControllerEventHandler.sendEvent(new Event()
+					.EventId(EventList.HANDLE_PLAY_RANDOM_EVENT)
+					.EventParameters(new String[]{""+r.fromPlayer,""+r.message}));
+			}
+		}
+		
+		//play each player's random event, update based on selections
+		responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.HANDLE_RANDOM_EVENT)
+					.ExpectsResponse(true)
+			);	
+		
+		//for each player, if they have used a special power,
+		//send the appropriate update event
+		for(Response r: responses){
+			String[] params = r.message.split("~");
+				
+			switch(params[0]){
+			//handle Defection
+			case "Defection":
+				
+			}
+		}
+	}
+
+	private void performSpecialPowersPhase() {
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.PERFORM_SPECIAL_POWERS)
+					.ExpectsResponse(true)
+			);	
+		
+		//for each player, if they have used a special power,
+		//send the appropriate update event
+		for(Response r: responses){
+			//split to individual updates
+			String[] updates = r.message.split(" ");
+			
+			//send event for each update
+			for(String s: updates){
+				String[] params = s.split("~");
+				
+				switch(params[0]){
+				//handle Master Thief
+				case "thief":
+					int thiefPlayerIndex = Integer.parseInt(params[1]);
+					int victimPlayerIndex = -1;
+					
+					switch (params[3]){
+					case "gold":	
+						victimPlayerIndex = Integer.parseInt(params[2]);
+						GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId(EventList.STEAL_GOLD)
+									.EventParameters(new String[]{"" + thiefPlayerIndex, "" + victimPlayerIndex})
+							);	
+						break;
+					case "recruit":
+						victimPlayerIndex = Integer.parseInt(params[2]);
+						GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId(EventList.STEAL_RECRUIT)
+									.EventParameters(new String[]{"" + thiefPlayerIndex, "" + victimPlayerIndex})
+							);	
+						break;
+					case "eliminate":
+						int thingID = Integer.parseInt(params[4]);
+						GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId(EventList.ELIMINATE_THING_BY_ID)
+									.EventParameters(new String[]{"" + thiefPlayerIndex, "" + thingID})
+							);	
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	private void incrementCitadelRounds() {
 		GameControllerEventHandler.sendEvent(
 				new Event()
@@ -780,134 +878,211 @@ public class GameController {
 			return;
 			
 		for(String s : contestedZones){
-			
-			// TODO: Remove things that do not have terrain controlled
-			
-				
-			String[] coordinates = s.split("SPLIT");
+			final String[] coordinates = s.split("SPLIT");
 			
 			GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId( EventList.BEGIN_BATTLE)
 					.EventParameters(coordinates)
 			);
-			// 1 turn
+			
 			boolean battleOver = false;
-			do {
-				Response[] targetedPlayers = GameControllerEventHandler.sendEvent(
-						new Event()
-							.EventId( EventList.CHOOSE_PLAYER )
-							.EventParameters( coordinates )
-							.ExpectsResponse(true)
-				);
-				
-				int[] attackedPlayers = new int[4];
-				Arrays.fill(attackedPlayers, -1);
-				
-				for (Response target : targetedPlayers ){
-					if (target.IsNullEvent()){
-						continue;
-					}
-					attackedPlayers[target.fromPlayer] = target.castToInt();
-				}
-				
-				for (int i = 0; i < attackedPlayers.length; i++){
-					System.out.println("Player " + i + " is attacking player " + attackedPlayers[i]);
-				}
-				
-				String[] combatTypes = new String[]{ "Magic", "Ranged", "Other" };
-				int totalHitsInRound = 0;
-				// 1 magic, ranged, other roll sequence
-				for (String combatType : combatTypes) {
-					String[] getRollParams = new String[3];
-					
-					getRollParams[0] = coordinates[0];
-					getRollParams[1] = coordinates[1];
-					getRollParams[2] = combatType;
-					
-					Response[] playerRolls = GameControllerEventHandler.sendEvent(
+			
+			if (GameControllerEventHandler.sendEvent(
+					new Event()
+					.EventId( EventList.REMOVE_BLUFFS )
+					.EventParameters(coordinates)
+					.ExpectsResponse()
+			)[0].eventId == EventList.REMOVE_BLUFFS){
+				battleOver = true;
+			}
+			
+			// 1 turn
+			if (!battleOver) {
+				do {
+					Response[] targetedPlayers = GameControllerEventHandler.sendEvent(
 							new Event()
-								.EventId( EventList.GET_CREATURE_ROLLS)
-								.EventParameters( getRollParams )
+								.EventId( EventList.CHOOSE_PLAYER )
+								.EventParameters( coordinates )
 								.ExpectsResponse(true)
 					);
 					
-					String[] hits = new String[numClients+2];
-					int numActualHits = 0;
-					for (Response rolls : playerRolls){
-						if (!rolls.message.trim().equals("") && Integer.parseInt(rolls.message.trim()) > 0){
-							numActualHits++;
-						}
-						if (rolls.IsNullEvent()){
-							hits[rolls.fromPlayer] = "0";
-						} else {
-							hits[attackedPlayers[rolls.fromPlayer]] = rolls.message;
-						}
-					}
+					int[] attackedPlayers = new int[numClients+1];
+					Arrays.fill(attackedPlayers, -1);
 					
-					hits[numClients] = coordinates[0];
-					hits[numClients+1] = coordinates[1];
-		 			
-					if (numActualHits > 0){
-						Response[] removedThingsResponse = GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.INFLICT_HITS )
-								.EventParameters( hits )
-								.ExpectsResponse(true)
-						);
-						
-						String[] removedThings = new String[numClients+2];
-						
-						for( Response response : removedThingsResponse ){
-							removedThings[response.fromPlayer] = response.message;
-						}
-						
-						removedThings[numClients] = coordinates[0];
-						removedThings[numClients+1] = coordinates[1];
-						
-						if (GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.REMOVE_THINGS )
-								.EventParameters(removedThings)
-								.ExpectsResponse()
-						)[0].eventId == EventList.REMOVE_THINGS){
-							battleOver = true;
-						} else {
-							battleOver = false;
-						}
-					}
-					
-					totalHitsInRound += numActualHits;
-					
-					if (battleOver){
-
-						break;
-					}
-				}
-				
-				if (!battleOver && totalHitsInRound != 0){
-					Response[] retreats = GameControllerEventHandler.sendEvent(
-						new Event()
-							.EventId( EventList.GET_RETREAT )
-							.EventParameters( coordinates )
-							.ExpectsResponse()
-					);
-					
-					int numLeft = 0;
-					for (Response retreat : retreats) {
-						if (retreat.eventId == EventList.NULL_EVENT){
+					for (Response target : targetedPlayers ){
+						if (target.IsNullEvent()){
 							continue;
 						}
-						if (retreat.message.equals("n")){
-							numLeft++;
-						} 
+						attackedPlayers[target.fromPlayer] = target.castToInt();
 					}
-					if (numLeft < 2){
-						battleOver = true;
+					
+					for (int i = 0; i < attackedPlayers.length; i++){
+						System.out.println("Player " + i + " is attacking player " + attackedPlayers[i]);
 					}
-				}
-				
-			} while (!battleOver);
+					
+					String[] combatTypes = new String[]{ "Magic", "Ranged", "Other" };
+					int totalHitsInRound = 0;
+					// 1 magic, ranged, other roll sequence
+					for (String combatType : combatTypes) {
+						String[] getRollParams = new String[3];
+						
+						getRollParams[0] = coordinates[0];
+						getRollParams[1] = coordinates[1];
+						getRollParams[2] = combatType;
+						
+						Response[] playerRolls = GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId( EventList.GET_CREATURE_ROLLS)
+									.EventParameters( getRollParams )
+									.ExpectsResponse(true)
+						);
+						
+						String[] hits = new String[4+3];
+						for (int i = 0; i <= 4; i++) {
+							hits[i] = "" + 0;
+						}
+						
+						int numActualHits = 0;
+						for (Response rolls : playerRolls){
+							if (!rolls.message.trim().equals("") && Integer.parseInt(rolls.message.trim()) > 0){
+								numActualHits++;
+							}
+							if (rolls.IsNullEvent()){
+								hits[rolls.fromPlayer] = "-1";
+							} else {
+								int targetPlayer = attackedPlayers[rolls.fromPlayer];
+								int oldHits = Integer.parseInt(hits[attackedPlayers[rolls.fromPlayer]]);
+								int newHits = oldHits + Integer.parseInt(rolls.message);
+								hits[targetPlayer] = "" + newHits;
+							}
+						}
+						
+						hits[4+1] = coordinates[0];
+						hits[4+2] = coordinates[1];
+						
+						getRollParams[0] = coordinates[0];
+						getRollParams[1] = coordinates[1];
+						getRollParams[2] = combatType;
+						Response neutralHits = GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.GET_NEUTRAL_HITS )
+								.ExpectsResponse(true)
+								.EventParameters(getRollParams)
+								.IntendedPlayers(new boolean[]{ true, false, false, false })
+						)[0];
+						
+						if (!neutralHits.IsNullEvent()) { 
+							int nHits = Integer.parseInt(neutralHits.message.trim());
+							numActualHits += nHits;
+							if (nHits > 0) {
+								ArrayList<Integer> targetablePlayers = new ArrayList<Integer>();
+								for(int i = 0; i < numClients; i++) {
+									if (!hits[i].equals("-1")) {
+										targetablePlayers.add(i);
+									}
+								}
+								
+								Random random = new Random();
+								for(int i = 0; i < nHits; i++) {
+									int randIndex = random.nextInt(targetablePlayers.size());
+									int targetPlayer = targetablePlayers.get(randIndex);
+									
+									hits[targetPlayer] = "" + (Integer.parseInt(hits[targetPlayer]) + 1);
+								}
+							}
+						}
+						
+						if (numActualHits > 0){
+							Response[] removedThingsResponse = GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId( EventList.INFLICT_HITS )
+									.EventParameters( hits )
+									.ExpectsResponse(true)
+							);
+							
+							String[] removedThings = new String[numClients+3];
+							
+							for( Response response : removedThingsResponse ){
+								removedThings[response.fromPlayer] = response.message;
+							}
+							
+							removedThings[numClients+1] = coordinates[0];
+							removedThings[numClients+2] = coordinates[1];
+							
+							int neutralHitsTaken = Integer.parseInt(hits[4]);
+							
+							// removing neutral things
+							if(neutralHitsTaken > 0) {
+								String[] params = new String[3];
+								params[0] = coordinates[0];
+								params[1] = coordinates[1];
+								params[2] = "" + neutralHitsTaken;
+								Response response = GameControllerEventHandler.sendEvent(
+									new Event()
+										.EventId( EventList.GET_NEUTRAL_THINGS_REMOVED)
+										.EventParameters(params)
+										.ExpectsResponse(true)
+										.IntendedPlayers(new boolean[]{true, false, false, false})
+								)[0];
+								
+								removedThings[numClients] = response.message;
+							} else {
+								removedThings[numClients] = "";
+							}
+							
+							if (GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId( EventList.REMOVE_THINGS )
+									.EventParameters(removedThings)
+									.ExpectsResponse()
+							)[0].eventId == EventList.REMOVE_THINGS){
+								battleOver = true;
+							} else {
+								battleOver = false;
+							}
+						}
+						
+						totalHitsInRound += numActualHits;
+						
+						if (battleOver){
+							break;
+						}
+					}
+					
+					if (!battleOver && totalHitsInRound != 0){
+						Response[] retreats = GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.GET_RETREAT )
+								.EventParameters( coordinates )
+								.ExpectsResponse()
+						);
+						
+						int numLeft = 0;
+						for (Response retreat : retreats) {
+							if (retreat.eventId == EventList.NULL_EVENT){
+								continue;
+							}
+							if (retreat.message.equals("n")){
+								numLeft++;
+							} 
+						}
+						
+						numLeft += Integer.parseInt(GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.GET_NUMBER_NEUTRAL_CREATURES)
+								.EventParameters(coordinates)
+								.ExpectsResponse()	
+							)[0].message
+						);
+						
+						if (numLeft < 2){
+							battleOver = true;
+						}
+					}
+					
+				} while (!battleOver);
+			}
 			
 			boolean[] intendedPlayers = new boolean[GameServer.servers.size()];
 			intendedPlayers[0] = true;

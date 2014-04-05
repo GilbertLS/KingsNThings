@@ -3,7 +3,6 @@ package Game;
 import gui.GameView;
 import Game.GameConstants.BattleTurn;
 import Game.GameConstants.ThingType;
-import Game.Networking.GameClient;
 
 /*
  * This class adds functionality to the Thing class to facilitate combat.
@@ -64,7 +63,6 @@ public abstract class Combatant extends Thing{
 		return isMagic;
 	}
 	
-	// remove promptView
 	public int GetCombatRoll(
 			BattleTurn turn,
 			int numPreviousRolls
@@ -87,5 +85,28 @@ public abstract class Combatant extends Thing{
 			}
 			
 		return rolls;	
+	}
+	
+	public int GetCombatRoll(
+		BattleTurn turn
+	) {
+		int rolls = 0;
+		if (!(
+				( this.IsMagic() && turn == BattleTurn.MAGIC ) ||
+				( this.IsRange() && turn == BattleTurn.RANGED ) ||
+				( !this.IsMagic() && !this.IsRange() && !( turn == BattleTurn.MAGIC) && !( turn == BattleTurn.RANGED )))){
+				return 0;
+		}
+			
+		int numRolls = isCharge ? 2 : 1;
+		for (int i = 0; i < numRolls; i++){
+			int roll = (int)Math.ceil(Math.random()*GameConstants.DIE_1_SIDES);
+			
+			if (roll <= this.GetCombatValue() ){
+				rolls++;
+			}
+		}
+			
+		return rolls;
 	}
 }

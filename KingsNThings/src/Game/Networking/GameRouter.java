@@ -66,19 +66,8 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 						}
 					} else if (e.eventId == EventList.SET_PHASE) {
 						Phase phase = Phase.valueOf(e.eventParams[0]);
-						System.out.println("DEBUG---- " + phase.name());
 						GameController.SetPhase(phase);
-					} else {
-						/*boolean[] intendedPlayers = new boolean[4];
-						
-						for (int i = 0; i < 4; i++){
-							if (i == myID) {
-								intendedPlayers[i] = false;
-							} else {
-								intendedPlayers[i] = true;
-							}
-						}*/
-						
+					} else {	
 						Event d = new Event()
 									.EventId(e.eventId)
 									.EventParameters(e.eventParams)

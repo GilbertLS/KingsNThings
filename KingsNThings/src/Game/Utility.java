@@ -1,5 +1,6 @@
 package Game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
@@ -56,5 +57,23 @@ public class Utility {
 	public static void debugPrint(Object s) {
 		System.out.println("DEBUG-------------------|" + s 
 				+  "|-------------------------------------");
+	}
+	
+	public static int NumberCombatants(ArrayList<Thing> things) {
+		int i = 0;
+		for (Thing t : things) {
+			if (t.IsCombatant()) {
+				if (t.isBuilding()) {
+					Building b = (Building)t;
+					if (!b.isNeutralized()) {
+						i++;
+					}
+				} else {
+					i++;
+				}
+			}
+		}
+		
+		return i;
 	}
 }

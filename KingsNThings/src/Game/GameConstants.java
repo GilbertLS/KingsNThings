@@ -16,7 +16,11 @@ public final class GameConstants {
 		INITIAL_TRADE_THINGS,
 		TRADE_THINGS, 
 		AWARD_INCOME, 
-		SWAP_INITIAL_HEXES
+		SWAP_INITIAL_HEXES,
+		SELECT_TARGET_PLAYER, 
+		CHOOSE_THIEF_ACTION, 
+		USER_FEEDBACK, 
+		PLAY_RANDOM_EVENT
 	}
 
 	//The different types of possible terrain in the game
@@ -25,6 +29,8 @@ public final class GameConstants {
 	
 	//The Different Factions which may control game pieces
 	public static enum ControlledBy {NEUTRAL, PLAYER1, PLAYER2, PLAYER3, PLAYER4}
+
+
 	
 	public static int GetPlayerNumber(ControlledBy c){
 		if ( c == ControlledBy.PLAYER1 ){ return 0; }
@@ -39,12 +45,11 @@ public final class GameConstants {
 	public static enum ThingType {SPECIAL_INCOME, 
 									MAGIC,
 									TREASURE,
-									EVENT,
 									CREATURE,
 									FORT, 
 									SETTLEMENT, 
 									SPECIAL_CHARACTER,
-									TERRAIN_LORD;
+									TERRAIN_LORD, RANDOM_EVENT;
 
 									public static boolean isSpecialIncome(ThingType tt) {
 										return tt == SPECIAL_CHARACTER
@@ -253,6 +258,9 @@ public final class GameConstants {
 	public static final String LuckyCharmImageFront = "LuckyCharm.jpg";
 	public static final String SwordImageFront = "Sword.jpg";
 	public static final String TalismanImageFront = "Talisman.jpg";
+	
+	//RANDOM EVENTS
+	public static final String DefectionImageFront = "Defection.png";
 	
 	//SPECIAL CHARACTERS
 	public static final String ArchClericImageFront = "ArchCleric.jpg";

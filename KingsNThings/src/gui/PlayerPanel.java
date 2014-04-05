@@ -1,7 +1,12 @@
 package gui;
 
+import Game.GameConstants.CurrentPhase;
+import Game.Utility;
+import Game.Networking.GameClient;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
@@ -32,6 +37,19 @@ public class PlayerPanel extends VBox {
 		setName("Player" + playerNumber);
 		setGold(0);
 		setThings(0);
+		
+		this.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				GameView gv = GameClient.game.gameView;
+				
+				if(gv.currentPhase == CurrentPhase.SELECT_TARGET_PLAYER
+						&& gv.currPlayerNum != playerNum-1){
+					gv.returnString = Integer.toString(playerNum-1);
+					Utility.GotInput(gv.inputLock);
+				}
+			}
+		});
 	}
 	
 	public void setGold(int g) {
