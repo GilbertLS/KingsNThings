@@ -38,12 +38,6 @@ public class TilePreview extends VBox {
 		if (view3 != null && !view3.isEmpty()) this.getChildren().add(createPanel(3, view3));
 		if (view4 != null && !view4.isEmpty()) this.getChildren().add(createPanel(4, view4));
 		if (viewDefenders != null && !viewDefenders.isEmpty()) this.getChildren().add(viewDefenders);
-		
-		view1.setVisible(!view1.isEmpty());
-		view2.setVisible(!view2.isEmpty());
-		view3.setVisible(!view3.isEmpty());
-		view4.setVisible(!view4.isEmpty());
-		viewDefenders.setVisible(!viewDefenders.isEmpty());
 	}
 	
 	private HBox createPanel(int playerNum, ThingViewList t) {
@@ -136,13 +130,22 @@ public class TilePreview extends VBox {
 		return tileRef;
 	}
 	
-	private static ImageView getPlayerIcon(int i) {
-		switch(i) {
-			case 1: return new ImageView(new Image("res/images/CM_411.png", 25, 25, false, true));
-			case 2: return new ImageView(new Image("res/images/CM_412.png", 25, 25, false, true));
-			case 3: return new ImageView(new Image("res/images/CM_413.png", 25, 25, false, true));
-			case 4: return new ImageView(new Image("res/images/CM_414.png", 25, 25, false, true));
-		}
-		return null;
+	private static VBox getPlayerIcon(int i) {
+		ImageView icon = null;
+		VBox box = new VBox();
+		
+		if(i==1)
+			icon = new ImageView(new Image("res/images/CM_411.png", 25, 25, false, true));
+		else if(i==1)
+			icon = new ImageView(new Image("res/images/CM_412.png", 25, 25, false, true));
+		else if(i==1)
+			icon = new ImageView(new Image("res/images/CM_413.png", 25, 25, false, true));
+		else if(i==1)
+			icon = new ImageView(new Image("res/images/CM_414.png", 25, 25, false, true));
+		
+		box.getChildren().add(icon);
+		box.setStyle("-fx-padding: 20 0 0 0;");
+		
+		return box;
 	}
 }
