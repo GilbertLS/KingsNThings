@@ -519,8 +519,15 @@ public class GameModel {
 		initializeSpecialIncomes();
 		initializeTreasure();
 		initializeMagic();
+		initializeRandomEvents();
 	}
 	
+	private void initializeRandomEvents() {
+		for(int i=0; i< 20; i++)
+			playingCup.add(new RandomEvent("Defection", GameConstants.DefectionImageFront));
+		
+	}
+
 	public void initializeSpecialCharacters(String s)
 	{
 		String[] initValues = s.trim().split(" ");
@@ -808,11 +815,8 @@ public class GameModel {
 	}
 
 	public void removeFromPlayerRack(ArrayList<Integer> thingIDs, int playerIndex) {
-		Player player = playerFromIndex(playerIndex);
-
 		for(Integer i: thingIDs)
-			if(player.hasInRack(i))
-				player.removeFromRackByID(i);
+			removeFromPlayerRack(i, playerIndex);
 	}
 
 	public void updatePlayedThings(ArrayList<HexTile> hexTiles, ArrayList<Integer> thingIDs, int playerIndex) {		
@@ -1593,5 +1597,29 @@ public class GameModel {
 		
 		Thing thing = victim.removeFromRackByIndex(thingIndex);
 		thief.addThingToRack(thing);
+	}
+
+	public Thing removeFromPlayerRack(int thingID, int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
+
+		if(player.hasInRack(thingID))
+			return player.removeFromRackByID(thingID);
+		
+		return null;
+	}
+
+	public String performRandomEvent(int playerIndex) {
+		switch(playerIndex){
+		case 0:
+			return player1.performRandomEvent();
+		case 1:
+			return player2.performRandomEvent();
+		case 2:
+			return player3.performRandomEvent();
+		case 3:
+			return player4.performRandomEvent();
+		}
+		
+		return "";
 	}
 }

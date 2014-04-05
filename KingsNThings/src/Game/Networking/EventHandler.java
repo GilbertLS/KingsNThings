@@ -22,6 +22,7 @@ import Game.GameConstants.Terrain;
 import Game.Dice;
 import Game.HexTile;
 import Game.Player;
+import Game.RandomEvent;
 import Game.Settlement;
 import Game.Thing;
 import Game.Utility;
@@ -842,6 +843,16 @@ public class EventHandler {
 				});
 			}
 		}
+		else if(e.eventId == EventList.HANDLE_PLAY_RANDOM_EVENT){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			RandomEvent re = (RandomEvent) GameClient.game.gameModel.removeFromPlayerRack(Integer.parseInt(e.eventParams[1]), 
+																											playerIndex);
+			Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
+			player.setRandomEvent(re);
+			
+			GameClient.game.updatePlayerRack(playerIndex);
+		}
 		else if(e.eventId == EventList.HANDLE_SPEND_GOLD)
 		{
 			int amount = Integer.parseInt(e.eventParams[0].trim());
@@ -946,6 +957,30 @@ public class EventHandler {
 					new Event()
 						.EventId(EventList.PERFORM_SPECIAL_POWERS)
 						.EventParameter(params)
+			);
+		}
+		else if(e.eventId == EventList.PLAY_RANDOM_EVENTS){
+	    	//drag and drop random Event to tile
+			String randomEventParams = GameClient.game.gameView.performPhaseWithUserFeedback(CurrentPhase.PLAY_RANDOM_EVENT, 
+																			"Please play a Random Event if you choose");
+				
+			//send changes
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.PLAY_RANDOM_EVENTS)
+						.EventParameter(randomEventParams)
+			);	
+		}
+		else if(e.eventId == EventList.HANDLE_RANDOM_EVENT){
+			
+			GameClient.game.sendMessageToView("Performing Random Event");
+			String eventParam = GameClient.game.gameModel.performRandomEvent(GameClient.game.gameModel.getCurrPlayerNumber());
+			
+			//send finished
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.HANDLE_RANDOM_EVENT)
+						.EventParameter(eventParam)
 			);
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)

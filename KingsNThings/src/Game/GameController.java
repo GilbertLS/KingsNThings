@@ -100,9 +100,9 @@ public class GameController {
 		/*begin need to happen even with DEVMODE:*/
 		placeThingsOnTile(1, "Control_Marker");
 		
-		//revealHexTiles();
+		revealHexTiles();
 		
-		//allowTileSwap();
+		allowTileSwap();
 		/*end need to happen even with DEVMODE*/
 		
 		
@@ -501,7 +501,7 @@ public class GameController {
 				if (!changedPhase) { currentPhase = Phase.MOVE_THINGS; }
 			}
 			
-			//randomEventsPhase();
+			randomEventsPhase();
 			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
@@ -529,6 +529,43 @@ public class GameController {
 		} while(!gameEnded);
 	}
 	
+	private void randomEventsPhase() {
+		//allow each player to play a random event
+		Response[] responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.PLAY_RANDOM_EVENTS)
+					.ExpectsResponse(true)
+			);	
+		
+		//update all players with changes
+		for(Response r: responses){
+			if(!r.message.equals("")){
+				GameControllerEventHandler.sendEvent(new Event()
+					.EventId(EventList.HANDLE_PLAY_RANDOM_EVENT)
+					.EventParameters(new String[]{""+r.fromPlayer,""+r.message}));
+			}
+		}
+		
+		//play each player's random event, update based on selections
+		responses = GameControllerEventHandler.sendEvent(
+				new Event()
+					.EventId( EventList.HANDLE_RANDOM_EVENT)
+					.ExpectsResponse(true)
+			);	
+		
+		//for each player, if they have used a special power,
+		//send the appropriate update event
+		for(Response r: responses){
+			String[] params = r.message.split("~");
+				
+			switch(params[0]){
+			//handle Defection
+			case "Defection":
+				
+			}
+		}
+	}
+
 	private void performSpecialPowersPhase() {
 		Response[] responses = GameControllerEventHandler.sendEvent(
 				new Event()

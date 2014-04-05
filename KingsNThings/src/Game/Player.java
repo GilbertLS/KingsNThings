@@ -23,6 +23,7 @@ public class Player {
 	private ArrayList<HexTile> ownedHexTiles;
 	private boolean citadelConstructed = false;
 	private int roundsSinceCitadel = 0;
+	private RandomEvent re = null;
 	
 	
 	public int GetPlayerNum(){
@@ -314,5 +315,20 @@ public class Player {
 
 	public Thing removeFromRackByIndex(int thingIndex) {
 		return playerRack.removeFromRackByIndex(thingIndex);
+	}
+
+	public void setRandomEvent(RandomEvent re) {
+		this.re = re;
+	}
+	
+	public String performRandomEvent(){
+		String ret = "";
+		
+		if(re != null){
+			ret = re.performRandomEvent();
+			re = null;
+		}
+		
+		return ret;
 	}
 }

@@ -82,6 +82,9 @@ public class HexTile implements IIncomable{
 		if(handleMagic(playerIndex, thing))
 			return;
 		
+		if(handleRandomEvent(playerIndex, thing))
+			return;
+		
 		if ( playerIndex == 0 ){
 			player1Things.add(thing);
 			thing.setControlledBy(ControlledBy.PLAYER1);
@@ -167,6 +170,15 @@ public class HexTile implements IIncomable{
 	
 	private boolean handleMagic(int playerIndex, Thing thing) {
 		if(thing.thingType == ThingType.MAGIC)
+		{
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean handleRandomEvent(int playerIndex, Thing thing) {
+		if(thing.isRandomEvent())
 		{
 			return true;
 		}
