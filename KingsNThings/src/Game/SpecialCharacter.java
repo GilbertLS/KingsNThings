@@ -53,15 +53,22 @@ public class SpecialCharacter extends Combatant implements IIncomable, ISpecialP
 	}
 
 	@Override
-	public void performSpecialPower() {
-		if(name.equals("Master Theif"));
-			performMasterTheifPower();
+	public String performSpecialPower() {
+		if(name.equals("Master Thief"))
+			return performMasterthiefPower();
+		else return "";
 	}
 
-	private void performMasterTheifPower() {
+	private String performMasterthiefPower() {
+		//add special character
+		String ret = "thief~";
+		
+		//add current player index
+		ret += ""+GameClient.game.gameModel.getCurrPlayerNumber() + "~";
+		
 		//designate other player
-		int targetIndex = Integer.parseInt(GameClient.game.gameView.performPhase(CurrentPhase.SELECT_TARGET_PLAYER));
-		Player targetPlayer = GameClient.game.gameModel.playerFromIndex(targetIndex);
+		GameClient.game.sendMessageToView("Please choose a target player for Master Thief");
+		ret += GameClient.game.gameView.performPhase(CurrentPhase.SELECT_TARGET_PLAYER) +"~";
 		
 		//rolls two dice for each player
 		int[] rolls = Dice.rollDice(2);
@@ -70,7 +77,7 @@ public class SpecialCharacter extends Combatant implements IIncomable, ISpecialP
 		rolls = Dice.rollDice(2);
 		int userRoll = rolls[0] + rolls[1];
 		
-		if(targetRoll == userRoll){	//roll again
+		if(userRoll == targetRoll){	//roll again
 			rolls = Dice.rollDice(2);
 			targetRoll = rolls[0] + rolls[1];
 			
@@ -78,20 +85,23 @@ public class SpecialCharacter extends Combatant implements IIncomable, ISpecialP
 			userRoll = rolls[0] + rolls[1];
 			
 			if(userRoll < targetRoll){
-				//send eliminate theif event to all players
+				GameClient.game.gameView.performUserFeedback("Master Thief was eliminated");
+				ret += "eliminate~";
+				return ret += thingID + "~";
 			}
 		}
-		else if (userRoll > targetRoll){	//theif was successful
-			String action = GameClient.game.gameView.performPhase(CurrentPhase.CHOOSE_THEIF_ACTION);
+		else if (userRoll > targetRoll){	//thief was successful
+			GameClient.game.sendMessageToView("Thief was successful, Please choose to steal gold or a recruit");
+			String action = GameClient.game.gameView.performPhase(CurrentPhase.CHOOSE_THIEF_ACTION);
 			
 			if(action.equals("gold")){
-				//send steal gold update event to all players
+				return ret += "gold~";
 			}
 			else if(action.equals("recruit")){
-				//send steal recruit event to all players
+				return ret += "recruit~";
 			}
 		}
+			
+		return "";
 	}
-	
-	//need method for special ability
 }

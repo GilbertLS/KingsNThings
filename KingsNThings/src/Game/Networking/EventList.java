@@ -72,5 +72,10 @@ public class EventList {
 	public static final int INCREMENT_CITADEL_ROUNDS = 142;
 	public static final int GET_POST_BATTLE_BUILDING_ELIMINATIONS = 143;
 	public static final int PERFORM_SPECIAL_POWERS = 144;
-	
+	public static final int STEAL_RECRUIT = 145;
+	public static final int STEAL_GOLD = 146;
+	public static final int ELIMINATE_THING_BY_ID = 147;
+	public static final int PLAY_RANDOM_EVENTS = 148;
+	public static final int HANDLE_PLAY_RANDOM_EVENT = 149;
+	public static final int HANDLE_RANDOM_EVENT = 150;
 }

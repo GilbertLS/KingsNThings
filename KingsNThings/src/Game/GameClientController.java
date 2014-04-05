@@ -167,7 +167,7 @@ public class GameClientController {
 		HexTile h = gameModel.gameBoard.getTile(x, y);
 		ArrayList<Thing> things = gameModel.getThingsFromCup(roll);
 		
-		//eliminate invalid defense creatrues
+		//eliminate invalid defense creatures
 		things = h.enforceValidDefense(things);
 		
 		for(Thing t: things)	//defending things aren't flipped
@@ -344,11 +344,12 @@ public class GameClientController {
 			return false;
 		
 		//invalid if a thing isn't owned by current player
+		//or is a random event but it's not time to play it
 		ObservableList<ThingView> items = listView.getItems();
 		for(Integer i: selectedIds)
-			if(items.get(i).thingRef.getControlledByPlayerNum() != GameClient.game.gameView.getCurrentPlayer())
+			if(items.get(i).thingRef.getControlledByPlayerNum() != GameClient.game.gameView.getCurrentPlayer()
+			|| (items.get(i).thingRef.isRandomEvent() && gv.currentPhase != CurrentPhase.PLAY_RANDOM_EVENT))
 				return false;
-		
 		
 		ArrayList<Thing> movingThings = new ArrayList<Thing>();
 		for(ThingView tv: items)
@@ -357,32 +358,36 @@ public class GameClientController {
 		ArrayList<Thing> flyers = getFlyers(hexTile.GetThings(gv.getCurrentPlayer()));
 		int numFlyersLeft = flyers.size() -  getFlyers(movingThings).size();
 		
-		int numFlyingDefend =0;	//total flipped player flying defenders
+		int numFlyingDefend =0;	//total not owned flyers
 		for(int i=0; i<gameModel.PlayerCount(); i++)
 		{
 			if(i != gv.getCurrentPlayer()){
-				for(Thing t: getFlyers(hexTile.GetThings(i)))
-					if(t.isFlipped())
-						numFlyingDefend++;
+				numFlyingDefend += getFlyers(hexTile.GetThings(i)).size(); 
 			}
 		}
 		
-		for(Thing t: getFlyers(hexTile.GetThings(4)))
-			if(t.isFlipped())
-				numFlyingDefend++;
+		numFlyingDefend += getFlyers(hexTile.GetThings(4)).size(); 
 		
 		//invalid if movement phase and player isn't alone on the tile
 		//unless all are flying and no flying enemies
-		if(gv.currentPhase == CurrentPhase.MOVEMENT
-			&& !hexTile.isOnlyCombatantPlayerOnTile(gv.getCurrentPlayer())
-			&& !(GameClient.game.areAllFlying(movingThings) && numFlyersLeft >= numFlyingDefend))
-				return false;
+		if(gv.currentPhase == CurrentPhase.MOVEMENT){
+			if(!hexTile.isOnlyCombatantPlayerOnTile(gv.getCurrentPlayer())
+					&& !(GameClient.game.areAllFlying(movingThings) && numFlyersLeft >= numFlyingDefend))
+			return false;
+		}				
 		
 		//invalid if recruit character phase and the dragged items
 		//does not consist of exactly 1 special character
 		if(gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
 			if(selectedIds.size() != 1
 				|| !items.get(selectedIds.get(0)).thingRef.isSpecialCharacter())
+				return false;
+		
+		//invalid if random event phase and drag doesn't
+		//only consist of a single random event
+		if(gv.currentPhase == CurrentPhase.PLAY_RANDOM_EVENT)
+			if(selectedIds.size() != 1
+				|| !items.get(selectedIds.get(0)).thingRef.isRandomEvent())
 				return false;
 		
 		return true;
@@ -560,5 +565,27 @@ public class GameClientController {
 		}
 		
 		return h;
+	}
+
+	public void stealGold(int thiefPlayerIndex, int victimPlayerIndex) {
+		gameModel.stealGold(thiefPlayerIndex, victimPlayerIndex);
+		gameView.updateGold(gameModel.GetPlayer(thiefPlayerIndex).getGold(), thiefPlayerIndex);
+		gameView.updateGold(gameModel.GetPlayer(victimPlayerIndex).getGold(), victimPlayerIndex);
+	}
+
+	public void stealRecruit(int thiefPlayerIndex, int victimPlayerIndex) {
+		gameModel.stealRecruit(thiefPlayerIndex, victimPlayerIndex);
+		this.updatePlayerRack(thiefPlayerIndex);
+		this.updatePlayerRack(victimPlayerIndex);
+	}
+
+	public void sendPlayRandomEventEvent(String param) {
+		String[] params = {"" + gameModel.getCurrPlayerNumber(), param};
+		
+		Event gameEvent = new Event()
+			.EventId(EventList.HANDLE_PLAY_RANDOM_EVENT)
+			.EventParameters(params);
+
+		Game.Networking.EventHandler.SendEvent(gameEvent);	
 	}
 }

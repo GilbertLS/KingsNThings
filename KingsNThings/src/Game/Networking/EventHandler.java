@@ -24,6 +24,7 @@ import Game.GameConstants.ThingType;
 import Game.Dice;
 import Game.HexTile;
 import Game.Player;
+import Game.RandomEvent;
 import Game.Settlement;
 import Game.Thing;
 import Game.Utility;
@@ -833,6 +834,16 @@ public class EventHandler {
 				});
 			}
 		}
+		else if(e.eventId == EventList.HANDLE_PLAY_RANDOM_EVENT){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			RandomEvent re = (RandomEvent) GameClient.game.gameModel.removeFromPlayerRack(Integer.parseInt(e.eventParams[1]), 
+																											playerIndex);
+			Player player = GameClient.game.gameModel.playerFromIndex(playerIndex);
+			player.setRandomEvent(re);
+			
+			GameClient.game.updatePlayerRack(playerIndex);
+		}
 		else if(e.eventId == EventList.HANDLE_SPEND_GOLD)
 		{
 			int amount = Integer.parseInt(e.eventParams[0].trim());
@@ -924,16 +935,44 @@ public class EventHandler {
 			GameClient.game.gameModel.incrementCitadelRounds();
 		}
 		else if(e.eventId == EventList.PERFORM_SPECIAL_POWERS){
-			int playerIndex = Integer.parseInt(e.eventParams[0]);
-
-			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
-			{
-				GameClient.game.gameModel.checkForSpecialPowers();
-			}
-			else
-			{
-				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "perform Special Powers");
-			}
+			
+			GameClient.game.sendMessageToView("Performing Special Powers");
+			ArrayList<String> eventParams = GameClient.game.gameModel.checkForSpecialPowers(GameClient.game.gameModel.getCurrPlayerNumber());
+			
+			String params = "";
+			for(String s: eventParams)
+				params += s+" ";
+			
+			//send finished
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.PERFORM_SPECIAL_POWERS)
+						.EventParameter(params)
+			);
+		}
+		else if(e.eventId == EventList.PLAY_RANDOM_EVENTS){
+	    	//drag and drop random Event to tile
+			String randomEventParams = GameClient.game.gameView.performPhaseWithUserFeedback(CurrentPhase.PLAY_RANDOM_EVENT, 
+																			"Please play a Random Event if you choose");
+				
+			//send changes
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.PLAY_RANDOM_EVENTS)
+						.EventParameter(randomEventParams)
+			);	
+		}
+		else if(e.eventId == EventList.HANDLE_RANDOM_EVENT){
+			
+			GameClient.game.sendMessageToView("Performing Random Event");
+			String eventParam = GameClient.game.gameModel.performRandomEvent(GameClient.game.gameModel.getCurrPlayerNumber());
+			
+			//send finished
+			EventHandler.SendEvent(
+					new Event()
+						.EventId(EventList.HANDLE_RANDOM_EVENT)
+						.EventParameter(eventParam)
+			);
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
@@ -1229,6 +1268,26 @@ public class EventHandler {
 					.EventId(EventList.GET_NUMBER_NEUTRAL_CREATURES)
 					.EventParameter("" + hasCreatures)
 			);
+		}
+		else if(e.eventId == EventList.ELIMINATE_THING_BY_ID){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
+			int thingID = Integer.parseInt(e.eventParams[1]);
+			
+			HexTile h = GameClient.game.gameModel.handleElimination(thingID, playerIndex);
+			
+			GameClient.game.gameView.board.getTileByHex(h).updateThings(playerIndex);
+		}
+		else if(e.eventId == EventList.STEAL_GOLD){
+			int thiefPlayerIndex = Integer.parseInt(e.eventParams[0]);
+			int victimPlayerIndex = Integer.parseInt(e.eventParams[1]);
+			
+			GameClient.game.stealGold(thiefPlayerIndex, victimPlayerIndex);
+		}
+		else if(e.eventId == EventList.STEAL_RECRUIT){
+			int thiefPlayerIndex = Integer.parseInt(e.eventParams[0]);
+			int victimPlayerIndex = Integer.parseInt(e.eventParams[1]);
+			
+			GameClient.game.stealRecruit(thiefPlayerIndex, victimPlayerIndex);
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){

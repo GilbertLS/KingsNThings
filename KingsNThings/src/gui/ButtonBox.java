@@ -155,8 +155,11 @@ public class ButtonBox extends HBox {
 				case RECRUIT_CHARACTER:
 					getChildren().setAll(recruitSpecial, userInputComplete);
 					break;
-				case CHOOSE_THEIF_ACTION:
-					getChildren().setAll(recruitSpecial, userInputComplete);
+				case CHOOSE_THIEF_ACTION:
+					getChildren().setAll(stealGold, stealRecruit);
+					break;
+				case SELECT_TARGET_PLAYER:
+					getChildren().setAll();
 					break;
 				default:
 					getChildren().setAll(buttons);

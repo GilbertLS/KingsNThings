@@ -23,6 +23,7 @@ public class Player {
 	private ArrayList<HexTile> ownedHexTiles;
 	private boolean citadelConstructed = false;
 	private int roundsSinceCitadel = 0;
+	private RandomEvent re = null;
 	
 	
 	public int GetPlayerNum(){
@@ -164,8 +165,8 @@ public class Player {
 		return playerRack.hasThing(thingID);
 	}
 
-	public void removeFromRack(int thingID) {
-		playerRack.removeFromRack(thingID);
+	public Thing removeFromRackByID(int thingID) {
+		return playerRack.removeFromRackByID(thingID);
 	}
 
 	public Thing getThingInRackByID(int thingID) {
@@ -302,9 +303,32 @@ public class Player {
 		ownedSettlements.remove(t);
 	}
 
-	public void performSpecialPowers() {
+	public ArrayList<String> performSpecialPowers() {
+		ArrayList<String> ret = new ArrayList<String>();
+	
 		for(SpecialCharacter sc: specialCharacters)
-			if(sc.name.equals("Master Theif"))
-				sc.performSpecialPower();
+			if(sc.name.equals("Master Thief"))
+				ret.add(sc.performSpecialPower());
+		
+		return ret;
+	}
+
+	public Thing removeFromRackByIndex(int thingIndex) {
+		return playerRack.removeFromRackByIndex(thingIndex);
+	}
+
+	public void setRandomEvent(RandomEvent re) {
+		this.re = re;
+	}
+	
+	public String performRandomEvent(){
+		String ret = "";
+		
+		if(re != null){
+			ret = re.performRandomEvent();
+			re = null;
+		}
+		
+		return ret;
 	}
 }

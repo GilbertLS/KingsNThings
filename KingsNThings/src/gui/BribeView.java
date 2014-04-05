@@ -32,7 +32,7 @@ import Game.Networking.GameClient;
 public class BribeView extends Dialog {
 	BribeView self = this;
 	VBox viewBox = new VBox();
-	Label defendingCreaturesLabel = new Label("Defending Creatrues");
+	Label defendingCreaturesLabel = new Label("Defending creatures");
 	ThingViewList defenseCreaturesList = new ThingViewList();
 	Label treasureLabel = new Label("Tile has no Treasure");
 	ThingViewList treasureList;
@@ -53,7 +53,7 @@ public class BribeView extends Dialog {
 	ObservableList<Node> children;
 		
 	public BribeView(Stage stage, Tile t){
-		super(stage, "Bribe Defending Creatrues", true, false);
+		super(stage, "Bribe Defending creatures", true, false);
 		
 	    referenceHexTile = t.getTileRef();
 	    this.t = t;

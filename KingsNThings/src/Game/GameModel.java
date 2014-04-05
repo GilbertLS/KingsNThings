@@ -519,25 +519,32 @@ public class GameModel {
 		initializeSpecialIncomes();
 		initializeTreasure();
 		initializeMagic();
+		initializeRandomEvents();
 	}
 	
+	private void initializeRandomEvents() {
+		for(int i=0; i< 20; i++)
+			playingCup.add(new RandomEvent("Defection", GameConstants.DefectionImageFront));
+		
+	}
+
 	public void initializeSpecialCharacters(String s)
 	{
 		String[] initValues = s.trim().split(" ");
 		
-		if(Integer.parseInt(initValues[0]) == 0)
+		/*if(Integer.parseInt(initValues[0]) == 0)
 			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Arch Cleric", 5, GameConstants.ArchClericImageFront)
 			.Magic(true));
 		else
 			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Arch Mage", 6, GameConstants.ArchMageImageFront)
-			.Magic(true));
+			.Magic(true));*/
 		
-		if(Integer.parseInt(initValues[1]) == 0)
-			unownedCharacters.add(new SpecialCharacter("Assassin Primus", 4, GameConstants.AssassinPrimusImageFront));
-		else
-			unownedCharacters.add(new SpecialCharacter("Baron Munchausen", 4, GameConstants.BaronMunchausenImageFront));
+		//if(Integer.parseInt(initValues[1]) == 0)
+			//unownedCharacters.add(new SpecialCharacter("Assassin Primus", 4, GameConstants.AssassinPrimusImageFront));
+		//else
+		//	unownedCharacters.add(new SpecialCharacter("Baron Munchausen", 4, GameConstants.BaronMunchausenImageFront));
 		
-		if(Integer.parseInt(initValues[2]) == 0)
+		/*if(Integer.parseInt(initValues[2]) == 0)
 			unownedCharacters.add(new SpecialCharacter("Deerhunter", 4, GameConstants.DeerhunterImageFront));
 		else
 			unownedCharacters.add(new TerrainLord(Terrain.DESERT,"Desert Master", 4, GameConstants.DesertMasterImageFront));
@@ -568,9 +575,9 @@ public class GameModel {
 		if(Integer.parseInt(initValues[7]) == 0)
 			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Marksman", 5, GameConstants.MarksmanImageFront)
 			.Ranged(true));
-		else
+		else*/
 			unownedCharacters.add(new SpecialCharacter("Master Thief", 4, GameConstants.MasterThiefImageFront));
-		
+		/*
 		if(Integer.parseInt(initValues[8]) == 0)
 			unownedCharacters.add(new TerrainLord(Terrain.MOUNTAIN, "Mountain King", 4, GameConstants.MountainKingImageFront));
 		else
@@ -585,7 +592,7 @@ public class GameModel {
 		if(Integer.parseInt(initValues[10]) == 0)
 			unownedCharacters.add(new SpecialCharacter("Swordmaster", 4, GameConstants.SwordmasterImageFront));
 		else
-			unownedCharacters.add(new SpecialCharacter("Warlord", 5, GameConstants.WarlordImageFront));
+			unownedCharacters.add(new SpecialCharacter("Warlord", 5, GameConstants.WarlordImageFront));*/
 			
 	}
 
@@ -808,11 +815,8 @@ public class GameModel {
 	}
 
 	public void removeFromPlayerRack(ArrayList<Integer> thingIDs, int playerIndex) {
-		Player player = playerFromIndex(playerIndex);
-
 		for(Integer i: thingIDs)
-			if(player.hasInRack(i))
-				player.removeFromRack(i);
+			removeFromPlayerRack(i, playerIndex);
 	}
 
 	public void updatePlayedThings(ArrayList<HexTile> hexTiles, ArrayList<Integer> thingIDs, int playerIndex) {		
@@ -839,7 +843,7 @@ public class GameModel {
 		
 		for(Integer id: thingIDs)
 		{			
-			Thing thingPlayed = tileFrom.getThingFromTileByID(id, playerIndex);
+			Thing thingPlayed = tileFrom.getThingFromTileByID(id);
 			
 			tileFrom.removeThing(id, playerIndex); 
 			tileTo.AddThingToTile(playerIndex, thingPlayed);
@@ -988,7 +992,7 @@ public class GameModel {
 		for(Integer i: tradedThingIDs)
 		{
 			things.add(player.getPlayerRack().getThing(i));
-			player.removeFromRack(i);
+			player.removeFromRackByID(i);
 		}
 		
 		//return them to the cup
@@ -1541,10 +1545,81 @@ public class GameModel {
 		player4.incrementCitadels();
 	}
 
-	public void checkForSpecialPowers() {
-		player1.performSpecialPowers();
-		player2.performSpecialPowers();
-		player3.performSpecialPowers();
-		player4.performSpecialPowers();
+	public ArrayList<String> checkForSpecialPowers(int playerIndex) {
+		switch(playerIndex){
+		case 0:
+			return player1.performSpecialPowers();
+		case 1:
+			return player2.performSpecialPowers();
+		case 2:
+			return player3.performSpecialPowers();
+		case 3:
+			return player4.performSpecialPowers();
+		}
+		
+		return new ArrayList<String>();
+	}
+	
+	public HexTile handleElimination(int thingID, int playerIndex){
+		//it is not known what tile the things resides on
+		//need to check all tiles until thing is found
+		
+		for(HexTile[] hexArray: gameBoard.getTiles())
+			for(HexTile h: hexArray)
+				if(h != null){
+					Thing t = h.getThingFromTileByID(thingID);
+					
+					if(t != null){
+						handleElimination(t,h);
+						return h;
+					}
+				}
+		
+		return null;
+	}
+
+	public void stealGold(int thiefPlayerIndex, int victimPlayerIndex) {
+		Player thief = playerFromIndex(thiefPlayerIndex);
+		Player victim = playerFromIndex(victimPlayerIndex);
+		
+		thief.addGold(victim.getGold());
+		victim.payGold(victim.getGold());
+	}
+
+	public void stealRecruit(int thiefPlayerIndex, int victimPlayerIndex) {
+		Player thief = playerFromIndex(thiefPlayerIndex);
+		Player victim = playerFromIndex(victimPlayerIndex);
+		
+		int victimRackSize = victim.getPlayerRack().size();
+		
+		//choose random thing
+		int thingIndex = (int)Math.floor(Math.random()*victimRackSize);
+		
+		Thing thing = victim.removeFromRackByIndex(thingIndex);
+		thief.addThingToRack(thing);
+	}
+
+	public Thing removeFromPlayerRack(int thingID, int playerIndex) {
+		Player player = playerFromIndex(playerIndex);
+
+		if(player.hasInRack(thingID))
+			return player.removeFromRackByID(thingID);
+		
+		return null;
+	}
+
+	public String performRandomEvent(int playerIndex) {
+		switch(playerIndex){
+		case 0:
+			return player1.performRandomEvent();
+		case 1:
+			return player2.performRandomEvent();
+		case 2:
+			return player3.performRandomEvent();
+		case 3:
+			return player4.performRandomEvent();
+		}
+		
+		return "";
 	}
 }

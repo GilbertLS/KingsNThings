@@ -3,10 +3,12 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.Combatant;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.ThingType;
+import Game.RandomEvent;
 import Game.Utility;
 import Game.Networking.GameClient;
 import Game.HexTile;
@@ -336,7 +338,8 @@ public class Tile extends Region implements Draggable {
 									{
 										if(ThingType.isSpecialIncome(tv.thingRef.getThingType())
 											|| tv.thingRef.getThingType() == ThingType.TREASURE
-											|| tv.thingRef.getThingType() == ThingType.MAGIC)
+											|| tv.thingRef.getThingType() == ThingType.MAGIC
+											|| tv.thingRef.isRandomEvent())
 											thingsToRemove.add(tv);
 									}									
 									
@@ -368,9 +371,10 @@ public class Tile extends Region implements Draggable {
 									if(tileRef.isControlledBy(ControlledBy.NEUTRAL)
 											&& tileRef.noDefense()) 						//exploration
 									{
-										//things can not move further
+										//things can not move further (unless flying over sea hex)
 										for(Thing t: things)
-											t.setMovementFinished();
+											if(!(!tileRef.isLand() && t.IsCombatant() && ((Combatant)t).IsFlying()))
+												t.setMovementFinished();
 										
 										//handle creatures
 										if (GameClient.game.rollForCreatures(GameClient.game.gameModel.GetCurrentPlayer(), tileRef.x, tileRef.y)){
@@ -410,6 +414,20 @@ public class Tile extends Region implements Draggable {
 									source.getListView().getItems().removeAll(thingViews);
 									
 									Utility.GotInput(gv.recruitLock);
+									
+									success = true;
+								}
+							}
+							else if (gv.currentPhase == CurrentPhase.PLAY_RANDOM_EVENT)
+							{
+								if(GameClient.game.isValidPlacement(tileRef, things, gv.getCurrentPlayer()))
+								{	
+									Thing re = things.get(0);
+									
+									gv.returnString = ""+re.thingID;
+									source.getListView().getItems().removeAll(thingViews);
+									
+									Utility.GotInput(gv.inputLock);
 									
 									success = true;
 								}

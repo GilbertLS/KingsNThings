@@ -44,8 +44,8 @@ public class PlayerPanel extends VBox {
 				GameView gv = GameClient.game.gameView;
 				
 				if(gv.currentPhase == CurrentPhase.SELECT_TARGET_PLAYER
-						&& gv.currPlayerNum != playerNum){
-					gv.returnString = Integer.toString(gv.currPlayerNum);
+						&& gv.currPlayerNum != playerNum-1){
+					gv.returnString = Integer.toString(playerNum-1);
 					Utility.GotInput(gv.inputLock);
 				}
 			}
