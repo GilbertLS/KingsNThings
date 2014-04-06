@@ -1344,6 +1344,20 @@ public class EventHandler {
 				}
 			});
 			
+		} else if (e.eventId == EventList.SET_HEX_TERRAIN) {
+			final int tileX = Integer.parseInt(e.eventParams[0]);
+			final int tileY = Integer.parseInt(e.eventParams[1]);
+			Terrain terrain = Terrain.valueOf(e.eventParams[2]);
+			
+			HexTile tile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
+			tile.terrain = terrain;
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
+				}
+			});
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){

@@ -39,10 +39,13 @@ public class EditStateWindow extends Dialog {
 	public RadioButton setPhaseButton;
 	public RadioButton addThingButton;
 	public RadioButton setHexButton;
+	public RadioButton setHexTerrainButton;
+	
 	public ChoiceBox<Phase> changePhaseDropDown;
 	public ChoiceBox<ControlledBy> controlledByDropDown;
 	public ChoiceBox<ControlledBy> setHexControlledByDropDown;
 	public ChoiceBox<SetOption> setOptionDropDown;
+	public ChoiceBox<Terrain> setHexTerrainDropDown;
 	
 	public EditStateWindow() {
 		super(null, "Edit State Menu", false, false);
@@ -67,17 +70,19 @@ public class EditStateWindow extends Dialog {
 		VBox removeThingBox = CreateRemoveThingView(toggleGroup);
 		VBox setPhaseBox = CreateSetPhaseView(toggleGroup);
 		VBox setTileBox = CreateSetTileView(toggleGroup);
+		VBox setHexTypeBox = CreateHexTypeBox(toggleGroup);
 		
 		VBox vbox = new VBox();
 		vbox.getChildren().add(addThingBox);
 		vbox.getChildren().add(removeThingBox);
 		vbox.getChildren().add(setPhaseBox);
 		vbox.getChildren().add(setTileBox);
+		vbox.getChildren().add(setHexTypeBox);
 		vbox.getChildren().add(executeCommandButton);
 		
 		stackPane.getChildren().add(vbox);
 	}
-	
+
 	private VBox CreateAddThingView(ToggleGroup toggleGroup) {
 		VBox addThingBox = new VBox();
 		
@@ -181,6 +186,29 @@ public class EditStateWindow extends Dialog {
 		
 		setTileBox.getChildren().add(setHexButton);
 		setTileBox.getChildren().add(controlledByBox);
+		setTileBox.getChildren().add(setOptionBox);
+		
+		return setTileBox;
+	}
+	
+	private VBox CreateHexTypeBox(ToggleGroup toggleGroup) {
+		VBox setTileBox = new VBox();
+		
+		setHexTerrainButton = new RadioButton("Set hex terrain");
+		setHexTerrainButton.setToggleGroup(toggleGroup);
+		
+		Label setTerrainLabel = new Label("Set hex type: ");
+		setHexTerrainDropDown = new ChoiceBox<Terrain>(FXCollections.observableArrayList(
+			Terrain.DESERT, Terrain.FOREST, Terrain.FROZEN_WASTE, Terrain.JUNGLE,
+			Terrain.MOUNTAIN, Terrain.PLAINS, Terrain.SEA, Terrain.SWAMP
+		));
+		setHexTerrainDropDown.getSelectionModel().selectFirst();
+		HBox setOptionBox = new HBox();
+		setOptionBox.getChildren().add(setTerrainLabel);
+		setOptionBox.getChildren().add(setHexTerrainDropDown);
+		HBox.setMargin(setTerrainLabel, new Insets(0, 0, 0, 20));
+		
+		setTileBox.getChildren().add(setHexTerrainButton);
 		setTileBox.getChildren().add(setOptionBox);
 		
 		return setTileBox;

@@ -68,6 +68,7 @@ public class EventList {
 	public static final int GET_RETREATED_TILE = 207;
 	public static final int RETREAT_PLAYER = 208;
 	public static final int SET_HEX_TILE = 209;
+	public static final int SET_HEX_TERRAIN = 210;
 	public static final int BRIBE_CREATURES = 138;
 	public static final int CHECK_TILE_SWAP = 139;
 	public static final int HANDLE_TILE_SWAP = 140;

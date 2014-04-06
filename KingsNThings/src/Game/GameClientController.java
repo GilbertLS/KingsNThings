@@ -509,6 +509,28 @@ public class GameClientController {
 			});
 			
 			t.start();
+		} else if (edit.setHexTerrainButton.isSelected()) { 
+			Thread t = new Thread( new Runnable() {
+				@Override
+				public void run() {
+					hideMenu();
+					Tile selectedTile = GameClient.game.gameView.chooseTileFromEditState();
+					Terrain terrain = edit.setHexTerrainDropDown.getSelectionModel().getSelectedItem();
+					
+					String[] params = new String[4];
+					params[0] = "" + selectedTile.getTileRef().x;
+					params[1] = "" + selectedTile.getTileRef().y;
+					params[2] = "" + terrain.name();
+					
+					Event e = new Event()
+						.EventId(EventList.SET_HEX_TERRAIN)
+						.EventParameters(params);
+					
+					EventHandler.SendEvent(e);
+				}
+			});
+			
+			t.start();
 		} else {
 			System.out.println("Error in GameClientController.parseEdit");
 		}
