@@ -506,7 +506,7 @@ public class GameController {
 			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
-				//moveThings();
+				moveThings();
 				if (!changedPhase) { currentPhase = Phase.BATTLE; }
 			}
 			if (currentPhase == Phase.BATTLE) {
@@ -961,9 +961,6 @@ public class GameController {
 						hits[4+1] = coordinates[0];
 						hits[4+2] = coordinates[1];
 						
-						getRollParams[0] = coordinates[0];
-						getRollParams[1] = coordinates[1];
-						getRollParams[2] = combatType;
 						Response neutralHits = GameControllerEventHandler.sendEvent(
 							new Event()
 								.EventId( EventList.GET_NEUTRAL_HITS )
@@ -1050,7 +1047,7 @@ public class GameController {
 						}
 					}
 					
-					if (!battleOver && totalHitsInRound != 0){
+					if (!battleOver){
 						Response[] retreats = GameControllerEventHandler.sendEvent(
 							new Event()
 								.EventId( EventList.GET_RETREAT )
@@ -1059,14 +1056,42 @@ public class GameController {
 						);
 						
 						int numLeft = 0;
+						
+						boolean[] retreatedPlayers = new boolean[] { false, false, false, false };
 						for (Response retreat : retreats) {
 							if (retreat.eventId == EventList.NULL_EVENT){
 								continue;
 							}
 							if (retreat.message.equals("n")){
 								numLeft++;
-							} 
+							} else if (retreat.message.equals("y")) {
+								retreatedPlayers[retreat.fromPlayer] = true;
+							}
 						}
+						
+						Response[] retreatedTiles = GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId(EventList.GET_RETREATED_TILE)
+								.EventParameters(coordinates)
+								.IntendedPlayers(retreatedPlayers)
+								.ExpectsResponse()
+						);
+						
+						String[] retreatParams = new String[numClients+2];
+						for (int i = 0; i < numClients; i++) { retreatParams[i] = ""; }
+						
+						for(Response ret : retreatedTiles) {
+							retreatParams[ret.fromPlayer] = ret.message;
+						}
+						
+						retreatParams[numClients] = coordinates[0];
+						retreatParams[numClients+1] = coordinates[1];
+						
+						GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId(EventList.RETREAT_PLAYER)
+								.EventParameters(retreatParams)
+						);
 						
 						numLeft += Integer.parseInt(GameControllerEventHandler.sendEvent(
 							new Event()

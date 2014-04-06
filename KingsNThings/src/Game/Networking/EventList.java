@@ -65,6 +65,8 @@ public class EventList {
 	public static final int GET_NEUTRAL_HITS = 204;
 	public static final int GET_NEUTRAL_THINGS_REMOVED = 205;
 	public static final int GET_NUMBER_NEUTRAL_CREATURES = 206;
+	public static final int GET_RETREATED_TILE = 207;
+	public static final int RETREAT_PLAYER = 208;
 	public static final int BRIBE_CREATURES = 138;
 	public static final int CHECK_TILE_SWAP = 139;
 	public static final int HANDLE_TILE_SWAP = 140;
