@@ -191,7 +191,7 @@ public class Tile extends Region implements Draggable {
 	    	ImageView imgView = new ImageView(img);
 	    	imgView.setFitHeight(25);
 	    	imgView.setFitWidth(25);
-	    	imgView.setX(this.getWidth()/4 + getWidth()/4);
+	    	imgView.setX(this.getWidth()/2);
 	    	list.add(imgView);
 	    	
 	    	if(specialIncome == null)

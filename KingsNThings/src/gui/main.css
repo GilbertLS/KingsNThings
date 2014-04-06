@@ -35,6 +35,11 @@
 	-fx-fill: white;
 }
 
+.text-panel {
+	-fx-background-color: #000000;
+	-fx-padding: 10;
+}
+
 .list-view {
 	-fx-focus-color: transparent;
 	-fx-border-width: 0 1 1 1;
@@ -102,7 +107,7 @@
 
 .button-box {
 	-fx-padding: 10;
-	-fx-background-color: #000000;
+	-fx-background-color: #232323;
 }
 
 .button-box .button {

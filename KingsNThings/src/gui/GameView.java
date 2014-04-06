@@ -75,22 +75,26 @@ public class GameView extends Scene {
                 
         tilePreview = new TilePreview(0);
         
-        board = new BoardView(tilePreview);
+        board = new BoardView(tilePreview, this);
         scroll = new BoardScrollPane(board);
         leftPanel.getChildren().add(scroll);
         
         VBox.setVgrow(scroll, Priority.ALWAYS);
         HBox.setHgrow(leftPanel, Priority.ALWAYS);
         
+        rightPanel.getChildren().add(new TextPanel("Player List"));
         playerList = new PlayerList(Arrays.asList(new PlayerPanel(1), new PlayerPanel(2), new PlayerPanel(3), new PlayerPanel(4)));
         rightPanel.getChildren().add(playerList);
         
+        rightPanel.getChildren().add(new TextPanel("Game Message"));
         messageView = new MessageView();
         rightPanel.getChildren().add(messageView);
-                
+             
+        rightPanel.getChildren().add(new TextPanel("Game Controls"));
         buttonBox = new ButtonBox();
         rightPanel.getChildren().add(buttonBox);
         
+        rightPanel.getChildren().add(new TextPanel("Tile Preview"));
         rightPanel.getChildren().add(tilePreview);        
         
         ArrayList<ThingView> arr = new ArrayList<ThingView>();
