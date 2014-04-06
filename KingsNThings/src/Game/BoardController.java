@@ -185,7 +185,7 @@ public class BoardController {
 					continue;
 				}
 				
-				if (currTile.isAdjacent(h)) {
+				if (currTile.isAdjacent(h) && h != currTile) {
 					adjacentTiles.add(h);
 				}
 			}

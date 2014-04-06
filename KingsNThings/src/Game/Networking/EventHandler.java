@@ -244,6 +244,10 @@ public class EventHandler {
 						continue;
 					}
 					
+					if (thing.isBuilding() && ((Building)thing).isNeutralized()) {
+						continue;
+					}
+					
 					BattleTurn turn;
 					if (isMagicTurn){ turn = BattleTurn.MAGIC; }
 					else if (isRangedTurn){ turn = BattleTurn.RANGED; }
@@ -1316,11 +1320,11 @@ public class EventHandler {
 				
 				for(Thing t : playerThings) {
 					removeThings.add(t);
-					retreatTile.AddThingToTile(i, t);
 				}
 				
 				for(Thing t : removeThings) {
 					originalTile.removeThing(t.thingID, i);
+					retreatTile.AddThingToTile(i, t);
 				}
 				
 				GameClient.game.gameView.board.getTileByHex(retreatTile).updateThings(i);
