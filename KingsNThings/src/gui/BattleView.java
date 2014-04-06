@@ -20,6 +20,8 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -143,6 +145,24 @@ public class BattleView extends Scene {
 		//battleStage.setY(battleStage.getY() + 150);
 
 		//battleStage.show();
+        this.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.DIGIT1) {
+					diceListView.SetRoll(0, 1);
+				} else if (event.getCode() == KeyCode.DIGIT2) {
+					diceListView.SetRoll(0, 2);
+				} else if (event.getCode() == KeyCode.DIGIT3) {
+					diceListView.SetRoll(0, 3);
+				} else if (event.getCode() == KeyCode.DIGIT4) {
+					diceListView.SetRoll(0, 4);
+				} else if (event.getCode() == KeyCode.DIGIT5) {
+					diceListView.SetRoll(0, 5);
+				} else if (event.getCode() == KeyCode.DIGIT6) {
+					diceListView.SetRoll(0, 6);
+				}
+			}
+        });
 	}
 	
 	public int RollDice(Thing thing, int diceNum, int numPreviousRolls){

@@ -121,12 +121,15 @@ public class GameView extends Scene {
         
         this.getStylesheets().add("gui/main.css");
 		BorderPane b = new BorderPane();
-        escapeMenu = new EscapeMenu(this);
         
         EventHandler<KeyEvent> keyPressed = new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
 				if (event.getCode() == KeyCode.M) {
+					if (escapeMenu == null) {
+						escapeMenu = new EscapeMenu(self);
+					}
+
 					escapeMenu.show();
 				}
 			}

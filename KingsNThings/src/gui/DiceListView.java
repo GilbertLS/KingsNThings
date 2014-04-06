@@ -22,4 +22,8 @@ public class DiceListView extends HBox {
 		int roll = diceViews[diceNum].RollDice();
 		return roll;
 	}
+	
+	public void SetRoll(int diceNum, int roll) {
+		diceViews[diceNum].SetRoll(roll);
+	}
 }

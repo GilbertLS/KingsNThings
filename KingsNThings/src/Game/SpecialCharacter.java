@@ -104,4 +104,14 @@ public class SpecialCharacter extends Combatant implements IIncomable, ISpecialP
 			
 		return "";
 	}
+	
+	public SpecialCharacter copy() {
+		SpecialCharacter copy = new SpecialCharacter(getThingType(), name, combatValue, frontFileName);
+		copy.Flying(isFlying);
+		copy.Ranged(isRange);
+		copy.Magic(isMagic);
+		copy.Charge(isCharge);
+		
+		return copy;
+	}
 }

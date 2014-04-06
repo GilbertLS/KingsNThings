@@ -9,6 +9,8 @@ import Game.Utility;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
@@ -18,6 +20,7 @@ public class DiceView extends Region {
 	private Boolean isEnabled = false;
 	private DiceView thisDice = this;
 	private Semaphore inputLock = new Semaphore(0);
+	private boolean takingInput = false;
 	
 	public DiceView(){
 		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
@@ -43,6 +46,7 @@ public class DiceView extends Region {
 		if (roll >= 1 && roll <= 6) {
 			setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromRoll() + "); ");
 			isEnabled = false;
+			takingInput = false;
 			Utility.GotInput(inputLock);
 		}
 	};
@@ -68,20 +72,21 @@ public class DiceView extends Region {
 	        		roll = Dice.rollDice(1)[0];
 	        		UpdateDice();
 	        	} else if (e.getButton() == MouseButton.SECONDARY && thisDice.isEnabled) {
-	        		System.out.println("Input roll: ");
-	        		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-	        		roll = 0;
-	        		try {
-						String line = buffer.readLine();
-						roll = Integer.parseInt(line);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-						roll = 0;
-					}
-	        		
-	        		UpdateDice();
-	        	}
+	        		System.out.println("Taking input: " + true);
+	        		takingInput = true;
+	        	} 
 	        }
 	   });
+	}
+	
+	public void SetRoll(int r) {
+		System.out.println(takingInput + " " + r);
+		if (!takingInput) {
+			return;
+		}
+		
+		roll = r;
+		
+		UpdateDice();
 	}
 }

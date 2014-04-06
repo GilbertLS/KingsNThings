@@ -350,6 +350,8 @@ public final class GameConstants {
 		RANGED,
 		OTHER
 	}
+	
+	public static enum SetOption { HEX, FORT }
 
 	public static ControlledBy controlledByFromIndex(Integer currentPlayer) {
 		switch(currentPlayer)

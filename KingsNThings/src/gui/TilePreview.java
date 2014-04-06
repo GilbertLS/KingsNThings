@@ -136,11 +136,11 @@ public class TilePreview extends VBox {
 		
 		if(i==1)
 			icon = new ImageView(new Image("res/images/CM_411.png", 25, 25, false, true));
-		else if(i==1)
+		else if(i==2)
 			icon = new ImageView(new Image("res/images/CM_412.png", 25, 25, false, true));
-		else if(i==1)
+		else if(i==3)
 			icon = new ImageView(new Image("res/images/CM_413.png", 25, 25, false, true));
-		else if(i==1)
+		else if(i==4)
 			icon = new ImageView(new Image("res/images/CM_414.png", 25, 25, false, true));
 		
 		box.getChildren().add(icon);
