@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.controlsfx.dialog.Dialog;
 
 import Game.GameConstants.ControlledBy;
+import Game.GameConstants.SetOption;
 import Game.GameConstants.Terrain;
 import Game.Phases;
 import Game.Thing;
@@ -34,17 +35,14 @@ public class EditStateWindow extends Dialog {
 	private Button executeCommandButton;
 	
 	private EditStateWindow _this;
-	public RadioButton magicButton;
-	public RadioButton rangedButton;
-	public RadioButton flyingButton;
-	public RadioButton chargeButton;
-	public ChoiceBox<Terrain> hexTypeDropDown;
-	public ChoiceBox<Integer> combatValueDropDown;
 	public RadioButton removeThingButton;
 	public RadioButton setPhaseButton;
 	public RadioButton addThingButton;
+	public RadioButton setHexButton;
 	public ChoiceBox<Phase> changePhaseDropDown;
 	public ChoiceBox<ControlledBy> controlledByDropDown;
+	public ChoiceBox<ControlledBy> setHexControlledByDropDown;
+	public ChoiceBox<SetOption> setOptionDropDown;
 	
 	public EditStateWindow() {
 		super(null, "Edit State Menu", false, false);
@@ -68,11 +66,13 @@ public class EditStateWindow extends Dialog {
 		VBox addThingBox = CreateAddThingView(toggleGroup);
 		VBox removeThingBox = CreateRemoveThingView(toggleGroup);
 		VBox setPhaseBox = CreateSetPhaseView(toggleGroup);
+		VBox setTileBox = CreateSetTileView(toggleGroup);
 		
 		VBox vbox = new VBox();
 		vbox.getChildren().add(addThingBox);
 		vbox.getChildren().add(removeThingBox);
 		vbox.getChildren().add(setPhaseBox);
+		vbox.getChildren().add(setTileBox);
 		vbox.getChildren().add(executeCommandButton);
 		
 		stackPane.getChildren().add(vbox);
@@ -151,4 +151,39 @@ public class EditStateWindow extends Dialog {
 		
 		return setPhaseBox;
 	}
+	
+	private VBox CreateSetTileView(ToggleGroup toggleGroup) {
+		VBox setTileBox = new VBox();
+		
+		setHexButton = new RadioButton("Set hex");
+		setHexButton.setToggleGroup(toggleGroup);
+		
+		Label controlledByLabel = new Label("Controlled By: ");
+		setHexControlledByDropDown = new ChoiceBox<ControlledBy>(FXCollections.observableArrayList(
+			ControlledBy.PLAYER1, ControlledBy.PLAYER2, ControlledBy.PLAYER3, ControlledBy.PLAYER4,
+			ControlledBy.NEUTRAL
+		));
+		setHexControlledByDropDown.getSelectionModel().selectFirst();
+		HBox controlledByBox = new HBox();
+		controlledByBox.getChildren().add(controlledByLabel);
+		controlledByBox.getChildren().add(setHexControlledByDropDown);
+		HBox.setMargin(controlledByLabel, new Insets(0, 0, 0, 20));
+		
+		Label setOptionLabel = new Label("Set option: ");
+		setOptionDropDown = new ChoiceBox<SetOption>(FXCollections.observableArrayList(
+			SetOption.HEX, SetOption.FORT
+		));
+		setOptionDropDown.getSelectionModel().selectFirst();
+		HBox setOptionBox = new HBox();
+		setOptionBox.getChildren().add(setOptionLabel);
+		setOptionBox.getChildren().add(setOptionDropDown);
+		HBox.setMargin(setOptionLabel, new Insets(0, 0, 0, 20));
+		
+		setTileBox.getChildren().add(setHexButton);
+		setTileBox.getChildren().add(controlledByBox);
+		setTileBox.getChildren().add(setOptionBox);
+		
+		return setTileBox;
+	}
+
 }

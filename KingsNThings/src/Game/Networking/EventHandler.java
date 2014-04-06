@@ -1157,7 +1157,7 @@ public class EventHandler {
 				
 				boardController.RemoveThings(removeThings, playerNum, tileX, tileY);
 				GameView.battleView.RemoveThings(removeThings, playerNum);
-			}
+			} 
 			
 			boolean battleOver = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size() <= 1;
 			
@@ -1325,6 +1325,25 @@ public class EventHandler {
 				
 				GameClient.game.gameView.board.getTileByHex(retreatTile).updateThings(i);
 			}
+		} else if (e.eventId == EventList.SET_HEX_TILE) {
+			final int tileX = Integer.parseInt(e.eventParams[0]);
+			final int tileY = Integer.parseInt(e.eventParams[1]);
+			int player = Integer.parseInt(e.eventParams[2]);
+			int setOption = Integer.parseInt(e.eventParams[3]);
+			
+			if (setOption == 0) {
+				GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetPlayer(player), tileX, tileY);
+			} else {
+				GameClient.game.gameModel.addTower(tileX, tileY, player);
+			}
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
+				}
+			});
+			
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){

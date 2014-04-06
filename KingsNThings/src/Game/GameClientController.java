@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
+import Game.GameConstants.SetOption;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Phases.Phase;
@@ -477,6 +478,31 @@ public class GameClientController {
 					Event e = new Event()
 						.EventId(EventList.SET_PHASE)
 						.EventParameter("" + phase.name());
+					
+					EventHandler.SendEvent(e);
+				}
+			});
+			
+			t.start();
+		} else if (edit.setHexButton.isSelected()) {
+			Thread t = new Thread( new Runnable() {
+				@Override
+				public void run() {
+					hideMenu();
+					Tile selectedTile = GameClient.game.gameView.chooseTileFromEditState();
+					ControlledBy controlledBy = edit.setHexControlledByDropDown.getSelectionModel().getSelectedItem();
+					SetOption option = edit.setOptionDropDown.getSelectionModel().getSelectedItem();
+					
+					String[] params = new String[4];
+					params[0] = "" + selectedTile.getTileRef().x;
+					params[1] = "" + selectedTile.getTileRef().y;
+					params[2] = "" + GameConstants.GetPlayerNumber(controlledBy);
+					int temp =  option == SetOption.HEX ? 0 : 1;
+					params[3] = "" + temp;
+					
+					Event e = new Event()
+						.EventId(EventList.SET_HEX_TILE)
+						.EventParameters(params);
 					
 					EventHandler.SendEvent(e);
 				}
