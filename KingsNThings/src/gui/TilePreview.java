@@ -6,6 +6,9 @@ import Game.HexTile;
 import Game.Thing;
 import Game.Networking.GameClient;
 import javafx.collections.FXCollections;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class TilePreview extends VBox {
@@ -23,17 +26,26 @@ public class TilePreview extends VBox {
 	
 	private void show(Tile t) {
 		this.getChildren().clear();
-		if (view1 != null) this.getChildren().add(view1);
-		if (view2 != null) this.getChildren().add(view2);
-		if (view3 != null) this.getChildren().add(view3);
-		if (view4 != null) this.getChildren().add(view4);
-		if (viewDefenders != null) this.getChildren().add(viewDefenders);
 		
-		view1.setVisible(!view1.isEmpty());
-		view2.setVisible(!view2.isEmpty());
-		view3.setVisible(!view3.isEmpty());
-		view4.setVisible(!view4.isEmpty());
-		viewDefenders.setVisible(!viewDefenders.isEmpty());
+		view1.setPrefWidth(307);
+		view2.setPrefWidth(307);
+		view3.setPrefWidth(307);
+		view4.setPrefWidth(307);
+		viewDefenders.setPrefWidth(307);
+		
+		if (view1 != null && !view1.isEmpty()) this.getChildren().add(createPanel(1, view1));
+		if (view2 != null && !view2.isEmpty()) this.getChildren().add(createPanel(2, view2));
+		if (view3 != null && !view3.isEmpty()) this.getChildren().add(createPanel(3, view3));
+		if (view4 != null && !view4.isEmpty()) this.getChildren().add(createPanel(4, view4));
+		if (viewDefenders != null && !viewDefenders.isEmpty()) this.getChildren().add(viewDefenders);
+	}
+	
+	private HBox createPanel(int playerNum, ThingViewList t) {
+		HBox panel = new HBox();
+		panel.getChildren().add(getPlayerIcon(playerNum));
+		panel.getChildren().add(t);
+		
+		return panel;
 	}
 
 	public ThingViewList GetThingList(int playerNum){
@@ -51,7 +63,6 @@ public class TilePreview extends VBox {
 	}
 		
 	public void changeTile(Tile t) {
-		
 		tileRef = t;
 		
 		view1 = new ThingViewList(FXCollections.observableList(t.p1Things));
@@ -117,5 +128,24 @@ public class TilePreview extends VBox {
 
 	public Tile getTile() {
 		return tileRef;
+	}
+	
+	private static VBox getPlayerIcon(int i) {
+		ImageView icon = null;
+		VBox box = new VBox();
+		
+		if(i==1)
+			icon = new ImageView(new Image("res/images/CM_411.png", 25, 25, false, true));
+		else if(i==1)
+			icon = new ImageView(new Image("res/images/CM_412.png", 25, 25, false, true));
+		else if(i==1)
+			icon = new ImageView(new Image("res/images/CM_413.png", 25, 25, false, true));
+		else if(i==1)
+			icon = new ImageView(new Image("res/images/CM_414.png", 25, 25, false, true));
+		
+		box.getChildren().add(icon);
+		box.setStyle("-fx-padding: 20 0 0 0;");
+		
+		return box;
 	}
 }

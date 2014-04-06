@@ -121,7 +121,7 @@ public class GameView extends Scene {
         
         this.getStylesheets().add("gui/main.css");
 		BorderPane b = new BorderPane();
-        escapeMenu = new EscapeMenu();
+        escapeMenu = new EscapeMenu(this);
         
         EventHandler<KeyEvent> keyPressed = new EventHandler<KeyEvent>() {
 			@Override
