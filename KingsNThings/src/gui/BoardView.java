@@ -11,21 +11,40 @@ import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Region;
 
 public class BoardView extends Region {
-	private BoardView 	thisBoard = this;
+	private BoardView 	self = this;
 	private TilePreview tilePreview;
 	public 	Tile 		lastSelectedTile;
 	private Semaphore	selectedTileLock = new Semaphore(0);
 	private Semaphore 	tempSem;
 	private boolean 	waitingForOtherSelectedTile = false;
+	private GameView	gameView;
 	
-	BoardView(TilePreview tp)
+	BoardView(TilePreview tp, GameView g)
 	{
 		tilePreview = tp;
+		gameView = g;
 		getStyleClass().add("board");
+		setupListeners();
+	}
+	
+	private void setupListeners() {
+		gameView.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
+            @Override
+            public void handle(ScrollEvent event) {
+            	if (event.isControlDown()) {
+					if (event.getDeltaY() > 0)
+						self.zoomIn();
+					else if (event.getDeltaY() < 0)
+						self.zoomOut();
+				}
+            }
+		});
 	}
 
 	public void setTiles(HexTile[][] h) {
@@ -54,7 +73,7 @@ public class BoardView extends Region {
 	    	            	tilePreview.changeTile((t));
 	    	            	
 	    	            	//tileSelection
-	    	            	thisBoard.lastSelectedTile = t;
+	    	            	self.lastSelectedTile = t;
 	    	            	if (waitingForOtherSelectedTile) {
 	    	            		waitingForOtherSelectedTile = false;
 	    	            		Utility.GotInput(tempSem);
