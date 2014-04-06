@@ -68,4 +68,14 @@ public class Creature extends Combatant{
 		
 		return s;
 	}
+	
+	public Creature copy() {
+		Creature c = new Creature(terrain, name, combatValue, frontFileName);
+		c.Flying(isFlying);
+		c.Ranged(isRange);
+		c.Magic(isMagic);
+		c.Charge(isCharge);
+		
+		return c;
+	}
 }

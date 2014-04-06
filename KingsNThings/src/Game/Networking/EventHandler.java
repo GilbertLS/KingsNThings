@@ -1130,22 +1130,15 @@ public class EventHandler {
 		} else if (e.eventId == EventList.ADD_THING){
 			int x = Integer.parseInt(e.eventParams[0]);
 			int y = Integer.parseInt(e.eventParams[1]);
-			int combatValue = Integer.parseInt(e.eventParams[2]);
-			Terrain terrain = Terrain.valueOf(e.eventParams[3]);
-			int playerNum = Integer.parseInt(e.eventParams[4]);
+			int thingId = Integer.parseInt(e.eventParams[2]);
+			int playerNum = Integer.parseInt(e.eventParams[3]);
 			
-			Creature creature = new Creature(terrain, combatValue);
-			creature.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
-			
-			for(int i = 5; i < e.eventParams.length; i++) {
-				if(e.eventParams[i].equals("Magic")) { creature.Magic(true); }
-				if(e.eventParams[i].equals("Ranged")) { creature.Ranged(true); }
-				if(e.eventParams[i].equals("Charge")) { creature.Charge(true); }
-				if(e.eventParams[i].equals("Flying")) { creature.Flying(true); }
-			}
+			Thing thing = GameClient.game.gameModel.getThingFromCup(thingId);
+			if(thing == null) { return; }
+			thing.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
 			
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
-			tile.AddThingToTile(playerNum, creature);
+			tile.AddThingToTile(playerNum, thing);
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings();
 			
 		} else if (e.eventId == EventList.REMOVE_BLUFFS) {

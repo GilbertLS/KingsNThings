@@ -1,16 +1,20 @@
 package gui;
 
+import java.util.ArrayList;
+
 import org.controlsfx.dialog.Dialog;
 
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.Phases;
+import Game.Thing;
 import Game.Phases.Phase;
 import Game.Networking.GameClient;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -80,47 +84,23 @@ public class EditStateWindow extends Dialog {
 		addThingButton = new RadioButton("Add thing");
 		addThingButton.setToggleGroup(toggleGroup);
 		
-		// Combat value box
-		HBox combatValueHBox = new HBox();
-		combatValueDropDown = new ChoiceBox<Integer>(FXCollections.observableArrayList(
-			1, 2, 3, 4, 5, 6
-		));
-		combatValueDropDown.getSelectionModel().selectFirst();
-		Label combatLabel = new Label("Combat Value: ");
-		combatValueHBox.getChildren().add(combatLabel);
-		combatValueHBox.getChildren().add(combatValueDropDown);
-		HBox.setMargin(combatLabel, new Insets(0, 0, 0, 20));
+		addThingBox.getChildren().add(addThingButton);
 		
-		// Hex type box
-		HBox hexTypeHBox = new HBox();
-		hexTypeDropDown = new ChoiceBox<Terrain>(FXCollections.observableArrayList(
-			Terrain.DESERT,   Terrain.FOREST, Terrain.FROZEN_WASTE, Terrain.JUNGLE, 
-			Terrain.MOUNTAIN, Terrain.PLAINS, Terrain.SEA, 			Terrain.SWAMP
-		));
-		hexTypeDropDown.getSelectionModel().selectFirst();
-		Label hexTypeLabel = new Label("Hex Type: ");
-		hexTypeHBox.getChildren().add(hexTypeLabel);
-		hexTypeHBox.getChildren().add(hexTypeDropDown);
-		HBox.setMargin(hexTypeLabel, new Insets(0, 0, 0, 20));
+		ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
+		ArrayList<Thing> things = GameClient.game.gameModel.getAllPlayingCupCreatures();
+		for(Thing t : things) {
+			t.setFlipped(false);
+			thingViews.add(new ThingView(t));
+		}
 		
-		// Creature type box
-		Label creatureType = new Label("Creature Type: ");
-		ToggleGroup creatureButtons = new ToggleGroup();
-		magicButton = new RadioButton("Magic");
-		magicButton.setToggleGroup(creatureButtons);
-		rangedButton = new RadioButton("Ranged");
-		rangedButton.setToggleGroup(creatureButtons);
-		flyingButton = new RadioButton("Flying");
-		chargeButton = new RadioButton("Charge");
-		HBox creatureTypeHBox = new HBox();
-		creatureTypeHBox.getChildren().add(creatureType);
-		creatureTypeHBox.getChildren().add(magicButton);
-		creatureTypeHBox.getChildren().add(rangedButton);
-		creatureTypeHBox.getChildren().add(chargeButton);
-		creatureTypeHBox.getChildren().add(flyingButton);
-		HBox.setMargin(creatureType, new Insets(0, 0, 0, 20));
+		ThingViewList thingViewList = new ThingViewList(
+			FXCollections.observableArrayList(thingViews)
+		);
 		
-		// Controlled by box
+		HBox hbox = new HBox();
+		hbox.getChildren().add(thingViewList);
+		addThingBox.getChildren().add(hbox);
+		
 		Label controlledByLabel = new Label("Controlled By: ");
 		controlledByDropDown = new ChoiceBox<ControlledBy>(FXCollections.observableArrayList(
 			ControlledBy.PLAYER1, ControlledBy.PLAYER2, ControlledBy.PLAYER3, ControlledBy.PLAYER4,
@@ -132,10 +112,6 @@ public class EditStateWindow extends Dialog {
 		controlledByBox.getChildren().add(controlledByDropDown);
 		HBox.setMargin(controlledByLabel, new Insets(0, 0, 0, 20));
 		
-		addThingBox.getChildren().add(addThingButton);
-		addThingBox.getChildren().add(combatValueHBox);
-		addThingBox.getChildren().add(hexTypeHBox);
-		addThingBox.getChildren().add(creatureTypeHBox);
 		addThingBox.getChildren().add(controlledByBox);
 		
 		return addThingBox;
