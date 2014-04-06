@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Networking.GameClient;
@@ -51,6 +52,10 @@ public class BoardController {
 	
 	public boolean HasThingsOnTile(Player player, int tileX, int tileY){
 		return gameBoard.getTile(tileX, tileY).HasThingsOnTile(player);
+	}
+	
+	public boolean HasCombatantsOnTile(Player player, int tileX, int tileY) {
+		return gameBoard.getTile(tileX, tileY).hasCombatants(player.GetPlayerNum());
 	}
 	
 	public HexTile GetTile(int tileX, int tileY){
@@ -167,5 +172,38 @@ public class BoardController {
 		}
 		
 		return controlledTerrains;
+	}
+
+	public ArrayList<HexTile> GetAdjacentTiles(int tileX, int tileY) {
+		HexTile currTile = GetTile(tileX, tileY);
+		
+		ArrayList<HexTile> adjacentTiles = new ArrayList<HexTile>();
+		for(int x = -3; x < 4; x++){
+			for(int y = -3; y < 4; y++){
+				HexTile h = gameBoard.getTile(x, y);
+				if (h == null) {
+					continue;
+				}
+				
+				if (currTile.isAdjacent(h)) {
+					adjacentTiles.add(h);
+				}
+			}
+		}
+		
+		return adjacentTiles;
+	}
+	
+	public ArrayList<HexTile> GetAdjacentControlledTiles(ControlledBy controlledBy, int tileX, int tileY) {
+		ArrayList<HexTile> adjacentTiles = GetAdjacentTiles(tileX, tileY);
+		ArrayList<HexTile> controlledAdjacentTiles = new ArrayList<HexTile>();
+		
+		for(HexTile t : adjacentTiles) {
+			if (t.getControlledBy() == controlledBy) {
+				controlledAdjacentTiles.add(t);
+			}
+		}
+		
+		return controlledAdjacentTiles;
 	}
 }

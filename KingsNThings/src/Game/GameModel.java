@@ -697,6 +697,27 @@ public class GameModel {
 		
 		return things;
 	}
+	
+	public ArrayList<Thing> getAllPlayingCupCreatures() {
+		ArrayList<Thing> things = new ArrayList<Thing>();
+		
+		things.addAll(playingCup);
+		things.addAll(unownedCharacters);
+		
+		return things;
+	}
+	
+	public Thing getThingFromCup(int thingId) {
+		for(Thing t : playingCup) {
+			if (t.thingID == thingId) { return t; }
+		}
+		
+		for(Thing t : unownedCharacters) {
+			if (t.thingID == thingId) { return t; }
+		}
+		
+		return null;
+	}
 
 	public void distributeInitialGold() {
 		player1.addGold(GameConstants.INITIAL_GOLD_AMOUNT);

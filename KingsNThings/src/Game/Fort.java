@@ -79,4 +79,5 @@ public class Fort extends Building implements IIncomable{
 	public boolean isCitadel() {
 		return level == Level.CITADEL;
 	}
+	
 }

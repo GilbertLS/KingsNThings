@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import javafx.application.Platform;
@@ -17,6 +18,7 @@ import Game.Building;
 import Game.Combatant;
 import Game.Creature;
 import Game.GameConstants;
+import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.BattleTurn;
 import Game.GameConstants.Terrain;
@@ -224,7 +226,7 @@ public class EventHandler {
 			}
 			
 			
-			if (GameClient.game.gameModel.boardController.HasThingsOnTile(
+			if (GameClient.game.gameModel.boardController.HasCombatantsOnTile(
 					GameClient.game.gameModel.GetCurrentPlayer(), 
 					tileX, 
 					tileY
@@ -237,17 +239,7 @@ public class EventHandler {
 				
 				int rolls = 0;
 				
-				ArrayList<Thing> thingsBattling = new ArrayList<Thing>();
-				for(Thing t :battleTile.GetThings( currPlayer ))
-				{
-					thingsBattling.add(t);
-				}
-				if(battleTile.hasFort() && battleTile.isControlledBy(currPlayer.faction))
-				{
-					thingsBattling.add(battleTile.getFort());
-				}
-				
-				for (Thing thing : thingsBattling){
+				for (Thing thing : battleTile.getCombatants(currPlayer.GetPlayerNum())){
 					if ( !thing.IsCombatant() ){
 						continue;
 					}
@@ -1090,22 +1082,16 @@ public class EventHandler {
 											.PlayersOnTile(tileX, tileY);
 			
 			if (playersOnTile.contains(currentPlayer.GetPlayerNum())) {
-				/*System.out.println("Would you like to retreat (y/n)?");
-				char answer = 'a';
-				
-				do {
-					BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-					try {
-						answer = bufferRead.readLine().charAt(0);
-					} catch (Exception ex){}
-					
-					System.out.println(answer);
-				} while (answer != 'y' && answer != 'n');*/
-				
-				boolean retreat = GameView.battleView.GetSurrender();
 				String answer;
-				if (retreat == true){
-					answer = "y";
+				
+				ControlledBy controlledBy = GameConstants.controlledByFromIndex(currentPlayer.GetPlayerNum());
+				if (!GameClient.game.gameModel.boardController.GetAdjacentControlledTiles(controlledBy, tileX, tileY).isEmpty()) {
+					boolean retreat = GameView.battleView.GetSurrender();
+					if (retreat == true){
+						answer = "y";
+					} else {
+						answer = "n";
+					}
 				} else {
 					answer = "n";
 				}
@@ -1144,22 +1130,15 @@ public class EventHandler {
 		} else if (e.eventId == EventList.ADD_THING){
 			int x = Integer.parseInt(e.eventParams[0]);
 			int y = Integer.parseInt(e.eventParams[1]);
-			int combatValue = Integer.parseInt(e.eventParams[2]);
-			Terrain terrain = Terrain.valueOf(e.eventParams[3]);
-			int playerNum = Integer.parseInt(e.eventParams[4]);
+			int thingId = Integer.parseInt(e.eventParams[2]);
+			int playerNum = Integer.parseInt(e.eventParams[3]);
 			
-			Creature creature = new Creature(terrain, combatValue);
-			creature.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
-			
-			for(int i = 5; i < e.eventParams.length; i++) {
-				if(e.eventParams[i].equals("Magic")) { creature.Magic(true); }
-				if(e.eventParams[i].equals("Ranged")) { creature.Ranged(true); }
-				if(e.eventParams[i].equals("Charge")) { creature.Charge(true); }
-				if(e.eventParams[i].equals("Flying")) { creature.Flying(true); }
-			}
+			Thing thing = GameClient.game.gameModel.getThingFromCup(thingId);
+			if(thing == null) { return; }
+			thing.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
 			
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
-			tile.AddThingToTile(playerNum, creature);
+			tile.AddThingToTile(playerNum, thing);
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings();
 			
 		} else if (e.eventId == EventList.REMOVE_BLUFFS) {
@@ -1178,7 +1157,7 @@ public class EventHandler {
 				
 				boardController.RemoveThings(removeThings, playerNum, tileX, tileY);
 				GameView.battleView.RemoveThings(removeThings, playerNum);
-			}
+			} 
 			
 			boolean battleOver = GameClient.game.gameModel.boardController.PlayersOnTile(tileX, tileY).size() <= 1;
 			
@@ -1199,6 +1178,7 @@ public class EventHandler {
 			
 			if(Utility.NumberCombatants(neutralThings) == 0) {
 				SendNullEvent();
+				return;
 			}
 			
 			BattleTurn turn;
@@ -1288,6 +1268,96 @@ public class EventHandler {
 			int victimPlayerIndex = Integer.parseInt(e.eventParams[1]);
 			
 			GameClient.game.stealRecruit(thiefPlayerIndex, victimPlayerIndex);
+		} else if (e.eventId == EventList.GET_RETREATED_TILE) {
+			int tileX = Integer.parseInt(e.eventParams[0]);
+			int tileY = Integer.parseInt(e.eventParams[1]);
+			
+			ControlledBy controlledBy = GameConstants.controlledByFromIndex(GameClient.game.gameModel.getCurrPlayerNumber());
+			
+			ArrayList<HexTile> possibleTiles = GameClient.game.gameModel.boardController.GetAdjacentControlledTiles(
+				controlledBy, 
+				tileX, 
+				tileY
+			);
+			
+			Random random = new Random();
+			int randTile = random.nextInt(possibleTiles.size());
+			HexTile retreatTile = possibleTiles.get(randTile);
+			
+			String parameters = "" + retreatTile.x + " " + retreatTile.y;
+			
+			EventHandler.SendEvent(
+				new Event()
+					.EventId(EventList.GET_RETREATED_TILE)
+					.EventParameter(parameters)
+			);
+		} else if (e.eventId == EventList.RETREAT_PLAYER) {
+			int numPlayers = GameClient.game.gameModel.PlayerCount();;
+			int tileX = Integer.parseInt(e.eventParams[numPlayers]);
+			int tileY = Integer.parseInt(e.eventParams[numPlayers+1]);
+			
+			BoardController boardController = GameClient.game.gameModel.boardController;
+			HexTile originalTile = boardController.GetTile(tileX, tileY);
+			
+			for(int i = 0; i < numPlayers; i++) {
+				String params = e.eventParams[i];
+				if (params.equals("")) {
+					continue;
+				}
+				
+				String[] split = params.split(" ");
+				int retreatX = Integer.parseInt(split[0]);
+				int retreatY = Integer.parseInt(split[1]);
+				
+				HexTile retreatTile = boardController.GetTile(retreatX, retreatY);
+				
+				ArrayList<Thing> playerThings = originalTile.GetThings(i);
+				ArrayList<Thing> removeThings = new ArrayList<Thing>();
+				
+				for(Thing t : playerThings) {
+					removeThings.add(t);
+					retreatTile.AddThingToTile(i, t);
+				}
+				
+				for(Thing t : removeThings) {
+					originalTile.removeThing(t.thingID, i);
+				}
+				
+				GameClient.game.gameView.board.getTileByHex(retreatTile).updateThings(i);
+			}
+		} else if (e.eventId == EventList.SET_HEX_TILE) {
+			final int tileX = Integer.parseInt(e.eventParams[0]);
+			final int tileY = Integer.parseInt(e.eventParams[1]);
+			int player = Integer.parseInt(e.eventParams[2]);
+			int setOption = Integer.parseInt(e.eventParams[3]);
+			
+			if (setOption == 0) {
+				GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetPlayer(player), tileX, tileY);
+			} else {
+				GameClient.game.gameModel.addTower(tileX, tileY, player);
+			}
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
+				}
+			});
+			
+		} else if (e.eventId == EventList.SET_HEX_TERRAIN) {
+			final int tileX = Integer.parseInt(e.eventParams[0]);
+			final int tileY = Integer.parseInt(e.eventParams[1]);
+			Terrain terrain = Terrain.valueOf(e.eventParams[2]);
+			
+			HexTile tile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
+			tile.terrain = terrain;
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
+				}
+			});
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
