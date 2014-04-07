@@ -1363,6 +1363,18 @@ public class EventHandler {
 				}
 			});
 		}
+		else if (e.eventId == EventList.REVEAL_COMBATANT){
+			final int playerIndex = Integer.parseInt(e.eventParams[0]);
+			
+			final ArrayList<HexTile> updateTiles = GameClient.game.gameModel.revealPinningEnemyCombatant(playerIndex);
+			
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					GameClient.game.gameView.updateTiles(updateTiles);
+				}
+			});
+		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
 				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);

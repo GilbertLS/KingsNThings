@@ -82,4 +82,5 @@ public class EventList {
 	public static final int PLAY_RANDOM_EVENTS = 148;
 	public static final int HANDLE_PLAY_RANDOM_EVENT = 149;
 	public static final int HANDLE_RANDOM_EVENT = 150;
+	public static final int REVEAL_COMBATANT = 151;
 }

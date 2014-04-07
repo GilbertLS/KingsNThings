@@ -523,7 +523,6 @@ public class GameModel {
 	}
 	
 	private void initializeRandomEvents() {
-		for(int i=0; i< 20; i++)
 			playingCup.add(new RandomEvent("Defection", GameConstants.DefectionImageFront));
 		
 	}
@@ -1642,5 +1641,36 @@ public class GameModel {
 		}
 		
 		return "";
+	}
+
+	public ArrayList<HexTile> revealPinningEnemyCombatant(int playerIndex) {
+		ArrayList<HexTile> tilesToUpdate = new ArrayList<HexTile>();
+		
+		//reveal a combatant for each player who has things
+		//in a tile that player with playerindex does
+		for(HexTile[] hexArray: gameBoard.getTiles())
+			for(HexTile h: hexArray)
+				if(h != null)
+					if(h.HasThingsOnTile(playerIndex))
+						for(int i=0; i<PlayerCount(); i++)
+							if(i != playerIndex && h.HasThingsOnTile(i)){
+								revealCombatant(h, i);
+								tilesToUpdate.add(h);
+							}
+		
+		return tilesToUpdate;
+	}
+
+	private void revealCombatant(HexTile h, int i) {
+		//dont need to worry about fort's etc, as they won't be 
+		//ever hidden
+		ArrayList<Thing> enemyThings = h.GetThings(i);
+		ArrayList<Thing> enemyBluffs = boardController.GetBluffs(h.x, h.y, i);
+		
+		for(Thing t: enemyThings)
+			if(!enemyBluffs.contains(t)){
+				t.setFlipped(false);
+				return;
+			}
 	}
 }
