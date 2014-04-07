@@ -47,7 +47,7 @@ public class GameView extends Scene {
     public 	RackView 		rack;
     public 	TilePreview 	tilePreview;
     public 	MessageView 	messageView;
-    public 	ScrollPane 		scroll;
+    public 	BoardScrollPane scroll;
     public 	CurrentPhase 	currentPhase = CurrentPhase.NULL;
     public 	boolean 		userInputDone = false;
 	String 					returnString = "";
