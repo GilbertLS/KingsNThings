@@ -52,7 +52,9 @@ public class GameServer implements Runnable {
 	}
 	
 	private boolean checkStartGame() {
-		return servers.size() == 4;
+		synchronized(servers) {
+			return servers.size() == 4;
+		}
 	}
 	
 	public void run(){
