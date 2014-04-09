@@ -425,7 +425,7 @@ public class GameController {
 			Response[] playerRolls = GameControllerEventHandler.sendEvent(e);
 			
 			//find highest roll and player index
-			for(int i=0; i<numClients; i++)
+			for(int i=0; i<playerRolls.length; i++)
 			{
 				int currentIndex = playerRolls[i].fromPlayer;
 				int currentRoll = Integer.parseInt(playerRolls[i].message);
@@ -438,7 +438,7 @@ public class GameController {
 			}	
 			
 			//remove players who did not tie for highest roll
-			for(int i=0; i<numClients; i++)
+			for(int i=0; i<playerRolls.length; i++)
 			{
 				int currentIndex = playerRolls[i].fromPlayer;
 				int currentRoll = Integer.parseInt(playerRolls[i].message);
