@@ -40,12 +40,23 @@ public class EditStateWindow extends Dialog {
 	public RadioButton addThingButton;
 	public RadioButton setHexButton;
 	public RadioButton setHexTerrainButton;
+	public RadioButton setStateButton;
+	public ThingViewList thingViewList;
 	
 	public ChoiceBox<Phase> changePhaseDropDown;
 	public ChoiceBox<ControlledBy> controlledByDropDown;
 	public ChoiceBox<ControlledBy> setHexControlledByDropDown;
 	public ChoiceBox<SetOption> setOptionDropDown;
 	public ChoiceBox<Terrain> setHexTerrainDropDown;
+	public ChoiceBox<FunctionalityStates> setStateDropDown;
+	
+	public enum FunctionalityStates {
+		MINIMAL,
+		AVERAGE,
+		SUPERIOR,
+		OUTSTANDING1,
+		OUTSTANDING2
+	}
 	
 	public EditStateWindow() {
 		super(null, "Edit State Menu", false, false);
@@ -71,6 +82,7 @@ public class EditStateWindow extends Dialog {
 		VBox setPhaseBox = CreateSetPhaseView(toggleGroup);
 		VBox setTileBox = CreateSetTileView(toggleGroup);
 		VBox setHexTypeBox = CreateHexTypeBox(toggleGroup);
+		VBox setFunctionalityState = CreateFunctionalityBox(toggleGroup);
 		
 		VBox vbox = new VBox();
 		vbox.getChildren().add(addThingBox);
@@ -78,6 +90,7 @@ public class EditStateWindow extends Dialog {
 		vbox.getChildren().add(setPhaseBox);
 		vbox.getChildren().add(setTileBox);
 		vbox.getChildren().add(setHexTypeBox);
+		vbox.getChildren().add(setFunctionalityState);
 		vbox.getChildren().add(executeCommandButton);
 		
 		stackPane.getChildren().add(vbox);
@@ -92,13 +105,13 @@ public class EditStateWindow extends Dialog {
 		addThingBox.getChildren().add(addThingButton);
 		
 		ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
-		ArrayList<Thing> things = GameClient.game.gameModel.getAllPlayingCupCreatures();
+		ArrayList<Thing> things = GameClient.game.gameModel.getAllTestPlayingCupCreatures();
 		for(Thing t : things) {
 			t.setFlipped(false);
 			thingViews.add(new ThingView(t));
 		}
 		
-		ThingViewList thingViewList = new ThingViewList(
+		thingViewList = new ThingViewList(
 			FXCollections.observableArrayList(thingViews)
 		);
 		
@@ -176,7 +189,7 @@ public class EditStateWindow extends Dialog {
 		
 		Label setOptionLabel = new Label("Set option: ");
 		setOptionDropDown = new ChoiceBox<SetOption>(FXCollections.observableArrayList(
-			SetOption.HEX, SetOption.FORT
+			SetOption.HEX, SetOption.TOWER, SetOption.KEEP, SetOption.CASTLE, SetOption.CITADEL
 		));
 		setOptionDropDown.getSelectionModel().selectFirst();
 		HBox setOptionBox = new HBox();
@@ -213,5 +226,29 @@ public class EditStateWindow extends Dialog {
 		
 		return setTileBox;
 	}
+	
+	private VBox CreateFunctionalityBox(ToggleGroup toggleGroup) {
+		VBox setStateBox = new VBox();
+		
+		setStateButton = new RadioButton("Set game state");
+		setStateButton.setToggleGroup(toggleGroup);
+		
+		Label setStateLabel = new Label("Set staet: ");
+		setStateDropDown = new ChoiceBox<FunctionalityStates>(FXCollections.observableArrayList(
+			FunctionalityStates.MINIMAL, FunctionalityStates.AVERAGE, FunctionalityStates.SUPERIOR,
+			FunctionalityStates.OUTSTANDING1, FunctionalityStates.OUTSTANDING2
+		));
+		setStateDropDown.getSelectionModel().selectFirst();
+		HBox setStateHBox = new HBox();
+		setStateHBox.getChildren().add(setStateLabel);
+		setStateHBox.getChildren().add(setStateDropDown);
+		HBox.setMargin(setStateLabel, new Insets(0, 0, 0, 20));
+		
+		setStateBox.getChildren().add(setStateButton);
+		setStateBox.getChildren().add(setStateHBox);
+		
+		return setStateBox;
+	}
+
 
 }

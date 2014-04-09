@@ -29,4 +29,10 @@ public class RandomEvent extends Thing {
 		
 		return ret;
 	}
+	
+	public RandomEvent copy() {
+		RandomEvent r = new RandomEvent(name, frontFileName);
+		
+		return r;
+	}
 }

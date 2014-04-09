@@ -17,10 +17,12 @@ import Game.BoardController;
 import Game.Building;
 import Game.Combatant;
 import Game.Creature;
+import Game.Fort;
 import Game.GameConstants;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.BattleTurn;
+import Game.GameConstants.SetOption;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Dice;
@@ -37,7 +39,7 @@ public class EventHandler {
 	
 	public static void HandleEvent( String input ) throws Exception{
 		Event e = Event.Destringify( input );
-		synchronized(lock){
+		synchronized(lock) {
 			HandleEvent( e );
 		}
 	}
@@ -1137,9 +1139,10 @@ public class EventHandler {
 			int thingId = Integer.parseInt(e.eventParams[2]);
 			int playerNum = Integer.parseInt(e.eventParams[3]);
 			
-			Thing thing = GameClient.game.gameModel.getThingFromCup(thingId);
+			Thing thing = GameClient.game.gameModel.removeThingFromTestCup(thingId);
 			if(thing == null) { return; }
 			thing.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
+			thing.setFlipped(true);
 			
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
 			tile.AddThingToTile(playerNum, thing);
@@ -1333,12 +1336,25 @@ public class EventHandler {
 			final int tileX = Integer.parseInt(e.eventParams[0]);
 			final int tileY = Integer.parseInt(e.eventParams[1]);
 			int player = Integer.parseInt(e.eventParams[2]);
-			int setOption = Integer.parseInt(e.eventParams[3]);
+			SetOption setOption = SetOption.valueOf(e.eventParams[3]);
 			
-			if (setOption == 0) {
+			if (setOption == SetOption.HEX) {
+				System.out.println(player);
 				GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetPlayer(player), tileX, tileY);
 			} else {
 				GameClient.game.gameModel.addTower(tileX, tileY, player);
+				Fort f = GameClient.game.gameModel.boardController.GetTile(tileX, tileY).getFort();
+				
+				if (setOption == SetOption.KEEP) {
+					f.upgrade();
+				} else if (setOption == SetOption.CASTLE) {
+					f.upgrade();
+					f.upgrade();
+				} else if (setOption == SetOption.CITADEL) {
+					f.upgrade();
+					f.upgrade();
+					f.upgrade();
+				}
 			}
 			
 			Platform.runLater(new Runnable() {
@@ -1354,14 +1370,16 @@ public class EventHandler {
 			Terrain terrain = Terrain.valueOf(e.eventParams[2]);
 			
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
-			tile.terrain = terrain;
+			if (tile != null) {
+				tile.terrain = terrain;
 			
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
-				}
-			});
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
+					}
+				});
+			}
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){

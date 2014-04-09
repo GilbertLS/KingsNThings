@@ -20,4 +20,9 @@ public class Settlement extends Building implements IIncomable{
 	{
 		return combatValue;
 	}
+	
+	public Settlement copy() {
+		Settlement settlement = new Settlement(name, combatValue, frontFileName, backFileName, settlementType);
+		return settlement;
+	}
 }

@@ -16,6 +16,7 @@ import Game.Networking.EventHandler;
 import Game.Networking.EventList;
 import Game.Networking.GameClient;
 import gui.EditStateWindow;
+import gui.EditStateWindow.FunctionalityStates;
 import gui.GameView;
 import gui.ThingView;
 import gui.Tile;
@@ -418,7 +419,7 @@ public class GameClientController {
 	}
 	
 	public void parseEdit(final EditStateWindow edit) {
-		if (edit.addThingButton.isSelected() && GameClient.game.gameView.selectedThings.size() == 1) {
+		if (edit.addThingButton.isSelected() && GameView.selectedThings.size() == 1) {
 			Thread t = new Thread( new Runnable() {
 				@Override
 				public void run() {
@@ -432,6 +433,8 @@ public class GameClientController {
 					params[1] = "" + selectedTile.getTileRef().y;
 					params[2] = "" + GameView.selectedThings.get(0).thingID;
 					params[3] = "" + GameConstants.GetPlayerNumber(controlledBy);
+					
+					edit.thingViewList.removeByThingId(GameView.selectedThings.get(0).thingID);
 					
 					Event e = new Event().EventId(EventList.ADD_THING).EventParameters(params);
 					EventHandler.SendEvent(e);
@@ -497,8 +500,7 @@ public class GameClientController {
 					params[0] = "" + selectedTile.getTileRef().x;
 					params[1] = "" + selectedTile.getTileRef().y;
 					params[2] = "" + GameConstants.GetPlayerNumber(controlledBy);
-					int temp =  option == SetOption.HEX ? 0 : 1;
-					params[3] = "" + temp;
+					params[3] = "" + option.name();
 					
 					Event e = new Event()
 						.EventId(EventList.SET_HEX_TILE)
@@ -527,6 +529,29 @@ public class GameClientController {
 						.EventParameters(params);
 					
 					EventHandler.SendEvent(e);
+				}
+			});
+			
+			t.start();
+		} else if (edit.setStateButton.isSelected()) {
+			Thread t = new Thread( new Runnable() {
+				@Override
+				public void run() {
+					hideMenu();
+					
+					FunctionalityStates state = edit.setStateDropDown.getSelectionModel().getSelectedItem();
+					
+					if (state == FunctionalityStates.MINIMAL) {
+						GameStates.Minimal();
+					} else if (state == FunctionalityStates.AVERAGE) {
+						GameStates.Average();
+					} else if (state == FunctionalityStates.SUPERIOR) {
+						GameStates.Superior();
+					} else if (state == FunctionalityStates.OUTSTANDING1) {
+						GameStates.Outstanding1();
+					} else if (state == FunctionalityStates.OUTSTANDING2) {
+						GameStates.Outstanding2();
+					}
 				}
 			});
 			

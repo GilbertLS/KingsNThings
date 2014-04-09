@@ -77,7 +77,7 @@ public abstract class Combatant extends Thing{
 			
 			int numRolls = isCharge ? 2 : 1;
 			for (int i = 0; i < numRolls; i++){
-				int roll = GameView.battleView.RollDice(this, 0, numPreviousRolls);
+				int roll = GameView.battleView.RollDice(this, 0, numPreviousRolls + rolls);
 				
 				if (roll <= this.GetCombatValue() ){
 					rolls++;
