@@ -149,6 +149,14 @@ public class Tile extends Region implements Draggable {
     	return this.tileRef;
     }
     
+    public void noStyleChangeUpdate(){
+    	String oldStyle = this.getStyle();
+    	
+    	update();
+    	
+    	this.setStyle(oldStyle);
+    }
+    
     public void update() {
     	this.getChildren().clear();
     	
@@ -498,7 +506,7 @@ public class Tile extends Region implements Draggable {
     		    width/4, 	height});
 
     	this.setShape(hex);
-    	this.update();
+    	this.noStyleChangeUpdate();
 	}
 		   
 }
