@@ -60,6 +60,8 @@ public class GameServer implements Runnable {
 	}
 	
 	public static void AddClient( GameRouter c ){
-		servers.add(c);
+		synchronized(servers) {
+			servers.add(c);
+		}
 	}
 }

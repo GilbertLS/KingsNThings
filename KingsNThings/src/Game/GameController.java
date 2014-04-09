@@ -45,7 +45,7 @@ public class GameController {
 	}
 	
 	public void StartGame(){
-
+		System.out.println("STARTING GAME");
     	for(GameRouter gr : GameServer.servers){
     		boolean[] intendedPlayers = new boolean[numClients];
     		
