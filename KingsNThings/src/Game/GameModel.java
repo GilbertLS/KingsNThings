@@ -1618,7 +1618,7 @@ public class GameModel {
 		return new ArrayList<String>();
 	}
 	
-	public HexTile handleElimination(int thingID, int playerIndex){
+	public HexTile handleElimination(int thingID){
 		//it is not known what tile the things resides on
 		//need to check all tiles until thing is found
 		
