@@ -1,5 +1,6 @@
 package gui;
 
+import org.controlsfx.control.action.Action;
 import org.controlsfx.dialog.Dialog;
 
 import com.sun.glass.events.MouseEvent;
@@ -25,6 +26,7 @@ public class EscapeMenu extends Dialog {
 	private int boxWidth = 200;
 	private int menuWidth = 250;
 	private int menuHeight = 200;
+	private boolean visible = false;
 	
 	private Button returnButton;
 	private Button editMenuButton;
@@ -38,7 +40,6 @@ public class EscapeMenu extends Dialog {
 		this.setContent(stackPane);
 		
 		final EscapeMenu _this = this;
-		
 		VBox box = new VBox();
 		returnButton = new Button("Return to game");
 		
@@ -50,14 +51,7 @@ public class EscapeMenu extends Dialog {
         });
 		
 		
-		EventHandler<KeyEvent> keyPressed = new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent event) {
-				if (event.getCode() == KeyCode.M) {
-					_this.hide();
-				}
-			}
-        };
+
         
         //scene.setOnKeyPressed(keyPressed);
         
@@ -80,6 +74,20 @@ public class EscapeMenu extends Dialog {
 		box.getChildren().add(editMenuButton);
 		
 		stackPane.getChildren().add(box);
+	}
+	
+	public boolean isVisible() {
+		return this.visible;
+	}
+	
+	public Action show() {
+		this.visible = true;
+		return super.show();
+	}
+	
+	public void hide() {
+		this.visible = false;
+		super.hide();
 	}
 
 	public void hideMenu() {
