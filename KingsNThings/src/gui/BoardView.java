@@ -9,8 +9,10 @@ import Game.Utility;
 import Game.Networking.Event;
 import Game.Networking.EventList;
 import Game.Networking.GameClient;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -23,18 +25,18 @@ public class BoardView extends Region {
 	private Semaphore	selectedTileLock = new Semaphore(0);
 	private Semaphore 	tempSem;
 	private boolean 	waitingForOtherSelectedTile = false;
-	private GameView	gameView;
+	private Scene		scene;
 	
-	BoardView(TilePreview tp, GameView g)
+	BoardView(TilePreview tp, Scene s)
 	{
 		tilePreview = tp;
-		gameView = g;
+		scene = s;
 		getStyleClass().add("board");
 		setupListeners();
 	}
 	
 	private void setupListeners() {
-		gameView.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
+		scene.addEventFilter(ScrollEvent.ANY, new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent event) {
             	if (event.isControlDown()) {
