@@ -531,19 +531,19 @@ public class GameModel {
 	{
 		String[] initValues = s.trim().split(" ");
 		
-		/*if(Integer.parseInt(initValues[0]) == 0)
+		if(Integer.parseInt(initValues[0]) == 0)
 			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Arch Cleric", 5, GameConstants.ArchClericImageFront)
 			.Magic(true));
 		else
 			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Arch Mage", 6, GameConstants.ArchMageImageFront)
-			.Magic(true));*/
+			.Magic(true));
 		
-		//if(Integer.parseInt(initValues[1]) == 0)
-			//unownedCharacters.add(new SpecialCharacter("Assassin Primus", 4, GameConstants.AssassinPrimusImageFront));
-		//else
-		//	unownedCharacters.add(new SpecialCharacter("Baron Munchausen", 4, GameConstants.BaronMunchausenImageFront));
+		if(Integer.parseInt(initValues[1]) == 0)
+			unownedCharacters.add(new SpecialCharacter("Assassin Primus", 4, GameConstants.AssassinPrimusImageFront));
+		else
+			unownedCharacters.add(new SpecialCharacter("Baron Munchausen", 4, GameConstants.BaronMunchausenImageFront));
 		
-		/*if(Integer.parseInt(initValues[2]) == 0)
+		if(Integer.parseInt(initValues[2]) == 0)
 			unownedCharacters.add(new SpecialCharacter("Deerhunter", 4, GameConstants.DeerhunterImageFront));
 		else
 			unownedCharacters.add(new TerrainLord(Terrain.DESERT,"Desert Master", 4, GameConstants.DesertMasterImageFront));
@@ -571,12 +571,12 @@ public class GameModel {
 			unownedCharacters.add((SpecialCharacter)new SpecialCharacter( "Lord Of Eagles", 5, GameConstants.LordOfEaglesImageFront)
 			.Flying(true));
 		
-		if(Integer.parseInt(initValues[7]) == 0)
+		/*if(Integer.parseInt(initValues[7]) == 0)
 			unownedCharacters.add((SpecialCharacter)new SpecialCharacter("Marksman", 5, GameConstants.MarksmanImageFront)
 			.Ranged(true));
 		else*/
 			unownedCharacters.add(new SpecialCharacter("Master Thief", 4, GameConstants.MasterThiefImageFront));
-		/*
+		
 		if(Integer.parseInt(initValues[8]) == 0)
 			unownedCharacters.add(new TerrainLord(Terrain.MOUNTAIN, "Mountain King", 4, GameConstants.MountainKingImageFront));
 		else
@@ -591,7 +591,7 @@ public class GameModel {
 		if(Integer.parseInt(initValues[10]) == 0)
 			unownedCharacters.add(new SpecialCharacter("Swordmaster", 4, GameConstants.SwordmasterImageFront));
 		else
-			unownedCharacters.add(new SpecialCharacter("Warlord", 5, GameConstants.WarlordImageFront));*/
+			unownedCharacters.add(new SpecialCharacter("Warlord", 5, GameConstants.WarlordImageFront));
 			
 	}
 
