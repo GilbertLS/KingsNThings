@@ -117,7 +117,7 @@ public class Tile extends Region implements Draggable {
     	for(Thing t : listOfThings) {
     		ThingView tv = new ThingView(t);
     		if(t.getThingType() != ThingType.FORT)
-    		listOfTvs.add(tv);
+    			listOfTvs.add(tv);
     	}
     }
     
@@ -207,7 +207,7 @@ public class Tile extends Region implements Draggable {
     		specialIncome = null;
     	}
     	
-    	//this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
     	
     	this.getChildren().setAll(list);
     	
