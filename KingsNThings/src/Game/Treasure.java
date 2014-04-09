@@ -18,4 +18,8 @@ public class Treasure extends Thing{
 	public int getValue() {
 		return value;
 	}
+	
+	public Treasure copy() {
+		return new Treasure(name, value, frontFileName);
+	}
 }

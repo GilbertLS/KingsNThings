@@ -45,7 +45,7 @@ public class GameController {
 	}
 	
 	public void StartGame(){
-
+		System.out.println("STARTING GAME");
     	for(GameRouter gr : GameServer.servers){
     		boolean[] intendedPlayers = new boolean[numClients];
     		
@@ -113,7 +113,7 @@ public class GameController {
 		
 		if(GameController.currentPhase == Phase.SETUP){ assignInitialThings(); }
 		
-		//if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
+		if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
 		
 		if(GameController.currentPhase == Phase.SETUP){ playThings(); }
 		

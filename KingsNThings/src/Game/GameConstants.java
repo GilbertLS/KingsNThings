@@ -351,7 +351,7 @@ public final class GameConstants {
 		OTHER
 	}
 	
-	public static enum SetOption { HEX, FORT }
+	public static enum SetOption { HEX, TOWER, KEEP, CASTLE, CITADEL }
 
 	public static ControlledBy controlledByFromIndex(Integer currentPlayer) {
 		switch(currentPlayer)

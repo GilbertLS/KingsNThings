@@ -24,6 +24,7 @@ public class GameModel {
 	private Player player1, player2, player3, player4;	//Players of the game
 	private Player currPlayer;
 	private ArrayList<Thing> playingCup;					//Container to hold unplayed Things
+	private ArrayList<Thing> copyPlayingCup;
 	private ArrayList<SpecialCharacter> unownedCharacters;	//Container to hold unplayed Special Characters
 	private int playerCount;
 	public GameBoard gameBoard;
@@ -520,6 +521,44 @@ public class GameModel {
 		initializeTreasure();
 		initializeMagic();
 		initializeRandomEvents();
+		copyPlayingCup();
+	}
+	
+	private void copyPlayingCup() {
+		copyPlayingCup = new ArrayList<Thing>(); 
+		for(Thing t : playingCup) {
+			if (t.thingType == ThingType.CREATURE) {
+				Creature c = (Creature)t;
+				
+				copyPlayingCup.add(c.copy());;
+			} else if (t.thingType == ThingType.SETTLEMENT) {
+				Settlement s = (Settlement)t;
+				
+				copyPlayingCup.add(s.copy());
+			} else if (t.thingType == ThingType.RANDOM_EVENT) {
+				RandomEvent r = (RandomEvent)t;
+				
+				copyPlayingCup.add(r.copy());
+			} else if (t.thingType == ThingType.TREASURE) {
+				Treasure tr = (Treasure)t;
+				
+				copyPlayingCup.add(tr.copy());
+			}
+		}
+	}
+	
+	private void copySpecialCharacters() {
+		for(Thing t : unownedCharacters) {
+			if (t.thingType == ThingType.TERRAIN_LORD) {
+				TerrainLord l = (TerrainLord)t;
+				
+				copyPlayingCup.add(l.copy());
+			} else if (t.thingType == ThingType.SPECIAL_CHARACTER) {
+				SpecialCharacter sc = (SpecialCharacter)t;
+				
+				copyPlayingCup.add(sc.copy());
+			}
+		}
 	}
 	
 	private void initializeRandomEvents() {
@@ -593,6 +632,7 @@ public class GameModel {
 		else
 			unownedCharacters.add(new SpecialCharacter("Warlord", 5, GameConstants.WarlordImageFront));
 			
+		copySpecialCharacters();
 	}
 
 	public String randomizeSpecialCharactersString() {
@@ -697,25 +737,23 @@ public class GameModel {
 		return things;
 	}
 	
-	public ArrayList<Thing> getAllPlayingCupCreatures() {
+	public ArrayList<Thing> getAllTestPlayingCupCreatures() {
 		ArrayList<Thing> things = new ArrayList<Thing>();
 		
-		things.addAll(playingCup);
-		things.addAll(unownedCharacters);
+		things.addAll(copyPlayingCup);
 		
 		return things;
 	}
 	
-	public Thing getThingFromCup(int thingId) {
-		for(Thing t : playingCup) {
-			if (t.thingID == thingId) { return t; }
+	public Thing removeThingFromTestCup(int thingId) {
+		Thing ret = null;
+		for(Thing t : copyPlayingCup) {
+			if (t.thingID == thingId) {
+				ret = t;
+			}
 		}
 		
-		for(Thing t : unownedCharacters) {
-			if (t.thingID == thingId) { return t; }
-		}
-		
-		return null;
+		return ret;
 	}
 
 	public void distributeInitialGold() {
@@ -1580,7 +1618,7 @@ public class GameModel {
 		return new ArrayList<String>();
 	}
 	
-	public HexTile handleElimination(int thingID, int playerIndex){
+	public HexTile handleElimination(int thingID){
 		//it is not known what tile the things resides on
 		//need to check all tiles until thing is found
 		
