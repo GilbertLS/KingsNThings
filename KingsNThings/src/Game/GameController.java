@@ -113,7 +113,7 @@ public class GameController {
 		
 		if(GameController.currentPhase == Phase.SETUP){ assignInitialThings(); }
 		
-		//if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
+		if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
 		
 		if(GameController.currentPhase == Phase.SETUP){ playThings(); }
 		

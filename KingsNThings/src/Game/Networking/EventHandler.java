@@ -613,7 +613,7 @@ public class EventHandler {
 				EventHandler.SendEvent( 
 					new Event()
 					.EventId(EventList.SET_MESSAGE)
-					.EventParameter("Player " + (playerIndex + 1) + " selecting a tile to place")
+					.EventParameter("Player " + (playerIndex+1) + " selecting a tile")
 				);
 				
 				do
@@ -1261,7 +1261,7 @@ public class EventHandler {
 			int playerIndex = Integer.parseInt(e.eventParams[0]);
 			int thingID = Integer.parseInt(e.eventParams[1]);
 			
-			HexTile h = GameClient.game.gameModel.handleElimination(thingID, playerIndex);
+			HexTile h = GameClient.game.gameModel.handleElimination(thingID);
 			
 			GameClient.game.gameView.board.getTileByHex(h).updateThings(playerIndex);
 		}
@@ -1355,6 +1355,10 @@ public class EventHandler {
 					f.upgrade();
 					f.upgrade();
 					f.upgrade();
+					
+					Player constructingPlayer = GameClient.game.gameModel.playerFromIndex(player);
+					constructingPlayer.setCitadelConstructed(true);
+					constructingPlayer.incrementCitadels();
 				}
 			}
 			
@@ -1416,9 +1420,9 @@ public class EventHandler {
 	}
 	
 	private static void waitForOtherPlayer(boolean expectsResponse, final String playerNumString, final String actionBeingTaken) {
-		String s = "Waiting for player" + playerNumString + " to " + actionBeingTaken + ".";
+		String s = "Waiting for Player" + playerNumString + " to " + actionBeingTaken + ".";
 
-		GameClient.game.sendMessageToView("Waiting for player" + playerNumString + " to " + actionBeingTaken + ".");
+		GameClient.game.sendMessageToView(s);
 		
 		if(expectsResponse)
 			SendNullEvent();		
