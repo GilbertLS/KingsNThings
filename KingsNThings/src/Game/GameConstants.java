@@ -20,7 +20,8 @@ public final class GameConstants {
 		SELECT_TARGET_PLAYER, 
 		CHOOSE_THIEF_ACTION, 
 		USER_FEEDBACK, 
-		PLAY_RANDOM_EVENT
+		PLAY_RANDOM_EVENT,
+		SETTING_PHASE
 	}
 
 	//The different types of possible terrain in the game

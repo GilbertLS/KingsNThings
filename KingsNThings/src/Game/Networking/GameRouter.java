@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.Semaphore;
 
 import Game.GameController;
 import Game.Phases.Phase;
 
 public class GameRouter implements Runnable, Comparable<GameRouter> {
 	
-	private Socket connection;
 	private boolean ready = false;
 	private static int id = 0;
 	private static int order =0;
@@ -19,10 +19,11 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 	public int myPlayerOrder;
 	private PrintWriter out;
 	private BufferedReader in;
+	private Semaphore waitSem;
 	
-	public GameRouter(Socket connection){
-		this.connection = connection;
+	public GameRouter(Socket connection, Semaphore s){
 		this.myID = id++;
+		this.waitSem = s;
 		
 		this.myPlayerOrder = order++;
 		
@@ -46,7 +47,7 @@ public class GameRouter implements Runnable, Comparable<GameRouter> {
 	}
 	
 	public void run(){
- 	    	ready = true;
+ 	    	waitSem.release();
  	        /////////////////////// GAME START ////////////////////////////
  	    	while(!GameController.gameEnded) {
  	    		try {

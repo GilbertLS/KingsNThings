@@ -95,10 +95,10 @@ public class GameController {
 		
 		initializeGold();
 		
-		
+		settingPhase();
 		
 		/*begin need to happen even with DEVMODE:*/
-		placeThingsOnTile(1, "Control_Marker");
+		if(GameController.currentPhase == Phase.SETUP) { placeThingsOnTile(1, "Control_Marker"); }
 		
 		revealHexTiles();
 		
@@ -119,6 +119,14 @@ public class GameController {
 		
 	}
 	
+	private void settingPhase() {
+		GameControllerEventHandler.sendEvent(
+			new Event()
+				.EventId(EventList.SETTING_PHASE)
+				.ExpectsResponse()
+		);
+	}
+
 	private void allowTileSwap() {		
 		GameControllerEventHandler.sendEvent(
 				new Event()
@@ -472,11 +480,15 @@ public class GameController {
 	
 	private void playPhases(){
 		if (currentPhase == Phase.SETUP) {
-    		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; 
+    		currentPhase = Phase.SETTING_PHASE; 
     	}
 		
 		do
 		{
+			if (currentPhase == Phase.SETTING_PHASE) {
+				settingPhase();
+			}
+			
 			incrementCitadelRounds();
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) {
 				distributeIncome();
@@ -497,10 +509,14 @@ public class GameController {
 			if (currentPhase == Phase.PLAY_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				playThings();
-				if (!changedPhase) { currentPhase = Phase.MOVE_THINGS; }
+				if (!changedPhase) { currentPhase = Phase.RANDOM_EVENTS; }
 			}
 			
-			randomEventsPhase();
+			if (currentPhase == Phase.RANDOM_EVENTS) {
+				if (changedPhase) { changedPhase = false; }
+				randomEventsPhase();
+				if (!changedPhase) { currentPhase = Phase.MOVE_THINGS; }
+			}
 			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
@@ -517,10 +533,14 @@ public class GameController {
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
 				playConstructionPhase();
-				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
+				if (!changedPhase) { currentPhase = Phase.SPECIAL_POWERS; }
 			}
 			
-			performSpecialPowersPhase();
+			if (currentPhase == Phase.SPECIAL_POWERS) {
+				if (changedPhase) { changedPhase = false; }
+				performSpecialPowersPhase();
+				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
+			}
 		
 			ChangePlayerOrder();
 		

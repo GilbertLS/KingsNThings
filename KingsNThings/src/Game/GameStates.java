@@ -13,7 +13,13 @@ import Game.Networking.EventList;
 import Game.Networking.GameClient;
 
 public class GameStates {
+	private static ArrayList<Integer> alreadySentThings = new ArrayList<Integer>();
+	
 	public static void Minimal() {
+		alreadySentThings = new ArrayList<Integer>();
+		
+		GameStates.ClearThings();
+		
 		// hex tiles
 		GameStates.SetTileType(Terrain.PLAINS, 0, 3);
 		GameStates.SetTileType(Terrain.FOREST, -1, 2);
@@ -140,7 +146,6 @@ public class GameStates {
 	}
 	
 	public static void Outstanding2() {
-		
 	}
 	
 	public static void SetTileType(Terrain terrain, int x, int y) {
@@ -179,7 +184,10 @@ public class GameStates {
 	}
 	
 	public static void ClearThings() {
+		Event e = new Event()
+			.EventId(EventList.CLEAR_THINGS);
 		
+		EventHandler.SendEvent(e);
 	}
 	
 	public static void AddThing(String name, int player, int x, int y ) {
@@ -191,6 +199,15 @@ public class GameStates {
 		int thingId = -1;
 		for(Thing t : things) {
 			if(t.GetName().equals(name)) {
+				boolean cont = false;
+				for(Integer i : alreadySentThings) {
+					if (i == t.thingID) {
+						cont = true;
+					}
+				}
+				
+				if(cont) { continue; }
+				
 				thingId = t.thingID;
 				break;
 			}
@@ -198,6 +215,8 @@ public class GameStates {
 		
 		params[2] = "" + thingId;
 		params[3] = "" + (player - 1);
+		
+		alreadySentThings.add(thingId);
 		
 		Event e = new Event()
 			.EventId(EventList.ADD_THING)

@@ -34,11 +34,14 @@ public class GameServer implements Runnable {
 		       Socket clientSocket = serverSocket.accept();
 		       System.out.println("A client has joined the game");
 		        
-		       GameRouter gameRouter = new GameRouter(clientSocket);
+		       Semaphore waitSem = new Semaphore(0);
+		       GameRouter gameRouter = new GameRouter(clientSocket, waitSem);
 		       Thread thread = new Thread(gameRouter);
 		       thread.start();
 		       
-		       while(!gameRouter.ready()){}      
+		       try {
+		    	   waitSem.acquire();
+				} catch (InterruptedException e) {} 
 			}
 		
 			serverSocket.close();
