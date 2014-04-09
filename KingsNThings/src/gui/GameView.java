@@ -101,27 +101,7 @@ public class GameView extends Scene {
         for(int i = 0; i < 10; i++)
         	arr.add(new ThingView(new Creature(GameConstants.Terrain.DESERT)));
         rack = new RackView(FXCollections.observableList((arr)));
-        leftPanel.getChildren().add(rack);
-        
-        
-        Button zoomin = new Button("zoom in");
-        zoomin.setOnMouseClicked(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent e) {
-            	self.board.zoomIn();
-            }
-        });
-        rightPanel.getChildren().add(zoomin);
-        Button zoomout = new Button("zoom out");
-        zoomout.setOnMouseClicked(new EventHandler<MouseEvent>(){
-       	 
-            @Override
-            public void handle(MouseEvent e) {
-            	self.board.zoomOut();
-            }
-        });
-        rightPanel.getChildren().add(zoomout);
-        
+        leftPanel.getChildren().add(rack);      
         
         this.getStylesheets().add("gui/main.css");
 		BorderPane b = new BorderPane();
@@ -133,8 +113,11 @@ public class GameView extends Scene {
 					if (escapeMenu == null) {
 						escapeMenu = new EscapeMenu(self);
 					}
-
-					escapeMenu.show();
+					
+					if(escapeMenu.isVisible())
+						escapeMenu.hide();
+					else
+						escapeMenu.show();
 				}
 			}
         };
