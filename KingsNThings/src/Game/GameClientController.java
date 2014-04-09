@@ -348,31 +348,38 @@ public class GameClientController {
 		//or is a random event but it's not time to play it
 		ObservableList<ThingView> items = listView.getItems();
 		for(Integer i: selectedIds)
-			if(items.get(i).thingRef.getControlledByPlayerNum() != GameClient.game.gameView.getCurrentPlayer()
+			if(items.get(i).thingRef.getControlledByPlayerNum() != gameView.getCurrentPlayer()
 			|| (items.get(i).thingRef.isRandomEvent() && gv.currentPhase != CurrentPhase.PLAY_RANDOM_EVENT))
 				return false;
 		
-		ArrayList<Thing> movingThings = new ArrayList<Thing>();
-		for(ThingView tv: items)
-			movingThings.add(tv.thingRef);
-		
-		ArrayList<Thing> flyers = getFlyers(hexTile.GetThings(gv.getCurrentPlayer()));
-		int numFlyersLeft = flyers.size() -  getFlyers(movingThings).size();
-		
-		int numFlyingDefend =0;	//total not owned flyers
-		for(int i=0; i<gameModel.PlayerCount(); i++)
-		{
-			if(i != gv.getCurrentPlayer()){
-				numFlyingDefend += getFlyers(hexTile.GetThings(i)).size(); 
-			}
-		}
-		
-		numFlyingDefend += getFlyers(hexTile.GetThings(4)).size(); 
-		
 		//invalid if movement phase and player isn't alone on the tile
-		//unless all are flying and no flying enemies
+		//unless all are flying and enough flying creatures were left behind
 		if(gv.currentPhase == CurrentPhase.MOVEMENT){
+			ArrayList<Thing> movingThings = new ArrayList<Thing>();
+			for(ThingView tv: items)
+				movingThings.add(tv.thingRef);
+			
+			ArrayList<Thing> flyers = getFlyers(hexTile.GetThings(gv.getCurrentPlayer()));
+			int numFlyersLeft = flyers.size() -  getFlyers(movingThings).size();
+			
+			int numFlyingDefend =0;	//total not owned flyers
+			for(int i=0; i<gameModel.PlayerCount(); i++)
+			{
+				if(i != gv.getCurrentPlayer()){
+					ArrayList<Thing> enemyThings = hexTile.GetThings(i);
+					
+					//only check non-flipped things
+					for(Thing t: getFlyers(enemyThings))
+						if(!t.isFlipped())
+							numFlyingDefend++; 
+				}
+			}
+			
+			//add defending creature things
+			numFlyingDefend += getFlyers(hexTile.GetThings(4)).size(); 
+			
 			if(!hexTile.isOnlyCombatantPlayerOnTile(gv.getCurrentPlayer())
+					&& !hasRevealedEnemyCombatant(hexTile, gv.getCurrentPlayer())
 					&& !(GameClient.game.areAllFlying(movingThings) && numFlyersLeft >= numFlyingDefend))
 			return false;
 		}				
@@ -392,6 +399,15 @@ public class GameClientController {
 				return false;
 		
 		return true;
+	}
+
+	private boolean hasRevealedEnemyCombatant(HexTile hexTile,
+			Integer currentPlayer) {
+		for(Thing t: hexTile.getCombatants(currentPlayer))
+			if(!t.isFlipped())
+				return true;
+		
+		return false;
 	}
 
 	private ArrayList<Thing> getFlyers(ArrayList<Thing> things) {

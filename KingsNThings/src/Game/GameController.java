@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import Game.GameConstants.BattleTurn;
@@ -472,7 +471,6 @@ public class GameController {
 	}
 	
 	private void playPhases(){
-		boolean gameWon = false;
 		if (currentPhase == Phase.SETUP) {
     		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; 
     	}
@@ -492,7 +490,7 @@ public class GameController {
 			if (currentPhase == Phase.RECRUIT_THINGS) {
 				if (changedPhase) { changedPhase = false; }
 				recruitThings();
-				//tradeThings();
+				tradeThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
 			
@@ -512,14 +510,13 @@ public class GameController {
 			if (currentPhase == Phase.BATTLE) {
 				if (changedPhase) { changedPhase = false; }
 				PlayBattlePhase();
-				gameWon = checkWin();
+				gameEnded = checkWin();
 				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
 			}
 
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
 				playConstructionPhase();
-				gameWon = checkWin();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
 			
@@ -554,7 +551,7 @@ public class GameController {
 					.ExpectsResponse(true)
 			);	
 		
-		//for each player, if they have used a special power,
+		//for each player, if they have used a random event,
 		//send the appropriate update event
 		for(Response r: responses){
 			String[] params = r.message.split("~");
@@ -714,6 +711,8 @@ public class GameController {
 	private void moveThings() {
 		for(GameRouter gr: GameServer.servers)
 		{
+			revealNonBluffPins(gr.myID);
+			
 			boolean moveDone = false;
 			
 			do
@@ -761,6 +760,15 @@ public class GameController {
 		//eliminate any things which ended their turn on a sea hex
 		Event e = new Event()
 					.EventId(EventList.ELIMINATE_SEA_HEX_THINGS);
+		GameControllerEventHandler.sendEvent(e);
+	}
+
+	private void revealNonBluffPins(int playerIndex) {
+		// TODO Auto-generated method stub
+		Event e = new Event()
+		.EventId(EventList.REVEAL_COMBATANT)
+		.EventParameter("" + playerIndex);
+		
 		GameControllerEventHandler.sendEvent(e);
 	}
 
@@ -878,7 +886,7 @@ public class GameController {
 			return;
 			
 		for(String s : contestedZones){
-			final String[] coordinates = s.split("SPLIT");
+			String[] coordinates = s.split("SPLIT");
 			
 			GameControllerEventHandler.sendEvent(
 				new Event()
@@ -907,7 +915,7 @@ public class GameController {
 								.ExpectsResponse(true)
 					);
 					
-					int[] attackedPlayers = new int[numClients+1];
+					int[] attackedPlayers = new int[4];
 					Arrays.fill(attackedPlayers, -1);
 					
 					for (Response target : targetedPlayers ){
@@ -938,58 +946,22 @@ public class GameController {
 									.ExpectsResponse(true)
 						);
 						
-						String[] hits = new String[4+3];
-						for (int i = 0; i <= 4; i++) {
-							hits[i] = "" + 0;
-						}
-						
+						String[] hits = new String[numClients+2];
 						int numActualHits = 0;
 						for (Response rolls : playerRolls){
 							if (!rolls.message.trim().equals("") && Integer.parseInt(rolls.message.trim()) > 0){
 								numActualHits++;
 							}
 							if (rolls.IsNullEvent()){
-								hits[rolls.fromPlayer] = "-1";
+								hits[rolls.fromPlayer] = "0";
 							} else {
-								int targetPlayer = attackedPlayers[rolls.fromPlayer];
-								int oldHits = Integer.parseInt(hits[attackedPlayers[rolls.fromPlayer]]);
-								int newHits = oldHits + Integer.parseInt(rolls.message);
-								hits[targetPlayer] = "" + newHits;
+								hits[attackedPlayers[rolls.fromPlayer]] = rolls.message;
 							}
 						}
 						
-						hits[4+1] = coordinates[0];
-						hits[4+2] = coordinates[1];
-						
-						Response neutralHits = GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.GET_NEUTRAL_HITS )
-								.ExpectsResponse(true)
-								.EventParameters(getRollParams)
-								.IntendedPlayers(new boolean[]{ true, false, false, false })
-						)[0];
-						
-						if (!neutralHits.IsNullEvent()) { 
-							int nHits = Integer.parseInt(neutralHits.message.trim());
-							numActualHits += nHits;
-							if (nHits > 0) {
-								ArrayList<Integer> targetablePlayers = new ArrayList<Integer>();
-								for(int i = 0; i < numClients; i++) {
-									if (!hits[i].equals("-1")) {
-										targetablePlayers.add(i);
-									}
-								}
-								
-								Random random = new Random();
-								for(int i = 0; i < nHits; i++) {
-									int randIndex = random.nextInt(targetablePlayers.size());
-									int targetPlayer = targetablePlayers.get(randIndex);
-									
-									hits[targetPlayer] = "" + (Integer.parseInt(hits[targetPlayer]) + 1);
-								}
-							}
-						}
-						
+						hits[numClients] = coordinates[0];
+						hits[numClients+1] = coordinates[1];
+			 			
 						if (numActualHits > 0){
 							Response[] removedThingsResponse = GameControllerEventHandler.sendEvent(
 								new Event()
@@ -998,35 +970,14 @@ public class GameController {
 									.ExpectsResponse(true)
 							);
 							
-							String[] removedThings = new String[numClients+3];
+							String[] removedThings = new String[numClients+2];
 							
 							for( Response response : removedThingsResponse ){
 								removedThings[response.fromPlayer] = response.message;
 							}
 							
-							removedThings[numClients+1] = coordinates[0];
-							removedThings[numClients+2] = coordinates[1];
-							
-							int neutralHitsTaken = Integer.parseInt(hits[4]);
-							
-							// removing neutral things
-							if(neutralHitsTaken > 0) {
-								String[] params = new String[3];
-								params[0] = coordinates[0];
-								params[1] = coordinates[1];
-								params[2] = "" + neutralHitsTaken;
-								Response response = GameControllerEventHandler.sendEvent(
-									new Event()
-										.EventId( EventList.GET_NEUTRAL_THINGS_REMOVED)
-										.EventParameters(params)
-										.ExpectsResponse(true)
-										.IntendedPlayers(new boolean[]{true, false, false, false})
-								)[0];
-								
-								removedThings[numClients] = response.message;
-							} else {
-								removedThings[numClients] = "";
-							}
+							removedThings[numClients] = coordinates[0];
+							removedThings[numClients+1] = coordinates[1];
 							
 							if (GameControllerEventHandler.sendEvent(
 								new Event()
@@ -1043,11 +994,12 @@ public class GameController {
 						totalHitsInRound += numActualHits;
 						
 						if (battleOver){
+	
 							break;
 						}
 					}
 					
-					if (!battleOver){
+					if (!battleOver && totalHitsInRound != 0){
 						Response[] retreats = GameControllerEventHandler.sendEvent(
 							new Event()
 								.EventId( EventList.GET_RETREAT )
@@ -1056,51 +1008,14 @@ public class GameController {
 						);
 						
 						int numLeft = 0;
-						
-						boolean[] retreatedPlayers = new boolean[] { false, false, false, false };
 						for (Response retreat : retreats) {
 							if (retreat.eventId == EventList.NULL_EVENT){
 								continue;
 							}
 							if (retreat.message.equals("n")){
 								numLeft++;
-							} else if (retreat.message.equals("y")) {
-								retreatedPlayers[retreat.fromPlayer] = true;
-							}
+							} 
 						}
-						
-						Response[] retreatedTiles = GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId(EventList.GET_RETREATED_TILE)
-								.EventParameters(coordinates)
-								.IntendedPlayers(retreatedPlayers)
-								.ExpectsResponse()
-						);
-						
-						String[] retreatParams = new String[numClients+2];
-						for (int i = 0; i < numClients; i++) { retreatParams[i] = ""; }
-						
-						for(Response ret : retreatedTiles) {
-							retreatParams[ret.fromPlayer] = ret.message;
-						}
-						
-						retreatParams[numClients] = coordinates[0];
-						retreatParams[numClients+1] = coordinates[1];
-						
-						GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId(EventList.RETREAT_PLAYER)
-								.EventParameters(retreatParams)
-						);
-						
-						numLeft += Integer.parseInt(GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.GET_NUMBER_NEUTRAL_CREATURES)
-								.EventParameters(coordinates)
-								.ExpectsResponse()	
-							)[0].message
-						);
-						
 						if (numLeft < 2){
 							battleOver = true;
 						}
