@@ -463,7 +463,7 @@ public class GameView extends Scene {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				displayMessage("PLAYER " + winningIndex +" WINS!!!");
+				displayMessage("PLAYER " + (winningIndex + 1) +" WINS!!!");
 			}
 		});
 		
