@@ -333,5 +333,11 @@ public class Player {
 	}
 	public void clearRack(){
 		playerRack.clearRack();
+	}
+
+	public void addNewHexTile(HexTile h) {
+		h.setControlledBy(faction);
+		
+		ownedHexTiles.add(h);
 	}	
 }
