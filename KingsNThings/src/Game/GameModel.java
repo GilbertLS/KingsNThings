@@ -562,8 +562,7 @@ public class GameModel {
 	}
 	
 	private void initializeRandomEvents() {
-			playingCup.add(new RandomEvent("Defection", GameConstants.DefectionImageFront));
-		
+		playingCup.add(new RandomEvent("Defection", GameConstants.DefectionImageFront));
 	}
 
 	public void initializeSpecialCharacters(String s)
@@ -1015,19 +1014,48 @@ public class GameModel {
 		playerFromIndex(playerIndex).payGold(cost);
 	}
 
-	public void recruitSpecialCharacter(int thingID, int playerIndex) {
+	public HexTile recruitSpecialCharacter(int thingID, int playerIndex) {
+		HexTile ret = null;
 		Thing t = null;
 		
-		for(SpecialCharacter sc: unownedCharacters)
-		{
-			if(sc.thingID == thingID)
+		for(SpecialCharacter sc: unownedCharacters){
+			if(sc.thingID == thingID){
 				t = sc;
+			}
+		}
+		if(t!=null)
+			unownedCharacters.remove(t);
+		
+		if(t == null){
+			//check for in-play Special Characters
+			for(HexTile[] hexArray: gameBoard.getTiles())
+				for(HexTile h: hexArray)
+					if(h != null){
+								
+						//iterate over players
+						for(int i=0; i<5; i++){
+		
+							//find any special characters
+							for(Thing thing: h.GetThings(i))
+								if(thing.isSpecialCharacter())
+									if(thing.thingID == thingID){
+										t = thing;
+										playerFromIndex(i).removeSpecialCharacter((SpecialCharacter) thing);
+										ret = h;
+									}
+						}
+						
+					}
+			
+			if(t != null){
+				ret.removeThing(thingID, t.getControlledByPlayerNum());	
+			}
 		}
 		
 		if(t != null)
 			playerFromIndex(playerIndex).addThingToRack(t);
 		
-		unownedCharacters.remove(t);
+		return ret;
 	}
 
 	public void handleRackOverload(int playerIndex) {
@@ -1710,5 +1738,26 @@ public class GameModel {
 				t.setFlipped(false);
 				return;
 			}
+	}
+
+	public ArrayList<SpecialCharacter> getInPlaySpecialCharacters() {
+		ArrayList<SpecialCharacter> ret = new ArrayList<SpecialCharacter>();
+		
+		//iterate over hextiles
+		for(HexTile[] hexArray: gameBoard.getTiles())
+			for(HexTile h: hexArray)
+				if(h != null){
+					
+					//iterate over players
+					for(int i=0; i<5; i++){
+						
+						//find any special characters
+						for(Thing t: h.GetThings(i))
+							if(t.isSpecialCharacter())
+								ret.add((SpecialCharacter) t);
+					}
+				}
+		
+		return ret;
 	}
 }

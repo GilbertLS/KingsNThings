@@ -50,7 +50,8 @@ public class ButtonBox extends HBox {
 						Utility.GotInput(gv.playLock);
 					
 					//allow end of recruitment phase when no character recruited
-					if(gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+					if((gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+							|| gv.currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION)
 							&& !gv.characterRecruited)
 						Utility.GotInput(gv.recruitLock);
 					
@@ -82,12 +83,15 @@ public class ButtonBox extends HBox {
 			
 			@Override
 		    public void handle(ActionEvent e) {
-				if(GameClient.game.gameView.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+				if((GameClient.game.gameView.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+						|| GameClient.game.gameView.currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION)
 						&& GameClient.game.gameView.characterRecruited == false)
 				{
 					int playerIndex = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
 					
-					SpecialCharacterView SCView = new SpecialCharacterView(GameClient.game.gameView.primaryStage, playerIndex);
+					boolean allCharacters = GameClient.game.gameView.currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION;
+					
+					SpecialCharacterView SCView = new SpecialCharacterView(GameClient.game.gameView.primaryStage, playerIndex, allCharacters);
 					GameView.specialCharacterView = SCView;
 				}
 			}
@@ -154,6 +158,9 @@ public class ButtonBox extends HBox {
 					break;
 				case RECRUIT_CHARACTER:
 					getChildren().setAll(recruitSpecial, userInputComplete);
+					break;
+				case CHOOSE_DEFECTION_ACTION:
+					getChildren().setAll(recruitSpecial);
 					break;
 				case CHOOSE_THIEF_ACTION:
 					getChildren().setAll(stealGold, stealRecruit);

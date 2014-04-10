@@ -881,9 +881,19 @@ public class EventHandler {
 				int thingID = Integer.parseInt(e.eventParams[0].trim());
 				final int playerIndex = Integer.parseInt(e.eventParams[1].trim());
 					
-				GameClient.game.gameModel.recruitSpecialCharacter(thingID, playerIndex);
+				final HexTile h = GameClient.game.gameModel.recruitSpecialCharacter(thingID, playerIndex);
 					
 				GameClient.game.updatePlayerRack(playerIndex);
+				
+				if(h != null){
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							GameClient.game.gameView.updateHexTile(h);
+						}
+					});
+				}
+				
 			}
 		}
 		else if(e.eventId == EventList.DO_CONSTRUCTION)
@@ -961,16 +971,23 @@ public class EventHandler {
 			);	
 		}
 		else if(e.eventId == EventList.HANDLE_RANDOM_EVENT){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			GameClient.game.sendMessageToView("Performing Random Event");
-			String eventParam = GameClient.game.gameModel.performRandomEvent(GameClient.game.gameModel.getCurrPlayerNumber());
-			
-			//send finished
-			EventHandler.SendEvent(
-					new Event()
-						.EventId(EventList.HANDLE_RANDOM_EVENT)
-						.EventParameter(eventParam)
-			);
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
+				String eventParam = GameClient.game.gameModel.performRandomEvent(GameClient.game.gameModel.getCurrPlayerNumber());
+				
+				//send finished
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.HANDLE_RANDOM_EVENT)
+							.EventParameter(eventParam)
+				);
+			}
+			else
+			{
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "handle a Random Event");
+			}
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{

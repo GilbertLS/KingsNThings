@@ -115,7 +115,7 @@ public class GameController {
 		
 		if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
 		
-		if(GameController.currentPhase == Phase.SETUP){ playThings(); }
+		//if(GameController.currentPhase == Phase.SETUP){ playThings(); }
 		
 	}
 	
@@ -478,6 +478,7 @@ public class GameController {
 		do
 		{
 			incrementCitadelRounds();
+			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) {
 				distributeIncome();
 			}
@@ -489,8 +490,8 @@ public class GameController {
 			}
 			if (currentPhase == Phase.RECRUIT_THINGS) {
 				if (changedPhase) { changedPhase = false; }
-				recruitThings();
-				tradeThings();
+				//recruitThings();
+				//tradeThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
 			
@@ -504,19 +505,19 @@ public class GameController {
 			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
-				moveThings();
+				//moveThings();
 				if (!changedPhase) { currentPhase = Phase.BATTLE; }
 			}
 			if (currentPhase == Phase.BATTLE) {
 				if (changedPhase) { changedPhase = false; }
-				PlayBattlePhase();
+				//PlayBattlePhase();
 				gameEnded = checkWin();
 				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
 			}
 
 			if (currentPhase == Phase.CONSTRUCTION) {
 				if (changedPhase) { changedPhase = false; }
-				playConstructionPhase();
+				//playConstructionPhase();
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
 			
@@ -545,11 +546,15 @@ public class GameController {
 		}
 		
 		//play each player's random event, update based on selections
-		responses = GameControllerEventHandler.sendEvent(
-				new Event()
-					.EventId( EventList.HANDLE_RANDOM_EVENT)
-					.ExpectsResponse(true)
-			);	
+		for(GameRouter gr: GameServer.servers)
+		{	
+			responses = GameControllerEventHandler.sendEvent(
+					new Event()
+						.EventId( EventList.HANDLE_RANDOM_EVENT)
+						.EventParameter(""+gr.myID)
+						.ExpectsResponse(true)
+				);	
+		}
 		
 		//for each player, if they have used a random event,
 		//send the appropriate update event
@@ -559,7 +564,7 @@ public class GameController {
 			switch(params[0]){
 			//handle Defection
 			case "Defection":
-				
+				//nothing further to handle
 			}
 		}
 	}

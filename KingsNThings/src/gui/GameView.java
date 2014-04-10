@@ -137,7 +137,9 @@ public class GameView extends Scene {
     
     public void updateHexTile(HexTile h)
     {
-    	this.board.getTileByHex(h).update();
+    	Tile t = board.getTileByHex(h);
+    	t.update();
+    	t.updateThings();
     }
     
     public void displayMessage(String message)
@@ -197,7 +199,8 @@ public class GameView extends Scene {
 		
 		//if recruiting character, do not allow end of phase until
 		//character played
-		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER
+				|| currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION)
 		{
 			Utility.PromptForInput(recruitLock);
 			characterRecruited = false;
@@ -403,7 +406,8 @@ public class GameView extends Scene {
 	
 	public void endRecruitSpecialCharacter(final boolean diceRolled)
 	{
-		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+		if(currentPhase == CurrentPhase.RECRUIT_CHARACTER
+				|| currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION)
 		{
 			Platform.runLater(new Runnable(){
 				public void run(){
