@@ -230,7 +230,7 @@ public class GameStates {
 		GameStates.AddThing("Village", 4, -1, 2);
 		GameStates.AddThing("City", 3, -3, -1);
 		GameStates.AddThing("Village", 1, 3, 2);
-		GameStates.AddThing("Village", 4, 1, -2);
+		GameStates.AddThing("Village", 2, 1, -2);
 		
 		//p1 stack
 		GameStates.AddThing("Crocodiles", 1, 1, 0);

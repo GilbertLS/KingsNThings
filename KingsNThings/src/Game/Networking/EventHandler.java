@@ -1162,7 +1162,9 @@ public class EventHandler {
 			Thing thing = GameClient.game.gameModel.removeThingFromTestCup(thingId);
 			if(thing == null) { return; }
 			thing.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
-			thing.setFlipped(true);
+			
+			if(thing.getThingType() != ThingType.SETTLEMENT)
+				thing.setFlipped(true);
 			
 			final HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
 			tile.AddThingToTile(playerNum, thing);

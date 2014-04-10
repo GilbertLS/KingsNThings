@@ -1252,21 +1252,29 @@ public class GameModel {
 	public String checkWin() {
 		boolean winnerFound = false;
 		int winningIndex = -1;
+		
 		for(int i=0; i<GameClient.game.gameModel.playerCount; i++)
 		{
-			if(!winnerFound)	//ensure unique winner
-			{
-				Player player = playerByOrder(i);
+			Player player = playerByOrder(i);
 				
-				//player has more than 1 citadel (player wins)
-				//or player constructed and held a citadel since last round (player wins)
-				if(player.getNumCitadels() > 1
-						|| player.citadelWasConstructed() && player.getRoundsSinceCitadel() >= 1)
-				{
-					winningIndex = i;
-					winnerFound = true;
-				}				
+			//player has more than 1 citadel (player wins)
+			//or player constructed and held a citadel since last round (player wins)
+			if(player.getNumCitadels() > 1)	{
+				winningIndex = player.GetPlayerNum();
+				winnerFound = true;
+				break;
 			}
+			else if(player.citadelWasConstructed() && player.getRoundsSinceCitadel() >= 1){
+				if(!winnerFound){
+					winningIndex = player.GetPlayerNum();
+					winnerFound = true;
+				}
+				else{
+					winningIndex = -1;
+					winnerFound = false;
+					break;
+				}
+			}				
 		}
 		
 		String ret = "";
