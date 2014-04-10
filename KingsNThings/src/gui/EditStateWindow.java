@@ -236,8 +236,7 @@ public class EditStateWindow extends Dialog {
 		
 		Label setStateLabel = new Label("Set staet: ");
 		setStateDropDown = new ChoiceBox<FunctionalityStates>(FXCollections.observableArrayList(
-			FunctionalityStates.MINIMAL, FunctionalityStates.AVERAGE, FunctionalityStates.SUPERIOR,
-			FunctionalityStates.OUTSTANDING1, FunctionalityStates.OUTSTANDING2
+			FunctionalityStates.MINIMAL, FunctionalityStates.AVERAGE, FunctionalityStates.SUPERIOR
 		));
 		setStateDropDown.getSelectionModel().selectFirst();
 		HBox setStateHBox = new HBox();

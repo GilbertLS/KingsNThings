@@ -543,7 +543,7 @@ public class GameController {
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
 		
-			ChangePlayerOrder();
+			if (!gameEnded) { ChangePlayerOrder(); }
 		
 		} while(!gameEnded);
 	}
@@ -672,12 +672,14 @@ public class GameController {
 		
 		boolean ret = Boolean.parseBoolean(args[0]);
 		
-		if(ret)
-		GameControllerEventHandler.sendEvent(
+		if(ret) {
+			GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId(EventList.HANDLE_WIN)
 					.EventParameter(args[1])
 			);
+			SetPhase(Phase.NONE);
+		}
 		
 		return ret;
 	}

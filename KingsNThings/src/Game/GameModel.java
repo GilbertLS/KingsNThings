@@ -547,6 +547,10 @@ public class GameModel {
 				Treasure tr = (Treasure)t;
 				
 				copyPlayingCup.add(tr.copy());
+			} else if (t.thingType == ThingType.SPECIAL_INCOME) {
+				SpecialIncome sp = (SpecialIncome)t;
+				
+				copyPlayingCup.add(sp.copy());
 			}
 		}
 	}
