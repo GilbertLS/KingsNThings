@@ -1447,6 +1447,22 @@ public class EventHandler {
 			});
 		} else if (e.eventId == EventList.CLEAR_THINGS) {
 			GameClient.game.gameModel.boardController.ClearThings();
+			for(int i = 0; i < 4; i++) {
+				GameClient.game.gameModel.GetPlayer(i).clearRack();
+			}
+		} else if (e.eventId == EventList.ADD_THING_TO_RACK) {
+			int thingId = Integer.parseInt(e.eventParams[0]);
+			int player = Integer.parseInt(e.eventParams[1]);
+			
+			Player p = GameClient.game.gameModel.GetPlayer(player);
+			Thing thing = GameClient.game.gameModel.removeThingFromTestCup(thingId);
+			if(thing == null) { return; }
+			thing.setControlledBy(GameConstants.controlledByFromIndex(player));
+			thing.setFlipped(true);
+			
+			p.addThingToRack(thing);
+			GameClient.game.updatePlayerRack(player);
+			
 		} else if (e.eventId == EventList.SETTING_PHASE ){
 			GameClient.game.sendMessageToView("Set-up game if you wish");
 			GameClient.game.gameView.performPhase(CurrentPhase.SETTING_PHASE);

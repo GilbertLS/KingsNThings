@@ -255,6 +255,15 @@ public class GameStates {
 		GameStates.AddThing("Black Knight", 2, 0, -1);
 		GameStates.AddThing("Dervish", 2, 0, -1);
 		GameStates.AddThing("Forester", 2, 0, -1);
+		
+		// p1 rack
+		GameStates.AddThingToRack("Diamond Field", 1);
+		GameStates.AddThingToRack("Peat Bog", 1);
+		
+		// p2 rack
+		GameStates.AddThingToRack("Copper Mine", 2);
+		GameStates.AddThingToRack("Gold Mine", 2);
+		GameStates.AddThingToRack("Emerald", 2);
 	}
 	
 	public static void Superior() {
@@ -390,6 +399,9 @@ public class GameStates {
 		GameStates.AddThing("Wild Cat", 4, -1, 0);
 		GameStates.AddThing("Elves", 4, -1, 0);
 		GameStates.AddThing("Great Owl", 4, -1, 0);
+		
+		// p1 rack
+		GameStates.AddThingToRack("Defection", 1);
 }
 	
 	public static void Outstanding1() {
@@ -438,6 +450,37 @@ public class GameStates {
 		Event e = new Event()
 			.EventId(EventList.CLEAR_THINGS);
 		
+		EventHandler.SendEvent(e);
+	}
+	
+	public static void AddThingToRack(String name, int player) {
+		String[] params = new String[4];
+		
+		ArrayList<Thing> things = GameClient.game.gameModel.getAllTestPlayingCupCreatures();
+		
+		int thingId = -1;
+		for(Thing t : things) {
+			if(t.GetName().equals(name)) {
+				boolean cont = false;
+				for(Integer i : alreadySentThings) {
+					if (i == t.thingID) {
+						cont = true;
+					}
+				}
+				
+				if(cont) { continue; }
+				
+				thingId = t.thingID;
+				break;
+			}
+		}
+		
+		params[0] = "" + thingId;
+		params[1] = "" + (player - 1);
+		
+		alreadySentThings.add(thingId);
+		
+		Event e = new Event().EventId(EventList.ADD_THING_TO_RACK).EventParameters(params);
 		EventHandler.SendEvent(e);
 	}
 	

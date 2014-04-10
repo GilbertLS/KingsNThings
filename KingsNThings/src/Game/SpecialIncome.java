@@ -32,4 +32,10 @@ public class SpecialIncome extends Thing implements IIncomable {
 	{
 		return terrain;
 	}
+	
+	public SpecialIncome copy() {
+		SpecialIncome sp = new SpecialIncome(terrain, name, frontFileName, income);
+		
+		return sp;
+	}
 }
