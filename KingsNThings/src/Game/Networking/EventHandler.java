@@ -1469,7 +1469,9 @@ public class EventHandler {
 			Thing thing = GameClient.game.gameModel.removeThingFromTestCup(thingId);
 			if(thing == null) { return; }
 			thing.setControlledBy(GameConstants.controlledByFromIndex(player));
-			thing.setFlipped(true);
+			
+			if(!thing.isSpecialIncome())
+				thing.setFlipped(true);
 			
 			p.addThingToRack(thing);
 			GameClient.game.updatePlayerRack(player);

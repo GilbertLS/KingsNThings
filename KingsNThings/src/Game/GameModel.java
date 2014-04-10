@@ -965,7 +965,9 @@ public class GameModel {
 		hexTile.setConstructionAllowed(false);
 		
 		if(hexTile.hasFort())
-			hexTile.getFort().upgrade();
+			if(!(hexTile.getFort().getLevel() == Level.CASTLE
+				&& playerFromIndex(playerIndex).hasCitadel()))
+					hexTile.getFort().upgrade();
 		else
 			addTower(hexTile, playerIndex);
 		

@@ -201,8 +201,9 @@ public class GameClientController {
 	private boolean areAllFlying(ArrayList<Thing> things) {
 		for(Thing t: things)
 		{
-			if(!((Combatant)t).isFlying)
-				return false;
+			if(t.IsCombatant())
+				if(!((Combatant)t).isFlying)
+					return false;
 		}
 		
 		return true;
