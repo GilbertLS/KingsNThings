@@ -40,6 +40,7 @@ public class Tile extends Region implements Draggable {
 	public ThingView specialIncome = null;
 	private int controllingPlayer = 0;
 	private CurrentPhase currentPhase;
+	private boolean hidden = true;
 	
     public Tile(Double width, Double height, HexTile h, int ii, int jj)
     {
@@ -51,6 +52,7 @@ public class Tile extends Region implements Draggable {
     	this.getStyleClass().add("tile");
     	this.setSize(width, height);
     	this.initListeners();
+    	this.hideTile();
     }
     
     public ArrayList<ThingView> getView(int i) {
@@ -148,16 +150,20 @@ public class Tile extends Region implements Draggable {
     public HexTile getTileRef() {
     	return this.tileRef;
     }
-    
-    public void noStyleChangeUpdate(){
-    	String oldStyle = this.getStyle();
-    	
-    	update();
-    	
-    	this.setStyle(oldStyle);
+      
+    public void update() {
+    	update(-1, -1);
     }
     
-    public void update() {
+    public void update(double height, double width) {
+    	
+    	if(height < 0 && width < 0) {
+    		height = this.getMinHeight();
+    		width  = this.getMinWidth();
+    	}
+    	
+    	height = width;
+    	
     	this.getChildren().clear();
     	
     	ArrayList<Node> list = new ArrayList<Node>();
@@ -165,11 +171,10 @@ public class Tile extends Region implements Draggable {
     	String markerPath = getMarkerString();
     	
     	if (markerPath != null) {
-	    	Image img = new Image("res/images/" + markerPath);
+    		double mySize = height/5;
+	    	Image img = new Image("res/images/" + markerPath, mySize, mySize, false, false);
 	    	ImageView imgView = new ImageView(img);
-	    	imgView.setFitHeight(25);
-	    	imgView.setFitWidth(25);
-	    	imgView.setX(this.getWidth()/4);
+	    	imgView.setX(width/4);
 	    	list.add(imgView);
     	}
     	
@@ -177,12 +182,11 @@ public class Tile extends Region implements Draggable {
     	String fortPath = getFortString();
     	
     	if (fortPath != null) {
-	    	Image img = new Image("res/images/" + fortPath);
+    		double mySize = height/3;
+	    	Image img = new Image("res/images/" + fortPath, mySize, mySize, false, false);
 	    	ImageView imgView = new ImageView(img);
-	    	imgView.setFitHeight(40);
-	    	imgView.setFitWidth(40);
-	    	imgView.setX(this.getWidth()/2 - imgView.getFitWidth()/2);
-	    	imgView.setY(this.getHeight()/2 - imgView.getFitHeight()/2);
+	    	imgView.setX(width/2 - mySize/2);
+	    	imgView.setY(height/2 - mySize/2);
 	    	list.add(imgView);
 	    	
 	    	if(fort == null)
@@ -195,11 +199,11 @@ public class Tile extends Region implements Draggable {
     	
     	String specialIncomePath = getSpecialIncomeString();
     	if (specialIncomePath != null) {
-	    	Image img = new Image("res/images/" + specialIncomePath);
+    		double mySize = height/4;
+	    	Image img = new Image("res/images/" + specialIncomePath, mySize, mySize, false, false);
 	    	ImageView imgView = new ImageView(img);
-	    	imgView.setFitHeight(25);
-	    	imgView.setFitWidth(25);
-	    	imgView.setX(this.getWidth()/2);
+	    	imgView.setX(4*width/6 - mySize/2);
+	    	imgView.setY(height/16);
 	    	list.add(imgView);
 	    	
 	    	if(specialIncome == null)
@@ -215,7 +219,10 @@ public class Tile extends Region implements Draggable {
     		specialIncome = null;
     	}
     	
-    	this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
+    	if(hidden)
+    		hideTile();
+    	else
+    		showTile();
     	
     	this.getChildren().setAll(list);
     	
@@ -462,21 +469,9 @@ public class Tile extends Region implements Draggable {
 	}
 
 	public void showTile() {  
-		String s = "";
-				
-		switch(tileRef.getTerrain())
-		{
-		 	case SEA: s = GameConstants.SeaTileFront; break;
-			case JUNGLE: s = GameConstants.JungleTileFront; break;
-			case FROZEN_WASTE: s = GameConstants.FrozenWasteTileFront; break;
-			case FOREST: s = GameConstants.ForestTileFront; break;
-			case PLAINS: s = GameConstants.PlainsTileFront; break;
-			case SWAMP: s = GameConstants.SwampTileFront; break;
-			case MOUNTAIN: s = GameConstants.MountainTileFront; break;
-			case DESERT: s = GameConstants.DesertTileFront; break;
-		}
-		
-		this.setStyle("-fx-background-image: url(/res/images/ " + s + "); ");
+		this.hidden = false;
+
+		this.setStyle("-fx-background-image: url(/res/images/ " + getBackgroundFromType() + "); ");
 	}
 	
 	public List<ThingView> getThings(int i) {
@@ -490,12 +485,13 @@ public class Tile extends Region implements Draggable {
 	}
 	
 	public void hideTile() {
+		this.hidden = true;
 		if(tileRef.isControlledBy(ControlledBy.NEUTRAL))
 			this.setStyle("-fx-background-image: url(/res/images/ " + "Tuile_Back.png" + "); ");
 	}
 	
 	public void setSize(double width, double height) {
-		this.setPrefSize(width, height);
+		this.setMinSize(width, height);
     	
     	Polygon hex = new Polygon();
     	hex.getPoints().addAll(new Double[]{
@@ -507,7 +503,7 @@ public class Tile extends Region implements Draggable {
     		    width/4, 	height});
 
     	this.setShape(hex);
-    	this.noStyleChangeUpdate();
+    	this.update();
 	}
 		   
 }

@@ -321,6 +321,24 @@ public class GameView extends Scene {
 		}
 	}
 	
+	public void HideBattle() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				self.primaryStage.setScene(self);
+			}
+		});
+	}
+	
+	public void ShowBattle() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				self.primaryStage.setScene(battleView);
+			}
+		});
+	}
+	
 	public void StartBattle(final int tileX, final int tileY){	
 		Platform.runLater(new Runnable() {
 			public void run(){

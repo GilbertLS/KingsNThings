@@ -27,6 +27,7 @@ import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Dice;
 import Game.HexTile;
+import Game.Phases.Phase;
 import Game.Player;
 import Game.RandomEvent;
 import Game.Settlement;
@@ -1148,8 +1149,10 @@ public class EventHandler {
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x,y);
 			
 			Thing thing = tile.getThingFromTileByID(thingId);
-			GameClient.game.gameModel.handleElimination(thing, tile);
-			GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
+			if (thing != null) {
+				GameClient.game.gameModel.handleElimination(thing, tile);
+				GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
+			}
 		} else if (e.eventId == EventList.ADD_THING){
 			int x = Integer.parseInt(e.eventParams[0]);
 			int y = Integer.parseInt(e.eventParams[1]);
@@ -1161,9 +1164,21 @@ public class EventHandler {
 			thing.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
 			thing.setFlipped(true);
 			
-			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
+			final HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
 			tile.AddThingToTile(playerNum, thing);
+			
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings();
+				
+			if(thing.getThingType() == ThingType.SETTLEMENT) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						GameClient.game.gameView.board.getTileByHex(tile).update();
+					}
+					
+				});
+				
+			}
 			
 		} else if (e.eventId == EventList.REMOVE_BLUFFS) {
 			int tileX = Integer.parseInt(e.eventParams[0]);
@@ -1304,9 +1319,22 @@ public class EventHandler {
 				tileY
 			);
 			
-			Random random = new Random();
-			int randTile = random.nextInt(possibleTiles.size());
-			HexTile retreatTile = possibleTiles.get(randTile);
+			//Random random = new Random();
+			//int randTile = random.nextInt(possibleTiles.size());
+
+			GameClient.game.gameView.HideBattle();
+			GameClient.game.sendMessageToView("Choose a tile to retreat to");
+			
+			Tile tile = null;
+			do {
+				if (tile != null) { GameClient.game.sendMessageToView("Choose a valid tile"); }
+				tile = GameClient.game.gameView.chooseTile();
+			} while(!possibleTiles.contains(tile.getTileRef()));
+			
+			HexTile retreatTile = tile.getTileRef();
+			
+			GameClient.game.gameView.ShowBattle();
+			//HexTile retreatTile = possibleTiles.get(randTile);
 			
 			String parameters = "" + retreatTile.x + " " + retreatTile.y;
 			
@@ -1413,12 +1441,36 @@ public class EventHandler {
 					GameClient.game.gameView.updateTiles(updateTiles);
 				}
 			});
+		} else if (e.eventId == EventList.CLEAR_THINGS) {
+			GameClient.game.gameModel.boardController.ClearThings();
+		} else if (e.eventId == EventList.SETTING_PHASE ){
+			GameClient.game.sendMessageToView("Set-up game if you wish");
+			GameClient.game.gameView.performPhase(CurrentPhase.SETTING_PHASE);
+			GameClient.game.clearMessageOnView();
+			EventHandler.SendNullEvent();
+		} else if (e.eventId == EventList.GET_DEFENDER) {
+			int tileX = Integer.parseInt(e.eventParams[0]);
+			int tileY = Integer.parseInt(e.eventParams[1]);
+			
+			HexTile h = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
+			
+			ControlledBy c = h.getControlledBy();
+			int playerIndex = GameConstants.GetPlayerNumber(c);
+			
+			String message;
+			if (!h.getCombatants(playerIndex).isEmpty()) {
+				message = "" + playerIndex;
+			} else {
+				message = "" + -1;
+			}
+			
+			EventHandler.SendEvent(new Event().EventId(EventList.GET_DEFENDER).EventParameter(message));
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
-				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
+				//throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
 		} else if (!e.expectsResponseEvent && numberOfSends != 0){
-				throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+				//throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
 		}
 
 	}

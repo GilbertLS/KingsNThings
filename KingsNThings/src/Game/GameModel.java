@@ -530,7 +530,11 @@ public class GameModel {
 			if (t.thingType == ThingType.CREATURE) {
 				Creature c = (Creature)t;
 				
-				copyPlayingCup.add(c.copy());;
+				if (c.name.equals("Giant Spider")) {
+					copyPlayingCup.add(c.copy());
+				}
+				
+				copyPlayingCup.add(c.copy());
 			} else if (t.thingType == ThingType.SETTLEMENT) {
 				Settlement s = (Settlement)t;
 				
@@ -751,6 +755,8 @@ public class GameModel {
 				ret = t;
 			}
 		}
+		
+		if(ret != null) { copyPlayingCup.remove(ret); }
 		
 		return ret;
 	}
