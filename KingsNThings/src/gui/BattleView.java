@@ -208,6 +208,7 @@ public class BattleView extends Scene {
 		for(int i = 0; i < numPlayers; i++) {
 			ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
 			for(Thing t : currTile.getCombatants(i)) {
+				t.setFlipped(false);
 				thingViews.add(new ThingView(t));
 			}
 			

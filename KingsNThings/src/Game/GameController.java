@@ -116,7 +116,7 @@ public class GameController {
 		
 		if(GameController.currentPhase == Phase.SETUP){ tradeInitialThings(); }
 		
-		//if(GameController.currentPhase == Phase.SETUP){ playThings(); }
+		if(GameController.currentPhase == Phase.SETUP){ playThings(); }
 		
 	}
 	
@@ -502,8 +502,8 @@ public class GameController {
 			}
 			if (currentPhase == Phase.RECRUIT_THINGS) {
 				if (changedPhase) { changedPhase = false; }
-				//recruitThings();
-				//tradeThings();
+				recruitThings();
+				tradeThings();
 				if (!changedPhase) { currentPhase = Phase.PLAY_THINGS; }
 			}
 			
@@ -521,12 +521,12 @@ public class GameController {
 			
 			if (currentPhase == Phase.MOVE_THINGS) {
 				if (changedPhase) { changedPhase = false; }
-				//moveThings();
+				moveThings();
 				if (!changedPhase) { currentPhase = Phase.BATTLE; }
 			}
 			if (currentPhase == Phase.BATTLE) {
 				if (changedPhase) { changedPhase = false; }
-				//PlayBattlePhase();
+				PlayBattlePhase();
 				gameEnded = checkWin();
 				if (!changedPhase) { currentPhase = Phase.CONSTRUCTION; }
 			}
@@ -543,7 +543,7 @@ public class GameController {
 				if (!changedPhase) { currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; }
 			}
 		
-			ChangePlayerOrder();
+			if (!gameEnded) { ChangePlayerOrder(); }
 		
 		} while(!gameEnded);
 	}
@@ -672,12 +672,14 @@ public class GameController {
 		
 		boolean ret = Boolean.parseBoolean(args[0]);
 		
-		if(ret)
-		GameControllerEventHandler.sendEvent(
+		if(ret) {
+			GameControllerEventHandler.sendEvent(
 				new Event()
 					.EventId(EventList.HANDLE_WIN)
 					.EventParameter(args[1])
 			);
+			SetPhase(Phase.NONE);
+		}
 		
 		return ret;
 	}
