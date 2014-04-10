@@ -1449,6 +1449,15 @@ public class EventHandler {
 			GameClient.game.gameModel.boardController.ClearThings();
 			for(int i = 0; i < 4; i++) {
 				GameClient.game.gameModel.GetPlayer(i).clearRack();
+				
+				final int y = i;
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						GameClient.game.updatePlayerRack(y);
+					}
+					
+				});
 			}
 		} else if (e.eventId == EventList.ADD_THING_TO_RACK) {
 			int thingId = Integer.parseInt(e.eventParams[0]);
