@@ -963,10 +963,11 @@ public class GameModel {
 	public void updateConstruction(HexTile hexTile, int playerIndex) {
 		hexTile.setConstructionAllowed(false);
 		
-		if(hexTile.hasFort())
+		if(hexTile.hasFort()){
 			if(!(hexTile.getFort().getLevel() == Level.CASTLE
 				&& playerFromIndex(playerIndex).hasCitadel()))
 					hexTile.getFort().upgrade();
+		}
 		else
 			addTower(hexTile, playerIndex);
 		

@@ -132,17 +132,24 @@ public class GameClientController {
 	public boolean rollForCreatures(Player player, int x, int y) {
 		int[] roll = Dice.rollDice(1);
 		
+		HexTile t =gameModel.gameBoard.getTile(x, y);
+		
 		boolean defendingCreatures = false;
-		if(roll[0] != 1 && roll[0] != 6)
-		{
-			createDefenseCreatures(roll[0], x, y);
-			sendCreateDefenseCreaturesEvent(player, roll[0], x, y);
-			
-			defendingCreatures = true;
-		}
-		else
-		{
-			gameModel.claimNewTile(player, x, y);
+		if(t.isLand() ){
+
+			if(roll[0] != 1 && roll[0] != 6)
+			{
+				createDefenseCreatures(roll[0], x, y);
+				sendCreateDefenseCreaturesEvent(player, roll[0], x, y);
+				
+				defendingCreatures = true;
+			}
+			else
+			{
+	
+	
+				gameModel.claimNewTile(player, x, y);
+			}
 		}
 
 		
