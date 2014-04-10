@@ -69,6 +69,7 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				if(gv.currentPhase == CurrentPhase.MOVEMENT 
 						|| gv.currentPhase == CurrentPhase.PLAY_THINGS
 						|| gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+						|| gv.currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION
 						|| gv.currentPhase == CurrentPhase.PLAY_RANDOM_EVENT)
 				{
 					ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());

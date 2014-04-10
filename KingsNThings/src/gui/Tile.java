@@ -419,7 +419,8 @@ public class Tile extends Region implements Draggable {
 									
 								}
 							}
-							else if (gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER)
+							else if (gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+									|| gv.currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION)
 							{
 								if(GameClient.game.isValidPlacement(tileRef, things, gv.getCurrentPlayer()))
 								{	

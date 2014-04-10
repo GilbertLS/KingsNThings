@@ -1,6 +1,8 @@
 package Game;
 
+import Game.GameConstants.CurrentPhase;
 import Game.GameConstants.ThingType;
+import Game.Networking.GameClient;
 
 /*
  * This Class represents a random event "Thing" in the Game,
@@ -26,6 +28,13 @@ public class RandomEvent extends Thing {
 		String ret = "";
 				
 		ret += "Defection";
+		
+		//get selection of special character from view
+		GameClient.game.gameView.performPhaseWithUserFeedback(CurrentPhase.CHOOSE_DEFECTION_ACTION, "Select a Special Character");
+
+		//auto-open a view of all special characters not owned by current player
+		
+		//select character, 
 		
 		return ret;
 	}
