@@ -491,8 +491,9 @@ public class GameController {
 			}
 			
 			incrementCitadelRounds();
-			distributeIncome();
-			
+			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) {
+				distributeIncome();
+			}
 			
 			if (currentPhase == Phase.RECRUIT_SPECIAL_CHARACTERS) { 
 				if (changedPhase) { changedPhase = false; }

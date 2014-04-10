@@ -42,6 +42,7 @@ public class MenuView extends Stage {
 		this.setWidth(400);
 		this.setHeight(400);
 		this.setResizable(false);
+		this.setTitle("KingsNThings");
 	}
 	
 	private void setupMainMenu() {
