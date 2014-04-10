@@ -127,6 +127,9 @@ public class BribeView extends Dialog {
 				ArrayList<Thing> selectedThings = new ArrayList<Thing>();
 				int playerIndex = GameClient.game.gameView.currPlayerNum;
 				
+				if (selectedThingViews.size() == 0)
+					return;
+				
 				for(int i=0; i<selectedThingViews.size(); i++){
 						selectedThings.add(selectedThingViews.get(i).thingRef);
 				}
