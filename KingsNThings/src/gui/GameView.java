@@ -460,7 +460,13 @@ public class GameView extends Scene {
 	}
 
 	public void handleWin(final int winningIndex) {
-		displayMessage("PLAYER " + winningIndex +" WINS!!!");
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				displayMessage("PLAYER " + winningIndex +" WINS!!!");
+			}
+		});
+		
 	}
 	
 	public void bribeCreatures(Tile t)
