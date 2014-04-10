@@ -16,7 +16,9 @@ import Game.Thing;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -217,6 +219,39 @@ public class Tile extends Region implements Draggable {
     	else
     	{
     		specialIncome = null;
+    	}
+    	
+    	//Creature count
+    	if(height > 120 && p1Things.size() + p2Things.size() + p3Things.size() + p4Things.size() + this.defendingThings.size() > 0) {
+	    	double countSize = height/6;
+	    	Label p1Count = new Label(Integer.toString(p1Things.size()));
+	    	p1Count.setStyle("-fx-background-image: url('res/images/CM_411.png'); -fx-background-repeat: stretch; -fx-background-position: center center; -fx-background-size: cover, auto;");
+	    	p1Count.relocate(3*height/10, 2*height/3);
+	    	p1Count.setPrefSize(countSize, countSize);
+	    	p1Count.alignmentProperty().set(Pos.CENTER);
+	    	
+	    	Label p2Count = new Label(Integer.toString(p2Things.size()));
+	    	p2Count.setStyle("-fx-background-image: url('res/images/CM_412.png'); -fx-background-repeat: stretch; -fx-background-position: center center; -fx-background-size: cover, auto;");
+	    	p2Count.relocate(4*height/10, 2*height/3);
+	    	p2Count.setPrefSize(countSize, countSize);
+	    	p2Count.alignmentProperty().set(Pos.CENTER);
+	    	
+	    	Label p3Count = new Label(Integer.toString(p3Things.size()));
+	    	p3Count.setStyle("-fx-background-image: url('res/images/CM_413.png'); -fx-background-repeat: stretch; -fx-background-position: center center; -fx-background-size: cover, auto;");
+	    	p3Count.relocate(5*height/10, 2*height/3);
+	    	p3Count.setPrefSize(countSize, countSize);
+	    	p3Count.alignmentProperty().set(Pos.CENTER);
+	    	
+	    	Label p4Count = new Label(Integer.toString(p4Things.size()));
+	    	p4Count.setStyle("-fx-background-image: url('res/images/CM_414.png'); -fx-background-repeat: stretch; -fx-background-position: center center; -fx-background-size: cover, auto;");
+	    	p4Count.relocate(6*height/10, 2*height/3);
+	    	p4Count.setPrefSize(countSize, countSize);
+	    	p4Count.alignmentProperty().set(Pos.CENTER);
+	    	
+	    	list.add(p1Count);
+	    	list.add(p2Count);
+	    	list.add(p3Count);
+	    	list.add(p4Count);
     	}
     	
     	if(hidden)
