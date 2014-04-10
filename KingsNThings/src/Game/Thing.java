@@ -85,7 +85,7 @@ public abstract class Thing {
 			case PLAYER2: return 1;
 			case PLAYER3: return 2;
 			case PLAYER4: return 3;
-			default: return 0;
+			default: return 4;
 		}
 	}
 

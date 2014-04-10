@@ -306,6 +306,7 @@ public class GameClientController {
 		
 		Event gameEvent = new Event()
 			.EventId(EventList.HANDLE_RECRUIT_CHARACTER)
+			.IntendedPlayers(intendedPlayers)
 			.EventParameters(args);
 	
 		Game.Networking.EventHandler.SendEvent(gameEvent);	
@@ -342,7 +343,9 @@ public class GameClientController {
 		HexTile hexTile = gv.tilePreview.getTile().getTileRef();
 		
 		//invalid if play things phase, and source isn't rack
-		if(!listView.equals(gv.rack) && gv.currentPhase == CurrentPhase.PLAY_THINGS)
+		if(!listView.equals(gv.rack) && (gv.currentPhase == CurrentPhase.PLAY_THINGS
+											|| gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+											|| gv.currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION))
 			return false;
 		
 		//invalid if a thing isn't owned by current player

@@ -32,7 +32,7 @@ public class EscapeMenu extends Dialog {
 	private Button editMenuButton;
 	private StackPane stackPane;
 	
-	private EditStateWindow editWindow;
+	public EditStateWindow editWindow;
 
 	public EscapeMenu(GameView g) {
 		super(g, "Menu", true, false);

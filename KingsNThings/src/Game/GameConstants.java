@@ -21,6 +21,7 @@ public final class GameConstants {
 		CHOOSE_THIEF_ACTION, 
 		USER_FEEDBACK, 
 		PLAY_RANDOM_EVENT,
+		CHOOSE_DEFECTION_ACTION,
 		SETTING_PHASE
 	}
 

@@ -882,9 +882,19 @@ public class EventHandler {
 				int thingID = Integer.parseInt(e.eventParams[0].trim());
 				final int playerIndex = Integer.parseInt(e.eventParams[1].trim());
 					
-				GameClient.game.gameModel.recruitSpecialCharacter(thingID, playerIndex);
+				final HexTile h = GameClient.game.gameModel.recruitSpecialCharacter(thingID, playerIndex);
 					
 				GameClient.game.updatePlayerRack(playerIndex);
+				
+				if(h != null){
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							GameClient.game.gameView.updateHexTile(h);
+						}
+					});
+				}
+				
 			}
 		}
 		else if(e.eventId == EventList.DO_CONSTRUCTION)
@@ -962,16 +972,23 @@ public class EventHandler {
 			);	
 		}
 		else if(e.eventId == EventList.HANDLE_RANDOM_EVENT){
+			int playerIndex = Integer.parseInt(e.eventParams[0]);
 			
-			GameClient.game.sendMessageToView("Performing Random Event");
-			String eventParam = GameClient.game.gameModel.performRandomEvent(GameClient.game.gameModel.getCurrPlayerNumber());
-			
-			//send finished
-			EventHandler.SendEvent(
-					new Event()
-						.EventId(EventList.HANDLE_RANDOM_EVENT)
-						.EventParameter(eventParam)
-			);
+			if(playerIndex == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum())
+			{
+				String eventParam = GameClient.game.gameModel.performRandomEvent(GameClient.game.gameModel.getCurrPlayerNumber());
+				
+				//send finished
+				EventHandler.SendEvent(
+						new Event()
+							.EventId(EventList.HANDLE_RANDOM_EVENT)
+							.EventParameter(eventParam)
+				);
+			}
+			else
+			{
+				waitForOtherPlayer(e.expectsResponseEvent, playerIndex, "handle a Random Event");
+			}
 		}
 		else if(e.eventId == EventList.MOVE_THINGS)
 		{
@@ -1368,7 +1385,9 @@ public class EventHandler {
 			
 			if (setOption == SetOption.HEX) {
 				System.out.println(player);
-				GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetPlayer(player), tileX, tileY);
+				if (player != 4) {
+					GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetPlayer(player), tileX, tileY);
+				}
 			} else {
 				GameClient.game.gameModel.addTower(tileX, tileY, player);
 				Fort f = GameClient.game.gameModel.boardController.GetTile(tileX, tileY).getFort();
@@ -1409,6 +1428,8 @@ public class EventHandler {
 					@Override
 					public void run() {
 						GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
+						Tile t = GameClient.game.gameView.board.getTileByCoords(tileX, tileY);
+						t.showTile();
 					}
 				});
 			}
