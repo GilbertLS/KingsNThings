@@ -331,4 +331,7 @@ public class Player {
 		
 		return ret;
 	}
+	public void clearRack(){
+		playerRack.clearRack();
+	}	
 }

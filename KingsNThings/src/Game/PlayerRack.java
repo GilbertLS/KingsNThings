@@ -81,4 +81,8 @@ public class PlayerRack {
 	public Thing removeFromRackByIndex(int thingIndex) {
 		return things.remove(thingIndex);
 	}
+	
+	public void clearRack(){
+		things.clear();
+	}
 }
