@@ -486,7 +486,7 @@ public class GameController {
 		
 		do
 		{
-			if (currentPhase == Phase.SETTING_PHASE) {
+			if (currentPhase == Phase.SETTING_PHASE && changedPhase) {
 				settingPhase();
 			}
 			

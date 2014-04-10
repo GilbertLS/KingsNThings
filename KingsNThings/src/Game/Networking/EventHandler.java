@@ -1145,9 +1145,21 @@ public class EventHandler {
 			thing.setControlledBy(GameConstants.controlledByFromIndex(playerNum));
 			thing.setFlipped(true);
 			
-			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
+			final HexTile tile = GameClient.game.gameModel.boardController.GetTile(x, y);
 			tile.AddThingToTile(playerNum, thing);
+			
 			GameClient.game.gameView.board.getTileByHex(tile).updateThings();
+				
+			if(thing.getThingType() == ThingType.SETTLEMENT) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						GameClient.game.gameView.board.getTileByHex(tile).update();
+					}
+					
+				});
+				
+			}
 			
 		} else if (e.eventId == EventList.REMOVE_BLUFFS) {
 			int tileX = Integer.parseInt(e.eventParams[0]);
@@ -1288,9 +1300,22 @@ public class EventHandler {
 				tileY
 			);
 			
-			Random random = new Random();
-			int randTile = random.nextInt(possibleTiles.size());
-			HexTile retreatTile = possibleTiles.get(randTile);
+			//Random random = new Random();
+			//int randTile = random.nextInt(possibleTiles.size());
+
+			GameClient.game.gameView.HideBattle();
+			GameClient.game.sendMessageToView("Choose a tile to retreat to");
+			
+			Tile tile = null;
+			do {
+				if (tile != null) { GameClient.game.sendMessageToView("Choose a valid tile"); }
+				tile = GameClient.game.gameView.chooseTile();
+			} while(!possibleTiles.contains(tile.getTileRef()));
+			
+			HexTile retreatTile = tile.getTileRef();
+			
+			GameClient.game.gameView.ShowBattle();
+			//HexTile retreatTile = possibleTiles.get(randTile);
 			
 			String parameters = "" + retreatTile.x + " " + retreatTile.y;
 			
