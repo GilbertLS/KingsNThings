@@ -529,7 +529,11 @@ public class GameModel {
 		for(Thing t : playingCup) {
 			if (t.thingType == ThingType.CREATURE) {
 				Creature c = (Creature)t;
-
+				
+				if (c.name.equals("Giant Spider")) {
+					copyPlayingCup.add(c.copy());
+				}
+				
 				copyPlayingCup.add(c.copy());
 			} else if (t.thingType == ThingType.SETTLEMENT) {
 				Settlement s = (Settlement)t;
