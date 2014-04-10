@@ -364,6 +364,9 @@ public class BattleView extends Scene {
 	        	if(currTile.hasFort() && currTile.getFort().thingID == thingId) {
 	        		Fort f = currTile.getFort();
 	        		if (f != null) {
+	        			if (f.isNeutralized()) {
+	        				f.setFlipped(true);
+	        			}
 	        			removeThing = false;
 	        			ThingView thingView = new ThingView(f);
 	        			list.removeByThingId(thingId);

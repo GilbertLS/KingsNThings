@@ -3,6 +3,7 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.Fort;
 import Game.GameConstants.ThingType;
 import Game.Combatant;
 import Game.Creature;
@@ -106,7 +107,9 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			int controlledBy 	= t.thingRef.getControlledByPlayerNum();
 			int currPlayer 		= GameClient.game.gameModel.getCurrPlayerNumber();
 			
-			if(!t.thingRef.isFlipped() || (controlledBy == currPlayer && currPlayer > -1))
+			if((t.thingRef.getThingType() == ThingType.FORT && !((Fort)t.thingRef).isNeutralized()) ||
+				((t.thingRef.getThingType() != ThingType.FORT && !t.thingRef.isFlipped()) ||
+				((t.thingRef.getThingType() != ThingType.FORT && controlledBy == currPlayer && currPlayer > -1))))
 				setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "'); -fx-background-size: 60 60;");
 			else
 				setStyle("-fx-background-image: url('res/images/" + t.thingRef.backFileName + "'); -fx-background-size: 60 60;");
