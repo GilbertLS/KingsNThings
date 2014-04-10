@@ -1,5 +1,8 @@
 package gui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -18,10 +21,21 @@ public class BoardScrollPane extends ScrollPane {
 		this.setStyle("-fx-background: rgba(0,0,0,0);");
 		
 		centeredPane = new StackPane();
-	    centeredPane.setStyle("-fx-border-color: red");
+		//board.setStyle("-fx-border-color: blue");
+	    //centeredPane.setStyle("-fx-border-color: red");
 	    centeredPane.getChildren().add(board);
 	    StackPane.setAlignment(board, Pos.CENTER);
 	    
 	    this.setContent(centeredPane);
+	    this.viewportBoundsProperty().addListener(
+	    	      new ChangeListener<Bounds>() {
+	    	      @Override public void changed(ObservableValue<? extends Bounds> observableValue, Bounds oldBounds, Bounds newBounds) {
+	    	    	  System.out.println("ITS HAPPENING!");
+	    	    	  centeredPane.setPrefSize(
+	    	          Math.max(board.getBoundsInParent().getMaxX(), newBounds.getWidth()),
+	    	          Math.max(board.getBoundsInParent().getMaxY(), newBounds.getHeight())
+	    	        );
+	    	      }
+	    	    });
 	}
 }

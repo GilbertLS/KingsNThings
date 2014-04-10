@@ -481,7 +481,7 @@ public class GameController {
 	
 	private void playPhases(){
 		if (currentPhase == Phase.SETUP) {
-    		currentPhase = Phase.SETTING_PHASE; 
+    		currentPhase = Phase.RECRUIT_SPECIAL_CHARACTERS; ; 
     	}
 		
 		do
