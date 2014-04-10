@@ -589,9 +589,9 @@ public class GameModel {
 		else
 			unownedCharacters.add(new SpecialCharacter("Baron Munchausen", 4, GameConstants.BaronMunchausenImageFront));
 		
-		if(Integer.parseInt(initValues[2]) == 0)
+		/*if(Integer.parseInt(initValues[2]) == 0)
 			unownedCharacters.add(new SpecialCharacter("Deerhunter", 4, GameConstants.DeerhunterImageFront));
-		else
+		else*/
 			unownedCharacters.add(new TerrainLord(Terrain.DESERT,"Desert Master", 4, GameConstants.DesertMasterImageFront));
 		
 		if(Integer.parseInt(initValues[3]) == 0)
@@ -656,7 +656,6 @@ public class GameModel {
 	}
 
 	private void initializeMagic() {
-		/* deferred for now
 		playingCup.add(new Magic("Balloon", GameConstants.BalloonImageFront));
 		playingCup.add(new Magic("Bow Magic", GameConstants.BowMagicImageFront));
 		playingCup.add(new Magic("Dispell Magic", GameConstants.DispellMagicImageFront));
@@ -667,7 +666,7 @@ public class GameModel {
 		playingCup.add(new Magic("Golem", GameConstants.GolemImageFront));
 		playingCup.add(new Magic("Lucky Charm", GameConstants.LuckyCharmImageFront));
 		playingCup.add(new Magic("Sword", GameConstants.SwordImageFront));
-		playingCup.add(new Magic("Talisman", GameConstants.TalismanImageFront));*/
+		playingCup.add(new Magic("Talisman", GameConstants.TalismanImageFront));
 	}
 
 	private void initializeTreasure() {

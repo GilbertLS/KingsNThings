@@ -157,10 +157,10 @@ public class SpecialCharacterView extends Dialog{
 						diceRolled = true;
 						
 						Dice.rollDice(2);
-						int playerRoll = 2;//Dice.getRoll(0) + Dice.getRoll(1);
+						int playerRoll = Dice.getRoll(0) + Dice.getRoll(1);
 						
 						Dice.rollDice(2);
-						int characterRoll = 1;//Dice.getRoll(0) + Dice.getRoll(1);
+						int characterRoll = Dice.getRoll(0) + Dice.getRoll(1);
 							
 						if(playerRoll > characterRoll)
 						{
