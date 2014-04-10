@@ -1368,7 +1368,9 @@ public class EventHandler {
 			
 			if (setOption == SetOption.HEX) {
 				System.out.println(player);
-				GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetPlayer(player), tileX, tileY);
+				if (player != 4) {
+					GameClient.game.gameModel.claimNewTile(GameClient.game.gameModel.GetPlayer(player), tileX, tileY);
+				}
 			} else {
 				GameClient.game.gameModel.addTower(tileX, tileY, player);
 				Fort f = GameClient.game.gameModel.boardController.GetTile(tileX, tileY).getFort();
@@ -1409,6 +1411,8 @@ public class EventHandler {
 					@Override
 					public void run() {
 						GameClient.game.gameView.updateHexTile(GameClient.game.gameModel.boardController.GetTile(tileX, tileY));
+						Tile t = GameClient.game.gameView.board.getTileByCoords(tileX, tileY);
+						t.showTile();
 					}
 				});
 			}
