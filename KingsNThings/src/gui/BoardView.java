@@ -53,7 +53,8 @@ public class BoardView extends Region {
 		Double width 	= 90.0;
 		Double height 	= 81.0;
 		
-		setPrefSize(width*6, height*7);
+		setMinSize(width*6, height*7);
+		setMaxSize(width*6, height*7);
 		
 		ArrayList<Tile> list = new ArrayList<Tile>();
 		
@@ -229,7 +230,8 @@ public class BoardView extends Region {
 				
 				if(first)
 				{
-					this.setPrefSize(width*6, height*7);
+					this.setMinSize(width*6, height*7);
+					this.setMaxSize(width*6, height*7);
 					first = false;
 				}
 				
