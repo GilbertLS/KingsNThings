@@ -156,7 +156,8 @@ public class EditStateWindow extends Dialog {
 		HBox phaseBox = new HBox();
 		changePhaseDropDown = new ChoiceBox<Phase>(FXCollections.observableArrayList(
 			Phase.BATTLE, Phase.CONSTRUCTION, Phase.MOVE_THINGS, Phase.PLAY_THINGS,
-			Phase.RECRUIT_SPECIAL_CHARACTERS, Phase.RECRUIT_THINGS, Phase.SETUP
+			Phase.RECRUIT_SPECIAL_CHARACTERS, Phase.RECRUIT_THINGS,
+			Phase.SETTING_PHASE, Phase.SPECIAL_POWERS, Phase.RANDOM_EVENTS
 		));
 		changePhaseDropDown.getSelectionModel().selectFirst();
 		Label changePhaseLabel = new Label("Phase: ");

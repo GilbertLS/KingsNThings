@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import javafx.application.Platform;
 import Game.GameConstants.ControlledBy;
 import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
@@ -205,5 +206,30 @@ public class BoardController {
 		}
 		
 		return controlledAdjacentTiles;
+	}
+	
+	public void ClearThings() {
+		for(int x = -3; x < 4; x++){
+			for(int y = -3; y < 4; y++){
+				final HexTile h = gameBoard.getTile(x, y);
+				if (h == null) {
+					continue;
+				}
+
+				ArrayList<Thing> things = h.getAllThings();
+				for(Thing t : things) {
+					GameClient.game.gameModel.handleElimination(t, h);
+				}
+				
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						GameClient.game.gameView.board.getTileByHex(h).update();
+						GameClient.game.gameView.board.getTileByHex(h).updateThings();
+					}
+				});
+				
+			}
+		}
 	}
 }

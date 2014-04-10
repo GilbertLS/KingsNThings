@@ -27,6 +27,7 @@ import Game.GameConstants.Terrain;
 import Game.GameConstants.ThingType;
 import Game.Dice;
 import Game.HexTile;
+import Game.Phases.Phase;
 import Game.Player;
 import Game.RandomEvent;
 import Game.Settlement;
@@ -1396,12 +1397,19 @@ public class EventHandler {
 					GameClient.game.gameView.updateTiles(updateTiles);
 				}
 			});
+		} else if (e.eventId == EventList.CLEAR_THINGS) {
+			GameClient.game.gameModel.boardController.ClearThings();
+		} else if (e.eventId == EventList.SETTING_PHASE ){
+			GameClient.game.sendMessageToView("Set-up game if you wish");
+			GameClient.game.gameView.performPhase(CurrentPhase.SETTING_PHASE);
+			GameClient.game.clearMessageOnView();
+			EventHandler.SendNullEvent();
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
-				throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
+				//throw new Exception("Expected event to be sent, but number of events sent was " + numberOfSends);
 		} else if (!e.expectsResponseEvent && numberOfSends != 0){
-				throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
+				//throw new Exception("Expected event to not be sent, but number of events sent was " + numberOfSends );
 		}
 
 	}

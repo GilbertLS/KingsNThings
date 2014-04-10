@@ -529,8 +529,8 @@ public class GameModel {
 		for(Thing t : playingCup) {
 			if (t.thingType == ThingType.CREATURE) {
 				Creature c = (Creature)t;
-				
-				copyPlayingCup.add(c.copy());;
+
+				copyPlayingCup.add(c.copy());
 			} else if (t.thingType == ThingType.SETTLEMENT) {
 				Settlement s = (Settlement)t;
 				
@@ -752,6 +752,8 @@ public class GameModel {
 				ret = t;
 			}
 		}
+		
+		if(ret != null) { copyPlayingCup.remove(ret); }
 		
 		return ret;
 	}
