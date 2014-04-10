@@ -81,8 +81,10 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 						ClipboardContent content = new ClipboardContent();
 						content.put(thingRackIds, selectedIds);
 						
-						content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + "~");
-							
+						if (gv.currentPhase == CurrentPhase.MOVEMENT) {
+							content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + "~");
+						}	
+						
 						db.setContent(content);
 					}
 				}

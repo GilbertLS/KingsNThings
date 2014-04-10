@@ -340,8 +340,6 @@ public class GameClientController {
 	}
 	
 	public boolean validDragStart(GameView gv, ListView<ThingView> listView, ArrayList<Integer> selectedIds) {
-		HexTile hexTile = gv.tilePreview.getTile().getTileRef();
-		
 		//invalid if play things phase, and source isn't rack
 		if(!listView.equals(gv.rack) && (gv.currentPhase == CurrentPhase.PLAY_THINGS
 											|| gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
@@ -359,6 +357,8 @@ public class GameClientController {
 		//invalid if movement phase and player isn't alone on the tile
 		//unless all are flying and enough flying creatures were left behind
 		if(gv.currentPhase == CurrentPhase.MOVEMENT){
+			HexTile hexTile = gv.tilePreview.getTile().getTileRef();
+			
 			ArrayList<Thing> movingThings = new ArrayList<Thing>();
 			for(ThingView tv: items)
 				movingThings.add(tv.thingRef);
