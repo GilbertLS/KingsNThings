@@ -389,7 +389,7 @@ public class BattleView extends Scene {
 			Utility.PromptForInput(targetLock);
 		} while (targetedPlayerNotValid());
 		
-		this.UpdateMessage("Targeted player " + targetedPlayer);
+		this.UpdateMessage("Targeted player " + targetedPlayer + 1);
 		int temp = targetedPlayer;
 		targetedPlayer = -1;
 		currentlyTargeting = false;

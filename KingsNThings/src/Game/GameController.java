@@ -1072,10 +1072,26 @@ public class GameController {
 					}
 					
 					if (!battleOver){
+						int defender = Integer.parseInt(
+							GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId( EventList.GET_DEFENDER )
+									.EventParameters(coordinates)
+									.IntendedPlayers(new boolean[] { true, false, false, false })
+									.ExpectsResponse()
+							)[0].message
+						);
+						
+						boolean[] attackers = { true, true, true, true };
+						if (defender >= 0 && defender < 4) {
+							attackers[defender] = false;
+						}
+						
 						Response[] retreats = GameControllerEventHandler.sendEvent(
 							new Event()
 								.EventId( EventList.GET_RETREAT )
 								.EventParameters( coordinates )
+								.IntendedPlayers(attackers)
 								.ExpectsResponse()
 						);
 						
@@ -1083,6 +1099,36 @@ public class GameController {
 						
 						boolean[] retreatedPlayers = new boolean[] { false, false, false, false };
 						for (Response retreat : retreats) {
+							if (retreat.eventId == EventList.NULL_EVENT){
+								continue;
+							}
+							if (retreat.message.equals("n")){
+								numLeft++;
+							} else if (retreat.message.equals("y")) {
+								retreatedPlayers[retreat.fromPlayer] = true;
+							}
+						}
+						
+						numLeft += Integer.parseInt(GameControllerEventHandler.sendEvent(
+							new Event()
+								.EventId( EventList.GET_NUMBER_NEUTRAL_CREATURES)
+								.EventParameters(coordinates)
+								.ExpectsResponse()	
+							)[0].message
+						);
+						
+						if(numLeft != 0 && defender >= 0 && defender < 4) {
+							boolean[] defenders = { false, false, false, false};
+							defenders[defender] = true;
+							
+							Response retreat = GameControllerEventHandler.sendEvent(
+								new Event()
+									.EventId( EventList.GET_RETREAT )
+									.EventParameters( coordinates )
+									.IntendedPlayers(defenders)
+									.ExpectsResponse()
+							)[0];
+							
 							if (retreat.eventId == EventList.NULL_EVENT){
 								continue;
 							}
@@ -1115,14 +1161,6 @@ public class GameController {
 							new Event()
 								.EventId(EventList.RETREAT_PLAYER)
 								.EventParameters(retreatParams)
-						);
-						
-						numLeft += Integer.parseInt(GameControllerEventHandler.sendEvent(
-							new Event()
-								.EventId( EventList.GET_NUMBER_NEUTRAL_CREATURES)
-								.EventParameters(coordinates)
-								.ExpectsResponse()	
-							)[0].message
 						);
 						
 						if (numLeft < 2){
