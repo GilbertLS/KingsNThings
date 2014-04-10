@@ -167,8 +167,8 @@ public class Tile extends Region implements Draggable {
     	if (markerPath != null) {
 	    	Image img = new Image("res/images/" + markerPath);
 	    	ImageView imgView = new ImageView(img);
-	    	imgView.setFitHeight(25);
-	    	imgView.setFitWidth(25);
+	    	imgView.setFitHeight(this.getHeight()/5);
+	    	imgView.setFitWidth(this.getWidth()/5);
 	    	imgView.setX(this.getWidth()/4);
 	    	list.add(imgView);
     	}
@@ -179,8 +179,8 @@ public class Tile extends Region implements Draggable {
     	if (fortPath != null) {
 	    	Image img = new Image("res/images/" + fortPath);
 	    	ImageView imgView = new ImageView(img);
-	    	imgView.setFitHeight(40);
-	    	imgView.setFitWidth(40);
+	    	imgView.setFitHeight(this.getHeight()/3);
+	    	imgView.setFitWidth(this.getWidth()/3);
 	    	imgView.setX(this.getWidth()/2 - imgView.getFitWidth()/2);
 	    	imgView.setY(this.getHeight()/2 - imgView.getFitHeight()/2);
 	    	list.add(imgView);
@@ -197,9 +197,10 @@ public class Tile extends Region implements Draggable {
     	if (specialIncomePath != null) {
 	    	Image img = new Image("res/images/" + specialIncomePath);
 	    	ImageView imgView = new ImageView(img);
-	    	imgView.setFitHeight(25);
-	    	imgView.setFitWidth(25);
-	    	imgView.setX(this.getWidth()/2);
+	    	imgView.setFitHeight(this.getHeight()/4);
+	    	imgView.setFitWidth(this.getWidth()/4);
+	    	imgView.setX(4*this.getWidth()/6 - imgView.getFitWidth()/2);
+	    	imgView.setY(this.getHeight()/16);
 	    	list.add(imgView);
 	    	
 	    	if(specialIncome == null)
@@ -494,7 +495,7 @@ public class Tile extends Region implements Draggable {
 	}
 	
 	public void setSize(double width, double height) {
-		this.setPrefSize(width, height);
+		this.setMinSize(width, height);
     	
     	Polygon hex = new Polygon();
     	hex.getPoints().addAll(new Double[]{
