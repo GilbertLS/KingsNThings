@@ -30,7 +30,6 @@ public class BoardScrollPane extends ScrollPane {
 	    this.viewportBoundsProperty().addListener(
 	    	      new ChangeListener<Bounds>() {
 	    	      @Override public void changed(ObservableValue<? extends Bounds> observableValue, Bounds oldBounds, Bounds newBounds) {
-	    	    	  System.out.println("ITS HAPPENING!");
 	    	    	  centeredPane.setPrefSize(
 	    	          Math.max(board.getBoundsInParent().getMaxX(), newBounds.getWidth()),
 	    	          Math.max(board.getBoundsInParent().getMaxY(), newBounds.getHeight())
