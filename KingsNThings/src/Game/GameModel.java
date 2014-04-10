@@ -1628,7 +1628,7 @@ public class GameModel {
 	public HexTile claimNewTile(Player player, int x, int y) {
 		HexTile h = gameBoard.getTile(x, y);
 		
-		player.addHexTile(h);
+		player.addNewHexTile(h);
 		h.setControlledBy(player.faction);
 		
 		return h;
