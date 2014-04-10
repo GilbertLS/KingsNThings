@@ -71,6 +71,7 @@ public class EventList {
 	public static final int SET_HEX_TERRAIN = 210;
 	public static final int CLEAR_THINGS = 211;
 	public static final int SETTING_PHASE = 212;
+	public static final int GET_DEFENDER = 213;
 	public static final int BRIBE_CREATURES = 138;
 	public static final int CHECK_TILE_SWAP = 139;
 	public static final int HANDLE_TILE_SWAP = 140;

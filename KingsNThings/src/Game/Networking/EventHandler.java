@@ -1132,8 +1132,10 @@ public class EventHandler {
 			HexTile tile = GameClient.game.gameModel.boardController.GetTile(x,y);
 			
 			Thing thing = tile.getThingFromTileByID(thingId);
-			GameClient.game.gameModel.handleElimination(thing, tile);
-			GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
+			if (thing != null) {
+				GameClient.game.gameModel.handleElimination(thing, tile);
+				GameClient.game.gameView.board.getTileByHex(tile).updateThings(playerId);
+			}
 		} else if (e.eventId == EventList.ADD_THING){
 			int x = Integer.parseInt(e.eventParams[0]);
 			int y = Integer.parseInt(e.eventParams[1]);
@@ -1429,6 +1431,23 @@ public class EventHandler {
 			GameClient.game.gameView.performPhase(CurrentPhase.SETTING_PHASE);
 			GameClient.game.clearMessageOnView();
 			EventHandler.SendNullEvent();
+		} else if (e.eventId == EventList.GET_DEFENDER) {
+			int tileX = Integer.parseInt(e.eventParams[0]);
+			int tileY = Integer.parseInt(e.eventParams[1]);
+			
+			HexTile h = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
+			
+			ControlledBy c = h.getControlledBy();
+			int playerIndex = GameConstants.GetPlayerNumber(c);
+			
+			String message;
+			if (!h.getCombatants(playerIndex).isEmpty()) {
+				message = "" + playerIndex;
+			} else {
+				message = "" + -1;
+			}
+			
+			EventHandler.SendEvent(new Event().EventId(EventList.GET_DEFENDER).EventParameter(message));
 		}
 		
 		if (e.expectsResponseEvent && numberOfSends == 0){
