@@ -9,12 +9,13 @@ import Game.GameConstants.ThingType;
 public abstract class Thing {
 	public int thingID;		//unique identifier
 	private static int thingIDCount = 0; //current unique identifier
-	private Boolean isFlipped;	//whether the Thing is flipped over currently
+	protected Boolean isFlipped;	//whether the Thing is flipped over currently
 	ThingType thingType;		//type of thing (enum defined in GameConstants class
 	String name;				//display name of this Thing
 	HexTile currentTile;
 	public String backFileName, frontFileName;
-	public ControlledBy controlledBy;		//Faction currently controlling this Tile
+	private ControlledBy controlledBy;		//Faction currently controlling
+	public int numMoves = 0;
 	
 	public Thing(ThingType thingType, String name, String frontFileName)
 	{
@@ -30,6 +31,11 @@ public abstract class Thing {
 		
 		this.currentTile = null;
 	}
+	
+	public void setControlledBy(ControlledBy controlledBy)	{this.controlledBy = controlledBy;}
+	public ControlledBy getControlledBy(){return controlledBy;}
+	public boolean isControlledBy(ControlledBy controlledBy){return this.controlledBy == controlledBy;}
+	
 	
 	public ThingType getThingType()
 	{
@@ -58,13 +64,62 @@ public abstract class Thing {
 		
 	}
 	
+	public boolean isSpecialCharacter(){
+		return thingType == ThingType.SPECIAL_CHARACTER ||
+			   thingType == ThingType.TERRAIN_LORD;
+		
+	}
+	
+	public boolean isSpecialIncome(){
+		return thingType == ThingType.SPECIAL_INCOME ||
+			   thingType == ThingType.SETTLEMENT;
+		
+	}
+	
 	public int getControlledByPlayerNum() {
+		if(controlledBy == null)
+			return -1;
+		
 		switch(controlledBy) {
 			case PLAYER1: return 0;
 			case PLAYER2: return 1;
 			case PLAYER3: return 2;
 			case PLAYER4: return 3;
-			default: return 0;
+			default: return 4;
 		}
+	}
+
+	public void clearMoves() {
+		numMoves = 0;
+	}
+
+	public String getFrontImage() {
+		return frontFileName;
+		
+	}
+	
+	public String getBackImage() {
+		return backFileName;
+	}
+	
+	public boolean isFlipped() {
+		return this.isFlipped;
+	}
+
+	public void setFlipped(boolean b) {
+		isFlipped = b;
+	}
+
+	public void setMovementFinished() {
+		numMoves = GameConstants.MAX_MOVES_PER_TURN;
+	}
+
+	public boolean isBuilding() {
+		return thingType == ThingType.FORT
+				|| thingType == ThingType.SETTLEMENT;
+	}
+
+	public boolean isRandomEvent() {
+		return thingType == ThingType.RANDOM_EVENT;
 	}
 }

@@ -1,44 +1,45 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.concurrent.Semaphore;
 
+import Game.Building;
 import Game.Combatant;
-import Game.Creature;
+import Game.Fort;
 import Game.GameConstants;
 import Game.HexTile;
-import Game.GameConstants.ControlledBy;
-import Game.GameConstants.Terrain;
 import Game.Thing;
+import Game.Utility;
+import Game.GameConstants.Level;
 import Game.Networking.GameClient;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 public class BattleView extends Scene {
 	public BorderPane root;
+	
     public VBox rightPanel;
     public HBox bottomPanel;
     public VBox leftPanel;
-    public BoardView board;
-    public PlayerList playerList;
-    public ButtonBox buttonBox;
-    public RackView rack;
-    public TilePreview tilePreview;
+    public HBox centerPanel;
+    public HBox topPanel;
+    
     public DiceListView diceListView;
     private Button submit = new Button("Submit");
     private Button yes = new Button("Yes");
@@ -47,16 +48,25 @@ public class BattleView extends Scene {
     protected InputState yesPressed = InputState.NOT_WAITING_FOR_INPUT;
     protected InputState noPressed = InputState.NOT_WAITING_FOR_INPUT;
     public MessageView messageView;
-    public Stage battleStage;
+    //public Stage battleStage;
+    private Semaphore inputLock = new Semaphore(0);
+    VBox centerVBox = new VBox();
     
     public int tileX;
     public int tileY;
+    private HexTile currTile;
+    private ThingViewList[] thingViewLists;
+    
+    private boolean currentlyTargeting = false;
+    private int targetedPlayer = -1;
+    private Semaphore targetLock = new Semaphore(0);
 	
 	public BattleView(BorderPane root, int tileX, int tileY){
 		super(root, 700, 500);
 		
 		this.tileX = tileX;
 		this.tileY = tileY;
+		this.currTile = GameClient.game.gameModel.boardController.GetTile(tileX, tileY);
 		
 		rightPanel = new VBox();
         root.setRight(rightPanel);
@@ -67,12 +77,19 @@ public class BattleView extends Scene {
         leftPanel = new VBox();
         root.setLeft(leftPanel);
         
+        centerPanel = new HBox();
+        root.setCenter(centerPanel);
+        
+        topPanel = new HBox();
+        root.setTop(topPanel);
+        
         submit.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 		    public void handle(ActionEvent e) {
 				if (submitPressed == InputState.WAITING_FOR_INPUT){
 					submitPressed = InputState.GOT_INPUT;
+					Utility.GotInput(inputLock);
 				}
 			}
 		});
@@ -83,6 +100,7 @@ public class BattleView extends Scene {
 		    public void handle(ActionEvent e) {
 				if (yesPressed == InputState.WAITING_FOR_INPUT){
 					yesPressed = InputState.GOT_INPUT;
+					Utility.GotInput(inputLock);
 				}
 			}
 		});
@@ -91,41 +109,65 @@ public class BattleView extends Scene {
 			@Override
 		    public void handle(ActionEvent e) {
 				if (noPressed == InputState.WAITING_FOR_INPUT){
+					Utility.GotInput(inputLock);
 					noPressed = InputState.GOT_INPUT;
 				}
 			}
 		});
-        //tilePreview = new TilePreview();
         
-        /*board = new BoardView(tilePreview);
-        root.setCenter(board);        */
+        SetupPlayerThings();
+    
         messageView = new MessageView();
         diceListView = new DiceListView();
-        rightPanel.getChildren().add(diceListView);
-        rightPanel.getChildren().add(submit);
+        centerVBox.getChildren().add(diceListView);
+        centerVBox.getChildren().add(submit);
         HBox yesNo = new HBox();
         yesNo.getChildren().add(yes);
         yesNo.getChildren().add(no);
-        rightPanel.getChildren().add(yesNo);
-        rightPanel.getChildren().add(messageView);
+        centerVBox.getChildren().add(yesNo);
+        centerVBox.getChildren().add(messageView);
         
-        this.getStylesheets().add("gui/myStyle.css");
+        centerVBox.setAlignment(Pos.CENTER);
+        centerPanel.setAlignment(Pos.CENTER);
+        centerPanel.getChildren().add(centerVBox);
         
-        SetupPlayerThings();
+        this.getStylesheets().add("gui/main.css");
+		
         
-        battleStage = new Stage();
+        /*battleStage = new Stage();
 		battleStage.setTitle("Combat Time - Player " + (GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum() + 1) );
 		battleStage.setScene(this);
-         
+        battleStage.initStyle(StageStyle.UNDECORATED);
+        battleStage.initModality(Modality.WINDOW_MODAL);
+        battleStage.initOwner(GameClient.game.gameView.getWindow());*/
+		
 		//battleStage.setX(battleStage.getX() + 150);
 		//battleStage.setY(battleStage.getY() + 150);
 
-		battleStage.show();
+		//battleStage.show();
+        this.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.DIGIT1) {
+					diceListView.SetRoll(0, 1);
+				} else if (event.getCode() == KeyCode.DIGIT2) {
+					diceListView.SetRoll(0, 2);
+				} else if (event.getCode() == KeyCode.DIGIT3) {
+					diceListView.SetRoll(0, 3);
+				} else if (event.getCode() == KeyCode.DIGIT4) {
+					diceListView.SetRoll(0, 4);
+				} else if (event.getCode() == KeyCode.DIGIT5) {
+					diceListView.SetRoll(0, 5);
+				} else if (event.getCode() == KeyCode.DIGIT6) {
+					diceListView.SetRoll(0, 6);
+				}
+			}
+        });
 	}
 	
-	public void RollDice(Thing thing, int diceNum, int roll, int numPreviousRolls){
+	public int RollDice(Thing thing, int diceNum, int numPreviousRolls){
 		if (!thing.IsCombatant()){
-			return;
+			return 0;
 		}
 		
 		Combatant combatant = (Combatant)thing;
@@ -152,53 +194,116 @@ public class BattleView extends Scene {
 		
 		UpdateMessage(s);
 	
-		diceListView.RollDice(diceNum, roll);
+		int roll = diceListView.RollDice(diceNum);
 		
 		ClearMessage();
+		
+		return roll;
 	}
 	
 	public void SetupPlayerThings(){
-		HexTile tile = GameClient.game.gameModel.gameBoard.getTile(tileX, tileY);
+		int numPlayers = GameClient.game.gameModel.PlayerCount();
+		thingViewLists = new ThingViewList[numPlayers + 1];
 		
-		tilePreview = new TilePreview(
-				GameClient.game.gameView.getCurrentPlayer()
+		for(int i = 0; i < numPlayers; i++) {
+			ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
+			for(Thing t : currTile.getCombatants(i)) {
+				t.setFlipped(false);
+				thingViews.add(new ThingView(t));
+			}
+			
+			Orientation orientation = i % 2 == 0 ? Orientation.HORIZONTAL : Orientation.VERTICAL;
+			
+			ThingViewList thingViewList = new ThingViewList(
+				FXCollections.observableArrayList(thingViews),
+				orientation
+			);
+			
+			thingViewLists[i] = thingViewList;
+			
+			Pane panel = null;
+			
+			if (i == 0) { panel = topPanel; } 
+			else if (i == 1) { panel = leftPanel; }
+			else if (i == 2) { panel = bottomPanel; } 
+			else if (i == 3) { panel = rightPanel; }
+			
+			if (i % 2 == 0) {
+				HBox playerAndThings = new HBox();
+				playerAndThings.getChildren().add(new PlayerBattleBox(i));
+				playerAndThings.getChildren().add(thingViewList);
+				HBox hb = (HBox)panel;
+				
+				hb.getChildren().add(playerAndThings);
+				hb.setAlignment(Pos.CENTER);
+				
+			} else {
+				VBox playerAndThings = new VBox();
+				playerAndThings.getChildren().add(new PlayerBattleBox(i));
+				playerAndThings.getChildren().add(thingViewList);
+				
+				VBox vb = (VBox)panel;
+				
+				vb.getChildren().add(playerAndThings);
+				vb.setAlignment(Pos.CENTER);
+			}
+		}
+		
+		ArrayList<ThingView> thingViews = new ArrayList<ThingView>();
+		for(Thing t : currTile.getCombatants(4)) {
+			thingViews.add(new ThingView(t));
+		}
+		
+		ThingViewList thingViewList = new ThingViewList(
+			FXCollections.observableArrayList(thingViews)
 		);
 		
-		tilePreview.changeTile(tile);
-		
-		leftPanel.getChildren().add(tilePreview);
-		
+		thingViewLists[numPlayers] = thingViewList;
+		if (!thingViews.isEmpty()) {
+			HBox neutralThings = new HBox();
+			neutralThings.getChildren().add(new PlayerBattleBox(4));
+			neutralThings.getChildren().add(thingViewList);
+			
+			centerVBox.getChildren().add(neutralThings);
+		}
 	}
 	
 	public void RemoveThings(int[] thingIds, int playerNum){
-		String s = "";
 		for (int thingId : thingIds){
-			s += thingId + " ";
 			RemoveThingFromBattle(thingId, playerNum);
 		}
 	}
 	
 	public int[] inflictHits(int numHitsTaken) {
-		UpdateMessage("Select " + numHitsTaken + " things to discard.");
+		UpdateMessage("Select " + numHitsTaken + " things to take hits."
+				+ "\nSelecting a fort will take however amount of hits are leftover.");
 		
+		int currPlayer = GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum();
+		
+		int numValid;
 		do {
 			submitPressed = InputState.WAITING_FOR_INPUT;
 			
-			while(submitPressed != InputState.GOT_INPUT){
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {}
+			Utility.PromptForInput(inputLock);
+			
+			numValid = 0;
+			for(Thing t : GameView.selectedThings) {
+				//ensure controlled by, and not a neutralized building
+				if (GameConstants.GetPlayerNumber(t.getControlledBy()) == currPlayer 
+						&& !(t.isBuilding() && ((Building)t).isNeutralized())) {
+					numValid++;
+				}
 			}
-		} while (GameView.selectedThings.size() != numHitsTaken);
+			System.out.println("DEBUG- NUM VALID " + numValid);
+		} while (numValid != numHitsTaken);
 		
 		submitPressed = InputState.NOT_WAITING_FOR_INPUT;
 		
 		int[] thingsToRemove = new int[numHitsTaken];
 		int i = 0;
-		for (Integer thingId : GameView.selectedThings){
+		for (Thing thing : GameView.selectedThings){
 			System.out.println("--------------");
-			thingsToRemove[i++] = thingId;
-			RemoveThingFromBattle(thingId, GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum());
+			thingsToRemove[i++] = thing.thingID;
 		}
 		ClearMessage();
 		
@@ -221,9 +326,7 @@ public class BattleView extends Scene {
 		noPressed = InputState.WAITING_FOR_INPUT;
 		
 		while(yesPressed != InputState.GOT_INPUT && noPressed != InputState.GOT_INPUT){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {}
+			Utility.PromptForInput(inputLock);
 		}
 		
 		boolean surrender;
@@ -252,14 +355,71 @@ public class BattleView extends Scene {
 	}
 	
 	public void RemoveThingFromBattle(final int thingId, int playerNum){
-		final ThingViewList list = tilePreview.GetThingList(playerNum);
+		final ThingViewList list = thingViewLists[playerNum];
 		
 		Platform.runLater(new Runnable() {
 	        @Override
 	        public void run() {
-	        	list.removeByThingId(thingId);
+	        	boolean removeThing = true;
+	        	if(currTile.hasFort() && currTile.getFort().thingID == thingId) {
+	        		Fort f = currTile.getFort();
+	        		if (f != null) {
+	        			if (f.isNeutralized()) {
+	        				f.setFlipped(true);
+	        			}
+	        			removeThing = false;
+	        			ThingView thingView = new ThingView(f);
+	        			list.removeByThingId(thingId);
+	        			list.add(thingView);
+	        		}
+	        	}
+	        	if(removeThing) {
+	        		list.removeByThingId(thingId);
+	        	}
 	        }
 	    });
 		
+	}
+	
+	public int GetTargetPlayer() {
+		this.UpdateMessage("Target player");
+		currentlyTargeting = true;
+		do {
+			if (targetedPlayer != -1) {
+				this.UpdateMessage("Cannot target player, target someone else");
+			}
+			
+			targetLock = new Semaphore(0);
+			Utility.PromptForInput(targetLock);
+		} while (targetedPlayerNotValid());
+		
+		this.UpdateMessage("Targeted player " + (targetedPlayer + 1));
+		int temp = targetedPlayer;
+		targetedPlayer = -1;
+		currentlyTargeting = false;
+		
+		return temp;
+	}
+	
+	private boolean targetedPlayerNotValid() {
+		int currPlayer = GameClient.game.gameModel.getCurrPlayerNumber();
+		int numPlayers = GameClient.game.gameModel.PlayerCount();
+		
+		boolean targetedPlayerValid = targetedPlayer != currPlayer && 
+				((targetedPlayer >= 0 && targetedPlayer < numPlayers) ||
+				 (targetedPlayer == 4));
+		
+		if (currTile.getCombatants(targetedPlayer).isEmpty()) {
+			targetedPlayerValid = false;
+		}
+		
+		return !targetedPlayerValid;
+	}
+
+	public void setPlayerTarget(int playerNum) {
+		if (currentlyTargeting) {
+			targetedPlayer = playerNum;
+			Utility.GotInput(targetLock);
+		}
 	}
 }

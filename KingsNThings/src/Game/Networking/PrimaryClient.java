@@ -1,13 +1,20 @@
 package Game.Networking;
 
 import gui.GameView;
+import gui.InputDialog;
+import gui.MenuView;
 
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.Semaphore;
+
+import org.controlsfx.dialog.Dialogs;
 
 import javafx.application.Application;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import Game.GameController;
  
 public class PrimaryClient extends Application {
@@ -66,6 +73,39 @@ public class PrimaryClient extends Application {
         }
     }
     
+    public static void beginUI(String[] args, String[] commands) {
+    	if (args.length != 2) {
+            System.err.println("Usage: java EchoClient <host name> <port number>");
+            System.exit(1);
+        }
+ 
+        String hostName = args[0];
+        String command = commands[0];
+        int portNumber = Integer.parseInt(args[1]);
+        
+        if(command.equals(Protocol.HOSTSERVER)) {
+    		try {
+    			HostGame();
+    		}
+    		catch(Exception e) {
+    			System.out.println("Failed to host game.");
+    		}
+    	}
+        else if(command.equals(Protocol.JOINSERVER))
+        {
+        	GameClient client = new GameClient(gameView);
+        	if(commands.length > 1)
+        		client.ConnectToHost(commands[1]);
+        	else
+        		client.ConnectToHost(hostName);
+        }
+        else
+        {
+        	System.err.println("Something went horribly wrong.");
+        	System.exit(0);
+        }
+    }
+       
     private static boolean HandleInput( 
     		String inputLine,
     		Socket socket,
@@ -79,7 +119,7 @@ public class PrimaryClient extends Application {
     	String command = input[0];
     	System.out.println("Client command: " + command);
     	if (input.length == 2 ){
-    		System.out.println("with arguements: " + input[1]);
+    		System.out.println("with arguments: " + input[1]);
     	}
     	
     	if (command.equals(Protocol.HOSTSERVER)){
@@ -117,25 +157,48 @@ public class PrimaryClient extends Application {
     }
     
     private static void HostGame() throws Exception {
-    	Runnable server = new GameController();
+    	Semaphore waitForGameSetup = new Semaphore(0);
+    	GameServer server = new GameServer(waitForGameSetup);
     	Thread thread = new Thread(server);
     	thread.start();
-    	Thread.sleep(2000);
+    	
+    	waitForGameSetup.acquire();
+    	
     	GameClient client = new GameClient(gameView);
-    	client.ConnectToHost(((GameController)server).address);
+    	client.ConnectToHost(server.address.getHostName());
     }
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		
+	public void start(Stage primaryStage) throws Exception {		
 		// TODO Auto-generated method stub
-		BorderPane root = new BorderPane();
-		gameView = new GameView(root, primaryStage);
+		gameView = new GameView(new HBox(), primaryStage);
+		
+		//UIJoin/Host
+		//---------------------------------------//
+		MenuView menu = new MenuView(a);
+		String command = menu.showInput();
+		
+		if(command == null) {
+			System.exit(0);
+		}
+		
+		beginUI(a, command.split(" "));
+		//---------------------------------------//
+		
+		//Console Join/Host
+        //begin(a);
 		
 		primaryStage.setTitle("Kings N Things");
         primaryStage.setScene(gameView);
         primaryStage.show();
         
-        begin(a);
+        primaryStage.setOnCloseRequest(new javafx.event.EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+            	//Add more stuff to end in a cleaner way?
+            	System.out.println("CLOSING APPLICATION!!!");
+                System.exit(0);
+            }
+        });
 	}
 }

@@ -2,7 +2,7 @@ package Game;
 
 public class Dice {
 	//individual die values
-	private static int[] dieValues;
+	private static int[] dieValues = new int[4];
 	//private List<DiceView> diceViews;
 	
 	public Dice(int numDice) {
@@ -31,5 +31,13 @@ public class Dice {
 		}
 		
 		return diceRolls;
+	}
+	
+	public static int getRoll(int i)
+	{
+		if(dieValues.length < i+1)
+			return -1;
+		else
+			return dieValues[i];
 	}
 }

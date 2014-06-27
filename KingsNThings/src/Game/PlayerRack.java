@@ -2,6 +2,8 @@ package Game;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import Game.Networking.GameClient;
+
 /*
  * This class is a container to hold up to 10 Things not currently played by a Player
  */
@@ -19,16 +21,6 @@ public class PlayerRack {
 	
 	public ArrayList<Thing> getThings() {
 		return things;
-	}
-
-	public boolean tooFull() {
-		return things.size()>10;
-	}
-
-	public int removeExcessFromRack() {
-		//remove excess and return num removed
-		
-		return 0;
 	}
 
 	public boolean hasThings(int i) {
@@ -50,16 +42,17 @@ public class PlayerRack {
 		return false;
 	}
 
-	public void removeFromRack(int thingID) {
-		ArrayList<Thing> thingsToRemove = new ArrayList<Thing>();
-		
+	public Thing removeFromRackByID(int thingID) {
+		Thing thing = null;
 		for(Thing t: things)
 		{
 			if(t.thingID == thingID)
-				thingsToRemove.add(t);
+				thing = t;
 		}
 		
-		things.removeAll(thingsToRemove);
+		things.remove(thing);
+		
+		return thing;
 	}
 
 	public Thing getThing(int thingID) {
@@ -69,5 +62,27 @@ public class PlayerRack {
 				return t;
 		}
 		return null;
+	}
+
+	public int size() {
+		return things.size();
+	}
+
+	public void handleRackOverload() {
+		for(int i=things.size()-1; i>9; i--){
+			GameClient.game.gameModel.handleElimination(things.remove(i), null);
+		}
+	}
+
+	public boolean tooFull() {
+		return things.size() > GameConstants.MAX_NUM_THINGS_IN_RACK;
+	}
+
+	public Thing removeFromRackByIndex(int thingIndex) {
+		return things.remove(thingIndex);
+	}
+	
+	public void clearRack(){
+		things.clear();
 	}
 }

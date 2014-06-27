@@ -6,15 +6,23 @@ import Game.GameConstants.ThingType;
 /*
  * This class extends the Building class to add specific village/city functionality 
  */
-public class Settlement extends Building {
+public class Settlement extends Building implements IIncomable{
 	private SettlementType settlementType;
 	
-	//temp
-	private static int settlementID = 0;
-	public Settlement(String backFileName, String frontFileName)
-	{
-		super(ThingType.SETTLEMENT, "Settlement" + settlementID++, (int)Math.ceil(Math.random()*6), backFileName, frontFileName);
+	public Settlement(String name, int combatValue, String frontFileName, String backFileName, SettlementType settlementType)
+	{		
+		super(ThingType.SETTLEMENT, name, combatValue, backFileName, frontFileName);
 		
-		this.settlementType = SettlementType.VILLAGE;
+		this.settlementType = settlementType;
+	}
+	
+	public int getIncome()
+	{
+		return combatValue;
+	}
+	
+	public Settlement copy() {
+		Settlement settlement = new Settlement(name, combatValue, frontFileName, backFileName, settlementType);
+		return settlement;
 	}
 }

@@ -14,13 +14,19 @@ public class Creature extends Combatant{
 	
 	public static int creatureNum = 0;
 	
+	public Terrain GetTerrain() { return terrain; }
+	
 	public Creature(Terrain terrian)
 	{
 		super(ThingType.CREATURE, "creature"+creatureNum++, (int)Math.ceil(Math.random()*6), GameConstants.PlaceHolderImageFront);
+		
+		this.terrain = terrian;
 	}
 	
 	public Creature(Terrain terrain, int combatValue){
 		super(ThingType.CREATURE, "creature"+creatureNum++, combatValue, GameConstants.PlaceHolderImageFront);
+		
+		this.terrain = terrain;
 	}
 	
 	public Creature(Terrain terrain, String name, int attackValue, String frontFileName)
@@ -61,5 +67,15 @@ public class Creature extends Combatant{
 				" " +"Charge: " + isCharge;
 		
 		return s;
+	}
+	
+	public Creature copy() {
+		Creature c = new Creature(terrain, name, combatValue, frontFileName);
+		c.Flying(isFlying);
+		c.Ranged(isRange);
+		c.Magic(isMagic);
+		c.Charge(isCharge);
+		
+		return c;
 	}
 }

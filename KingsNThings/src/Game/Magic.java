@@ -8,10 +8,8 @@ import Game.GameConstants.ThingType;
  */
 public class Magic extends Thing{
 
-	//temp
-	private static int magicID = 0;
-	public Magic(String frontFileName)
+	public Magic(String name, String frontFileName)
 	{
-		super(ThingType.MAGIC, "Magic" + magicID++, frontFileName);
+		super(ThingType.MAGIC, name, frontFileName);
 	}
 }

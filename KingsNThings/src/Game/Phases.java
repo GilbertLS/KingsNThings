@@ -1,0 +1,17 @@
+package Game;
+
+public class Phases {
+	public enum Phase {
+		SETUP,
+		RECRUIT_SPECIAL_CHARACTERS,
+		RECRUIT_THINGS,
+		PLAY_THINGS,
+		RANDOM_EVENTS,
+		MOVE_THINGS,
+		BATTLE,
+		CONSTRUCTION,
+		NONE, 
+		SETTING_PHASE, 
+		SPECIAL_POWERS
+	}
+}

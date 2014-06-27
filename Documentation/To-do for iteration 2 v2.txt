@@ -1,0 +1,35 @@
+Major Things:
+-Random Events
+-Special Powers
+-Special character abilities
+-Battle
+	-defense creature control
+	-bluffing
+	-auto-capture hex if no defense combatants
+	-defense creatrues don't requrie support
+	-post-battle handling of
+		-forts
+		-things
+		-special creatures
+		-treasure
+-Magic
+
+Edge-cases:
+-reveal flying creatures to continue
+-allow revealing of enemy flyign creatures
+-random events returned to cup immediately if drawn for defense
+-if bribe all combatants, win treasure/magic
+
+NOT IN DEMO?:
+-re-draw starting hexes
+-discharge special characters
+-remove special income (anytime except combat)
+-call bluff anytime
+-Turn in treasure anytime
+-request reveal bluff beginning of movement
+
+Silly Things:
+-why only 48 hex tiles?
+-technically special character shouldn't go on rack temporarily
+-player enforced rack limit
+-player decides between defense special incomes if equal 

@@ -8,58 +8,73 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
-public class ThingViewList extends HBox {
-	protected ListView<ThingView> view;
-	protected ArrayList<ThingView> items;
+public class ThingViewList extends ListView<ThingView> {
+	protected ThingViewList self = this;
 	
-	 ThingViewList(ObservableList<ThingView> l) {
-		view = new ListView<ThingView>(l);
-		view.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		view.setOrientation(Orientation.HORIZONTAL);
-		view.getStyleClass().add("thingview-list");
-		view.setPrefHeight(70);
-		view.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
-            @Override
-            public ListCell<ThingView> call(ListView<ThingView> param) {
-                return new ThingCell();
-            }
-        });
-		
-		items = new ArrayList<ThingView>();
-		
-		this.getChildren().add(view);
+	ThingViewList(ObservableList<ThingView> l) {
+		super(l);
+		setup(Orientation.HORIZONTAL);
+	 }
+	
+	 ThingViewList(ObservableList<ThingView> l, Orientation orientation) {
+		super(l);
+		setup(orientation);
+	 }
+	 
+	 ThingViewList() {
+		 super();
+		 setup(Orientation.HORIZONTAL);
+	 }
+	 
+	 private void setup(Orientation orientation) {
+		this.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		this.setOrientation(orientation);
 		this.getStyleClass().add("thingview-list");
+		
+		if(orientation == Orientation.HORIZONTAL) {
+			this.setMinHeight(70);
+			this.setMaxHeight(70);
+		} else {
+			this.setMinWidth(70);
+			this.setMaxWidth(70);
+		}
+		
+		this.setCellFactory(new Callback<ListView<ThingView>, ListCell<ThingView>>() {
+			@Override
+	        public ListCell<ThingView> call(ListView<ThingView> param) {
+				return new ThingCell();
+	        }
+	    });
 	 }
 	 
 	 public void add(ThingView t) {
-		 items.add(t);
-		 view.getItems().add(t);
+		 this.getItems().add(t);
 	 }
 	 
 	 public void addAll(List<ThingView> l) {
-		 items.addAll(l);
-		 view.getItems().addAll(l);
+		 this.getItems().addAll(l);
 	 }
 	 
 	 public void remove(ThingView t) {
-		 items.remove(t);
-		 view.getItems().remove(t);
+		 this.getItems().remove(t);
+		 
+		 if(getItems().isEmpty())
+			 this.setVisible(false);
 	 }
 	 
 	 public void remove(int i) {
-		 if (items.get(i) == view.getItems().get(i)){
-			 items.remove(i);
-			 view.getItems().remove(i);
-		 }
+		 this.getItems().remove(i);
+		 
+		 if(getItems().isEmpty())
+			 this.setVisible(false);
 	 }
 	 
 	 public void removeByThingId(int id) {
 		 ThingView remove = null;
 		 
-		 for (ThingView tv : view.getItems()) {
+		 for (ThingView tv : this.getItems()) {
 			 if (tv.thingRef.thingID == id) {
 				 System.out.println("REMOVED ITEM: " + id);
 				 remove = tv;
@@ -67,19 +82,15 @@ public class ThingViewList extends HBox {
 			 }
 		 }
 		 
-		 items.remove(remove);
-		 view.getItems().remove(remove);
+		 this.getItems().remove(remove);
 	 }
 	 
 	 public void removeAll(List<ThingView> l) {
-		 items.removeAll(l);
-		 view.getItems().removeAll(l);
+		 this.getItems().removeAll(l);
 	 }
 	 
 	 public void setAll(List<ThingView> l) {
-		 items.clear();
-		 items.addAll(l);
-		 view.getItems().setAll(l);
+		 this.getItems().setAll(l);
 	 }
 	 
 	 public void setAllThings(List<Thing> t) {
@@ -92,5 +103,9 @@ public class ThingViewList extends HBox {
 		 }
 		 
 		 this.setAll(list);
+	 }
+	 
+	 public boolean isEmpty() {
+		 return this.getItems().isEmpty();
 	 }
 }

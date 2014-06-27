@@ -3,11 +3,16 @@ package gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import Game.Fort;
+import Game.GameConstants.ThingType;
+import Game.Combatant;
+import Game.Creature;
+import Game.Combatant;
+import Game.Creature;
 import Game.Player;
-import Game.Thing;
 import Game.GameConstants.CurrentPhase;
+import Game.Thing;
 import Game.Networking.GameClient;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
@@ -36,19 +41,20 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				
 				List<ThingView> list = getListView().getSelectionModel().getSelectedItems();
 				
-				Player currPlayer = GameClient.game.gameModel.GetCurrentPlayer();
 				GameView.selectedThings.clear();
 				for (ThingView thing : list){
-					if (thing.thingRef.controlledBy != currPlayer.faction){
-						continue;
-					}
-					
-					int thingId = thing.thingRef.thingID;
-					
-					GameView.selectedThings.add(thingId);
+					GameView.selectedThings.add(thing.thingRef);
 				}
 				
-				System.out.println(GameView.selectedThings);
+				/*for (Thing thing : GameView.selectedThings) {
+					if(thing instanceof Creature) {
+						System.out.println((Creature)thing);
+					}
+				}*/
+				for (Thing thing : GameView.selectedThings) {
+					System.out.print(thing.thingID + " ");
+				}
+				System.out.println();
 			}
 		});
 		
@@ -60,24 +66,31 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 				
 				GameView gv = GameClient.game.gameView;
 
-				if(gv.currentPhase == CurrentPhase.MOVEMENT || gv.currentPhase == CurrentPhase.PLAY_THINGS)
+				//drag can be started from any of these phases
+				if(gv.currentPhase == CurrentPhase.MOVEMENT 
+						|| gv.currentPhase == CurrentPhase.PLAY_THINGS
+						|| gv.currentPhase == CurrentPhase.RECRUIT_CHARACTER
+						|| gv.currentPhase == CurrentPhase.CHOOSE_DEFECTION_ACTION
+						|| gv.currentPhase == CurrentPhase.PLAY_RANDOM_EVENT)
 				{
 					ArrayList<Integer> selectedIds = new ArrayList<Integer>(getListView().getSelectionModel().getSelectedIndices());
 					
-					//Check if thing is owned by player
-					if (getListView().getItems().get(selectedIds.get(0)).thingRef.getControlledByPlayerNum() == GameClient.game.gameModel.GetCurrentPlayer().GetPlayerNum()) {
+					//check valid drag
+					if(GameClient.game.validDragStart(gv, getListView(), selectedIds))
+					{															
 						Dragboard db = startDragAndDrop(TransferMode.MOVE);
 						ClipboardContent content = new ClipboardContent();
 						content.put(thingRackIds, selectedIds);
-				
-						content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + " ");
-					
+						
+						if (gv.currentPhase == CurrentPhase.MOVEMENT) {
+							content.put(originalTile, gv.tilePreview.tileRef.getTileRef().x + "SPLIT" +  gv.tilePreview.tileRef.getTileRef().y + "~");
+						}	
+						
 						db.setContent(content);
 					}
 				}
-
 				//db.setDragView(arg0);
-				e.consume();;
+				e.consume();
 			}
 		});
 	}
@@ -90,7 +103,16 @@ public class ThingCell extends ListCell<ThingView> implements Draggable {
 			setStyle("");
 		} else {
 			setPrefSize(64, 64);
-			setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "');");
+			
+			int controlledBy 	= t.thingRef.getControlledByPlayerNum();
+			int currPlayer 		= GameClient.game.gameModel.getCurrPlayerNumber();
+			
+			if((t.thingRef.getThingType() == ThingType.FORT && !((Fort)t.thingRef).isNeutralized()) ||
+				((t.thingRef.getThingType() != ThingType.FORT && !t.thingRef.isFlipped()) ||
+				((t.thingRef.getThingType() != ThingType.FORT && controlledBy == currPlayer && currPlayer > -1))))
+				setStyle("-fx-background-image: url('res/images/" + t.thingRef.frontFileName + "'); -fx-background-size: 60 60;");
+			else
+				setStyle("-fx-background-image: url('res/images/" + t.thingRef.backFileName + "'); -fx-background-size: 60 60;");
 		}
 	}
 }
